@@ -2,8 +2,11 @@ package net.thevpc.nuts.collections;
 
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * NMaps class.
@@ -14,7 +17,7 @@ import java.util.Map;
 public class NMaps {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -27,7 +30,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -43,7 +46,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -62,7 +65,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -84,7 +87,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -109,7 +112,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -137,7 +140,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -168,7 +171,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -202,7 +205,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -239,7 +242,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -279,7 +282,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -322,7 +325,7 @@ public class NMaps {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of.
      *
      * @param a1 a1
      * @param b1 b1
@@ -674,7 +677,128 @@ public class NMaps {
         return m;
     }
 
-    public static <K, V> Map<K, V> ofConcurrentReadWriteLRUMap(int size) {
+    public static <K, V> NCappedMap<K, V> ofConcurrentReadWriteLRUMap(int size) {
         return NUtilsRPI.of().createConcurrentReadWriteLRUMap(size);
+    }
+
+    public static <K, V> NCappedMap<K, V> ofLRUMap(int size) {
+        return NUtilsRPI.of().createLruMap(size);
+    }
+
+    /**
+     * Creates a new instance of case-insensitive.
+     *
+     * @return of case-insensitive result
+     */
+    public static <T> Map<String,T> ofCaseInsensitiveMap() {
+        return NUtilsRPI.of().createInsensitiveMap();
+    }
+
+    /**
+     * Creates a new instance of case-insensitive.
+     *
+     * @param other other
+     * @return of case-insensitive result
+     */
+    public static <T> Map<String,T> ofCaseInsensitiveMap(Map<String, T> other) {
+        Map<String,T> m = ofCaseInsensitiveMap();
+        if(other!=null){
+            m.putAll(other);
+        }
+        return m;
+    }
+
+    /**
+     * Creates a new instance of format-insensitive.
+     *
+     * @return of format-insensitive result
+     */
+    public static <T> Map<String,T> ofFormatInsensitiveStringMap() {
+        return NUtilsRPI.of().createFormatInsensitiveMap();
+    }
+
+    /**
+     * Creates a new instance of format-insensitive.
+     *
+     * @param other other
+     * @return of format-insensitive result
+     */
+    public static <T> Map<String,T> ofFormatInsensitiveStringMap(Map<String, T> other) {
+        Map<String,T> m = ofFormatInsensitiveStringMap();
+        if(other!=null){
+            m.putAll(other);
+        }
+        return m;
+    }
+
+    /**
+     * Creates a new instance of.
+     *
+     * @param normalizer normalizer
+     * @return of result
+     */
+    public static <T> Map<String,T> ofNormalizedStringMap(Function<String,String> normalizer) {
+        return NUtilsRPI.of().createNormalizedMap(normalizer);
+    }
+
+    /**
+     * Creates a new instance of.
+     *
+     * @param normalizer normalizer
+     * @param other other
+     * @return of result
+     */
+    public static <T> Map<String,T> ofNormalizedStringMap(Function<String,String> normalizer,Map<String, T> other) {
+        Map<String,T> m = ofNormalizedStringMap(normalizer);
+        if(other!=null){
+            m.putAll(other);
+        }
+        return m;
+    }
+
+    /**
+     * Merge maps.
+     *
+     * @param source source
+     * @param dest   dest
+     * @return merge maps result
+     */
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
+        if (dest == null) {
+            dest = new HashMap<>();
+        }
+        if (source != null) {
+            for (Map.Entry<K, V> e : source.entrySet()) {
+                if (e.getValue() != null) {
+                    dest.put(e.getKey(), e.getValue());
+                } else {
+                    dest.remove(e.getKey());
+                }
+            }
+        }
+        return dest;
+    }
+
+    /**
+     * Non null map.
+     *
+     * @param other other
+     * @return non null map result
+     */
+    public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
+        if (other == null) {
+            return new LinkedHashMap<>();
+        }
+        return new LinkedHashMap<>(other);
+    }
+
+    /**
+     * Unmodifiable map.
+     *
+     * @param other other
+     * @return unmodifiable map result
+     */
+    public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
+        return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
     }
 }

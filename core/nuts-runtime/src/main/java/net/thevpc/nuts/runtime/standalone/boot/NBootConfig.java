@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
+import net.thevpc.nuts.collections.NMaps;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
@@ -33,7 +34,6 @@ import net.thevpc.nuts.core.NWorkspaceOptions;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -134,8 +134,8 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.setStoreStrategy(options.storeStrategy().orNull());
             this.setRepositoryStoreStrategy(options.repositoryStoreStrategy().orNull());
             this.setStoreLayout(options.storeLayout().orNull());
-            this.storeLocations = NCollections.nonNullMap(options.storeLocations().orNull());
-            this.homeLocations = NCollections.nonNullMap(options.homeLocations().orNull());
+            this.storeLocations = NMaps.nonNullMap(options.storeLocations().orNull());
+            this.homeLocations = NMaps.nonNullMap(options.homeLocations().orNull());
             this.setRuntimeId(options.runtimeId().orNull());
             this.system = options.system().orElse(false);
             this.runtimeId = options.runtimeId().orNull();

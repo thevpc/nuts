@@ -2,6 +2,7 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -343,6 +344,18 @@ public class NSagaContextModel implements Serializable, Cloneable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NSagaContextModel that = (NSagaContextModel) o;
+        return startTime == that.startTime && endTime == that.endTime && Objects.equals(stackStepId, that.stackStepId) && Objects.equals(stackStepGroup, that.stackStepGroup) && Objects.equals(stackStepIndex, that.stackStepIndex) && Objects.equals(values, that.values) && Objects.equals(stepsToCompensate, that.stepsToCompensate) && status == that.status && Objects.equals(firstFailStepError, that.firstFailStepError) && Objects.equals(firstFailStepId, that.firstFailStepId) && Objects.equals(firstFailStepName, that.firstFailStepName) && Objects.equals(lastResult, that.lastResult);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stackStepId, stackStepGroup, stackStepIndex, values, stepsToCompensate, status, startTime, endTime, firstFailStepError, firstFailStepId, firstFailStepName, lastResult);
+    }
+
+    @Override
     public NSagaContextModel clone() {
         NSagaContextModel copy = new NSagaContextModel();
         copy.values.putAll(this.values); // shallow copy of values
@@ -358,21 +371,23 @@ public class NSagaContextModel implements Serializable, Cloneable {
         return copy;
     }
 
+
     @Override
     public String toString() {
-        return "NSagaContextModel{" +
-                " status=" + status +
-                ", stackStepId=" + stackStepId +
-                ", stackStepGroup=" + stackStepGroup +
-                ", stackStepIndex=" + stackStepIndex +
-                ", values=" + values +
-                ", stepsToCompensate=" + stepsToCompensate +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", firstFailStepId=" + firstFailStepId +
-                ", firstFailStepName=" + firstFailStepName +
-                ", firstFailStepThrowable=" + firstFailStepError +
-                ", lastResult=" + lastResult +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("status", status)
+                .add("stackStepId", stackStepId)
+                .add("stackStepGroup", stackStepGroup)
+                .add("stackStepIndex", stackStepIndex)
+                .add("values", values)
+                .add("stepsToCompensate", stepsToCompensate)
+                .add("startTime", startTime)
+                .add("endTime", endTime)
+                .add("firstFailStepId", firstFailStepId)
+                .add("endTime", endTime)
+                .add("firstFailStepName", firstFailStepName)
+                .add("firstFailStepError", firstFailStepError)
+                .add("lastResult", lastResult)
+                .build();
     }
 }

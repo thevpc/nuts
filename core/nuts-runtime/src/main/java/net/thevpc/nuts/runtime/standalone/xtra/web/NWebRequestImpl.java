@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.*;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
@@ -105,7 +106,7 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebRequestImpl uri(String url, Object... vars) {
         NAssert.requireNamedNonNull(url, "url");
         NAssert.requireNamedNonNull(vars, "vars");
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         char[] charArray = url.toCharArray();
         char last = '\0';
         int index = 0;

@@ -605,6 +605,28 @@ abstract class NColorBase implements NColor {
         public String name() {
             return null;
         }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor4 nColor4 = (NColor4) o;
+            return color == nColor4.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
+        }
     }
 
     static class NColor4Named extends NColorBase {
@@ -682,6 +704,28 @@ abstract class NColorBase implements NColor {
         public String name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor4Named that = (NColor4Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
+        }
     }
 
     static class NColor8 extends NColorBase {
@@ -752,6 +796,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor8 nColor8 = (NColor8) o;
+            return color == nColor8.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
         }
     }
 
@@ -830,6 +896,18 @@ abstract class NColorBase implements NColor {
         public String name() {
             return name;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor8Named that = (NColor8Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
+        }
     }
 
     static class NColor16 extends NColorBase {
@@ -902,6 +980,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor16 nColor16 = (NColor16) o;
+            return color == nColor16.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
         }
     }
 
@@ -981,6 +1081,28 @@ abstract class NColorBase implements NColor {
         public String name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor16Named that = (NColor16Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
+        }
     }
 
     static class NColor24 extends NColorBase {
@@ -1049,6 +1171,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor24 nColor24 = (NColor24) o;
+            return color == nColor24.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
         }
     }
 
@@ -1123,6 +1267,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor24Named that = (NColor24Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
         }
     }
 
@@ -1209,6 +1375,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor32 nColor32 = (NColor32) o;
+            return color == nColor32.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
         }
     }
 
@@ -1306,6 +1494,28 @@ abstract class NColorBase implements NColor {
         public String name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor32Named that = (NColor32Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
+        }
     }
 
     static class NColor64 extends NColorBase {
@@ -1370,6 +1580,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor64 nColor64 = (NColor64) o;
+            return color == nColor64.color;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(color);
         }
     }
 
@@ -1441,6 +1673,28 @@ abstract class NColorBase implements NColor {
          */
         public String name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            String n = name();
+            int bits=bits().bits();
+            if(!NBlankable.isBlank(n)){
+                return "C"+bits+":"+color+","+n;
+            }
+            return "C"+bits+":"+color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            NColor64Named that = (NColor64Named) o;
+            return color == that.color && Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(color, name);
         }
     }
 

@@ -3,10 +3,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.shell;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 
 public abstract class AbstractShellWriter implements NShellWriter {
     private NShellFamily family;
-    private NStringBuilder out = new NStringBuilder();
+    private NStringBuilder out = new NStringBuilderImpl();
     private boolean disableCommand;
 
     public AbstractShellWriter(NShellFamily family) {
@@ -43,7 +44,7 @@ public abstract class AbstractShellWriter implements NShellWriter {
 
     protected void printlnCommandImpl(String any) {
         if (isDisableCommand()) {
-            new NStringBuilder(any).lines().forEach(x -> {
+            new NStringBuilderImpl(any).lines().forEach(x -> {
                 out.println(codeCommentImpl(x));
             });
         } else {
@@ -64,7 +65,7 @@ public abstract class AbstractShellWriter implements NShellWriter {
 
     @Override
     public NShellWriter printlnComment(String comment) {
-        new NStringBuilder(comment).lines().forEach(x -> {
+        new NStringBuilderImpl(comment).lines().forEach(x -> {
             out.println(lineCommentImpl(x));
         });
         return this;

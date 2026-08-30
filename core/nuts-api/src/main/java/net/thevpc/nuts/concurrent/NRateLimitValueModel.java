@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -94,13 +95,14 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
         return Objects.hash(id, lastAccess, Arrays.hashCode(rules));
     }
 
+
     @Override
     public String toString() {
-        return "NLimitedValueData{" +
-                "id='" + id + '\'' +
-                ", lastAccess=" + lastAccess +
-                ", rules=" + Arrays.toString(rules) +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("id", id)
+                .add("lastAccess", lastAccess)
+                .add("rules", rules)
+                .build();
     }
 
     /**

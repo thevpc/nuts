@@ -83,15 +83,24 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 case "user.home":
                     return System.getProperty("user.home");
                 case "home.apps":
+                case "home.bin":
+                case "home.conf":
                 case "home.config":
                 case "home.lib":
                 case "home.temp":
                 case "home.var":
                 case "home.cache":
                 case "home.run":
-                case "home.log":
-                    return NBootUtils.getHome(from.substring("home.".length()).toUpperCase(), options);
+                case "home.log": {
+                    String sub = from.substring("home.".length());
+                    if ("config".equalsIgnoreCase(sub)) {
+                        sub = "CONF";
+                    }
+                    return NBootUtils.getHome(sub.toUpperCase(), options);
+                }
                 case "apps":
+                case "bin":
+                case "conf":
                 case "config":
                 case "lib":
                 case "cache":
@@ -99,8 +108,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 case "temp":
                 case "log":
                 case "var": {
-                    Map<String, String> s = NBootUtils.firstNonNull(options.getStoreLocations(), Collections.emptyMap());
-                    String v = s.get(from);
+                    String storeType = "config".equalsIgnoreCase(from) ? "CONF" : from;
+                    String v = options.getStoreType(storeType);
                     if (v == null) {
                         return "${" + from + "}";
                     }
@@ -232,6 +241,10 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             if (this.options.getCreationTime() == null) {
                 this.options.setCreationTime(creationTime);
             }
+            if (scanner == null) {
+                InputStream in = options.getStdin();
+                scanner = new Scanner(in == null ? System.in : in);
+            }
             NBootContext.log().setOptions(this.options);
         });
     }
@@ -349,19 +362,25 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
                 for (String s : repositoryDB.findByAnyTag(tags.toArray(new String[0]))) {
                     if ("maven".equals(s)) {
-                        for (String customOption : options.getCustomOptions()) {
-                            NBootArg a = new NBootArg(customOption);
-                            if ("---m2".equals(a.key())) {
-                                if (a.isActive()) {
-                                    boolean m2 = a.isEnabled()
-                                            ? NBootUtils.parseBoolean(a.getValue(), true, true)
-                                            : !NBootUtils.parseBoolean(a.getValue(), true, false);
-                                    if (!m2) {
-                                        continue;
+                        boolean includeMaven = true;
+                        if (options.getCustomOptions() != null) {
+                            for (String customOption : options.getCustomOptions()) {
+                                NBootArg a = new NBootArg(customOption);
+                                if ("---m2".equals(a.key())) {
+                                    if (a.isActive()) {
+                                        boolean m2 = a.isEnabled()
+                                                ? NBootUtils.parseBoolean(a.getValue(), true, true)
+                                                : !NBootUtils.parseBoolean(a.getValue(), true, false);
+                                        if (!m2) {
+                                            includeMaven = false;
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
                             }
+                        }
+                        if (!includeMaven) {
+                            continue;
                         }
                     }
                     drs.add(new NBootRepositorySelector("INCLUDE", NBootRepositoryLocation.of(s, repositoryDB)));
@@ -397,12 +416,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                                         }
                                         if (NBootUtils.isBlank(r.getName())) {
                                             Object o = jsonObject.get("repositoryName");
+                                            if (o == null || NBootUtils.isBlank(String.valueOf(o))) {
+                                                o = jsonObject.get("name");
+                                            }
                                             if (o instanceof String && !NBootUtils.isBlank((String) o)) {
                                                 r = r.setName(String.valueOf(o));
                                             }
-                                        }
-                                        if (NBootUtils.isBlank(r.getName())) {
-                                            r = r.setName(r.getName());
                                         }
                                     }
                                 } catch (Exception e) {
@@ -466,9 +485,6 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     }
                 }
             }
-            if (options.getJavaOptions() == null) {
-                Collections.addAll(cmd, NBootCmdLine.parseDefault(options.getJavaOptions()));
-            }
             cmd.add("-jar");
             cmd.add(file.getPath());
             cmd.addAll(asCmdLine(options, new NBootWorkspaceOptionsConfig().setCompact(true).setApiVersion(options.getApiVersion())).toStringList());
@@ -511,9 +527,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             }
 
             NBootIdCache fid = new NBootIdCache();
-            fid.baseId = baseId;
-            cache.fallbackIdMap.put(fid.baseId, fid);
-            String s = (lastWorkspace ? lastWorkspaceOptions : options).getStoreLocations().get("LIB") + "/id/"
+            NBootOptionsInfo curr = (lastWorkspace ? lastWorkspaceOptions : options);
+            String libFolder = curr == null ? null : curr.getStoreType("LIB");
+            if (libFolder == null) {
+                return fid;
+            }
+            String s = libFolder + "/id/"
                     + NBootUtils.resolveIdPath(baseId.getShortId());
             //
             Path ss = Paths.get(s);
@@ -619,27 +638,6 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             boolean dryFlag = NBootUtils.firstNonNull(options.getDry(), false);
             boolean resetFlag = NBootUtils.firstNonNull(options.getReset(), false);
             NBootLog log = NBootContext.log();
-            if (resetHardFlag) {
-                //force loading version early, it will be used later-on
-                log.log(isAskConfirm(getOptions()) ? Level.OFF : Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofPlain(NBootI18n.of("reset hard all workspaces")));
-                long countDeleted = 0;
-                if (dryFlag) {
-                    //
-                } else {
-                    countDeleted = NBootUtils.deleteStoreLocationsHard(lastWorkspaceOptions, getOptions(), () -> scanner.nextLine());
-                    NBootUtils.ndiUndo(null, false);
-                }
-                if (isPlainTrace()) {
-                    if (countDeleted > 0) {
-                        log.warn(NBootMsg.ofC(NBootI18n.of("nuts hard reset successfully")));
-                    } else {
-                        log.warn(NBootMsg.ofC(NBootI18n.of("nuts hard reset did not require to delete any file. system is clean.")));
-                    }
-                }
-                if (NBootUtils.isEmptyList(options.getApplicationArguments())) {
-                    throw new NBootException(NBootMsg.ofPlain(""), 0);
-                }
-            }
             if (!preparedWorkspace) {
                 preparedWorkspace = true;
                 String isolationLevel = NBootUtils.firstNonBlank(options.getIsolationLevel(), "SYSTEM");
@@ -1061,7 +1059,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 exceptionRunnable.run();
                 return loadedWorkspace;
             }
-            NWorkspaceBaseAndError e = _doNormalBootstrap();
+            NWorkspaceBaseAndError firstAttempt = _doNormalBootstrap();
+            NWorkspaceBaseAndError e = firstAttempt;
             if (e.workspace == null) {
                 if (complete != null) {
                     return null;
@@ -1071,12 +1070,12 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 if (e.error != null) {
                     if (!shouldDoMyBest) {
                         this.exceptionRunnable = () -> {
-                            logError(e.classworld, e.errorList, options);
-                            throw e.error;
+                            logError(firstAttempt.classworld, firstAttempt.errorList, options);
+                            throw firstAttempt.error;
                         };
                         this.exceptionRunnable.run();
                     } else {
-                        logError(e.classworld, e.errorList, options);
+                        logError(firstAttempt.classworld, firstAttempt.errorList, options);
                     }
                 }
                 if (shouldDoMyBest) {
@@ -1089,10 +1088,11 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     if (e2.error != null) {
                         this.exceptionRunnable = () -> {
                             logError(e2.classworld, e2.errorList, options);
-                            throw e.error;
+                            throw e2.error;
                         };
                         this.exceptionRunnable.run();
                     }
+                    e = e2;
                 }
             }
             return loadedWorkspace = e.workspace;
@@ -1245,13 +1245,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     wsInstance = a.createWorkspace(options);
                 } catch (NBootWorkspaceAlreadyExistsException ex) {
                     log.error(NBootMsg.ofPlain(ex.getMessage()), ex);
-                    return result;
+                    return result.withError(ex);
                 } catch (NBootWorkspaceNotFoundException ex) {
                     String m = options.getOpenMode();
                     if (NBootUtils.sameEnum(m, "OPEN_OR_NULL")) {
                         //just ignore
                     } else {
                         log.error(NBootMsg.ofPlain(ex.getMessage()), ex);
+                        return result.withError(ex);
                     }
                     return result;
                 } catch (UnsatisfiedLinkError | Exception ex) {
@@ -1330,7 +1331,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             try {
                 NBootCompleteCmdlineRequest cmdComplete = null;
                 if (complete != null) {
-                    NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, Arrays.asList(unparsedOptions.optionArgs())));
+                    List<String> optArgs = (unparsedOptions == null || unparsedOptions.optionArgs() == null) ? Collections.emptyList() : Arrays.asList(unparsedOptions.optionArgs());
+                    NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, optArgs));
                     if (r instanceof NBootCompleteResult) {
                         NBootContext.context().log.out().println(((NBootCompleteResult) r).format());
                         return this;
@@ -1434,14 +1436,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             log.error(NBootMsg.ofC("  nuts-boot-runtime                : %s", NBootUtils.desc(options.getRuntimeId())));
             log.error(NBootMsg.ofC("  nuts-boot-repositories           : %s", NBootUtils.desc(options.getBootRepositories())));
             log.error(NBootMsg.ofC("  workspace-location               : %s", NBootUtils.firstNonNull(workspace, "<default-location>")));
-            log.error(NBootMsg.ofC("  nuts-store-bin                   : %s", NBootUtils.desc(rbc_locations.get("BIN"))));
-            log.error(NBootMsg.ofC("  nuts-store-conf                  : %s", NBootUtils.desc(rbc_locations.get("CONF"))));
-            log.error(NBootMsg.ofC("  nuts-store-var                   : %s", NBootUtils.desc(rbc_locations.get("VAR"))));
-            log.error(NBootMsg.ofC("  nuts-store-log                   : %s", NBootUtils.desc(rbc_locations.get("LOG"))));
-            log.error(NBootMsg.ofC("  nuts-store-temp                  : %s", NBootUtils.desc(rbc_locations.get("TEMP"))));
-            log.error(NBootMsg.ofC("  nuts-store-cache                 : %s", NBootUtils.desc(rbc_locations.get("CACHE"))));
-            log.error(NBootMsg.ofC("  nuts-store-run                   : %s", NBootUtils.desc(rbc_locations.get("RUN"))));
-            log.error(NBootMsg.ofC("  nuts-store-lib                   : %s", NBootUtils.desc(rbc_locations.get("LIB"))));
+            log.error(NBootMsg.ofC("  nuts-store-bin                   : %s", NBootUtils.desc(options.getStoreType("BIN"))));
+            log.error(NBootMsg.ofC("  nuts-store-conf                  : %s", NBootUtils.desc(options.getStoreType("CONF"))));
+            log.error(NBootMsg.ofC("  nuts-store-var                   : %s", NBootUtils.desc(options.getStoreType("VAR"))));
+            log.error(NBootMsg.ofC("  nuts-store-log                   : %s", NBootUtils.desc(options.getStoreType("LOG"))));
+            log.error(NBootMsg.ofC("  nuts-store-temp                  : %s", NBootUtils.desc(options.getStoreType("TEMP"))));
+            log.error(NBootMsg.ofC("  nuts-store-cache                 : %s", NBootUtils.desc(options.getStoreType("CACHE"))));
+            log.error(NBootMsg.ofC("  nuts-store-run                   : %s", NBootUtils.desc(options.getStoreType("RUN"))));
+            log.error(NBootMsg.ofC("  nuts-store-lib                   : %s", NBootUtils.desc(options.getStoreType("LIB"))));
             log.error(NBootMsg.ofC("  nuts-store-strategy              : %s", NBootUtils.desc(options.getStoreStrategy())));
             log.error(NBootMsg.ofC("  nuts-store-layout                : %s", NBootUtils.desc(options.getStoreLayout())));
             log.error(NBootMsg.ofC("  nuts-boot-args                   : %s", asCmdLine(options, null)));
@@ -1544,11 +1546,15 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 req += 1;
             }
         }
-        if (!unsatisfiedOnly || !NBootUtils.isActualJavaCommand(options.getJavaCommand())) {
-            req += 2;
+        if (!NBootUtils.isBlank(options.getJavaCommand())) {
+            if (!unsatisfiedOnly || !NBootUtils.isActualJavaCommand(options.getJavaCommand())) {
+                req += 2;
+            }
         }
-        if (!unsatisfiedOnly || !NBootUtils.isActualJavaOptions(options.getJavaOptions())) {
-            req += 4;
+        if (!NBootUtils.isBlank(options.getJavaOptions())) {
+            if (!unsatisfiedOnly || !NBootUtils.isActualJavaOptions(options.getJavaOptions())) {
+                req += 4;
+            }
         }
         return req;
     }

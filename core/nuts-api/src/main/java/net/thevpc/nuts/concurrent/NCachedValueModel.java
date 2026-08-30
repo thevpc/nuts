@@ -2,10 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
-import net.thevpc.nuts.util.NUnexpectedException;
+import net.thevpc.nuts.util.*;
+
+import java.util.Objects;
 
 /**
  * Internal data model representing the persisted state of a cached value.
@@ -31,10 +30,8 @@ import net.thevpc.nuts.util.NUnexpectedException;
  * persisting or reconstructing this model when cache entries are loaded or saved.
  * </p>
  *
- * @implNote
- * This class performs only shallow cloning. It is designed to be a simple,
+ * @implNote This class performs only shallow cloning. It is designed to be a simple,
  * serializable-like data carrier between caching components.
- *
  * @see NCachedValue
  * @see NCachedValueFactory
  * @see NCachedValueStore
@@ -42,52 +39,81 @@ import net.thevpc.nuts.util.NUnexpectedException;
  */
 public class NCachedValueModel implements Cloneable, NCopiable {
 
-    /** Unique identifier for the cached entry. */
+    /**
+     * Unique identifier for the cached entry.
+     */
     private String id;
 
-    /** The most recently computed value (may be {@code null}). */
+    /**
+     * The most recently computed value (may be {@code null}).
+     */
     private Object value;
 
-    /** The last thrown exception during value computation, if any. */
+    /**
+     * The last thrown exception during value computation, if any.
+     */
     private Throwable error;
 
-    /** Indicates whether the cache entry has been explicitly invalidated. */
+    /**
+     * Indicates whether the cache entry has been explicitly invalidated.
+     */
     private boolean invalidated;
 
-    /** Whether the cache is in an error state (e.g., repeated failures). */
+    /**
+     * Whether the cache is in an error state (e.g., repeated failures).
+     */
     private Boolean errorState;
 
-    /** The last known valid value, used if {@code retainLastOnFailure} is enabled. */
+    /**
+     * The last known valid value, used if {@code retainLastOnFailure} is enabled.
+     */
     private Object lastValidValue = null;
 
-    /** Timestamp of the last successful or attempted evaluation, in milliseconds. */
+    /**
+     * Timestamp of the last successful or attempted evaluation, in milliseconds.
+     */
     private long lastEvalTimestamp = 0;
 
-    /** Number of consecutive failed attempts since last success. */
+    /**
+     * Number of consecutive failed attempts since last success.
+     */
     private int failedAttempts = 0;
 
-    /** Maximum duration before the cached value expires. */
+    /**
+     * Maximum duration before the cached value expires.
+     */
     private NDuration expiry = NDuration.ofMillis(Long.MAX_VALUE);
 
-    /** Minimum wait period before retrying after a failure. */
+    /**
+     * Minimum wait period before retrying after a failure.
+     */
     private NDuration retryPeriod = NDuration.ZERO;
 
-    /** Maximum number of retries allowed after failure before marking error state. */
+    /**
+     * Maximum number of retries allowed after failure before marking error state.
+     */
     private int maxRetries = 0;
 
-    /** Whether to retain the last valid value if computation fails. */
+    /**
+     * Whether to retain the last valid value if computation fails.
+     */
     private boolean retainLastOnFailure = false;
 
-    /** Creates an empty model with default settings. */
+    /**
+     * Creates an empty model with default settings.
+     */
     public NCachedValueModel() {
     }
 
-    /** Creates a model associated with a specific identifier. */
+    /**
+     * Creates a model associated with a specific identifier.
+     */
     public NCachedValueModel(String id) {
         this.id = id;
     }
 
     // ---- Getters / Setters ----
+
     /**
      * Checks if is invalidated.
      *
@@ -357,7 +383,7 @@ public class NCachedValueModel implements Cloneable, NCopiable {
      *
      * @return copy result
      */
-    public NCachedValueModel copy(){
+    public NCachedValueModel copy() {
         /**
          * Clone.
          *
@@ -371,13 +397,13 @@ public class NCachedValueModel implements Cloneable, NCopiable {
      *
      * @return clone result
      */
-    protected NCachedValueModel clone(){
+    protected NCachedValueModel clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
+            /**
+             * Return.
+             *
+             * @param super.clone(super.clone(
+             */
             return (NCachedValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
             /**
@@ -386,7 +412,37 @@ public class NCachedValueModel implements Cloneable, NCopiable {
              * @param e e
              * @return runtime exception result
              */
-            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NCachedValueModel that = (NCachedValueModel) o;
+        return invalidated == that.invalidated && lastEvalTimestamp == that.lastEvalTimestamp && failedAttempts == that.failedAttempts && maxRetries == that.maxRetries && retainLastOnFailure == that.retainLastOnFailure && Objects.equals(id, that.id) && Objects.equals(value, that.value) && Objects.equals(error, that.error) && Objects.equals(errorState, that.errorState) && Objects.equals(lastValidValue, that.lastValidValue) && Objects.equals(expiry, that.expiry) && Objects.equals(retryPeriod, that.retryPeriod);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, value, error, invalidated, errorState, lastValidValue, lastEvalTimestamp, failedAttempts, expiry, retryPeriod, maxRetries, retainLastOnFailure);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this)
+                .add("id", id)
+                .add("value", value)
+                .add("error", error)
+                .add("invalidated", invalidated)
+                .add("errorState", errorState)
+                .add("lastValidValue", lastValidValue)
+                .add("lastEvalTimestamp", lastEvalTimestamp)
+                .add("failedAttempts", failedAttempts)
+                .add("expiry", expiry)
+                .add("retryPeriod", retryPeriod)
+                .add("maxRetries", maxRetries)
+                .add("retainLastOnFailure", retainLastOnFailure)
+                .build();
     }
 }

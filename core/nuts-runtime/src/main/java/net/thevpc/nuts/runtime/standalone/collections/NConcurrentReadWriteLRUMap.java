@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.collections;
 
+import net.thevpc.nuts.collections.NCappedMap;
+
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -11,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author thevpc
  * @since 0.8.0
  */
-public class NConcurrentReadWriteLRUMap<K, V> extends LinkedHashMap<K, V> {
+public class NConcurrentReadWriteLRUMap<K, V> extends LinkedHashMap<K, V> implements NCappedMap<K, V> {
     private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private Lock readLock = readWriteLock.readLock();
     private Lock writeLock = readWriteLock.writeLock();
@@ -75,4 +78,29 @@ public class NConcurrentReadWriteLRUMap<K, V> extends LinkedHashMap<K, V> {
     protected boolean removeEldestEntry(Map.Entry eldest) {
         return this.size() > maxSize;
     }
+
+    @Override
+    public void resize(int maxEntries) {
+        //LRUMap<A, B> n = new LRUMap<A, B>(maxEntries);
+        //n.putAll(this);
+        int old = this.maxSize;
+        this.maxSize = maxEntries;
+        if (old > maxEntries) {
+            int size = size();
+            for (Iterator<Map.Entry<K, V>> iterator = this.entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<K, V> abEntry = iterator.next();
+                iterator.remove();
+                size--;
+                if (size <= maxEntries) {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public int maxEntries() {
+        return maxSize;
+    }
+
 }

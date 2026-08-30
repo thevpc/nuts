@@ -392,7 +392,7 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
 
     @Override
     public String toString() {
-        return new NToStringBuilder("NutsRepositoryConfig")
+        return NToStringBuilder.of(this)
                 .add("name",name)
                 .addIfNonBlank("uuid",uuid)
                 .addIfNonBlank("location",location)

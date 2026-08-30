@@ -734,9 +734,9 @@ public class NTextBuilderPlain implements NTextBuilder {
         if (NBlankable.isBlank(prefix)) {
             return this;
         }
-        NStringBuilder old = new NStringBuilder(sb.toString());
+        String old = sb.toString();
         sb.delete(0, sb.length());
-        sb.append(old.indent(prefix.filteredText(), skipFirstLine).toString());
+        sb.append(NStringUtils.indent(old,prefix.filteredText(), skipFirstLine));
         return null;
     }
 

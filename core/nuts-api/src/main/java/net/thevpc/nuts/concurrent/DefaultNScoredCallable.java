@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.function.Supplier;
 
@@ -27,8 +28,8 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
     /**
      * Default n scored callable.
      *
-     * @param value value
-     * @param score score
+     * @param value        value
+     * @param score        score
      * @param emptyMessage empty message
      * @return default n scored callable result
      */
@@ -61,7 +62,7 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
      * @return call result
      */
     public T call() {
-        if (score>0) {
+        if (score > 0) {
             return value.get();
         } else {
             NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
@@ -77,6 +78,15 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
      */
     public int getScore(NScorableContext scorableContext) {
         return score;
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("value", value)
+                .add("score", score)
+                .add("emptyMessage", emptyMessage)
+                .build();
     }
 
 }

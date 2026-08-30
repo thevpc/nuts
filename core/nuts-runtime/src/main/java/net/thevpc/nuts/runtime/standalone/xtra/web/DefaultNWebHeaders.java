@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.web;
 
-import net.thevpc.nuts.collections.NNormalizedStringMap;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DefaultNWebHeaders {
-    private final Map<String, List<String>> headers = NNormalizedStringMap.ofCaseInsensitive();
+    private final Map<String, List<String>> headers = NMaps.ofCaseInsensitiveMap();
 
     public void addHeaders(DefaultNWebHeaders others, Mode mode) {
         if (others != null) {
@@ -158,7 +158,7 @@ public class DefaultNWebHeaders {
     }
 
     public Map<String, List<String>> toMap() {
-        Map<String, List<String>> headers2 = NNormalizedStringMap.ofCaseInsensitive();
+        Map<String, List<String>> headers2 = NMaps.ofCaseInsensitiveMap();
         for (Map.Entry<String, List<String>> e : this.headers.entrySet()) {
             headers2.put(e.getKey(), new ArrayList<>(e.getValue()));
         }
@@ -166,7 +166,7 @@ public class DefaultNWebHeaders {
     }
 
     public Map<String, String> toFirstMap() {
-        Map<String, String> headers2 = NNormalizedStringMap.ofCaseInsensitive();
+        Map<String, String> headers2 = NMaps.ofCaseInsensitiveMap();
         for (Map.Entry<String, List<String>> e : this.headers.entrySet()) {
             List<String> v = e.getValue();
             if (v == null || v.isEmpty()) {

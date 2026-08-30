@@ -2,15 +2,13 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
-import net.thevpc.nuts.util.NUnexpectedException;
+import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -203,13 +201,27 @@ public class NWorkBalancerModel implements Serializable, Cloneable, NCopiable {
         return copy;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NWorkBalancerModel that = (NWorkBalancerModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(options, that.options) && Objects.equals(strategy, that.strategy) && Objects.equals(workers, that.workers) && Objects.equals(context, that.context);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, options, strategy, workers, context);
+    }
+
     @Override
     public String toString() {
-        return "NWorkBalancerModel{" +
-                "id='" + id + '\'' +
-                ", context=" + context +
-                ", options=" + options +
-                ", workers=" + workers +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("id", id)
+                .add("context", context)
+                .add("strategy", strategy)
+                .add("options", options)
+                .add("workers", workers)
+                .build();
     }
 }

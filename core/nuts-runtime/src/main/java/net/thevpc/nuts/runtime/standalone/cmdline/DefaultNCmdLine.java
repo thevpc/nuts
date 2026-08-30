@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.cmdline;
 
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.platform.NShellFamily;
@@ -1668,7 +1669,7 @@ public class DefaultNCmdLine implements NCmdLine {
             }
             String fileContent = path.readString();
             List<String> parsed = new ArrayList<>();
-            for (String line : new NStringBuilder(fileContent).lines().toList()) {
+            for (String line : new NStringBuilderImpl(fileContent).lines().toList()) {
                 if (!NBlankable.isBlank(line) && !NStringUtils.strip(line).startsWith("#")) {
                     NCmdLine subCmd = NCmdLine.parse(line, s).get();
                     subCmd.expandArgumentsFile(false);

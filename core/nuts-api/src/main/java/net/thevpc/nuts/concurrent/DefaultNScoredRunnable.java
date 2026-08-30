@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.internal.NApiUtilsRPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.function.Supplier;
 
@@ -76,4 +77,12 @@ public class DefaultNScoredRunnable<T> implements NScoredRunnable<T> {
         return score;
     }
 
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("value", value)
+                .add("score", score)
+                .add("emptyMessage", emptyMessage)
+                .build();
+    }
 }

@@ -38,7 +38,6 @@ import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.platform.NRuntimeDistribution;
-import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsgType;
@@ -262,7 +261,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @return create insensitive map result
      */
-    <T> NNormalizedStringMap<T> createInsensitiveMap();
+    <T> Map<String, T> createInsensitiveMap();
 
     /**
      * Creates a new instance of create multi key map.
@@ -616,7 +615,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @return create format insensitive map result
      */
-    <T> NNormalizedStringMap<T> createFormatInsensitiveMap();
+    <T> Map<String, T> createFormatInsensitiveMap();
 
     /**
      * Creates a new instance of create normalized map.
@@ -624,7 +623,7 @@ public interface NUtilsRPI extends NComponent {
      * @param normalizer normalizer
      * @return create normalized map result
      */
-    <T> NNormalizedStringMap<T> createNormalizedMap(Function<String, String> normalizer);
+    <T> Map<String, T> createNormalizedMap(Function<String, String> normalizer);
 
     /**
      * Creates a new instance of create lru map.
@@ -632,7 +631,7 @@ public interface NUtilsRPI extends NComponent {
      * @param size size
      * @return create lru map result
      */
-    <K, V> NLRUMap<K, V> createLruMap(int size);
+    <K, V> NCappedMap<K, V> createLruMap(int size);
 
     /**
      * Creates a new instance of create evicting byte queue.
@@ -958,12 +957,15 @@ public interface NUtilsRPI extends NComponent {
 
     <A, B> List<B> createImmutableConvertedList(List<A> base, Function<A, B> converter);
 
-    <K, V> Map<K, V> createConcurrentReadWriteLRUMap(int size);
+    <K, V> NCappedMap<K, V> createConcurrentReadWriteLRUMap(int size);
 
-    <T,K> NCollectionDiffBuilder<T,K> createCollectionDiffBuilder();
+    <T, K> NCollectionDiffBuilder<T, K> createCollectionDiffBuilder();
 
     NRuntimeDistribution createRuntimeDistribution(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority);
+
     NLiteral createLiteral(Object any);
 
     NArg createCmdlineArg(String value, NCmdLine cmdline);
+
+    NStringBuilder createStringBuilder(String value);
 }

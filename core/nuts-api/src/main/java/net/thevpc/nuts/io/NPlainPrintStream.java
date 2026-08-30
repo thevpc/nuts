@@ -18,7 +18,7 @@ import java.util.Date;
  * @since 0.8.0
  */
 public class NPlainPrintStream implements NPrintStream {
-    private NStringBuilder sb = new NStringBuilder();
+    private StringBuilder sb = new StringBuilder();
     private NContentMetadata md = new DefaultNContentMetadata();
 
     /**
@@ -31,14 +31,29 @@ public class NPlainPrintStream implements NPrintStream {
 
     @Override
     public NStringWriter asStringWriter() {
-        return sb.asStringWriter();
+        return new NStringWriter() {
+            @Override
+            public void write(char text) {
+                sb.append(text);
+            }
+
+            @Override
+            public void write(String text) {
+                sb.append(text);
+            }
+
+            @Override
+            public void write(char[] text, int offset, int len) {
+                sb.append(text, offset, len);
+            }
+        };
     }
 
     @Override
     public OutputStream outputStream() {
         return new OutputStream() {
             @Override
-            public void write(int b)  {
+            public void write(int b) {
                 sb.append((char) b);
             }
         };
@@ -162,9 +177,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(boolean x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -172,9 +187,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(char x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -182,9 +197,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(NMsg b) {
         sb.append(b);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -192,9 +207,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(NText b) {
         sb.append(b);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -202,9 +217,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(int x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -212,9 +227,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(long x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -222,9 +237,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(float x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -232,9 +247,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(double x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -242,9 +257,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(char[] x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -252,9 +267,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(String x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -262,9 +277,9 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(Object x) {
         sb.append(x);
-      /**
-       * Println.
-       */
+        /**
+         * Println.
+         */
         println();
         return this;
     }
@@ -322,7 +337,7 @@ public class NPlainPrintStream implements NPrintStream {
     public OutputStream asOutputStream() {
         return new OutputStream() {
             @Override
-            public void write(int b)  {
+            public void write(int b) {
                 sb.append((char) b);
             }
         };

@@ -18,14 +18,9 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -673,7 +668,7 @@ public class BCrypt {
         byte[] passwordb, saltb, hashed;
         char minor = (char) 0;
         int rounds, off = 0;
-        NStringBuilder rs = new NStringBuilder();
+        NStringBuilder rs = new NStringBuilderImpl();
 
         if (salt[0] != '$' || salt[1] != '2')
             throw new IllegalArgumentException("Invalid salt version");
@@ -735,7 +730,7 @@ public class BCrypt {
      * @return an encoded salt value
      */
     public static char[] gensalt(int log_rounds, SecureRandom random) {
-        NStringBuilder rs = new NStringBuilder();
+        NStringBuilder rs = new NStringBuilderImpl();
         byte[] rnd = new byte[BCRYPT_SALT_LEN];
 
         random.nextBytes(rnd);

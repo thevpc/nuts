@@ -4,8 +4,10 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 import net.thevpc.nuts.util.NUnexpectedException;
 
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 /**
@@ -411,5 +413,35 @@ public class NCircuitBreakerCallModel implements Cloneable, NCopiable {
              */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NCircuitBreakerCallModel that = (NCircuitBreakerCallModel) o;
+        return failureThreshold == that.failureThreshold && successThreshold == that.successThreshold && failureCount == that.failureCount && successCount == that.successCount && openTimestamp == that.openTimestamp && Objects.equals(id, that.id) && Objects.equals(error, that.error) && status == that.status && Objects.equals(successRetryPeriod, that.successRetryPeriod) && Objects.equals(failureRetryPeriod, that.failureRetryPeriod) && Objects.equals(lastValidResult, that.lastValidResult) && Objects.equals(caller, that.caller);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, error, status, failureThreshold, successThreshold, failureCount, successCount, openTimestamp, successRetryPeriod, failureRetryPeriod, lastValidResult, caller);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("id", id)
+                .add("error", error)
+                .add("status", status)
+                .add("failureThreshold", failureThreshold)
+                .add("successThreshold", successThreshold)
+                .add("failureCount", failureCount)
+                .add("successCount", successCount)
+                .add("openTimestamp", openTimestamp)
+                .add("successRetryPeriod", successRetryPeriod)
+                .add("failureRetryPeriod", failureRetryPeriod)
+                .add("lastValidResult", lastValidResult)
+                .add("caller", caller)
+                .build();
     }
 }

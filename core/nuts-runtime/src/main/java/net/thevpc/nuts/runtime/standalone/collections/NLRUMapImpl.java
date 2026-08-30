@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.collections;
 
-import net.thevpc.nuts.collections.NLRUMap;
+import net.thevpc.nuts.collections.NCappedMap;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -9,13 +9,13 @@ import java.util.Map;
 /**
  * Created by vpc on 6/1/14.
  */
-public class NLRUMapImpl<K, V> extends LinkedHashMap<K, V> implements NLRUMap<K, V> {
+public class NLRUMapImpl<K, V> extends LinkedHashMap<K, V> implements NCappedMap<K, V> {
 
-    private int maxEntries;
+    private int maxSize;
 
-    public NLRUMapImpl(final int maxEntries) {
-        super(maxEntries + 1, 1.0f, true);
-        this.maxEntries = maxEntries;
+    public NLRUMapImpl(final int maxSize) {
+        super(maxSize + 1, 1.0f, true);
+        this.maxSize = maxSize;
     }
 
     /**
@@ -37,15 +37,15 @@ public class NLRUMapImpl<K, V> extends LinkedHashMap<K, V> implements NLRUMap<K,
      */
     @Override
     protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
-        return super.size() > maxEntries;
+        return super.size() > maxSize;
     }
 
     @Override
     public void resize(int maxEntries) {
         //LRUMap<A, B> n = new LRUMap<A, B>(maxEntries);
         //n.putAll(this);
-        int old = this.maxEntries;
-        this.maxEntries = maxEntries;
+        int old = this.maxSize;
+        this.maxSize = maxEntries;
         if (old > maxEntries) {
             int size = size();
             for (Iterator<Map.Entry<K, V>> iterator = this.entrySet().iterator(); iterator.hasNext(); ) {
@@ -57,5 +57,10 @@ public class NLRUMapImpl<K, V> extends LinkedHashMap<K, V> implements NLRUMap<K,
                 }
             }
         }
+    }
+
+    @Override
+    public int maxEntries() {
+        return maxSize;
     }
 }

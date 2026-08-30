@@ -30,6 +30,7 @@ import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.LinkedHashMap;
@@ -170,12 +171,12 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
 
     @Override
     public String toString() {
-        return "NutsCommandFactoryConfig{" +
-                "factoryId='" + factoryId + '\'' +
-                ", factoryType='" + factoryType + '\'' +
-                ", priority=" + priority +
-                ", parameters=" + parameters +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("factoryId", factoryId)
+                .add("factoryType", factoryType)
+                .add("priority", priority)
+                .add("parameters", parameters)
+                .build();
     }
 
     /**
@@ -197,7 +198,7 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
              * @param e e
              * @return runtime exception result
              */
-            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
     }
 }

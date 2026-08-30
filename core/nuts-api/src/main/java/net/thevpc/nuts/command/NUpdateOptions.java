@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.command;
 
+import net.thevpc.nuts.util.NToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -48,5 +50,10 @@ public class NUpdateOptions implements Serializable {
     public NUpdateOptions() {
     }
 
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .build();
+    }
 
 }

@@ -2,6 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
+
+import java.util.Objects;
 
 /**
  * Represents the result of a task execution, which can either be a successful result
@@ -17,19 +20,19 @@ public class NTaskResult<T> {
     private final T result;
 
     /** The exception thrown during task execution if the task failed; null if successful. */
-    private final Throwable exception;
+    private final Throwable error;
 
     /**
      * Private constructor to create a task result.
      *
      * @param taskId the unique identifier of the task
      * @param result the result of the task if successful
-     * @param exception the exception thrown if the task failed
+     * @param error the exception thrown if the task failed
      */
-    private NTaskResult(String taskId, T result, Throwable exception) {
+    private NTaskResult(String taskId, T result, Throwable error) {
         this.taskId = taskId;
         this.result = result;
-        this.exception = exception;
+        this.error = error;
     }
 
     /**
@@ -73,7 +76,7 @@ public class NTaskResult<T> {
      */
     @NGetter
     public boolean isSuccess() {
-        return exception == null;
+        return error == null;
     }
 
     /**
@@ -83,7 +86,7 @@ public class NTaskResult<T> {
      */
     @NGetter
     public boolean isError() {
-        return exception != null;
+        return error != null;
     }
 
     /**
@@ -98,7 +101,7 @@ public class NTaskResult<T> {
     @NGetter
     public T result() {
         if (isError()) {
-            throw NException.ofUncheckedException(exception);
+            throw NException.ofUncheckedException(error);
         }
         return result;
     }
@@ -110,6 +113,28 @@ public class NTaskResult<T> {
      */
     @NGetter
     public Throwable error() {
-        return exception;
+        return error;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NTaskResult<?> that = (NTaskResult<?>) o;
+        return Objects.equals(taskId, that.taskId) && Objects.equals(result, that.result) && Objects.equals(error, that.error);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(taskId, result, error);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("taskId", taskId)
+                .add("result", result)
+                .add("error", error)
+                .build();
+    }
+
 }

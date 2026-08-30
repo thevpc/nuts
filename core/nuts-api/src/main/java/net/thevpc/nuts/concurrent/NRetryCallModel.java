@@ -2,11 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
-import net.thevpc.nuts.util.NUnexpectedException;
+import net.thevpc.nuts.util.*;
 
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 /**
@@ -357,4 +355,34 @@ public class NRetryCallModel implements Cloneable, NCopiable {
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NRetryCallModel that = (NRetryCallModel) o;
+        return failedAttempts == that.failedAttempts && maxRetries == that.maxRetries && Objects.equals(id, that.id) && Objects.equals(error, that.error) && status == that.status && Objects.equals(result, that.result) && Objects.equals(expiry, that.expiry) && Objects.equals(recover, that.recover) && Objects.equals(caller, that.caller) && Objects.equals(handler, that.handler) && Objects.equals(retryPeriod, that.retryPeriod);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, error, status, result, failedAttempts, expiry, recover, caller, handler, retryPeriod, maxRetries);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("id", id)
+                .add("error", error)
+                .add("status", status)
+                .add("result", result)
+                .add("failedAttempts", failedAttempts)
+                .add("expiry", expiry)
+                .add("recover", recover)
+                .add("caller", caller)
+                .add("handler", handler)
+                .add("retryPeriod", retryPeriod)
+                .add("maxRetries", maxRetries)
+                .build();
+    }
+
 }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NTupleElementBuilder;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -123,14 +124,14 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
 
     @Override
     public String toString() {
-        return "NRateLimitRuleModel{" +
-                "id=" + id +
-                ", capacity=" + capacity +
-                ", strategy=" + strategy +
-                ", duration=" + duration +
-                ", available=" + available +
-                ", lastRefill=" + lastRefill +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("id", id)
+                .add("capacity", capacity)
+                .add("strategy", strategy)
+                .add("duration", duration)
+                .add("available", available)
+                .add("lastRefill", lastRefill)
+                .build();
     }
 
     @Override

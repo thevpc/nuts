@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NpsType;
 import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.util.*;
 
 import java.io.BufferedReader;
@@ -41,7 +42,7 @@ public class LinuxPsParser {
                     if (line.isEmpty()) {
                         continue;
                     }
-                    NStringBuilder sb = new NStringBuilder(line);
+                    NStringBuilder sb = new NStringBuilderImpl(line);
                     DefaultNPsInfoBuilder pi = new DefaultNPsInfoBuilder();
                     pi.setUser(sb.readUntil(spaces));
                     sb.readWhile(spaces);

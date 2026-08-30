@@ -3,8 +3,10 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents the complete model of a saga execution.
@@ -129,11 +131,24 @@ public class NSagaModel implements Serializable, Cloneable, NCopiable {
     }
 
     @Override
-    public String toString() {
-        return "NSagaModel{" +
-                "id='" + id + '\'' +
-                ", context=" + context +
-                ", nodes=" + node +
-                '}';
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NSagaModel that = (NSagaModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(node, that.node) && Objects.equals(context, that.context);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, node, context);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("id", id)
+                .add("context", context)
+                .add("node", node)
+                .build();
+    }
+
 }

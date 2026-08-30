@@ -59,7 +59,6 @@ import net.thevpc.nuts.runtime.standalone.collections.NNormalizedStringMapImpl;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
-import net.thevpc.nuts.runtime.standalone.workspace.NFailSafeHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
@@ -83,7 +82,7 @@ import net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityMode
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
-import net.thevpc.nuts.collections.NLRUMap;
+import net.thevpc.nuts.collections.NCappedMap;
 import net.thevpc.nuts.collections.NObservableMap;
 
 import java.lang.management.ManagementFactory;
@@ -137,7 +136,7 @@ public class NWorkspaceModel {
     public NVersion askedApiVersion;
     public NId askedRuntimeId;
     public NBootOptions initialBootOptions;
-    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMapImpl<>(100);
+    public NCappedMap<NId, CachedSupplier<NDefinition>> cachedDefs = new NLRUMapImpl<>(100);
     public DefaultNExtensions extensions;
     public NWorkspaceStore store;
     public DefaultElementMapperStore defaultElementMapperStore = new DefaultElementMapperStore();

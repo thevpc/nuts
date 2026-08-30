@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.yaml;
 
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -193,7 +194,7 @@ public class YamlTokenizer {
     }
 
     private String readBlockScalar(String type, int parentIndent) throws IOException {
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         int scalarIndent = -1;
 
         // Read all lines and process them

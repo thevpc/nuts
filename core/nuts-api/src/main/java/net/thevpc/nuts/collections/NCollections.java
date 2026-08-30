@@ -288,19 +288,6 @@ public class NCollections {
         );
     }
 
-    /**
-     * Non null map.
-     *
-     * @param other other
-     * @return non null map result
-     */
-    public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
-        if (other == null) {
-            return new LinkedHashMap<>();
-        }
-        return new LinkedHashMap<>(other);
-    }
-
 
     /**
      * Non null list.
@@ -362,16 +349,6 @@ public class NCollections {
         return set;
     }
 
-
-    /**
-     * Unmodifiable map.
-     *
-     * @param other other
-     * @return unmodifiable map result
-     */
-    public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
-        return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
-    }
 
     /**
      * Non null list from array.
@@ -689,28 +666,6 @@ public class NCollections {
         };
     }
 
-    /**
-     * Merge maps.
-     *
-     * @param source source
-     * @param dest   dest
-     * @return merge maps result
-     */
-    public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
-        if (dest == null) {
-            dest = new HashMap<>();
-        }
-        if (source != null) {
-            for (Map.Entry<K, V> e : source.entrySet()) {
-                if (e.getValue() != null) {
-                    dest.put(e.getKey(), e.getValue());
-                } else {
-                    dest.remove(e.getKey());
-                }
-            }
-        }
-        return dest;
-    }
 
     /**
      * Converts to set.
@@ -745,8 +700,4 @@ public class NCollections {
         return set;
     }
 
-
-//    public static <K, V> KeyValueList<K, V> unmodifiableMapList(KeyValueList<K, V> list) {
-//        return list == null ? null : new UnmodifiableKeyValueList<K, V>(list);
-//    }
 }

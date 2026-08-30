@@ -13,6 +13,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.pipeline.*;
 import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.runtime.standalone.util.DefaultNLiteral;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NRuntimeDistributionImpl;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamBase;
@@ -218,22 +219,22 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public <T> NNormalizedStringMap<T> createInsensitiveMap() {
+    public <T> Map<String,T> createInsensitiveMap() {
         return NNormalizedStringMapImpl.ofCaseInsensitive();
     }
 
     @Override
-    public <T> NNormalizedStringMap<T> createFormatInsensitiveMap() {
+    public <T> Map<String,T> createFormatInsensitiveMap() {
         return NNormalizedStringMapImpl.ofFormatInsensitive();
     }
 
     @Override
-    public <T> NNormalizedStringMap<T> createNormalizedMap(Function<String, String> normalizer) {
+    public <T> Map<String,T> createNormalizedMap(Function<String, String> normalizer) {
         return new NNormalizedStringMapImpl<>(normalizer);
     }
 
     @Override
-    public <K, V> NLRUMap<K, V> createLruMap(int size) {
+    public <K, V> NCappedMap<K, V> createLruMap(int size) {
         return new NLRUMapImpl<>(size);
     }
 
@@ -847,7 +848,7 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     }
 
     @Override
-    public <K, V> Map<K, V> createConcurrentReadWriteLRUMap(int size) {
+    public <K, V> NCappedMap<K, V> createConcurrentReadWriteLRUMap(int size) {
         return new NConcurrentReadWriteLRUMap<>(size);
     }
 
@@ -870,5 +871,10 @@ public class DefaultNUtilsRPI implements NUtilsRPI {
     @Override
     public NArg createCmdlineArg(String value, NCmdLine cmdline) {
         return new DefaultNArg(value, cmdline);
+    }
+
+    @Override
+    public NStringBuilder createStringBuilder(String value) {
+        return new NStringBuilderImpl(value);
     }
 }

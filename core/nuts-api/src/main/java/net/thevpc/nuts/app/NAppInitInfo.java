@@ -2,9 +2,11 @@ package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 import net.thevpc.nuts.util.NUtils;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents initialization information for an application.
@@ -25,12 +27,12 @@ public class NAppInitInfo {
      * Initializes an instance of {@code NAppInitInfo} with the specified arguments, application class,
      * store ID, and start time.
      *
-     * @param args      The command-line arguments passed to the application.
-     * @param sourceType  The application's main class.
-     * @param startTime The start time of the application, represented as an {@code NClock} instance.
+     * @param args       The command-line arguments passed to the application.
+     * @param sourceType The application's main class.
+     * @param startTime  The start time of the application, represented as an {@code NClock} instance.
      */
     public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplicationHandler appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
-        this.args = NUtils.firstNonNullLazy(args,()->new String[0]);
+        this.args = NUtils.firstNonNullLazy(args, () -> new String[0]);
         this.sourceType = sourceType;
         this.source = source;
         this.appInstance = appInstance;
@@ -99,5 +101,28 @@ public class NAppInitInfo {
     @NGetter
     public Object source() {
         return source;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NAppInitInfo that = (NAppInitInfo) o;
+        return Objects.deepEquals(args, that.args) && Objects.equals(sourceType, that.sourceType) && Objects.equals(source, that.source) && Objects.equals(appInstance, that.appInstance) && Objects.equals(startTime, that.startTime) && Objects.equals(storeLocationSupplier, that.storeLocationSupplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(args), sourceType, source, appInstance, startTime, storeLocationSupplier);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(toString()).omitBlanks(true)
+                .add("args", args)
+                .add("source", source)
+                .add("appInstance", appInstance)
+                .add("startTime", startTime)
+                .add("storeLocationSupplier", storeLocationSupplier)
+                .build();
     }
 }

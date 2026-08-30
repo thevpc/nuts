@@ -4,6 +4,7 @@ import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -262,7 +263,7 @@ public class DefaultNConnectionStringBuilder implements Cloneable, NConnectionSt
 
     static String serializeQueryMap(Map<String, List<String>> queryMap) {
         if (queryMap != null) {
-            NStringBuilder sb = new NStringBuilder();
+            NStringBuilder sb = new NStringBuilderImpl();
             for (Map.Entry<String, List<String>> e : queryMap.entrySet()) {
                 String k = e.getKey();
                 if (k != null && !k.isEmpty()) {

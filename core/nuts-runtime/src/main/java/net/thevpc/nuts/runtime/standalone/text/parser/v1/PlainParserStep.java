@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 
 import java.util.function.IntPredicate;
 
@@ -12,7 +13,7 @@ public class PlainParserStep extends ParserStep {
     private StringBuilder escape;
 //    private boolean spreadLines;
     private boolean lineStart;
-    private NStringBuilder value = new NStringBuilder();
+    private NStringBuilder value = new NStringBuilderImpl();
     private DefaultNTextNodeParser.State state;
     private IntPredicate exitCondition;
     private boolean exitOnBrace;

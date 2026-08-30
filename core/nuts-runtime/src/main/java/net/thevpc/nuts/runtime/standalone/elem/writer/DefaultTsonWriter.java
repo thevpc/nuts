@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NCharReader;
 import net.thevpc.nuts.io.NStringWriter;
 import net.thevpc.nuts.runtime.standalone.elem.builder.NBoundAffixList;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
@@ -687,14 +688,14 @@ public class DefaultTsonWriter {
 
 
     public static String formatTson(NElement e) {
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
         w.write(e);
         return sb.toString();
     }
 
     public static String formatTson(NAffix e) {
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         DefaultTsonWriter w = new DefaultTsonWriter(sb.asStringWriter());
         w.writeAffix(e);
         return sb.toString();

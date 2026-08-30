@@ -9,6 +9,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
 import net.thevpc.nuts.runtime.standalone.collections.NEvictingCharQueueImpl;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.collections.NEvictingCharQueue;
@@ -27,8 +28,8 @@ public class StyledParserStep extends ParserStep {
     int sharpsEndCount = 0;
     CurState curState = CurState.EMPTY;
     List<NText> children = new ArrayList<>();
-    NStringBuilder name = new NStringBuilder();
-    NStringBuilder content = new NStringBuilder();
+    NStringBuilder name = new NStringBuilderImpl();
+    NStringBuilder content = new NStringBuilderImpl();
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;

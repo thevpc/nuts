@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.DefaultNTextCursorTracker;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -617,8 +618,8 @@ public class DefaultNIORPI implements NIORPI {
             name = "";
         }
         rootFolder.mkdirs();
-        NStringBuilder ext = new NStringBuilder(NIOUtils.getFileExtension(name, false, true));
-        NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        NStringBuilder ext = new NStringBuilderImpl(NIOUtils.getFileExtension(name, false, true));
+        NStringBuilder prefix = new NStringBuilderImpl((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");
             if (!folder) {

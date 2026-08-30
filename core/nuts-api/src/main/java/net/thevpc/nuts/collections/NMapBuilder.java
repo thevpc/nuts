@@ -157,4 +157,9 @@ public class NMapBuilder<K, V> {
     public Map<K, V> build() {
         return base;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(base);
+    }
 }

@@ -2,13 +2,11 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
-import net.thevpc.nuts.util.NUnexpectedException;
+import net.thevpc.nuts.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Context for a {@link NWorkBalancerModel}, holding global and per-worker variables.
@@ -88,4 +86,26 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NWorkBalancerModelContext that = (NWorkBalancerModelContext) o;
+        return Objects.equals(variables, that.variables);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(variables);
+    }
+
+    @Override
+    public String toString() {
+        NToStringBuilder b = NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true);
+        for (Map.Entry<String, Map<String, NElement>> e : variables.entrySet()) {
+            b.add(e.getKey(), e.getValue());
+        }
+        return b.toString();
+    }
+
 }
