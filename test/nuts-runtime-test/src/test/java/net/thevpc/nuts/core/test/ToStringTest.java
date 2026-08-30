@@ -10,7 +10,7 @@ public class ToStringTest {
     @Test
     public void test1() {
         //System.out.println(new NToStringBuilder("hello").add("a","b").toString());
-        NToStringBuilder r = new NToStringBuilder("hello").add("a", NMaps.of("a\nb", "a\nb"));
+        NToStringBuilder r = NToStringBuilder.of("hello").add("a", NMaps.of("a\nb", "a\nb"));
         String a = r.toString();
         String b = r.toString();
         System.out.println(a);
