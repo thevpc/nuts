@@ -29,4 +29,6 @@ public interface NSagaStore {
      * @param value the {@link NSagaModel} to persist
      */
     void save(NSagaModel value);
+
+    boolean delete(String id);
 }

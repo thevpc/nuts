@@ -45,7 +45,7 @@ import net.thevpc.nuts.util.NSetter;
  * @see NCircuitBreakerCall
  * @since 0.8.8
  */
-public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
+public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable, AutoCloseable {
     /**
      * Creates a new concurrency limiter wrapping the given callable.
      *
@@ -185,4 +185,7 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable {
      */
     @NGetter
     boolean isFull();
+
+    @Override
+    void close();
 }

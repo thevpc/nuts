@@ -28,4 +28,11 @@ public interface NRetryCallStore {
      * @param value the {@link NRetryCallModel} to persist
      */
     void save(NRetryCallModel value);
+
+    /**
+     * delete its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

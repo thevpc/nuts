@@ -19,10 +19,19 @@ public class NBulkheadCallStoreMemory implements NBulkheadCallStore {
 
     @Override
     public void save(NBulkheadCallModel value) {
-        if (value.id() != null) {
-            values.put(value.id(), value);
-        } else {
-            values.remove(value.id());
+        synchronized (values) {
+            if (value.id() != null) {
+                values.put(value.id(), value.copy());
+            } else {
+                values.remove(value.id());
+            }
+        }
+    }
+
+    @Override
+    public boolean delete(String id) {
+        synchronized (values) {
+            return values.remove(id) != null;
         }
     }
 }

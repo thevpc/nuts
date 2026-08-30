@@ -11,7 +11,7 @@ import java.util.function.IntFunction;
 
 public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
     private NBeanContainer beanContainer;
-    private NCircuitBreakerCallStore store;
+    private final NCircuitBreakerCallStore store;
     private NCircuitBreakerCallModel model;
 
     public NCircuitBreakerCallImpl(String id, NCallable<T> callable, NBeanContainer beanContainer, NCircuitBreakerCallStore store) {
@@ -183,5 +183,11 @@ public class NCircuitBreakerCallImpl<T> implements NCircuitBreakerCall<T> {
         }
     }
 
+    @Override
+    public void close() {
+        synchronized (store){
+            store.delete(model.id());
+        }
+    }
 
 }

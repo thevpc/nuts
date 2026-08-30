@@ -54,7 +54,7 @@ import java.util.function.IntFunction;
  * @see NConcurrent#circuitBreakerCall(NCallable)
  * @since 0.8.7
  */
-public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
+public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, AutoCloseable {
 
     /**
      * The current state of the circuit breaker.
@@ -145,4 +145,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @return the result of the main callable or the last successful value
      */
     T callOrLast();
+
+    @Override
+    void close();
 }

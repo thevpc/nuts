@@ -28,4 +28,11 @@ public interface NRateLimitValueStore {
      * @param model the rate-limit value model to save
      */
     void save(NRateLimitValueModel model);
+
+    /**
+     * delete its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

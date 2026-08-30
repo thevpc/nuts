@@ -9,6 +9,7 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
+import net.thevpc.nuts.io.NullInputStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.*;
@@ -449,7 +450,7 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setRequestMethod(method.toString());
                 uc.setUseCaches(false);
 
-                long bodyLength = requestBody == null || requestBody.isKnownContentLength() ? -1 : requestBody.contentLength();
+                long bodyLength = (requestBody != null && requestBody.isKnownContentLength()) ? requestBody.contentLength() : -1;
                 boolean someBody = requestBody != null;
 
                 uc.setDoInput(!r.isOneWay());
@@ -461,7 +462,7 @@ public class DefaultNWebCli implements NWebCli {
 
                 try {
                     if (someBody) {
-                        if (requestBody.isKnownContentLength()) {
+                        if (bodyLength >= 0) {
                             uc.setFixedLengthStreamingMode(bodyLength);
                         }
                         NCp.of().from(requestBody).to(uc.getOutputStream()).run();
@@ -492,6 +493,7 @@ public class DefaultNWebCli implements NWebCli {
                 if (rCode != null && !rCode.isOk() && rm.isEmpty()) {
                     rm = "Error " + rCode;
                 }
+                NHttpCode finalRCode = rCode;
                 NWebResponse httpResponse = new NWebResponseImpl(
                         rCode,
                         NMsg.ofP(rm),
@@ -501,24 +503,31 @@ public class DefaultNWebCli implements NWebCli {
                             if (!r.isOneWay()) {
                                 //TODO change me with a smart copy input source!
                                 HttpURLConnection uc2 = finalUc;
-                                try {
-                                    bytes = NInputSourceBuilder.of(finalUc.getInputStream()).closeAction(() -> {
-                                                // close connection when fully read!
-                                                if (uc2 != null) {
-                                                    try {
-                                                        uc2.disconnect();
-                                                    } catch (Exception e) {
-                                                        //
-                                                    }
+                                InputStream is = null;
+                                if (finalRCode != null && finalRCode.isError()) {
+                                    is = finalUc.getErrorStream();
+                                }
+                                if (is == null) {
+                                    try {
+                                        is = finalUc.getInputStream();
+                                    } catch (IOException e) {
+                                        is = finalUc.getErrorStream();
+                                    }
+                                }
+                                if (is == null) {
+                                    is = NullInputStream.INSTANCE;
+                                }
+                                bytes = NInputSourceBuilder.of(is).closeAction(() -> {
+                                            // close connection when fully read!
+                                            if (uc2 != null) {
+                                                try {
+                                                    uc2.disconnect();
+                                                } catch (Exception e) {
+                                                    //
                                                 }
                                             }
-                                    ).createInputSource();
-
-                                } catch (IOException e) {
-                                    throw new NIOException(e);
-                                }
-//                    byte[] byteArrayResult = NCp.of().from(uc.getInputStream()).getByteArrayResult();
-//                    bytes = NIO.of().ofInputSource(byteArrayResult);
+                                        }
+                                ).createInputSource();
                                 long contentLength = finalUc.getContentLengthLong();
                                 if (contentLength >= 0) {
                                     bytes.metaData().contentLength(contentLength);

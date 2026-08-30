@@ -29,6 +29,7 @@ public class NHttpCode {
     public static final NHttpCode REQUEST_TIMEOUT = of(408);
     public static final NHttpCode CONFLICT = of(409);
     public static final NHttpCode GONE = of(410);
+    public static final NHttpCode TOO_MANY_REQUESTS = of(429);
     public static final NHttpCode LENGTH_REQUIRED = of(411);
     public static final NHttpCode PRECONDITION_FAILED = of(412);
     public static final NHttpCode CONTENT_TOO_LARGE = of(413);

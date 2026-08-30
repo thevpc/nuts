@@ -168,13 +168,10 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
 
     @Override
     public InputStream createInputStream() {
-        if (baseInputStream == null) {
-            InputStream b = NullInputStream.INSTANCE;
-            if (nonBlocking) {
-                return new NNonBlockingInputStreamAdapter(b, metadata, sourceName);
-            }
-        }
         InputStream a = baseInputStream;
+        if (a == null) {
+            a = NullInputStream.INSTANCE;
+        }
         Runnable currentOnClose = closeAction;
         if (tee != null) {
             a = new InputStreamTee(a, tee, currentOnClose, metadata);

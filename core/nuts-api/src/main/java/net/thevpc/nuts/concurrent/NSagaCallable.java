@@ -13,7 +13,7 @@ import net.thevpc.nuts.util.NCopiable;
  *
  * @param <T> the type of the result produced by this saga callable
  */
-public interface NSagaCallable<T> extends NCallable<T>, NCopiable {
+public interface NSagaCallable<T> extends NCallable<T>, NCopiable, AutoCloseable {
 
     /**
      * Executes this saga callable and returns its result.
@@ -97,4 +97,7 @@ public interface NSagaCallable<T> extends NCallable<T>, NCopiable {
      * @return {@code true} if a step was executed; {@code false} if the saga has completed
      */
     boolean runStep(); // advances one step, returns false if no more steps
+
+    @Override
+    void close();
 }

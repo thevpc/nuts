@@ -224,7 +224,7 @@ public class NChronometer implements Serializable {
        *
        * @param newName new name
        */
-        setName(newName);
+        name(newName);
       /**
        * Start.
        */
@@ -260,7 +260,7 @@ public class NChronometer implements Serializable {
      * @param desc desc
      * @return set name result
      */
-    public NChronometer setName(String desc) {
+    public NChronometer name(String desc) {
         this.name = desc;
         return this;
     }

@@ -27,4 +27,11 @@ public interface NBulkheadCallStore {
      * @param model the model to save
      */
     void save(NBulkheadCallModel model);
+
+    /**
+     * delete a by its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

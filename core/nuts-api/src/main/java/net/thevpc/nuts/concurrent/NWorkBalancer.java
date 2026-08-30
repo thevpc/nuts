@@ -35,7 +35,7 @@ import java.util.Map;
  * @param <T> the type returned by the call
  * @since 0.8.7
  */
-public interface NWorkBalancer<T> {
+public interface NWorkBalancer<T> extends AutoCloseable{
 
 
     /**
@@ -135,4 +135,7 @@ public interface NWorkBalancer<T> {
      */
     @NGetter
     Map<String, NElement> options();
+
+    @Override
+    void close();
 }

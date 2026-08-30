@@ -3,8 +3,12 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NTupleElementBuilder;
+import net.thevpc.nuts.io.NClosable;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NToStringBuilder;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -20,39 +24,53 @@ import java.util.Objects;
  *
  * @since 0.8.8
  */
-public class NRateLimitRuleModel implements Serializable, NDescribable {
-    /** Unique identifier for this rate limit rule. */
+public class NRateLimitRuleModel implements Serializable, NDescribable, NCopiable, Cloneable {
+    /**
+     * Unique identifier for this rate limit rule.
+     */
     private String id;
 
-    /** Identifier of the strategy used (e.g., "token-bucket", "leaky-bucket", "fixed-window"). */
+    /**
+     * Identifier of the strategy used (e.g., "token-bucket", "leaky-bucket", "fixed-window").
+     */
     private String strategy;
 
-    /** Maximum number of tokens that can be accumulated (i.e., the bucket capacity). */
+    /**
+     * Maximum number of tokens that can be accumulated (i.e., the bucket capacity).
+     */
     private int capacity;
 
-    /** Refill duration in milliseconds — defines the rate of token replenishment. */
+    /**
+     * Refill duration in milliseconds — defines the rate of token replenishment.
+     */
     private long duration;
 
-    /** Number of currently available tokens at the time of serialization. */
+    /**
+     * Number of currently available tokens at the time of serialization.
+     */
     private double available;
 
-    /** Timestamp (in milliseconds since epoch) of the last token refill event. */
+    /**
+     * Timestamp (in milliseconds since epoch) of the last token refill event.
+     */
     private long lastRefill;
 
-    /** Optional serialized configuration data for custom or strategy-specific settings. */
+    /**
+     * Optional serialized configuration data for custom or strategy-specific settings.
+     */
     private byte[] config;
 
 
     /**
      * Constructs a new rate limit rule model.
      *
-     * @param id          unique rule identifier
-     * @param strategy    name of the applied rate limiting strategy
-     * @param capacity    maximum number of tokens that can be stored
-     * @param duration    refill duration in milliseconds
-     * @param available   number of currently available tokens
-     * @param lastRefill  last refill timestamp in milliseconds
-     * @param config      optional binary configuration data
+     * @param id         unique rule identifier
+     * @param strategy   name of the applied rate limiting strategy
+     * @param capacity   maximum number of tokens that can be stored
+     * @param duration   refill duration in milliseconds
+     * @param available  number of currently available tokens
+     * @param lastRefill last refill timestamp in milliseconds
+     * @param config     optional binary configuration data
      */
     public NRateLimitRuleModel(String id, String strategy, int capacity, long duration, double available, long lastRefill, byte[] config) {
         this.id = id;
@@ -64,43 +82,57 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
         this.config = config;
     }
 
-    /** Returns a defensive copy of the serialized configuration. */
+    /**
+     * Returns a defensive copy of the serialized configuration.
+     */
     @NGetter
     public byte[] config() {
         return config == null ? new byte[0] : Arrays.copyOf(config, config.length);
     }
 
-    /** Returns the rule identifier. */
+    /**
+     * Returns the rule identifier.
+     */
     @NGetter
     public String id() {
         return id;
     }
 
-    /** Returns the strategy name. */
+    /**
+     * Returns the strategy name.
+     */
     @NGetter
     public String strategy() {
         return strategy;
     }
 
-    /** Returns the capacity (maximum token count). */
+    /**
+     * Returns the capacity (maximum token count).
+     */
     @NGetter
     public int capacity() {
         return capacity;
     }
 
-    /** Returns the duration (refill period in milliseconds). */
+    /**
+     * Returns the duration (refill period in milliseconds).
+     */
     @NGetter
     public long duration() {
         return duration;
     }
 
-    /** Returns the number of currently available tokens. */
+    /**
+     * Returns the number of currently available tokens.
+     */
     @NGetter
     public double available() {
         return available;
     }
 
-    /** Returns the timestamp of the last refill event (ms since epoch). */
+    /**
+     * Returns the timestamp of the last refill event (ms since epoch).
+     */
     @NGetter
     public long lastRefill() {
         return lastRefill;
@@ -149,5 +181,23 @@ public class NRateLimitRuleModel implements Serializable, NDescribable {
             b.add("config", NElement.ofByteArray(config));
         }
         return b.build();
+    }
+
+    @Override
+    public NRateLimitRuleModel copy() {
+        return clone();
+    }
+
+    @Override
+    protected NRateLimitRuleModel clone() {
+        try {
+            NRateLimitRuleModel m = (NRateLimitRuleModel) super.clone();
+            if (m.config != null) {
+                m.config = Arrays.copyOf(m.config, m.config.length);
+            }
+            return m;
+        } catch (CloneNotSupportedException e) {
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
+        }
     }
 }

@@ -673,4 +673,11 @@ public class NSagaCallableImpl<T> implements NSagaCallable<T> {
     public T result() {
         return (T) model.context().lastResult();
     }
+
+    @Override
+    public void close() {
+        synchronized (store) {
+            store.delete(model.id());
+        }
+    }
 }

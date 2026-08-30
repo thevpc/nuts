@@ -12,7 +12,7 @@ import java.util.Objects;
 public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
     private NBulkheadCallModel model;
     private NBulkheadCallBackend backend;
-    private NBulkheadCallStore store;
+    private final NBulkheadCallStore store;
 
     public NBulkheadCallImpl(String id, NCallable<T> callable, NBulkheadCallStore store, NBulkheadCallBackend backend) {
         this.model = new NBulkheadCallModel(id);
@@ -204,5 +204,12 @@ public class NBulkheadCallImpl<T> implements NBulkheadCall<T> {
                 .set("backend", backend.getClass().getSimpleName())
                 .set("metrics", backend.getMetrics(model.id()).describe())
                 .build();
+    }
+
+    @Override
+    public void close() {
+        synchronized (store){
+            store.delete(model.id());
+        }
     }
 }

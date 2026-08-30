@@ -12,15 +12,17 @@ import java.util.Objects;
 
 class NRateLimitValueImpl implements NRateLimitValue {
     private NRateLimitValueFactoryImpl factory;
+    private NRateLimitValueStore store;
     private String id;
 
     public NRateLimitValueImpl(NRateLimitValueModel data, NRateLimitValueFactoryImpl factory) {
         this.id = data.id();
         this.factory = factory;
+        this.store = factory.store();
     }
 
     public NRateLimitValueModel model() {
-        return factory.load(id);
+        return store.load(id);
     }
 
     public synchronized NRateLimitValueResult take() {
@@ -30,7 +32,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
     @Override
     public synchronized NRateLimitValueResult take(int count) {
         Instant lastAccess = Instant.now();
-        synchronized (factory.store()) {
+        synchronized (store) {
             NRateLimitValueModel model = model();
             NRateLimitRuleModel[] ruleModels = model.rules();
             NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
@@ -86,7 +88,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
             Instant lastAccess = Instant.now();
             long shouldWaitForMs = 0;
             NRateLimitRuleModel faultyRuleModel = null;
-            synchronized (factory.store()) {
+            synchronized (store) {
                 NRateLimitValueModel model = model();
                 NRateLimitRuleModel[] ruleModels = model.rules();
                 NRateLimitRule[] rules = new NRateLimitRule[ruleModels.length];
@@ -102,7 +104,7 @@ class NRateLimitValueImpl implements NRateLimitValue {
                         shouldWaitForMs = Math.max(shouldWaitForMs, rule.nextAvailableMillis(count));
                     }
                 }
-                factory.save(new NRateLimitValueModel(
+                store.save(new NRateLimitValueModel(
                         id, lastAccess == null ? 0 : lastAccess.getEpochSecond(),
                         Arrays.stream(rules).map(NRateLimitRule::toModel).toArray(NRateLimitRuleModel[]::new)
                 ));
@@ -190,6 +192,13 @@ class NRateLimitValueImpl implements NRateLimitValue {
     @Override
     public NElement describe() {
         return model().describe();
+    }
+
+    @Override
+    public void close() {
+        synchronized (store){
+            store.delete(id);
+        }
     }
 
 }

@@ -3,8 +3,12 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NTupleElementBuilder;
+import net.thevpc.nuts.io.NClosable;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NToStringBuilder;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -23,7 +27,7 @@ import java.util.Objects;
  *
  * @since 0.8.7
  */
-public class NRateLimitValueModel implements Serializable, NDescribable {
+public class NRateLimitValueModel implements Serializable, NDescribable, NCopiable, Cloneable {
     /**
      * Unique identifier of this rate-limited value.
      */
@@ -81,6 +85,27 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
     @NGetter
     public NRateLimitRuleModel[] rules() {
         return rules;
+    }
+
+    @Override
+    public NRateLimitValueModel copy() {
+        return clone();
+    }
+
+    @Override
+    protected NRateLimitValueModel clone() {
+        NRateLimitValueModel cloned = null;
+        try {
+            cloned = (NRateLimitValueModel) super.clone();
+            if(cloned.rules!=null) {
+                cloned.rules=Arrays.stream(cloned.rules)
+                        .map(x->x.copy())
+                        .toArray(NRateLimitRuleModel[]::new);
+            }
+        } catch (CloneNotSupportedException e) {
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
+        }
+        return cloned;
     }
 
     @Override

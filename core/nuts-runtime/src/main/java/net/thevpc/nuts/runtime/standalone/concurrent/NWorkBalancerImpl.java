@@ -14,6 +14,7 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
 
     final List<NWorkBalancerRunningJob> runningJobs = Collections.synchronizedList(new ArrayList<>());
     private final NWorkBalancerFactoryImpl factory;
+    private final NWorkBalancerStore store;
     final NWorkBalancerModel model;
     private final Map<String, NWorkBalancerWorkerLoadImpl> workBalancerWorkerLoadMap = new HashMap<>();
     private final Map<String, NWorkBalancerWorkerModel> workBalancerWorkerModelMap = new HashMap<>();
@@ -22,6 +23,7 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
         this.model = model;
         this.strategy = factory.createStrategy(model.strategy());
         this.factory = factory;
+        this.store = factory.store();
         _updateModel();
     }
 
@@ -99,5 +101,10 @@ public class NWorkBalancerImpl<T> implements NWorkBalancer<T> {
         return model.options() != null ? Collections.unmodifiableMap(model.options()) : Collections.emptyMap();
     }
 
-
+    @Override
+    public void close() {
+        synchronized (store) {
+            store.delete(model.id());
+        }
+    }
 }

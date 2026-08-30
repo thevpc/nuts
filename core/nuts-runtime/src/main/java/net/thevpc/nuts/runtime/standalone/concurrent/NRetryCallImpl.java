@@ -119,6 +119,14 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
+    public void close(){
+        synchronized (store) {
+            String oldId = model.id();
+            store.delete(oldId);
+        }
+    }
+
+    @Override
     public T call() {
         synchronized (this) {
             String id = model.id();

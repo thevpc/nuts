@@ -18,7 +18,7 @@ import java.util.function.IntFunction;
  * @param <T> the type of the result returned by this retry call
  * @since 0.8.7
  */
-public interface NRetryCall<T> extends NCallable<T>, NDescribable {
+public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable {
 
     /**
      * Status of the retry call during its lifecycle.
@@ -145,6 +145,10 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      */
     void callAsync();
 
+    /**
+     * dispose of the retry call and delete it
+     */
+    void close();
 
     /**
      * Returns a {@link Future} representing the asynchronous execution of this retry call.

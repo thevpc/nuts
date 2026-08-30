@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the value
  */
-public interface NOnceValue<T> extends Supplier<T>, NDescribable {
+public interface NOnceValue<T> extends Supplier<T>, NDescribable, AutoCloseable {
 
     /**
      * Creates a once value from a supplier.
@@ -93,4 +93,6 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable {
      */
     T orElse(T value);
 
+    @Override
+    void close();
 }
