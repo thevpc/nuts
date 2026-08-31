@@ -41,8 +41,8 @@ import java.util.List;
  * to drive a gpu.
  * <p>
  * This is the software axis, deliberately kept distinct from {@link NGpuVendor}
- * and {@link NGpuDevice} which describe the hardware. The relation is not one to
- * one : {@link #OPENCL}, {@link #VULKAN} and {@link #DIRECTML} run on any
+ * and {@link NGpuDeviceType} which describe the hardware. The relation is not
+ * one to one : {@link #OPENCL}, {@link #VULKAN} and {@link #DIRECTML} run on any
  * vendor's hardware, and a single physical device is usually reachable through
  * several runtimes at once.
  * <p>
@@ -443,18 +443,6 @@ public enum NParallelProcessorFamily implements NEnum {
     // -------------------------------------------------------------------------
 
     /**
-     * Detects, for every family, whether code targeting it can be executed and
-     * whether it can be compiled on this machine.
-     * <p>
-     * Families that are neither runnable nor buildable are omitted, so an empty
-     * list means no parallel processing runtime was found at all. Only
-     * {@link #CUDA} and {@link #ROCM} report a distinct toolkit today, the cross
-     * vendor layers expose no development kit that can be detected the same way.
-     *
-     * @return available runtimes, never null
-     * @since 1.0.0
-     */
-    /**
      * Whether the environment and filesystem reads the probes rely on are
      * permitted at all, hence whether an empty {@link #detectAvailable()} means
      * "no runtime is installed" rather than "nothing could be read".
@@ -469,6 +457,18 @@ public enum NParallelProcessorFamily implements NEnum {
         return _canProbe();
     }
 
+    /**
+     * Detects, for every family, whether code targeting it can be executed and
+     * whether it can be compiled on this machine.
+     * <p>
+     * Families that are neither runnable nor buildable are omitted, so an empty
+     * list means no parallel processing runtime was found at all. Only
+     * {@link #CUDA} and {@link #ROCM} report a distinct toolkit today, the cross
+     * vendor layers expose no development kit that can be detected the same way.
+     *
+     * @return available runtimes, never null
+     * @since 1.0.0
+     */
     public static List<NParallelProcessorRuntime> detectAvailable() {
         List<NParallelProcessorRuntime> result = new ArrayList<>();
         if (!_canProbe()) {

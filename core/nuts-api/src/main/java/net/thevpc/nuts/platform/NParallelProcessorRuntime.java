@@ -23,8 +23,6 @@
  */
 package net.thevpc.nuts.platform;
 
-import net.thevpc.nuts.util.NBlankable;
-
 import java.util.Objects;
 
 /**
@@ -43,7 +41,7 @@ import java.util.Objects;
  * @app.category Base
  * @since 1.0.0
  */
-public class NParallelProcessorRuntime implements NBlankable {
+public class NParallelProcessorRuntime {
 
     private final NParallelProcessorFamily family;
     private final boolean runtimeAvailable;
@@ -109,11 +107,6 @@ public class NParallelProcessorRuntime implements NBlankable {
      */
     public String getVersion() {
         return version;
-    }
-
-    @Override
-    public boolean isBlank() {
-        return !runtimeAvailable && !toolkitAvailable;
     }
 
     @Override

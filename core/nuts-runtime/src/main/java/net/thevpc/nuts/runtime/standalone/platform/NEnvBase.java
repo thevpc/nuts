@@ -30,7 +30,7 @@ public abstract class NEnvBase implements NEnv {
     protected String userHome;
     protected Set<NDesktopEnvironmentFamily> osDesktopEnvironmentFamilies;
     protected Boolean gui;
-    protected List<NParallelProcessorRuntime> parallelProcessorRuntimes;
+    protected volatile List<NParallelProcessorRuntime> parallelProcessorRuntimes;
 
     protected abstract NOsFamily getOsFamily0();
 

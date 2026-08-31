@@ -78,6 +78,81 @@ public final class NGpuCapabilities {
      */
     public static final String COMPUTE_CAPABILITY = "compute.capability";
 
+    /**
+     * Current pci express link generation, as an example {@code 1}. A device
+     * idling at a lower generation than {@link #PCIE_GEN_MAX} is normal power
+     * saving; one stuck there under load is not.
+     */
+    public static final String PCIE_GEN_CURRENT = "pcie.gen.current";
+
+    /**
+     * Highest pci express link generation the device supports.
+     */
+    public static final String PCIE_GEN_MAX = "pcie.gen.max";
+
+    /**
+     * Current pci express link width in lanes, as an example {@code 8}.
+     */
+    public static final String PCIE_WIDTH_CURRENT = "pcie.width.current";
+
+    /**
+     * Highest pci express link width the device supports, in lanes. A card
+     * negotiated below this permanently is running on a restricted slot.
+     */
+    public static final String PCIE_WIDTH_MAX = "pcie.width.max";
+
+    /**
+     * Theoretical memory bandwidth in gigabytes per second. Published only for
+     * the models a lookup table covers, no vendor tool reporting it.
+     */
+    public static final String MEMORY_BANDWIDTH_GBPS = "memory.bandwidth.gbps";
+
+    /**
+     * System property forcing the primary gpu device, holding a pci address
+     * such as {@code 0000:01:00.0}.
+     */
+    public static final String PRIMARY_GPU_PROPERTY = "nuts.gpu.device";
+
+    /**
+     * Minimum compute capability for fast half precision arithmetic, NVIDIA Pascal.
+     */
+    public static final int CC_PASCAL = 600;
+
+    /**
+     * Minimum compute capability for {@code __dp4a}, the byte-wise dot product
+     * intrinsic backing integer 8 bits arithmetic.
+     */
+    public static final int CC_DP4A = 610;
+
+    /**
+     * Minimum compute capability for tensor core matrix operations, NVIDIA Turing.
+     */
+    public static final int CC_TURING = 750;
+
+    /**
+     * Minimum compute capability for bfloat16, NVIDIA Ampere.
+     */
+    public static final int CC_AMPERE = 800;
+
+    /**
+     * Turing parts that reach {@link #CC_TURING} yet ship without tensor cores,
+     * so that the compute capability alone would overstate their capabilities.
+     * <p>
+     * impl-note: list borrowed from llama.cpp, which special cases the very same
+     * models by marketing name because no property exposed by the driver
+     * distinguishes them.
+     */
+    private static final String[] TURING_WITHOUT_TENSOR_CORES_EXACT = {
+            "NVIDIA GeForce MX450",
+            "NVIDIA GeForce MX550"
+    };
+
+    /**
+     * Model name prefix of Turing parts shipped without tensor cores, covering
+     * the whole GeForce GTX 16 series.
+     */
+    private static final String TURING_WITHOUT_TENSOR_CORES_PREFIX = "NVIDIA GeForce GTX 16";
+
     private NGpuCapabilities() {
     }
 
@@ -196,8 +271,9 @@ public final class NGpuCapabilities {
     }
 
     /**
-     * Returns true when integer 8 bits arithmetic is supported, which the
-     * {@code __dp4a} intrinsic provides from Pascal onwards. NVIDIA only, see
+     * Returns true when integer 8 bits arithmetic is supported, which requires
+     * the {@code __dp4a} intrinsic and therefore {@link #CC_DP4A}, one step
+     * above {@link #CC_PASCAL} rather than Pascal proper. NVIDIA only, see
      * {@link #isSupportedFp16(NGpu)}.
      *
      * @param gpu device to read
@@ -273,50 +349,4 @@ public final class NGpuCapabilities {
     private static NOptional<String> read(NGpu gpu, String key) {
         return gpu == null ? NOptional.<String>ofEmpty() : gpu.capability(key);
     }
-
-    /**
-     * System property forcing the primary gpu device, holding a pci address
-     * such as {@code 0000:01:00.0}.
-     */
-    public static final String PRIMARY_GPU_PROPERTY = "nuts.gpu.device";
-
-    /**
-     * Minimum compute capability for fast half precision arithmetic, NVIDIA Pascal.
-     */
-    public static final int CC_PASCAL = 600;
-
-    /**
-     * Minimum compute capability for {@code __dp4a}, the byte-wise dot product
-     * intrinsic backing integer 8 bits arithmetic.
-     */
-    public static final int CC_DP4A = 610;
-
-    /**
-     * Minimum compute capability for tensor core matrix operations, NVIDIA Turing.
-     */
-    public static final int CC_TURING = 750;
-
-    /**
-     * Minimum compute capability for bfloat16, NVIDIA Ampere.
-     */
-    public static final int CC_AMPERE = 800;
-
-    /**
-     * Turing parts that reach {@link #CC_TURING} yet ship without tensor cores,
-     * so that the compute capability alone would overstate their capabilities.
-     * <p>
-     * impl-note: list borrowed from llama.cpp, which special cases the very same
-     * models by marketing name because no property exposed by the driver
-     * distinguishes them.
-     */
-    private static final String[] TURING_WITHOUT_TENSOR_CORES_EXACT = {
-            "NVIDIA GeForce MX450",
-            "NVIDIA GeForce MX550"
-    };
-
-    /**
-     * Model name prefix of Turing parts shipped without tensor cores, covering
-     * the whole GeForce GTX 16 series.
-     */
-    private static final String TURING_WITHOUT_TENSOR_CORES_PREFIX = "NVIDIA GeForce GTX 16";
 }

@@ -226,8 +226,8 @@ public class GpuDetectionTest {
         Assertions.assertFalse(buildOnly.isRuntimeAvailable());
         Assertions.assertTrue(buildOnly.isToolkitAvailable());
         Assertions.assertEquals("12.4", buildOnly.getVersion());
-        Assertions.assertTrue(neither.isBlank());
-        Assertions.assertFalse(runOnly.isBlank());
+        Assertions.assertFalse(neither.isRuntimeAvailable());
+        Assertions.assertFalse(neither.isToolkitAvailable());
         Assertions.assertEquals(NParallelProcessorFamily.UNKNOWN,
                 NParallelProcessorRuntime.of(null, false, false, null).getFamily());
     }
