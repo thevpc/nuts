@@ -94,25 +94,8 @@ public abstract class NEnvBase implements NEnv {
 
     @Override
     public NParallelProcessorFamily parallelProcessorFamily() {
-        List<NParallelProcessorRuntime> runtimes = parallelProcessorRuntimes();
-        if (runtimes.isEmpty()) {
-            return isParallelProcessorDetectionSupported()
-                    ? NParallelProcessorFamily.NONE
-                    : NParallelProcessorFamily.UNKNOWN;
-        }
-        // detectAvailable() already yields vendor native stacks before cross
-        // vendor layers, so the first runnable entry is the most specific one
-        for (NParallelProcessorRuntime r : runtimes) {
-            if (r.isRuntimeAvailable() && !r.getFamily().isCrossVendor()) {
-                return r.getFamily();
-            }
-        }
-        for (NParallelProcessorRuntime r : runtimes) {
-            if (r.isRuntimeAvailable()) {
-                return r.getFamily();
-            }
-        }
-        return runtimes.get(0).getFamily();
+        return NParallelProcessorFamily.resolve(
+                parallelProcessorRuntimes(), isParallelProcessorDetectionSupported());
     }
 
     @Override

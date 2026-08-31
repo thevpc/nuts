@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.platform.NGpu;
-import net.thevpc.nuts.platform.NGpuCapabilities;
 import net.thevpc.nuts.platform.NGpuDeviceType;
+import net.thevpc.nuts.platform.NGpuUtils;
 import net.thevpc.nuts.platform.NGpuVendor;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NRam;
@@ -21,10 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Discovers GPU devices on linux, as {@link NGpu} instances carrying the
- * capabilities declared by {@link NGpuCapabilities}.
+ * capabilities declared by {@link NGpuUtils}.
  * <p>
  * Detection is layered by cost. The kernel exposes vendor, pci identity, bound
  * module, device count, model name and uuid as plain files, and those readings
@@ -37,6 +38,10 @@ import java.util.concurrent.TimeUnit;
  * are re-read on every call and never cached : a caller asking how much video
  * memory is free must not be handed a figure from process startup.
  * <p>
+ * The filesystem root and the command runner are injectable, so that the whole
+ * reading can be exercised against fixture directories rather than against the
+ * machine the tests happen to run on.
+ * <p>
  * Every probe is fail-safe, an unreadable or missing source degrades the
  * corresponding property to unknown and never propagates an error : a machine
  * with no GPU, a container without device passthrough and a card left to
@@ -44,9 +49,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class NLinuxGpuProbe {
 
-    private static final String SYS_PCI_DEVICES = "/sys/bus/pci/devices";
-    private static final String PROC_NVIDIA_GPUS = "/proc/driver/nvidia/gpus";
-    private static final String SYS_NVIDIA_VERSION = "/sys/module/nvidia/version";
+    /**
+     * Kernel paths, relative to the probe root so that a fixture directory can
+     * stand in for the machine. Resolving an absolute path against a root would
+     * silently discard that root.
+     */
+    private static final String SYS_PCI_DEVICES = "sys/bus/pci/devices";
+    private static final String PROC_NVIDIA_GPUS = "proc/driver/nvidia/gpus";
+    private static final String SYS_NVIDIA_VERSION = "sys/module/nvidia/version";
 
     /**
      * Video memory amounts published by {@code amdgpu} on the pci device node,
@@ -98,12 +108,46 @@ public class NLinuxGpuProbe {
     };
 
     /**
+     * The probe reading the real machine, running vendor tools as processes.
+     */
+    private static final NLinuxGpuProbe LOCAL =
+            new NLinuxGpuProbe(Paths.get("/"), new Function<String[], String>() {
+                @Override
+                public String apply(String[] command) {
+                    return exec(command);
+                }
+            });
+
+    private final Path root;
+    private final Function<String[], String> commandRunner;
+
+    /**
      * volatile, the read below is a double checked lock and a plain field would
      * let a caller observe a partially published list.
      */
-    private static volatile List<Device> cachedDevices;
+    private volatile List<Device> cachedDevices;
 
-    private NLinuxGpuProbe() {
+    private NLinuxGpuProbe(Path root, Function<String[], String> commandRunner) {
+        this.root = root;
+        this.commandRunner = commandRunner;
+    }
+
+    /**
+     * Builds a probe reading an arbitrary root through an arbitrary command
+     * runner, which is what makes the reading testable : a fixture directory
+     * standing in for {@code /sys} and {@code /proc}, and a stub standing in for
+     * the vendor tool.
+     * <p>
+     * The runner is handed the command and its arguments and returns the
+     * standard output, or null when the tool is missing, fails or times out,
+     * which is the contract {@link #exec(String...)} honours.
+     *
+     * @param root          directory standing in for the filesystem root
+     * @param commandRunner runner invoking a command, null result meaning no answer
+     * @return a probe reading that root
+     */
+    public static NLinuxGpuProbe of(Path root, Function<String[], String> commandRunner) {
+        return new NLinuxGpuProbe(root, commandRunner);
     }
 
     /**
@@ -135,6 +179,20 @@ public class NLinuxGpuProbe {
      * @return detected devices sorted by pci address, empty when none is found
      */
     public static List<NGpu> gpus() {
+        if (NOsFamily.current() != NOsFamily.LINUX) {
+            return Collections.emptyList();
+        }
+        return LOCAL.detect();
+    }
+
+    /**
+     * Reads the devices under this probe's root. Unlike {@link #gpus()} it does
+     * not require the host to be linux, the root being whatever it was built
+     * with.
+     *
+     * @return detected devices sorted by pci address, empty when none is found
+     */
+    public List<NGpu> detect() {
         List<Device> devices = identities();
         if (devices.isEmpty()) {
             return Collections.emptyList();
@@ -151,10 +209,10 @@ public class NLinuxGpuProbe {
         return Collections.unmodifiableList(all);
     }
 
-    private static List<Device> identities() {
+    private List<Device> identities() {
         List<Device> c = cachedDevices;
         if (c == null) {
-            synchronized (NLinuxGpuProbe.class) {
+            synchronized (this) {
                 c = cachedDevices;
                 if (c == null) {
                     c = Collections.unmodifiableList(probeIdentities());
@@ -165,11 +223,8 @@ public class NLinuxGpuProbe {
         return c;
     }
 
-    private static List<Device> probeIdentities() {
+    private List<Device> probeIdentities() {
         List<Device> all = new ArrayList<>();
-        if (NOsFamily.current() != NOsFamily.LINUX) {
-            return all;
-        }
         List<String[]> pciDevices = scanPciDisplayDevices();
         if (pciDevices.isEmpty()) {
             return all;
@@ -189,30 +244,30 @@ public class NLinuxGpuProbe {
             String kernelDriver = pci[3];
 
             Map<String, String> caps = new LinkedHashMap<>();
-            put(caps, NGpuCapabilities.PCI_BUS_ID, pciBusId);
-            put(caps, NGpuCapabilities.PCI_DEVICE_ID, pci[2]);
-            put(caps, NGpuCapabilities.VENDOR, vendor.id());
-            put(caps, NGpuCapabilities.DEVICE_TYPE, resolveDeviceType(vendor, pciBusId).id());
-            put(caps, NGpuCapabilities.KERNEL_DRIVER, kernelDriver);
+            put(caps, NGpuUtils.PCI_BUS_ID, pciBusId);
+            put(caps, NGpuUtils.PCI_DEVICE_ID, pci[2]);
+            put(caps, NGpuUtils.VENDOR, vendor.id());
+            put(caps, NGpuUtils.DEVICE_TYPE, resolveDeviceType(vendor, pciBusId).id());
+            put(caps, NGpuUtils.KERNEL_DRIVER, kernelDriver);
 
             String modelName = null;
 
             if (vendor == NGpuVendor.NVIDIA) {
                 String[] info = readNvidiaProcInformation(pciBusId);
                 modelName = info[0];
-                put(caps, NGpuCapabilities.UUID, info[1]);
+                put(caps, NGpuUtils.UUID, info[1]);
                 if ("nvidia".equals(kernelDriver)) {
-                    put(caps, NGpuCapabilities.DRIVER_VERSION, nvidiaDriverVersion);
+                    put(caps, NGpuUtils.DRIVER_VERSION, nvidiaDriverVersion);
                 }
                 String[] smiRow = smi.get(pciBusId);
                 if (smiRow != null) {
                     // published in the major.minor form the vendor tool reports,
                     // matching the key the nvidia-smi based detection already fills
-                    put(caps, NGpuCapabilities.COMPUTE_CAPABILITY, smiRow[0]);
-                    put(caps, NGpuCapabilities.PCIE_GEN_CURRENT, smiRow[1]);
-                    put(caps, NGpuCapabilities.PCIE_GEN_MAX, smiRow[2]);
-                    put(caps, NGpuCapabilities.PCIE_WIDTH_CURRENT, smiRow[3]);
-                    put(caps, NGpuCapabilities.PCIE_WIDTH_MAX, smiRow[4]);
+                    put(caps, NGpuUtils.COMPUTE_CAPABILITY, smiRow[0]);
+                    put(caps, NGpuUtils.PCIE_GEN_CURRENT, smiRow[1]);
+                    put(caps, NGpuUtils.PCIE_GEN_MAX, smiRow[2]);
+                    put(caps, NGpuUtils.PCIE_WIDTH_CURRENT, smiRow[3]);
+                    put(caps, NGpuUtils.PCIE_WIDTH_MAX, smiRow[4]);
                 }
             }
             if (modelName == null) {
@@ -222,7 +277,7 @@ public class NLinuxGpuProbe {
             // or not a vendor tool answered
             Double bandwidth = NEnvLocal.KNOWN_BANDWIDTH_GBPS.get(modelName);
             if (bandwidth != null) {
-                put(caps, NGpuCapabilities.MEMORY_BANDWIDTH_GBPS, String.valueOf(bandwidth));
+                put(caps, NGpuUtils.MEMORY_BANDWIDTH_GBPS, String.valueOf(bandwidth));
             }
             all.add(new Device(pciBusId, modelName, vendor, caps));
         }
@@ -249,7 +304,7 @@ public class NLinuxGpuProbe {
      * Devices reporting nothing are absent from the result rather than present
      * with negative amounts.
      */
-    private static Map<String, long[]> readMemory(List<Device> devices) {
+    private Map<String, long[]> readMemory(List<Device> devices) {
         Map<String, long[]> result = new LinkedHashMap<>();
         boolean anyNvidia = false;
         for (Device device : devices) {
@@ -283,8 +338,8 @@ public class NLinuxGpuProbe {
      * @param pciBusId pci address of the device, such as {@code 0000:03:00.0}
      * @return {@code {total, used, free}} in bytes, null when not published
      */
-    private static long[] readSysfsVram(String pciBusId) {
-        Path deviceDir = Paths.get(SYS_PCI_DEVICES, pciBusId);
+    private long[] readSysfsVram(String pciBusId) {
+        Path deviceDir = root.resolve(SYS_PCI_DEVICES).resolve(pciBusId);
         long total = parseBytes(readFirstLine(deviceDir.resolve(SYS_VRAM_TOTAL)));
         if (total < 0) {
             return null;
@@ -300,9 +355,9 @@ public class NLinuxGpuProbe {
     /**
      * Lists display controllers as {@code {pciBusId, vendorId, deviceId, kernelDriver}}.
      */
-    private static List<String[]> scanPciDisplayDevices() {
+    private List<String[]> scanPciDisplayDevices() {
         List<String[]> result = new ArrayList<>();
-        File[] entries = new File(SYS_PCI_DEVICES).listFiles();
+        File[] entries = root.resolve(SYS_PCI_DEVICES).toFile().listFiles();
         if (entries == null) {
             return result;
         }
@@ -339,9 +394,9 @@ public class NLinuxGpuProbe {
      *
      * @return {@code {modelName, uuid}}, entries being null when unavailable
      */
-    private static String[] readNvidiaProcInformation(String pciBusId) {
+    private String[] readNvidiaProcInformation(String pciBusId) {
         String[] result = new String[]{null, null};
-        String content = readFile(Paths.get(PROC_NVIDIA_GPUS, pciBusId, "information"));
+        String content = readFile(root.resolve(PROC_NVIDIA_GPUS).resolve(pciBusId).resolve("information"));
         if (content == null) {
             return result;
         }
@@ -361,8 +416,8 @@ public class NLinuxGpuProbe {
         return result;
     }
 
-    private static String readNvidiaDriverVersion() {
-        return readFirstLine(Paths.get(SYS_NVIDIA_VERSION));
+    private String readNvidiaDriverVersion() {
+        return readFirstLine(root.resolve(SYS_NVIDIA_VERSION));
     }
 
     /**
@@ -399,7 +454,7 @@ public class NLinuxGpuProbe {
      * @return map of pci address to a row holding {@link #SMI_IDENTITY_FIELDS}
      * in order, unreported fields being null
      */
-    private static Map<String, String[]> queryNvidiaSmiIdentity() {
+    private Map<String, String[]> queryNvidiaSmiIdentity() {
         Map<String, String[]> full = queryNvidiaSmi(SMI_IDENTITY_FIELDS);
         if (!full.isEmpty()) {
             return full;
@@ -422,13 +477,14 @@ public class NLinuxGpuProbe {
      * @param fields fields to query, {@code pci.bus_id} being added as the key
      * @return map of pci address to row, empty when the tool did not answer
      */
-    private static Map<String, String[]> queryNvidiaSmi(String[] fields) {
+    private Map<String, String[]> queryNvidiaSmi(String[] fields) {
         Map<String, String[]> result = new LinkedHashMap<>();
         StringBuilder query = new StringBuilder("--query-gpu=pci.bus_id");
         for (String field : fields) {
             query.append(',').append(field);
         }
-        String out = exec("nvidia-smi", query.toString(), "--format=csv,noheader,nounits");
+        String out = commandRunner.apply(new String[]{
+                "nvidia-smi", query.toString(), "--format=csv,noheader,nounits"});
         if (out == null) {
             return result;
         }

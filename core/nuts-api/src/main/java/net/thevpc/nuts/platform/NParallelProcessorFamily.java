@@ -135,8 +135,6 @@ public enum NParallelProcessorFamily implements NEnum {
             "/usr/lib/cuda"
     };
 
-    private static final NParallelProcessorFamily _curr = _resolveCurrent();
-
     /**
      * lower-cased identifier for the enum entry
      */
@@ -144,20 +142,6 @@ public enum NParallelProcessorFamily implements NEnum {
 
     NParallelProcessorFamily() {
         this.id = NNameFormat.ID_NAME.format(name());
-    }
-
-    private static NParallelProcessorFamily _resolveCurrent() {
-        if (!_canProbe()) return UNKNOWN;
-        // vendor native stacks first, they are the most specific
-        if (_hasCuda())     return CUDA;
-        if (_hasRocm())     return ROCM;
-        if (_hasOneApi())   return ONEAPI;
-        if (_hasMetal())    return METAL;
-        // then cross vendor layers, from most to least capable
-        if (_hasDirectMl()) return DIRECTML;
-        if (_hasVulkan())   return VULKAN;
-        if (_hasOpenCl())   return OPENCL;
-        return NONE;
     }
 
     /**
@@ -177,10 +161,6 @@ public enum NParallelProcessorFamily implements NEnum {
         } catch (Exception | LinkageError ignored) {
             return false;
         }
-    }
-
-    private static boolean _hasCuda() {
-        return _hasCudaRuntime() || _hasCudaToolkit();
     }
 
     /**
@@ -223,10 +203,6 @@ public enum NParallelProcessorFamily implements NEnum {
             if (pf != null && _dirExists(pf + "\\NVIDIA GPU Computing Toolkit\\CUDA")) return true;
         }
         return false;
-    }
-
-    private static boolean _hasRocm() {
-        return _hasRocmRuntime() || _hasRocmToolkit();
     }
 
     /**
@@ -484,6 +460,43 @@ public enum NParallelProcessorFamily implements NEnum {
         return result;
     }
 
+    /**
+     * Picks the single family to use out of a detected runtime list, vendor
+     * native stacks winning over cross vendor layers and a runnable stack
+     * winning over one that can only be built against.
+     * <p>
+     * This is the one resolution rule, used by
+     * {@link net.thevpc.nuts.platform.NEnv#parallelProcessorFamily()}, so that
+     * no two callers can answer the same runtime list differently.
+     *
+     * @param runtimes           detected runtimes, as returned by {@link #detectAvailable()}
+     * @param detectionSupported whether probing was possible at all, which is
+     *                           what separates an empty list meaning "none is
+     *                           installed" from one meaning "nothing could be read"
+     * @return the resolved family, {@link #NONE} or {@link #UNKNOWN} when the
+     * list is empty
+     * @since 1.0.0
+     */
+    public static NParallelProcessorFamily resolve(List<NParallelProcessorRuntime> runtimes, boolean detectionSupported) {
+        if (runtimes == null || runtimes.isEmpty()) {
+            return detectionSupported ? NONE : UNKNOWN;
+        }
+        // detectAvailable() already yields vendor native stacks before cross
+        // vendor layers, so the first runnable entry is the most specific one
+        for (NParallelProcessorRuntime r : runtimes) {
+            if (r.isRuntimeAvailable() && !r.getFamily().isCrossVendor()) {
+                return r.getFamily();
+            }
+        }
+        for (NParallelProcessorRuntime r : runtimes) {
+            if (r.isRuntimeAvailable()) {
+                return r.getFamily();
+            }
+        }
+        // nothing runnable, a toolkit only install is still a positive answer
+        return runtimes.get(0).getFamily();
+    }
+
     private static void _addIfAny(List<NParallelProcessorRuntime> result, NParallelProcessorFamily family,
                                   boolean runtime, boolean toolkit, String version) {
         if (runtime || toolkit) {
@@ -581,14 +594,6 @@ public enum NParallelProcessorFamily implements NEnum {
             if (n.startsWith("OPENCL")) return NOptional.of(OPENCL);
             return null;
         });
-    }
-
-    // -------------------------------------------------------------------------
-    // Public API
-    // -------------------------------------------------------------------------
-
-    public static NParallelProcessorFamily getCurrent() {
-        return _curr;
     }
 
     // --- Category helpers ---

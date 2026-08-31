@@ -27,7 +27,7 @@ import java.util.List;
  * @app.category Base
  * @since 1.0.0
  */
-public final class NGpuCapabilities {
+public final class NGpuUtils {
 
     /**
      * Pci address, as an example {@code 0000:01:00.0}. Stable identity of a
@@ -153,7 +153,7 @@ public final class NGpuCapabilities {
      */
     private static final String TURING_WITHOUT_TENSOR_CORES_PREFIX = "NVIDIA GeForce GTX 16";
 
-    private NGpuCapabilities() {
+    private NGpuUtils() {
     }
 
     /**
@@ -221,7 +221,7 @@ public final class NGpuCapabilities {
      * Returns true when tensor cores are available.
      * <p>
      * Compute capability alone is not sufficient : a handful of Turing parts
-     * reach {@link NGpuCapabilities#CC_TURING} without shipping tensor cores and
+     * reach {@link NGpuUtils#CC_TURING} without shipping tensor cores and
      * are excluded by model name. Deriving this from
      * {@link #COMPUTE_CAPABILITY} alone, as a caller reading the raw capability
      * would, overstates those models.

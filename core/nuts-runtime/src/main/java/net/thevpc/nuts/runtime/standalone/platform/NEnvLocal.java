@@ -196,7 +196,7 @@ public class NEnvLocal extends NEnvBase {
         // on linux the kernel exposes vendor, pci identity, bound module and
         // device count as plain files, which enumerates every adapter rather
         // than only the ones a vendor tool reports, and carries the extra
-        // capabilities declared by NGpuCapabilities. Falls through to the
+        // capabilities declared by NGpuUtils. Falls through to the
         // generic detection below when that reading is unavailable.
         switch (osFamily()) {
             case LINUX:
@@ -250,15 +250,15 @@ public class NEnvLocal extends NEnvBase {
                     long freeBytes = Long.parseLong(parts[3].trim()) * 1024L * 1024L;
 
                     Map<String, String> caps = new LinkedHashMap<>();
-                    caps.put(NGpuCapabilities.COMPUTE_CAPABILITY, parts[4].trim());
-                    caps.put(NGpuCapabilities.PCIE_GEN_CURRENT, parts[5].trim());
-                    caps.put(NGpuCapabilities.PCIE_GEN_MAX, parts[6].trim());
-                    caps.put(NGpuCapabilities.PCIE_WIDTH_CURRENT, parts[7].trim());
-                    caps.put(NGpuCapabilities.PCIE_WIDTH_MAX, parts[8].trim());
+                    caps.put(NGpuUtils.COMPUTE_CAPABILITY, parts[4].trim());
+                    caps.put(NGpuUtils.PCIE_GEN_CURRENT, parts[5].trim());
+                    caps.put(NGpuUtils.PCIE_GEN_MAX, parts[6].trim());
+                    caps.put(NGpuUtils.PCIE_WIDTH_CURRENT, parts[7].trim());
+                    caps.put(NGpuUtils.PCIE_WIDTH_MAX, parts[8].trim());
 
                     Double bw = KNOWN_BANDWIDTH_GBPS.get(name);
                     if (bw != null) {
-                        caps.put(NGpuCapabilities.MEMORY_BANDWIDTH_GBPS, String.valueOf(bw));
+                        caps.put(NGpuUtils.MEMORY_BANDWIDTH_GBPS, String.valueOf(bw));
                     }
 
                     list.add(new NGpu(name, new NRam(name, totalBytes, usedBytes, freeBytes), caps));

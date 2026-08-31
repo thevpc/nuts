@@ -32,10 +32,10 @@ import java.util.Objects;
  * because they are installed separately and lead to opposite decisions. A
  * machine with an NVIDIA driver but no CUDA toolkit can run a prebuilt cuda
  * binary yet cannot compile one, while a build container with the toolkit and no
- * device is exactly the reverse. Reducing both to a single "has cuda" boolean,
- * which is what {@link NParallelProcessorFamily#getCurrent()} does on its own,
+ * device is exactly the reverse. Reducing both to a single "has cuda" boolean
  * loses the distinction a resolver needs to choose between shipping a prebuilt
- * artifact and shipping sources.
+ * artifact and shipping sources, which is why
+ * {@link NParallelProcessorFamily#detectAvailable()} reports them apart.
  *
  * @author thevpc
  * @app.category Base

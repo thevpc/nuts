@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Covers the gpu capabilities published by {@link NGpuCapabilities} and the
+ * Covers the gpu capabilities published by {@link NGpuUtils} and the
  * parallel processing runtime resolution.
  * <p>
  * Devices are built by hand rather than probed, so the suite behaves the same on
@@ -32,38 +32,38 @@ public class GpuDetectionTest {
     @Test
     public void testVendorAndDeviceTypeAreReadBackTyped() {
         NGpu nv = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
-        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuCapabilities.vendor(nv));
-        Assertions.assertEquals(NGpuDeviceType.DEDICATED_GPU, NGpuCapabilities.deviceType(nv));
+        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuUtils.vendor(nv));
+        Assertions.assertEquals(NGpuDeviceType.DEDICATED_GPU, NGpuUtils.deviceType(nv));
 
         NGpu igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
-        Assertions.assertEquals(NGpuVendor.INTEL, NGpuCapabilities.vendor(igpu));
-        Assertions.assertEquals(NGpuDeviceType.INTEGRATED_GPU, NGpuCapabilities.deviceType(igpu));
+        Assertions.assertEquals(NGpuVendor.INTEL, NGpuUtils.vendor(igpu));
+        Assertions.assertEquals(NGpuDeviceType.INTEGRATED_GPU, NGpuUtils.deviceType(igpu));
     }
 
     @Test
     public void testMissingCapabilitiesReadAsUnknownNotAsFailure() {
         // a device detected by tooling that publishes none of these keys
         NGpu bare = new NGpu("some gpu", new NRam("some gpu", -1, -1, -1), Collections.<String, String>emptyMap());
-        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuCapabilities.vendor(bare));
-        Assertions.assertEquals(NGpuDeviceType.UNKNOWN, NGpuCapabilities.deviceType(bare));
-        Assertions.assertTrue(NGpuCapabilities.computeCapability(bare) < 0);
-        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(bare));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(bare));
+        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuUtils.vendor(bare));
+        Assertions.assertEquals(NGpuDeviceType.UNKNOWN, NGpuUtils.deviceType(bare));
+        Assertions.assertTrue(NGpuUtils.computeCapability(bare) < 0);
+        Assertions.assertFalse(NGpuUtils.isComputeCapable(bare));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(bare));
         // and a null device must not blow up either
-        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuCapabilities.vendor(null));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(null));
+        Assertions.assertEquals(NGpuVendor.UNKNOWN, NGpuUtils.vendor(null));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(null));
     }
 
     @Test
     public void testComputeCapabilityHasOneCanonicalEncoding() {
         // the vendor tool reports "8.9"; callers get a comparable int, so that
         // no two call sites can disagree on the encoding
-        Assertions.assertEquals(890, NGpuCapabilities.computeCapability(named("x", 890)));
-        Assertions.assertEquals(750, NGpuCapabilities.computeCapability(named("x", 750)));
-        Assertions.assertEquals(NGpuCapabilities.CC_TURING, NGpuCapabilities.computeCapability(named("x", 750)));
+        Assertions.assertEquals(890, NGpuUtils.computeCapability(named("x", 890)));
+        Assertions.assertEquals(750, NGpuUtils.computeCapability(named("x", 750)));
+        Assertions.assertEquals(NGpuUtils.CC_TURING, NGpuUtils.computeCapability(named("x", 750)));
         // garbage in the bag degrades to unknown rather than throwing
-        Assertions.assertTrue(NGpuCapabilities.computeCapability(withCapability("compute.capability", "not-a-number")) < 0);
-        Assertions.assertTrue(NGpuCapabilities.computeCapability(withCapability("compute.capability", "8")) < 0);
+        Assertions.assertTrue(NGpuUtils.computeCapability(withCapability("compute.capability", "not-a-number")) < 0);
+        Assertions.assertTrue(NGpuUtils.computeCapability(withCapability("compute.capability", "8")) < 0);
     }
 
     // -------------------------------------------------------------------------
@@ -72,12 +72,12 @@ public class GpuDetectionTest {
 
     @Test
     public void testComputeCapableRequiresTheVendorModule() {
-        Assertions.assertTrue(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB)));
+        Assertions.assertTrue(NGpuUtils.isComputeCapable(nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB)));
         // same hardware left to the open source driver : no cuda capability
-        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", "nouveau", 890, 6 * GIB)));
-        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(nvidia("0000:01:00.0", null, 890, 6 * GIB)));
+        Assertions.assertFalse(NGpuUtils.isComputeCapable(nvidia("0000:01:00.0", "nouveau", 890, 6 * GIB)));
+        Assertions.assertFalse(NGpuUtils.isComputeCapable(nvidia("0000:01:00.0", null, 890, 6 * GIB)));
         // i915 is a display driver, intel compute goes through level zero
-        Assertions.assertFalse(NGpuCapabilities.isComputeCapable(
+        Assertions.assertFalse(NGpuUtils.isComputeCapable(
                 device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1)));
     }
 
@@ -90,43 +90,43 @@ public class GpuDetectionTest {
         // these reach CC_TURING yet ship no tensor cores. A caller deriving the
         // answer from compute.capability alone would say true for all of them,
         // which is exactly why the rule lives here and not at call sites.
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce MX450", NGpuCapabilities.CC_TURING)));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce MX550", NGpuCapabilities.CC_TURING)));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce GTX 1650", NGpuCapabilities.CC_TURING)));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce GTX 1660 Ti", NGpuCapabilities.CC_TURING)));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(named("NVIDIA GeForce MX450", NGpuUtils.CC_TURING)));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(named("NVIDIA GeForce MX550", NGpuUtils.CC_TURING)));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(named("NVIDIA GeForce GTX 1650", NGpuUtils.CC_TURING)));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(named("NVIDIA GeForce GTX 1660 Ti", NGpuUtils.CC_TURING)));
         // a regular turing part is unaffected
-        Assertions.assertTrue(NGpuCapabilities.hasTensorCores(named("NVIDIA GeForce RTX 2060", NGpuCapabilities.CC_TURING)));
+        Assertions.assertTrue(NGpuUtils.hasTensorCores(named("NVIDIA GeForce RTX 2060", NGpuUtils.CC_TURING)));
         // int4 is tensor core only and must follow the exclusion
-        Assertions.assertFalse(NGpuCapabilities.isSupportedInt4(named("NVIDIA GeForce GTX 1660 Ti", NGpuCapabilities.CC_TURING)));
-        Assertions.assertTrue(NGpuCapabilities.isSupportedInt4(named("NVIDIA GeForce RTX 2060", NGpuCapabilities.CC_TURING)));
+        Assertions.assertFalse(NGpuUtils.isSupportedInt4(named("NVIDIA GeForce GTX 1660 Ti", NGpuUtils.CC_TURING)));
+        Assertions.assertTrue(NGpuUtils.isSupportedInt4(named("NVIDIA GeForce RTX 2060", NGpuUtils.CC_TURING)));
     }
 
     @Test
     public void testDataTypeSupportFollowsComputeCapabilityThresholds() {
         NGpu maxwell = named("NVIDIA GeForce GTX 970", 520);
-        Assertions.assertFalse(NGpuCapabilities.isSupportedFp16(maxwell));
-        Assertions.assertFalse(NGpuCapabilities.isSupportedInt8(maxwell));
-        Assertions.assertFalse(NGpuCapabilities.isSupportedBf16(maxwell));
+        Assertions.assertFalse(NGpuUtils.isSupportedFp16(maxwell));
+        Assertions.assertFalse(NGpuUtils.isSupportedInt8(maxwell));
+        Assertions.assertFalse(NGpuUtils.isSupportedBf16(maxwell));
 
-        Assertions.assertTrue(NGpuCapabilities.isSupportedFp16(named("p", NGpuCapabilities.CC_PASCAL)));
+        Assertions.assertTrue(NGpuUtils.isSupportedFp16(named("p", NGpuUtils.CC_PASCAL)));
         // dp4a lands one step above pascal proper
-        Assertions.assertFalse(NGpuCapabilities.isSupportedInt8(named("p", NGpuCapabilities.CC_PASCAL)));
-        Assertions.assertTrue(NGpuCapabilities.isSupportedInt8(named("p", NGpuCapabilities.CC_DP4A)));
+        Assertions.assertFalse(NGpuUtils.isSupportedInt8(named("p", NGpuUtils.CC_PASCAL)));
+        Assertions.assertTrue(NGpuUtils.isSupportedInt8(named("p", NGpuUtils.CC_DP4A)));
 
-        NGpu ampere = named("a", NGpuCapabilities.CC_AMPERE);
-        Assertions.assertTrue(NGpuCapabilities.isSupportedBf16(ampere));
-        Assertions.assertTrue(NGpuCapabilities.hasTensorCores(ampere));
+        NGpu ampere = named("a", NGpuUtils.CC_AMPERE);
+        Assertions.assertTrue(NGpuUtils.isSupportedBf16(ampere));
+        Assertions.assertTrue(NGpuUtils.hasTensorCores(ampere));
     }
 
     @Test
     public void testDataTypeSupportIsNvidiaOnlyForNow() {
         NGpu amd = device(NGpuVendor.AMD, NGpuDeviceType.DEDICATED_GPU,
-                "0000:01:00.0", "amdgpu", NGpuCapabilities.CC_AMPERE, 16 * GIB);
-        Assertions.assertFalse(NGpuCapabilities.isSupportedFp16(amd));
-        Assertions.assertFalse(NGpuCapabilities.isSupportedBf16(amd));
-        Assertions.assertFalse(NGpuCapabilities.hasTensorCores(amd));
+                "0000:01:00.0", "amdgpu", NGpuUtils.CC_AMPERE, 16 * GIB);
+        Assertions.assertFalse(NGpuUtils.isSupportedFp16(amd));
+        Assertions.assertFalse(NGpuUtils.isSupportedBf16(amd));
+        Assertions.assertFalse(NGpuUtils.hasTensorCores(amd));
         // but the amdgpu module still gates its own compute stack
-        Assertions.assertTrue(NGpuCapabilities.isComputeCapable(amd));
+        Assertions.assertTrue(NGpuUtils.isComputeCapable(amd));
     }
 
     // -------------------------------------------------------------------------
@@ -174,19 +174,19 @@ public class GpuDetectionTest {
         NGpu small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
         NGpu big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
 
-        Assertions.assertSame(small, NGpuCapabilities.primary(Arrays.asList(igpu, small)).get());
-        Assertions.assertSame(big, NGpuCapabilities.primary(Arrays.asList(small, big)).get());
+        Assertions.assertSame(small, NGpuUtils.primary(Arrays.asList(igpu, small)).get());
+        Assertions.assertSame(big, NGpuUtils.primary(Arrays.asList(small, big)).get());
         // the answer must not depend on discovery order
-        Assertions.assertSame(big, NGpuCapabilities.primary(Arrays.asList(big, small)).get());
+        Assertions.assertSame(big, NGpuUtils.primary(Arrays.asList(big, small)).get());
     }
 
     @Test
     public void testPrimarySkipsDevicesTheVendorStackCannotDrive() {
         NGpu igpu = device(NGpuVendor.INTEL, NGpuDeviceType.INTEGRATED_GPU, "0000:00:02.0", "i915", -1, -1);
         NGpu nouveau = nvidia("0000:01:00.0", "nouveau", 890, 8 * GIB);
-        Assertions.assertFalse(NGpuCapabilities.primary(Arrays.asList(igpu, nouveau)).isPresent());
-        Assertions.assertFalse(NGpuCapabilities.primary(Collections.<NGpu>emptyList()).isPresent());
-        Assertions.assertFalse(NGpuCapabilities.primary(null).isPresent());
+        Assertions.assertFalse(NGpuUtils.primary(Arrays.asList(igpu, nouveau)).isPresent());
+        Assertions.assertFalse(NGpuUtils.primary(Collections.<NGpu>emptyList()).isPresent());
+        Assertions.assertFalse(NGpuUtils.primary(null).isPresent());
     }
 
     @Test
@@ -194,20 +194,20 @@ public class GpuDetectionTest {
         NGpu small = nvidia("0000:01:00.0", "nvidia", 890, 6 * GIB);
         NGpu big = nvidia("0000:02:00.0", "nvidia", 890, 24 * GIB);
         List<NGpu> gpus = Arrays.asList(small, big);
-        String saved = System.getProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY);
+        String saved = System.getProperty(NGpuUtils.PRIMARY_GPU_PROPERTY);
         try {
-            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "0000:01:00.0");
-            Assertions.assertSame(small, NGpuCapabilities.primary(gpus).get());
+            System.setProperty(NGpuUtils.PRIMARY_GPU_PROPERTY, "0000:01:00.0");
+            Assertions.assertSame(small, NGpuUtils.primary(gpus).get());
             // an address matching nothing must not defeat the heuristic
-            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "0000:99:99.9");
-            Assertions.assertSame(big, NGpuCapabilities.primary(gpus).get());
-            System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, "   ");
-            Assertions.assertSame(big, NGpuCapabilities.primary(gpus).get());
+            System.setProperty(NGpuUtils.PRIMARY_GPU_PROPERTY, "0000:99:99.9");
+            Assertions.assertSame(big, NGpuUtils.primary(gpus).get());
+            System.setProperty(NGpuUtils.PRIMARY_GPU_PROPERTY, "   ");
+            Assertions.assertSame(big, NGpuUtils.primary(gpus).get());
         } finally {
             if (saved == null) {
-                System.clearProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY);
+                System.clearProperty(NGpuUtils.PRIMARY_GPU_PROPERTY);
             } else {
-                System.setProperty(NGpuCapabilities.PRIMARY_GPU_PROPERTY, saved);
+                System.setProperty(NGpuUtils.PRIMARY_GPU_PROPERTY, saved);
             }
         }
     }
@@ -345,7 +345,7 @@ public class GpuDetectionTest {
 
     private static NGpu withCapability(String key, String value) {
         Map<String, String> caps = new LinkedHashMap<>();
-        caps.put(NGpuCapabilities.VENDOR, NGpuVendor.NVIDIA.id());
+        caps.put(NGpuUtils.VENDOR, NGpuVendor.NVIDIA.id());
         caps.put(key, value);
         return new NGpu("x", new NRam("x", -1, -1, -1), caps);
     }
@@ -354,16 +354,16 @@ public class GpuDetectionTest {
     private static NGpu gpu(String name, NGpuVendor vendor, NGpuDeviceType type, String pciBusId,
                             String kernelDriver, int computeCapability, long memory) {
         Map<String, String> caps = new LinkedHashMap<>();
-        caps.put(NGpuCapabilities.PCI_BUS_ID, pciBusId);
-        caps.put(NGpuCapabilities.PCI_DEVICE_ID, "0x28e1");
-        caps.put(NGpuCapabilities.VENDOR, vendor.id());
-        caps.put(NGpuCapabilities.DEVICE_TYPE, type.id());
+        caps.put(NGpuUtils.PCI_BUS_ID, pciBusId);
+        caps.put(NGpuUtils.PCI_DEVICE_ID, "0x28e1");
+        caps.put(NGpuUtils.VENDOR, vendor.id());
+        caps.put(NGpuUtils.DEVICE_TYPE, type.id());
         if (kernelDriver != null) {
-            caps.put(NGpuCapabilities.KERNEL_DRIVER, kernelDriver);
+            caps.put(NGpuUtils.KERNEL_DRIVER, kernelDriver);
         }
         if (computeCapability >= 0) {
             // stored the way the vendor tool reports it, major.minor
-            caps.put(NGpuCapabilities.COMPUTE_CAPABILITY,
+            caps.put(NGpuUtils.COMPUTE_CAPABILITY,
                     (computeCapability / 100) + "." + ((computeCapability / 10) % 10));
         }
         return new NGpu(name, new NRam(name, memory, -1, -1), caps);
