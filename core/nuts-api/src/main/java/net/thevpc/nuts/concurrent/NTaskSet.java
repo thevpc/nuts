@@ -1,5 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public interface NTaskSet {
      * @return a new {@code NTaskSet} instance
      */
     static NTaskSet of() {
-        return NConcurrent.of().taskSet();
+        return NConcurrentRPI.of().taskSet();
     }
 
 

@@ -39,6 +39,25 @@ import net.thevpc.nuts.util.NGetter;
 public interface NCircuitBreakerCallFactory {
 
     /**
+     * Creates a new default {@link NCircuitBreakerCallFactory} instance.
+     *
+     * @return a new circuit breaker call factory instance
+     */
+    static NCircuitBreakerCallFactory of() {
+        return NConcurrent.of().circuitBreakerCallFactory();
+    }
+
+    /**
+     * Creates a new {@link NCircuitBreakerCallFactory} using the provided store.
+     *
+     * @param store the circuit breaker store to use
+     * @return a new circuit breaker call factory instance
+     */
+    static NCircuitBreakerCallFactory of(NCircuitBreakerCallStore store) {
+        return NConcurrent.of().circuitBreakerCallFactory().withStore(store);
+    }
+
+    /**
      * Returns the store used by this factory to persist or track circuit-breaker states.
      *
      * @return the circuit-breaker call store

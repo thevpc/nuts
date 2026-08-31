@@ -44,6 +44,13 @@ public class NRateLimitValueModel implements Serializable, NDescribable, NCopiab
 
 
     /**
+     * Constructs an empty {@code NRateLimitValueModel}.
+     */
+    public NRateLimitValueModel() {
+        this.id = "";
+    }
+
+    /**
      * Constructs a new {@code NRateLimitValueModel}.
      *
      * @param id         unique identifier of the value, or empty string if null
@@ -54,6 +61,39 @@ public class NRateLimitValueModel implements Serializable, NDescribable, NCopiab
         this.id = id == null ? "" : id;
         this.lastAccess = lastAccess;
         this.rules = rules;
+    }
+
+    /**
+     * Sets the unique identifier of this value.
+     *
+     * @param id identifier string
+     * @return this instance
+     */
+    public NRateLimitValueModel id(String id) {
+        this.id = id == null ? "" : id;
+        return this;
+    }
+
+    /**
+     * Sets the timestamp of the last access in milliseconds.
+     *
+     * @param lastAccess last access timestamp
+     * @return this instance
+     */
+    public NRateLimitValueModel lastAccess(long lastAccess) {
+        this.lastAccess = lastAccess;
+        return this;
+    }
+
+    /**
+     * Sets the array of rate-limit rules.
+     *
+     * @param rules array of rules
+     * @return this instance
+     */
+    public NRateLimitValueModel rules(NRateLimitRuleModel[] rules) {
+        this.rules = rules;
+        return this;
     }
 
     /**

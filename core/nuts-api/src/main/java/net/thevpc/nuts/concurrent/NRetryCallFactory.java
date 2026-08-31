@@ -10,6 +10,24 @@ package net.thevpc.nuts.concurrent;
  */
 public interface NRetryCallFactory {
     /**
+     * Creates a new default {@link NRetryCallFactory} instance.
+     *
+     * @return a new retry call factory instance
+     */
+    static NRetryCallFactory of() {
+        return NConcurrent.of().retryCallFactory();
+    }
+
+    /**
+     * Creates a new {@link NRetryCallFactory} using the provided store.
+     *
+     * @param store the retry call store to use
+     * @return a new retry call factory instance
+     */
+    static NRetryCallFactory of(NRetryCallStore store) {
+        return NConcurrent.of().retryCallFactory().withStore(store);
+    }
+    /**
      * Returns the underlying store used to persist retry call models.
      *
      * @return the retry call store, may be {@code null} if not configured

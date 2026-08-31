@@ -132,7 +132,7 @@ public class DefaultNWebHeaders {
 
     public String getFirst(String name) {
         List<String> u = headers.get(name);
-        if (u != null) {
+        if (u != null && !u.isEmpty()) {
             return u.get(0);
         }
         return null;

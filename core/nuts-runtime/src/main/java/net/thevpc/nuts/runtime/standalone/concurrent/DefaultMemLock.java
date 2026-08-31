@@ -183,11 +183,10 @@ public class DefaultMemLock extends AbstractNLock {
 
     public boolean tryLockImmediately() {
         try {
-            lock.tryLock();
+            return lock.tryLock();
         } catch (Exception ex) {
             return false;
         }
-        return false;
     }
 
     @Override

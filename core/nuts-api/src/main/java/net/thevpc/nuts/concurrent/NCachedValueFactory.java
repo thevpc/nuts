@@ -28,6 +28,40 @@ import java.util.function.Supplier;
  */
 public interface NCachedValueFactory {
     /**
+     * Creates a new {@link NCachedValueFactory} using the default store.
+     *
+     * @return a new cached value factory instance
+     */
+    static NCachedValueFactory of() {
+        return NConcurrent.of().cachedValueFactory();
+    }
+
+    /**
+     * Creates a new {@link NCachedValueFactory} with a custom {@link NCachedValueStore}.
+     *
+     * @param store the backing store for cached values
+     * @return a new cached value factory instance using the provided store
+     */
+    static NCachedValueFactory of(NCachedValueStore store) {
+        return NConcurrent.of().cachedValueFactory().withStore(store);
+    }
+
+    /**
+     * Sets the backing {@link NCachedValueStore} for this factory.
+     *
+     * @param store the store to use
+     * @return this factory instance for method chaining
+     */
+    NCachedValueFactory withStore(NCachedValueStore store);
+
+    /**
+     * Returns the backing store used by this factory.
+     *
+     * @return the cached value store
+     */
+    NCachedValueStore store();
+
+    /**
      * Creates a named cached value for the given supplier.
      * <p>
      * The {@code id} can be used by the factory implementation to identify,

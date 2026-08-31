@@ -30,6 +30,7 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
+import net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentRPI;
 import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
@@ -98,6 +99,7 @@ public class NWorkspaceModel {
     public NUtilsRPI defaultNUtilsRPI;
     public NTextRPI defaultNTextRPI;
     public NCmdLineRPI defaultNCmdLineRPI;
+    public NConcurrentRPI defaultConcurrentRPI;
 
 
     public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();
@@ -311,6 +313,14 @@ public class NWorkspaceModel {
                 if (t == null) {
                     t = new DefaultNCmdLineRPI();
                     defaultNCmdLineRPI = t;
+                }
+                return (T) t;
+            }
+            case "net.thevpc.nuts.internal.rpi.NConcurrentRPI": {
+                NConcurrentRPI t = defaultConcurrentRPI;
+                if (t == null) {
+                    t = new DefaultNConcurrentRPI();
+                    defaultConcurrentRPI = t;
                 }
                 return (T) t;
             }

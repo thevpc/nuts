@@ -10,6 +10,25 @@ package net.thevpc.nuts.concurrent;
 public interface NSagaCallableFactory {
 
     /**
+     * Creates a new default {@link NSagaCallableFactory} instance.
+     *
+     * @return a new saga callable factory instance
+     */
+    static NSagaCallableFactory of() {
+        return NConcurrent.of().sagaFactory();
+    }
+
+    /**
+     * Creates a new {@link NSagaCallableFactory} using the provided store.
+     *
+     * @param store the saga store to use
+     * @return a new saga callable factory instance
+     */
+    static NSagaCallableFactory of(NSagaStore store) {
+        return NConcurrent.of().sagaFactory().withStore(store);
+    }
+
+    /**
      * Returns the {@link NSagaStore} associated with this factory.
      * <p>
      * The store is used to persist saga progress, variables, or status, enabling

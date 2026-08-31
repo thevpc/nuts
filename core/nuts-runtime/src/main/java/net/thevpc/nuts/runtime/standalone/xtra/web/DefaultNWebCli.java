@@ -334,7 +334,10 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     public String formatURL(NWebRequest r, boolean safe) {
-        String p = r.uri();
+        String p = r == null ? null : r.uri();
+        if (p == null) {
+            p = "";
+        }
         StringBuilder u = new StringBuilder();
         if (prefix == null || p.startsWith("http:") || p.startsWith("https:")) {
             u.append(p);
@@ -342,7 +345,9 @@ public class DefaultNWebCli implements NWebCli {
             if (p.isEmpty() || p.equals("/")) {
                 u.append(prefix);
             } else {
-                if (!p.startsWith("/") && !prefix.endsWith("/")) {
+                if (prefix.endsWith("/") && p.startsWith("/")) {
+                    u.append(prefix).append(p.substring(1));
+                } else if (!p.startsWith("/") && !prefix.endsWith("/")) {
                     u.append(prefix).append("/").append(p);
                 } else {
                     u.append(prefix).append(p);
@@ -362,7 +367,7 @@ public class DefaultNWebCli implements NWebCli {
             }
         }
 
-        if (r.parameters() != null && r.parameters().size() > 0) {
+        if (r != null && r.parameters() != null && r.parameters().size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<String>> e : r.parameters().entrySet()) {
                 String k = e.getKey();
@@ -447,7 +452,7 @@ public class DefaultNWebCli implements NWebCli {
                 for (Map.Entry<String, List<String>> e : headers.toMap().entrySet()) {
                     _writeHeader(uc, e.getKey(), e.getValue());
                 }
-                uc.setRequestMethod(method.toString());
+                _setRequestMethod(uc, method);
                 uc.setUseCaches(false);
 
                 long bodyLength = (requestBody != null && requestBody.isKnownContentLength()) ? requestBody.contentLength() : -1;
@@ -579,12 +584,6 @@ public class DefaultNWebCli implements NWebCli {
         if (values == null || values.isEmpty()) {
             return;
         }
-        // Sets the general request property. If a property with
-        // the key already exists, overwrite its value with the new value.
-        //NOTE: HTTP requires all request properties which can legally have
-        // multiple instances with the same key to use a comma-separated list
-        // syntax which enables multiple properties to be appended into a single property.
-        //
         switch (name.toUpperCase()) {
             case "COOKIE": {
                 uc.setRequestProperty(name, String.join("; ", values));
@@ -592,9 +591,46 @@ public class DefaultNWebCli implements NWebCli {
             }
         }
         for (String s : values) {
-            uc.setRequestProperty(name, s);
+            uc.addRequestProperty(name, s);
         }
+    }
 
+    private static void _setRequestMethod(HttpURLConnection uc, NHttpMethod method) throws IOException {
+        String m = method.toString();
+        try {
+            uc.setRequestMethod(m);
+        } catch (java.net.ProtocolException ex) {
+            if (method == NHttpMethod.PATCH) {
+                boolean success = false;
+                try {
+                    java.lang.reflect.Field methodField = HttpURLConnection.class.getDeclaredField("method");
+                    methodField.setAccessible(true);
+                    methodField.set(uc, "PATCH");
+                    success = true;
+                } catch (Exception ignored) {
+                }
+                if (!success) {
+                    try {
+                        java.lang.reflect.Field delegateField = uc.getClass().getDeclaredField("delegate");
+                        delegateField.setAccessible(true);
+                        Object delegate = delegateField.get(uc);
+                        if (delegate instanceof HttpURLConnection) {
+                            java.lang.reflect.Field methodField = HttpURLConnection.class.getDeclaredField("method");
+                            methodField.setAccessible(true);
+                            methodField.set(delegate, "PATCH");
+                            success = true;
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                if (!success) {
+                    uc.setRequestMethod("POST");
+                    uc.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+                }
+            } else {
+                throw ex;
+            }
+        }
     }
 
     @Override

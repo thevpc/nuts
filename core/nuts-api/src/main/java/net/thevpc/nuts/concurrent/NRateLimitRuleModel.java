@@ -62,6 +62,12 @@ public class NRateLimitRuleModel implements Serializable, NDescribable, NCopiabl
 
 
     /**
+     * Constructs an empty rate limit rule model.
+     */
+    public NRateLimitRuleModel() {
+    }
+
+    /**
      * Constructs a new rate limit rule model.
      *
      * @param id         unique rule identifier
@@ -80,6 +86,83 @@ public class NRateLimitRuleModel implements Serializable, NDescribable, NCopiabl
         this.available = available;
         this.lastRefill = lastRefill;
         this.config = config;
+    }
+
+    /**
+     * Sets the rule identifier.
+     *
+     * @param id rule identifier
+     * @return this instance
+     */
+    public NRateLimitRuleModel id(String id) {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * Sets the strategy name.
+     *
+     * @param strategy strategy name
+     * @return this instance
+     */
+    public NRateLimitRuleModel strategy(String strategy) {
+        this.strategy = strategy;
+        return this;
+    }
+
+    /**
+     * Sets the capacity (maximum token count).
+     *
+     * @param capacity capacity
+     * @return this instance
+     */
+    public NRateLimitRuleModel capacity(int capacity) {
+        this.capacity = capacity;
+        return this;
+    }
+
+    /**
+     * Sets the duration in milliseconds.
+     *
+     * @param duration duration
+     * @return this instance
+     */
+    public NRateLimitRuleModel duration(long duration) {
+        this.duration = duration;
+        return this;
+    }
+
+    /**
+     * Sets the available tokens count.
+     *
+     * @param available available count
+     * @return this instance
+     */
+    public NRateLimitRuleModel available(double available) {
+        this.available = available;
+        return this;
+    }
+
+    /**
+     * Sets the last refill timestamp in milliseconds.
+     *
+     * @param lastRefill last refill timestamp
+     * @return this instance
+     */
+    public NRateLimitRuleModel lastRefill(long lastRefill) {
+        this.lastRefill = lastRefill;
+        return this;
+    }
+
+    /**
+     * Sets the configuration data.
+     *
+     * @param config config data
+     * @return this instance
+     */
+    public NRateLimitRuleModel config(byte[] config) {
+        this.config = config;
+        return this;
     }
 
     /**

@@ -13,6 +13,16 @@ public class NCachedValueFactoryImpl implements NCachedValueFactory {
         this.store = store;
     }
 
+    @Override
+    public NCachedValueStore store() {
+        return store;
+    }
+
+    @Override
+    public NCachedValueFactory withStore(NCachedValueStore store) {
+        return new NCachedValueFactoryImpl(store);
+    }
+
 
     @Override
     public <T> NCachedValue<T> of(Supplier<T> supplier) {

@@ -223,7 +223,7 @@ public interface NConcurrent extends NComponent {
     /**
      * @since 0.8.7
      */
-    NConcurrent setRetryCallFactory(NRetryCallFactory retryCallFactory);
+    NConcurrent retryCallFactory(NRetryCallFactory retryCallFactory);
 
     /**
      * @since 0.8.7
@@ -333,17 +333,6 @@ public interface NConcurrent extends NComponent {
     NConcurrent sleep(long durationMillis) throws NInterruptedException;
 
     // --------------------
-    // NTaskSet
-    // --------------------
-
-    /**
-     * Task set.
-     *
-     * @return task set result
-     */
-    NTaskSet taskSet();
-
-    // --------------------
     // Retry Call
     // --------------------
     /**
@@ -356,7 +345,7 @@ public interface NConcurrent extends NComponent {
     /**
      * Retry fixed periods.
      *
-     * @param ...periods ...periods
+     * @param periods ...periods
      * @return retry fixed periods result
      */
     IntFunction<NDuration> retryFixedPeriods(NDuration ...periods);

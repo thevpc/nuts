@@ -102,12 +102,34 @@ public class NHttpCode {
      * @return is server error result
      */
     public boolean isServerError() {
-      /**
-       * Return.
-       *
-       * @param 500 500
-       */
         return (code >= 500);
+    }
+
+    /**
+     * Checks if is error.
+     *
+     * @return is error result
+     */
+    public boolean isError() {
+        return (code >= 400);
+    }
+
+    /**
+     * Checks if is redirect.
+     *
+     * @return is redirect result
+     */
+    public boolean isRedirect() {
+        return (code >= 300 && code < 400);
+    }
+
+    /**
+     * Checks if is informational.
+     *
+     * @return is informational result
+     */
+    public boolean isInformational() {
+        return (code >= 100 && code < 200);
     }
 
     /**

@@ -16,6 +16,8 @@ import net.thevpc.nuts.net.NWebResponseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +45,7 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public int intStatusCode() {
-        return httpCode.code();
+        return httpCode == null ? 0 : httpCode.code();
     }
 
     public NHttpCode statusCode() {
@@ -104,8 +106,30 @@ public class NWebResponseImpl implements NWebResponse {
         if (content1 == null) {
             return null;
         }
+        NElementReader reader;
+        if (type == null) {
+            reader = NElementReader.ofJson();
+        } else {
+            switch (type) {
+                case JSON:
+                    reader = NElementReader.ofJson();
+                    break;
+                case TSON:
+                    reader = NElementReader.ofTson();
+                    break;
+                case YAML:
+                    reader = NElementReader.ofYaml();
+                    break;
+                case XML:
+                    reader = NElementReader.ofXml();
+                    break;
+                default:
+                    reader = NElementReader.ofJson();
+                    break;
+            }
+        }
         try (InputStream in = content1.inputStream()) {
-            return NElementReader.ofJson().read(in, clz);
+            return reader.read(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -118,18 +142,7 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public <T> T contentAsJson(Class<T> clz) {
-        if (content == null) {
-            return null;
-        }
-        NInputSource content1 = content();
-        if (content1 == null) {
-            return null;
-        }
-        try (InputStream in = content1.inputStream()) {
-            return NElementReader.ofJson().read(in, clz);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        return contentAs(clz, NContentType.JSON);
     }
 
     @Override
@@ -144,14 +157,28 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public String contentAsString() {
-        if (content == null) {
+        byte[] bytes = contentAsBytes();
+        if (bytes == null) {
             return null;
         }
-        NInputSource content1 = content();
-        if (content1 == null) {
-            return null;
+        Charset cs = StandardCharsets.UTF_8;
+        String ct = contentType();
+        if (ct != null) {
+            int i = ct.toLowerCase().indexOf("charset=");
+            if (i >= 0) {
+                String s = ct.substring(i + "charset=".length()).trim();
+                int sc = s.indexOf(';');
+                if (sc >= 0) {
+                    s = s.substring(0, sc).trim();
+                }
+                s = s.replace("\"", "").replace("'", "").trim();
+                try {
+                    cs = Charset.forName(s);
+                } catch (Exception ignored) {
+                }
+            }
         }
-        return new String(content1.readBytes());
+        return new String(bytes, cs);
     }
 
     @Override
@@ -172,16 +199,16 @@ public class NWebResponseImpl implements NWebResponse {
 
     @Override
     public boolean isError() {
-        return httpCode.code() >= 400;
+        return httpCode != null && httpCode.code() >= 400;
     }
 
     @Override
     public boolean isOk() {
+        if (httpCode == null) {
+            return false;
+        }
         int ic = httpCode.code();
-        return
-                ic >= 200
-                        && ic < 300
-                ;
+        return ic >= 200 && ic < 300;
     }
 
     @Override
@@ -193,17 +220,25 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     public boolean isClientError() {
+        if (httpCode == null) {
+            return false;
+        }
         int code = httpCode.code();
-
         return code >= 400 && code < 500;
     }
 
     public boolean isServerError() {
+        if (httpCode == null) {
+            return false;
+        }
         int code = httpCode.code();
         return code >= 500;
     }
 
     public boolean isRedirect() {
+        if (httpCode == null) {
+            return false;
+        }
         int code = httpCode.code();
         return code >= 300 && code < 400;
     }

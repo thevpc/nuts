@@ -65,7 +65,7 @@ public class NConcurrentImpl implements NConcurrent {
 
 
     @Override
-    public NConcurrent setRetryCallFactory(NRetryCallFactory retryCallFactory) {
+    public NConcurrent retryCallFactory(NRetryCallFactory retryCallFactory) {
         this.retryValueFactory = retryCallFactory;
         return this;
     }
@@ -260,10 +260,6 @@ public class NConcurrentImpl implements NConcurrent {
         return this;
     }
 
-    @Override
-    public NTaskSet taskSet() {
-        return new NTaskSetImpl();
-    }
 
     @Override
     public IntFunction<NDuration> retryFixedPeriod(NDuration period) {
