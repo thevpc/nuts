@@ -1223,6 +1223,6 @@ public class DefaultNTextRPI implements NTextRPI {
 
     @Override
     public NOptional<NTextTheme> createThemeByPath(NPath path) {
-        return shared.loadThemeByPath(path);
+        return shared.getThemeByPath(path);
     }
 }

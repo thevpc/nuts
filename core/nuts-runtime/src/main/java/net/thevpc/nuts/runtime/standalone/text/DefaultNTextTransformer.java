@@ -148,7 +148,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     })).collect(Collectors.toList()));
                 }else{
                     if (config.isApplyTheme()) {
-                        NTextTheme theme = NTextTheme.get(config.themeName()).orElse(NTextRPI.of().currentTheme());
+                        NTextTheme theme = NTextTheme.of(config.themeName()).orElse(NTextRPI.of().currentTheme());
                         NTextStyles basicStyles = theme.toBasicStyles(t.styles(),config.isBasicTrueStyles());
                         return compressTxt(cc.stream().map(x->mapTxt(x, y -> {
                             if(y.type() == NTextType.STYLED){
@@ -254,7 +254,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     );
                 }
                 if (config.isApplyTheme()) {
-                    NTextTheme theme = NTextTheme.get(config.themeName()).orElse(NTextTheme.of());
+                    NTextTheme theme = NTextTheme.of(config.themeName()).orElse(NTextTheme.of());
                     text = mapTxt(text, x -> {
                         if (x.type() == NTextType.STYLED) {
                             NTextStyled y = (NTextStyled) x;
@@ -283,7 +283,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             });
         }else{
             if (config.isApplyTheme()) {
-                NTextTheme theme = NTextTheme.get(config.themeName()).orElse(NTextTheme.of());
+                NTextTheme theme = NTextTheme.of(config.themeName()).orElse(NTextTheme.of());
                 text = mapTxt(text, x -> {
                     if (x.type() == NTextType.STYLED) {
                         NTextStyled y = (NTextStyled) x;

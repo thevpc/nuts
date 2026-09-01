@@ -133,27 +133,6 @@ public class DefaultNTextManagerModel {
         return defaultTheme;
     }
 
-    public NTextTheme loadThemeByName(String y) {
-        y = NStringUtils.strip(y);
-        if (NBlankable.isBlank(y)) {
-            y = "default";
-        }
-        NTextTheme t = cachedThemes.get(y);
-        if (t != null) {
-            return t;
-        }
-        if ("default".equals(y)) {
-            //default always refers to this implementation
-            t = getDefaultTheme();
-            cachedThemes.put(y, t);
-            return t;
-        } else {
-            t = new NTextThemeWrapper(new NTextPropertiesTheme(y, null, workspace));
-            cachedThemes.put(y, t);
-            return t;
-        }
-    }
-
     public NOptional<NTextTheme> loadThemeByNameOrPath(String nameOrPath) {
         if (NBlankable.isBlank(nameOrPath)) {
             return NOptional.of(getTheme());
@@ -162,10 +141,10 @@ public class DefaultNTextManagerModel {
         if (p.isName()) {
             return getThemeByName(p.toString());
         }
-        return loadThemeByPath(p);
+        return getThemeByPath(p);
     }
 
-    public NOptional<NTextTheme> loadThemeByPath(NPath path) {
+    public NOptional<NTextTheme> getThemeByPath(NPath path) {
         if (path == null) {
             return NOptional.ofNamedEmpty(NMsg.ofC("path"));
         }
@@ -179,27 +158,56 @@ public class DefaultNTextManagerModel {
         if (bootTheme == null) {
             synchronized (this) {
                 if (bootTheme == null) {
-                    NBootOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
-                    bootTheme = NTextTheme.ofNameOrPath(bootOptions.theme().orNull()).orElse(getDefaultTheme());
+                    NBootOptions bootOptions = ((NWorkspaceExt)workspace).getModel().bootModel.getBootUserOptions();
+                    String themeName = bootOptions.theme().orNull();
+                    if(NBlankable.isBlank(themeName)) {
+                        bootTheme = getDefaultTheme();
+                    }else {
+                        NPath path =null;
+                        try {
+                            path = NPath.of(themeName);
+                        }catch (Exception ex){
+                            //
+                        }
+                        if(path==null){
+                            bootTheme = getDefaultTheme();
+                        }else if (path.isName()) {
+                            bootTheme = getThemeByName(themeName).orElseGet(() -> getDefaultTheme());
+                        } else {
+                            bootTheme = getThemeByPath(path).orElseGet(() -> getDefaultTheme());
+                        }
+                    }
                 }
             }
         }
         return NOptional.ofNamed(bootTheme,"bootTheme").withDefault(this::getDefaultTheme);
     }
 
+
+    public NOptional<NTextTheme> getSelectedTheme() {
+        return NOptional.of(selectedTheme).orElseGetOptionalFrom(()->getBootTheme()).orElseGetOptionalOf(()->getDefaultTheme());
+    }
+
     public NOptional<NTextTheme> getThemeByName(String name) {
         if (NBlankable.isBlank(name)) {
-            return NOptional.of(selectedTheme).orElseGetOptionalFrom(()->getBootTheme()).orElseGetOptionalOf(()->getDefaultTheme());
+            return getSelectedTheme();
         }
         try {
-            return NOptional.of(loadThemeByName(name));
+            String y = NStringUtils.strip(name);
+            NTextTheme t = cachedThemes.get(y);
+            if (t != null) {
+                return NOptional.of(t);
+            }
+            t = new NTextThemeWrapper(new NTextPropertiesTheme(y, null, workspace));
+            cachedThemes.put(y, t);
+            return NOptional.of(t);
         } catch (Exception ex) {
             return NOptional.ofNamedEmpty(NMsg.ofC("theme %s", name));
         }
     }
 
     public NTextTheme getTheme() {
-        return getThemeByName("").get();
+        return getSelectedTheme().get();
     }
 
     public void setTheme(NTextTheme styleTheme) {

@@ -648,14 +648,15 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --open-or-null``` (defaults to ```bool false```)
       will open existing workspace or exit not already existing
 
- ```sh --theme <theme-name>``` (defaults to ```kw default```)
-      start nuts using a specific terminal coloring theme.
-      Current themes include:
-        - ##default## use default theme for the current environment
-        - ##ansi##    use ANSI colors
-        - ##horizon## used as default on linux and other NIX
-        - ##grass##   used as default on windows
-        - any file path or url   : define your customized theme
+ ```sh --theme <theme-name-or-path>``` (defaults to ```kw default```)
+       start nuts using a specific terminal coloring theme by theme name or file path/url.
+       Default built-in themes include:
+         - ##default##    use default theme for the current environment
+         - ##ansi##       use ANSI colors
+         - ##horizon##    used as default on linux and other NIX
+         - ##grass##      used as default on windows
+         - ##whiteboard## light background theme using 24-bit true colors
+         - any file path or url : define your customized theme
 
 ```sh ---debug=port,(suspend|!suspend)``` this option enables running child processes with debug mode.
    It defaults to ```string "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" ```
@@ -801,10 +802,10 @@ nuts -ZQ -w=test --json
             reset workspace test and show result in json format
 
 ```sh
-nuts -ZySb -w=test --theme=documentation/website/static/theme-examples/min2.ntf-theme
+nuts -ZySb -w=test --theme=documentation/website/src/resources/theme-examples/min.ntf-theme
 ```
             run nuts with a custom theme file.
-            Examples of theme files are available under ```sh $nuts_github/website/static/theme-examples/```
+            Examples of theme files are available under ```sh $nuts_github/documentation/website/src/resources/theme-examples/```
 
 
 ```sh
