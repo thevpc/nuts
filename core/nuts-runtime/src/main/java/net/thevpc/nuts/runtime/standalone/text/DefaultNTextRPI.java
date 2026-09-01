@@ -722,7 +722,7 @@ public class DefaultNTextRPI implements NTextRPI {
     }
 
     public NOptional<NTextTheme> getTheme(String name) {
-        return shared.getTheme(name);
+        return shared.getThemeByName(name);
     }
 
     @Override
@@ -732,12 +732,6 @@ public class DefaultNTextRPI implements NTextRPI {
 
     @Override
     public NTextRPI setTheme(NTextTheme theme) {
-        shared.setTheme(theme);
-        return this;
-    }
-
-    @Override
-    public NTextRPI setTheme(String theme) {
         shared.setTheme(theme);
         return this;
     }
@@ -1215,5 +1209,20 @@ public class DefaultNTextRPI implements NTextRPI {
         }
     }
 
+    @Override
+    public NOptional<NTextTheme> createThemeByName(String name) {
+        if(NBlankable.isBlank(name)) {
+            return shared.getThemeByName(name);
+        }
+        NPath n = NPath.of(name);
+        if(n.isName()){
+            return shared.getThemeByName(n.name());
+        }
+        return createThemeByPath(n);
+    }
 
+    @Override
+    public NOptional<NTextTheme> createThemeByPath(NPath path) {
+        return shared.loadThemeByPath(path);
+    }
 }

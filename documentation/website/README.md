@@ -38,13 +38,13 @@ documentation/website/
     │   ├── blog.html        -> Compiles to docs/blog.html (Release log & updates)
     │   ├── faq.html         -> Compiles to docs/faq.html (FAQ)
     │   ├── contrib.html     -> Compiles to docs/contrib.html (Contributor guide)
-    │   ├── compat_reports/  -> Pre-generated API & binary compatibility reports
-    │   └── versions/        -> Pre-generated version manifests
+    │   ├── compat_reports/  -> Pre-generated API & binary compatibility reports (DO NOT EDIT!)
+    │   └── versions/        -> Pre-generated version manifests (DO NOT EDIT!)
     ├── resources/     # Static web assets copied verbatim to docs/
     │   ├── assets/    # CSS, SASS, vendor JS (Bootstrap, FontAwesome, Highlight.js)
     │   └── downloads/ # Pre-packaged distribution JARs and launchers
     └── script/        # NExpr site configuration scripts
-        └── project.nexpr   # Dynamic version definitions (LTS & preview versions, URLs)
+        └── project.nexpr   # Dynamic version definitions (Stable & Latest versions, URLs)
 ```
 
 ---

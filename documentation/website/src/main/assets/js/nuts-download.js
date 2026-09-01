@@ -40,6 +40,7 @@
         linux: [
             { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl / wget',      desc: 'One-liner install. Recommended.' },
             { id: 'offline', icon: 'fas fa-cube',        label: 'Offline bundle',   desc: 'No internet after download. Air-gapped environments.' },
+            { id: 'deb',     icon: 'fab fa-ubuntu',     label: 'DEB package',      desc: 'Debian, Ubuntu, Mint, Pop!_OS.' },
             { id: 'rpm',     icon: 'fas fa-box',         label: 'RPM package',      desc: 'RedHat, Fedora, OpenSuSE.' }
         ],
         macos: [
@@ -82,6 +83,10 @@
                 offline: dlTable([
                     { name: 'Linux x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux-x64-' + v + '.zip' },
                     { name: 'Linux x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-bin-with-java-' + v + '.zip', badge: 'JRE included' }
+                ]) + tip.linux,
+
+                deb: dlTable([
+                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' }
                 ]) + tip.linux,
 
                 rpm: dlTable([

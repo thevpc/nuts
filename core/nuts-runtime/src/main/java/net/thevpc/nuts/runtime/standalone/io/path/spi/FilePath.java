@@ -486,28 +486,19 @@ public class FilePath implements NPathSPI {
 
     @Override
     public Boolean isName(NPath basePath) {
-        return value.getNameCount() == 1 && value.getParent() == null;
-//        if (value.getNameCount() > 1) {
-//            return false;
-//        }
-//        String v = value.toString();
-//        switch (v) {
-//            case "/":
-//            case "\\":
-//            case ".":
-//            case "..": {
-//                return false;
-//            }
-//        }
-//        for (char c : v.toCharArray()) {
-//            switch (c) {
-//                case '/':
-//                case '\\': {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
+        if(value.getNameCount()!=1){
+            return false;
+        }
+        if(value.getParent()!=null){
+            return false;
+        }
+        String n = getName(basePath);
+        switch (n){
+            case ".":
+            case "..":
+             return false;
+        }
+        return true;
     }
 
     @Override

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSetter;
@@ -48,6 +49,16 @@ public interface NTextTheme {
         return NTextRPI.of().currentTheme();
     }
 
+    @NGetter
+    static NOptional<NTextTheme> of(String name){
+        return NTextRPI.of().createThemeByName(name);
+    }
+
+    @NGetter
+    static NOptional<NTextTheme> of(NPath path){
+        return NTextRPI.of().createThemeByPath(path);
+    }
+
     /**
      * Sets the set.
      *
@@ -56,16 +67,6 @@ public interface NTextTheme {
     @NSetter
     static void set(NTextTheme theme){
         NTextRPI.of().setTheme(theme);
-    }
-
-    /**
-     * Sets the set.
-     *
-     * @param themeName theme name
-     */
-    @NSetter
-    static void set(String themeName){
-        NTextRPI.of().setTheme(themeName);
     }
 
     /**

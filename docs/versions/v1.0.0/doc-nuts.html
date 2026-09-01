@@ -558,6 +558,15 @@
                     
                 </li>
                 
+                <li class="nav-item">
+                    <a class="nav-link" href="#U9fdf7fbb1b4fbacd31c18ad434a3bf7888215a45">
+                        <span class="nav-num">6</span>
+                        07-ansi-theme.md
+                    </a>
+                    
+                    
+                </li>
+                
             </ul>
         </div>
 
@@ -1936,6 +1945,39 @@ nuts -v
 
                     </section>
                     <hr class="divider">
+                    
+
+                </section>
+                <hr class="divider">
+                
+                <section id="U9fdf7fbb1b4fbacd31c18ad434a3bf7888215a45">
+
+                    <h2 class="main-section1" data-num="6">
+                        <a href="#U9fdf7fbb1b4fbacd31c18ad434a3bf7888215a45">
+                            6 07-ansi-theme.md
+                        </a>
+                    </h2>
+
+                    <div class="text-card">
+                        <H4 class="md-title-1">Customizing ANSI Themes</H4><H4 class="md-title-2">Overview</H4><p class="md-phrase">Nuts provides a powerful theming system for ANSI/NTF (Nuts Text Format) output. Themes determine the actual colors used for semantic tokens such as <mark class="md-code md-code-ac1">primary1</mark>, <mark class="md-code md-code-ac1">error</mark>, <mark class="md-code md-code-ac1">warn</mark>, etc. You can switch between built‑in themes or create your own.</p><H4 class="md-title-2">Switching Themes at Runtime</H4><pre><code class="language-java">import net.thevpc.nuts.text.NTextTheme;
+
+// Load a theme by its name (e.g., &quot;dark&quot;, &quot;light&quot;, &quot;horizon&quot;)
+NTextTheme theme = NTextTheme.of(&quot;dark&quot;);
+// Apply the theme globally
+Nuts.textTheme().setTheme(theme);
+</code></pre>You can also set the theme via a configuration property or environment variable:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Configuration property</b>: <code class="md-code md-code-ac1">nuts.text.theme = dark</code></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Environment variable</b>: <code class="md-code md-code-ac1">NUTS_TEXT_THEME=dark</code></p></li></ul><H4 class="md-title-2">Defining Your Own Theme</H4><p class="md-phrase">Create a <code class="md-code md-code-ac1">.ntf-theme</code> file in any location accessible to your application. The file format is a simple <code class="md-code md-code-ac1">key=value</code> list where keys are semantic token names and values are color specifications.</p><pre><code class="language-properties"># example.ntf-theme
+primary1 = #1e90ff
+secondary5 = #ffdead
+error = #ff5555
+warn = #ffb86c
+info = #8be9fd
+</code></pre><p class="md-phrase">Place your custom theme file on the classpath (e.g., <code class="md-code md-code-ac1">src/main/resources/META-INF/ntf-themes/</code>) or load it explicitly:</p><pre><code class="language-java">NTextTheme custom = NTextTheme.load(&quot;classpath:/my-theme.ntf-theme&quot;);
+Nuts.textTheme().setTheme(custom);
+</code></pre><H4 class="md-title-2">Built‑in Theme Examples</H4>The repository ships a few example themes you can use as a starting point:<ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">example.ntf-theme</b> – a balanced default theme.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">horizon.ntf-theme</b> – a dark blue horizon style.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">min.ntf-theme</b> – a minimalistic light theme.</p></li></ul><p class="md-phrase">You can find these files under <code class="md-code md-code-ac1">src/resources/theme-examples/</code>.</p><H4 class="md-title-2">Applying Themes to Specific Output</H4><p class="md-phrase">If you need to render a message with a non‑global theme, use the <mark class="md-code md-code-ac1">NText</mark> API directly:</p><pre><code class="language-java">NText themed = NText.of(&quot;Hello World&quot;).withTheme(custom);
+NOut.println(themed);
+</code></pre><H4 class="md-title-2">Further Reading</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-ac1">NTextTheme</mark> class: <code class="md-code md-code-ac1">net.thevpc.nuts.text.NTextTheme</code></p></li><li class="md-uli"><p class="md-phrase">Default runtime implementation: <code class="md-code md-code-ac1">net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI</code></p></li><li class="md-uli"><p class="md-phrase">Theme resource location: <code class="md-code md-code-ac1">META-INF/ntf-themes/</code></p></li></ul><p class="md-phrase">For more details, refer to the <a href="../03-msg/02-nmsg-styling.md" class="md-link">Styling Messages</a> section.</p>
+                    </div>
+
                     
 
                 </section>

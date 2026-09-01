@@ -338,16 +338,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.wsModel.configModel.addPathFactory(nPathFactorySPI);
         }
 
-        try {
-            NTextTheme.of();
-        } catch (Exception ex) {
-            wsModel.LOG
-                    .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", data.effectiveBootOptions.theme())
-                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
-                    );
-            NTextRPI.of().setTheme("");//set default!
-        }
-
+        //load theme!!
+        NTextTheme.of();
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
         _initLog(data);
         wsModel.securityModel = new DefaultNWorkspaceSecurityModel(this);

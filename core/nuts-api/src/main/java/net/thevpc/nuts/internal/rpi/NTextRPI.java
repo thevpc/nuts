@@ -27,6 +27,7 @@
 package net.thevpc.nuts.internal.rpi;
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.*;
@@ -337,15 +338,6 @@ public interface NTextRPI extends NComponent {
     NTextRPI setTheme(NTextTheme theme);
 
     /**
-     * Sets the theme.
-     *
-     * @param themeName theme name
-     * @return set theme result
-     */
-    @NSetter
-    NTextRPI setTheme(String themeName);
-
-    /**
      * Code highlighter.
      *
      * @param kind kind
@@ -593,4 +585,8 @@ public interface NTextRPI extends NComponent {
         }
         return value;
     }
+
+    NOptional<NTextTheme> createThemeByName(String name);
+
+    NOptional<NTextTheme> createThemeByPath(NPath path);
 }

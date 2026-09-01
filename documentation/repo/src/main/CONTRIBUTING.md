@@ -42,7 +42,7 @@ mvn clean install
 
 ## Updating Documentation & Website (`nuts-release-tool` & `nsite`)
 
-The website and root Markdown files (`README.md`, `CONTRIBUTING.md`, etc.) are generated using **`nsite`** via **`nuts-release-tool`**.
+The website and root Markdown files (`README.md`, `CONTRIBUTING.md`, etc.) are generated using [nsite](https://github.com/thevpc/nsite) via [nuts-release-tool](https://github.com/thevpc/nuts-release-tool).
 
 ⚠️ **CRITICAL RULES**:
 - **Do NOT edit root `README.md` or `CONTRIBUTING.md` directly!** They are generated from template files in `documentation/repo/src/main/`.
