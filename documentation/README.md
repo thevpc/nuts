@@ -153,28 +153,9 @@ Contains comprehensive guides for users and developers:
 ---
 
 ### 8. `website/` — Documentation Website Sources
-The source directory for generating the static website hosted on GitHub Pages:
-* **`src/main/`**: Top-level web pages processed by `nsite`:
-  * `index.html` (Landing page)
-  * `doc-nuts.html` (Core Nuts user & CLI manual)
-  * `doc-naf.html` (NAF developer manual)
-  * `apps.html` (Nuts application catalog)
-  * `download.html` (Installation & binaries page)
-  * `blog.html` & `faq.html` (Announcements & frequently asked questions)
-  * `contrib.html` (Contributor guide)
-  * `compat_reports/` (API & binary compatibility reports)
-  * `versions/` (Release version manifests)
-* **`src/include/`**: Reusable HTML/mardown/NTF fragments and card templates (`apps/`, `blog/`, `contrib/`, `doc-naf/`, `doc-nuts/`, `download/`, `faq/`, `template/`).
-* **`src/resources/`**: Static assets copied verbatim to the generated site:
-  * Stylesheets & SASS (`assets/css`, `assets/sass`)
-  * Vendor libraries (`bootstrap`, `font-awesome`, `highlight.js`, `jquery`, `magnific-popup`)
-  * Downloadable runtime JARs (`nuts-latest.jar`, `nuts-standard.jar`, versioned JARs)
-  * Theme examples (`example.ntf-theme`, `horizon.ntf-theme`, `min.ntf-theme`)
-*  `src/main/compat_reports/*` is pre-generated based on Java API Compliance Checker
-*  `src/main/versions/*` is pre-generated based on `src/include/versions` and `src/include/template/v1/doc-*.html`
-* **`src/script/project.nexpr`**: NExpr configuration script defining version numbers (`latestApiVersion`, `stableRuntimeVersion`, etc.), download URLs, and metadata variables, executed at the start of generation.
-* **`archive/`**: Archived historical versions (e.g. `v2026/`).
-* **`other-src/`**: AsciiDoc source documentation (`nuts-documentation.adoc`) and extra graphics.
+Source templates, entry-point HTML pages, modular markdown inclusions, and static assets evaluated by **`nsite`** (via `nuts-release-tool`) to compile the static website in `$NUTS_REPO_ROOT/docs/` (hosted on GitHub Pages at [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)).
+
+> 📖 **Full Guide**: For detailed documentation on page templates, modular inclusions (`src/include/`), static resources (`src/resources/`), and deprecated archive folders, see **[website/README.md](website/README.md)**.
 
 ---
 
@@ -195,57 +176,21 @@ flowchart LR
     E --> F["SiteRunner<br/>(nsite Docs & Repo)"]
 ```
 
-1. **`BaseConfRunner`**:
-   - Resolves `nuts-release-tool.tson` (and merges optional local overrides from `nuts-release-tool.local.tson`).
-   - Initializes `NutsBuildRunnerContext`, path mappings, and environment variables (`vars`).
-2. **`JarsRunner`**:
-   - Resolves LTS and latest version numbers.
-   - When `publish` is enabled, publishes Maven artifacts (`net.thevpc:nuts`) to the remote repository.
-3. **`ReposRunner`**:
-   - Updates repository metadata and package indexes for `nuts-preview` and `nuts-public`.
-4. **`InstallerRunner`**:
-   - Builds portable fat JARs, GraalVM native binaries, OS packages via `jpackage`, and standalone bundles with embedded JRE 8.
-5. **`CompatRunner`**:
-   - Runs `japi-compliance-checker` to compare API changes across release versions and builds the interactive compatibility matrix.
-6. **`SiteRunner`**:
-   - Uses `net.thevpc.nuts:nsite` to compile website templates into `$NUTS_REPO_ROOT/docs/` and interpolate root repository files (`README.md`, `CONTRIBUTING.md`).
+### ⚙️ Build Pipeline & Runner Architecture
 
----
+When `nuts-release-tool` runs, it orchestrates fat JAR packaging, native binaries, API compatibility reports, and static website compilation via `nsite`.
 
-### 🚩 Configuration Flags Reference (`nuts-release-tool.tson`)
-
-The release configuration file (`nuts-release-tool.tson` / `nuts-release-tool.local.tson`) controls the build process through the following flags:
-
-| Flag | Type | Description |
-| :--- | :--- | :--- |
-| **`build-jars`** | `boolean` | **Build Portable Fat JARs (`PackageType.PORTABLE`)**.<br>When `true`, packages self-contained JARs for `nuts-installer` (`net.thevpc.nuts.installer.NutsInstaller`) and `nuts-app-full` (`net.thevpc.nuts.NutsApp`), copying them into `installers/dist/<version>/` along with SHA-256 checksums. |
-| **`build-native`** | `boolean` | **Build Native Platform Executables & Bundles**.<br>When `true`, generates three distribution formats:<br>• `PackageType.BIN`: Ahead-of-Time (AOT) compiled native executables using GraalVM `native-image` (with automated reflection config profiling).<br>• `PackageType.NATIVE`: OS-native platform installers generated via `jpackage`.<br>• `PackageType.JRE_BUNDLE`: Standalone archive bundles embedding a dedicated JRE 8 for Linux (x64/x32), Windows (x64/x32), and macOS (x64). |
-| **`build-site`** | `boolean` | **Build Documentation Website & Sync Repository**.<br>When `true`, runs `nsite` to evaluate `project.nexpr`, compile pages (`website/src/main/*.html`), embed partials (`website/src/include/`), copy static assets verbatim (`website/src/resources/`), emit static files to `$NUTS_REPO_ROOT/docs/`, and sync interpolated files to repository root (`repo/src/main/`). |
-| **`build-repos`** | `boolean` | **Update Repository Statistics & Catalogs**.<br>When `true`, executes `nuts settings update stats` on both `../nuts-repos/nuts-preview` and `../nuts-repos/nuts-public` to refresh artifact catalog indexes. |
-| **`build-repo-nuts-preview`** | `boolean` | Rebuilds catalog indexes specifically for `../nuts-repos/nuts-preview`. |
-| **`build-repo-nuts-public`** | `boolean` | Rebuilds catalog indexes specifically for `../nuts-repos/nuts-public`. |
-| **`build-compat`** | `boolean` | **Generate API Backward Compatibility Matrix**.<br>When `true`, invokes `japi-compliance-checker` on pairwise combinations of versions in `all-versions` (e.g. `0.8.0` through `1.0.0`), generates HTML change reports under `website/src/main/compat_reports/`, and builds the matrix table in `120-versions.html.md`. |
-| **`publish`** | `boolean` | **Push / Deploy Artifacts to Production Server**.<br>When `true`, securely uploads all compiled JARs, native packages, checksums, Maven artifacts, and server scripts to the production server (`thevpc.net`) via SSH/`rsync`. |
-| **`all-versions`** | `list` / `string` | List of version identifiers to include in API compatibility checks (e.g. `["0.8.0", ..., "0.8.9", "1.0.0"]`). |
-| **`stable-api-version`** | `string` | Version identifier for the LTS API (e.g. `"0.8.9"`). |
-| **`stable-app-version`** | `string` | Version identifier for the LTS App (e.g. `"0.8.9"`). |
-| **`stable-runtime-version`**| `string` | Version identifier for the LTS Runtime (e.g. `"0.8.9.0"`). |
-| **`trace`** | `boolean` | Enables trace-level logging (`NSession.of().trace(true)`). |
-| **`verbose`** | `boolean` | Enables verbose logging output (`Level.FINEST`). |
-| **`debug`** | `boolean` | Appends JVM remote socket debugging flags (`-agentlib:jdwp=...`) to sub-commands. |
-| **`vars`** | `object` | Environment paths and deployment settings: JDK homes (`JAVA8_HOME`, `JAVA17_HOME`), GraalVM directory (`NUTS_GRAALVM_DIR`), JRE 8 archive paths (`INSTALLER_JRE8_*`), and remote deployment targets (`REMOTE_NUTS_THEVPC_DEPLOY_*`). |
-
----
+> 📖 **Full Configuration Reference**: For detailed runner architecture, configuration flags (`build-jars`, `build-native`, `build-site`, `publish`, `vars`), and `nuts-release-tool.tson` options, see **[website/README.md](website/README.md)**.
 
 ### 🚀 Running the Build
 
-From the root of the repository:
+From the repository root:
 ```bash
-# Run the release tool script directly
+# On Linux / macOS:
 ./nuts-release-tool
 
-# Or run via nuts with verbose logging and stacktraces
-nuts -ZySb --stacktrace --color=formatted nuts-release-tool
+# On Windows:
+nuts-release-tool.bat
 ```
 
 ---

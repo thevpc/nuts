@@ -37,39 +37,50 @@ Think of **Nuts** as **`uv`** (or `npx`/`pipx`), but for the Java ecosystem: com
 
 ## Installation
 
-### Latest (recommended)
+Nuts can be installed via enterprise packages (RPM/DEB), standalone binaries, or quick automated scripts.
 
-🐧 Linux / 🍏 macOS
+### 📦 Enterprise & Download Packages (Recommended)
+
+Visit the official **[Nuts Download Page](https://thevpc.github.io/nuts/download.html)** for:
+- **RPM & DEB Packages** (RedHat / SUSE / Debian / Ubuntu)
+- **GUI & Console Installers**
+- **Offline Binaries & Standalone Executable JARs** (`nuts-app.jar` for zero-install execution)
+- **Version Archives & Release LTS Builds**
+
+#### Quick Standalone Execution (No Install Required):
+Download `nuts-app-1.0.0.jar` from the [Download Page](https://thevpc.github.io/nuts/download.html) and run:
 ```bash
+java -jar nuts-app-1.0.0.jar -Zy
+```
+
+---
+
+### ⚡ Quick Script Installation (Developer / Evaluation)
+
+#### 🐧 Linux / 🍏 macOS
+```bash
+# Latest Release (Recommended for Developers)
 curl -s https://thevpc.net/nuts/install-latest.sh | bash
+
+# Stable Release (Production Systems)
+curl -s https://thevpc.net/nuts/install-stable.sh | bash
 ```
 
-🪟 Windows (PowerShell)
-```bash
+#### 🪟 Windows (PowerShell)
+```powershell
+# Latest Release
 powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"
+
+# Stable Release
+powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"
 ```
 
-Restart your terminal, then verify:
-
+*Restart your terminal, then verify:*
 ```bash
 nuts --version
 ```
 
-### Stable (for production)
-
-🐧 Linux / 🍏 macOS
-```bash
-curl -s https://thevpc.net/nuts/install-stable.sh | bash
-```
-
-🪟 Windows (PowerShell)
-```bash
-powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"
-```
-
-
 ### Update existing installation
-
 ```bash
 nuts update
 ```
