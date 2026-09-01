@@ -38,7 +38,7 @@ import net.thevpc.nuts.util.NOptional;
  * the usual laptop layout, and a single runtime such as Vulkan or OpenCL may
  * run on any of them.
  *
- * @author thevpc
+ * @author OussemaBenAmeur
  * @app.category Base
  * @since 1.0.0
  */

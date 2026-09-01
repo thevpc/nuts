@@ -6,12 +6,18 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.*;
 
 import net.thevpc.nuts.command.NExecutionEntry;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.mon.NProgressHandler;
 import net.thevpc.nuts.mon.NProgressMonitor;
 import net.thevpc.nuts.mon.NProgressRunner;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.net.NConnectionStringBuilder;
+import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.platform.NGpuDevice;
+import net.thevpc.nuts.platform.NGpuDeviceType;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -56,6 +62,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1088,5 +1095,66 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
         return new DefaultNPathInfo(name,path,targetType, targetType,targetPath,size,symbolicLink,lastModified,lastAccess, creationTime, permissions,owner,group);
+    }
+
+    @Override
+    public NOptional<NGpuDevice> primaryGpu(List<NGpuDevice> gpus) {
+        if (gpus == null || gpus.isEmpty()) {
+            return NOptional.ofEmpty();
+        }
+        String forced = System.getProperty(NGpuDevice.PRIMARY_GPU_PROPERTY);
+        if (forced != null && !forced.trim().isEmpty()) {
+            String f = forced.trim();
+            for (NGpuDevice g : gpus) {
+                if (g != null && f.equals(g.capability(NGpuDevice.PCI_BUS_ID).orNull())) {
+                    return NOptional.of(g);
+                }
+            }
+        }
+        NGpuDevice best = null;
+        for (NGpuDevice g : gpus) {
+            if (g == null || !g.isComputeCapable()) {
+                continue;
+            }
+            if (best == null) {
+                best = g;
+            } else {
+                boolean candidateDedicated = g.deviceType() == NGpuDeviceType.DEDICATED_GPU;
+                boolean currentDedicated = best.deviceType() == NGpuDeviceType.DEDICATED_GPU;
+                if (candidateDedicated != currentDedicated) {
+                    if (candidateDedicated) {
+                        best = g;
+                    }
+                } else {
+                    long candidateMem = g.vram() == null ? -1 : g.vram().total();
+                    long currentMem = best.vram() == null ? -1 : best.vram().total();
+                    if (candidateMem > currentMem) {
+                        best = g;
+                    }
+                }
+            }
+        }
+        return best == null ? NOptional.ofEmpty() : NOptional.of(best);
+    }
+
+    @Override
+    public NEnv createEnv(NConnectionString connectionString) {
+        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.host())) {
+            return NExtensions.of(NEnv.class);
+        }
+
+        NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
+                //remove 'path' query param because target is independent of path
+                .path(null);
+        NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
+
+        NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
+                //remove 'use' query param because target is independent of transport
+                .setQueryParam("use", null)
+                .build();
+
+        Map<NConnectionString, NEnv> cache = NWorkspace.of().getOrComputeProperty(NEnv.class + "::Cache", () -> (Map<NConnectionString, NEnv>) new ConcurrentHashMap<NConnectionString, NEnv>());
+        return cache.computeIfAbsent(normalizedConnectionStringWithoutUse, x -> NExtensions.of().createSupported(NEnv.class, normalizedConnectionStringWithUse).get());
+
     }
 }

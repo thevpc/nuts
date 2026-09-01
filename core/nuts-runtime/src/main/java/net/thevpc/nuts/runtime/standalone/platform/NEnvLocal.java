@@ -192,52 +192,50 @@ public class NEnvLocal extends NEnvBase {
     }
 
     @Override
-    public List<NGpu> gpus() {
+    public List<NGpuDevice> gpus() {
         // on linux the kernel exposes vendor, pci identity, bound module and
         // device count as plain files, which enumerates every adapter rather
         // than only the ones a vendor tool reports, and carries the extra
-        // capabilities declared by NGpuUtils. Falls through to the
+        // capabilities declared by NGpuDevice. Falls through to the
         // generic detection below when that reading is unavailable.
         switch (osFamily()) {
             case LINUX:
             case UNIX: {
-                List<NGpu> detailed = NLinuxGpuProbe.gpus();
+                List<NGpuDevice> detailed = NLinuxGpuProbe.gpus();
                 if (!detailed.isEmpty()) {
                     return detailed;
                 }
                 break;
             }
         }
-        List<NGpu> result = tryNvidiaSmi();
-        if (!result.isEmpty()) return result;
-        switch (osFamily()) {
-            case WINDOWS: {
-                result = tryWindowsWmic();
-                break;
-            }
-            case LINUX:
-            case UNIX: {
-                result = tryLinuxSysfs();
-                break;
-            }
-            case MACOS: {
-                result = tryMacSystemProfiler();
-                break;
-            }
-            default: {
-                result = Collections.emptyList();
+        List<NGpuDevice> result = tryNvidiaSmi();
+        if (result.isEmpty()) {
+            switch (osFamily()) {
+                case WINDOWS: {
+                    result = tryWindowsWmic();
+                    break;
+                }
+                case LINUX:
+                case UNIX: {
+                    result = tryLinuxSysfs();
+                    break;
+                }
+                case MACOS: {
+                    result = tryMacSystemProfiler();
+                    break;
+                }
+                default: {
+                    result = Collections.emptyList();
+                }
             }
         }
-        return result;
+        return DefaultNGpuDevice.orderWithPrimaryFirst(result);
     }
 
     // --- NVIDIA: nvidia-smi reports MiB, convert to bytes ---
-    private static List<NGpu> tryNvidiaSmi() {
-        List<NGpu> list = new ArrayList<>();
+    private static List<NGpuDevice> tryNvidiaSmi() {
+        List<NGpuDevice> list = new ArrayList<>();
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-
-            );
             for (String line : NStringUtils.splitLines(NExec.ofSystem("nvidia-smi",
                             "--query-gpu=name,memory.total,memory.used,memory.free,compute_cap,pcie.link.gen.current,pcie.link.gen.max,pcie.link.width.current,pcie.link.width.max",
                             "--format=csv,noheader,nounits")
@@ -250,20 +248,19 @@ public class NEnvLocal extends NEnvBase {
                     long freeBytes = Long.parseLong(parts[3].trim()) * 1024L * 1024L;
 
                     Map<String, String> caps = new LinkedHashMap<>();
-                    caps.put(NGpuUtils.COMPUTE_CAPABILITY, parts[4].trim());
-                    caps.put(NGpuUtils.PCIE_GEN_CURRENT, parts[5].trim());
-                    caps.put(NGpuUtils.PCIE_GEN_MAX, parts[6].trim());
-                    caps.put(NGpuUtils.PCIE_WIDTH_CURRENT, parts[7].trim());
-                    caps.put(NGpuUtils.PCIE_WIDTH_MAX, parts[8].trim());
+                    caps.put(NGpuDevice.COMPUTE_CAPABILITY, parts[4].trim());
+                    caps.put(NGpuDevice.PCIE_GEN_CURRENT, parts[5].trim());
+                    caps.put(NGpuDevice.PCIE_GEN_MAX, parts[6].trim());
+                    caps.put(NGpuDevice.PCIE_WIDTH_CURRENT, parts[7].trim());
+                    caps.put(NGpuDevice.PCIE_WIDTH_MAX, parts[8].trim());
 
                     Double bw = KNOWN_BANDWIDTH_GBPS.get(name);
                     if (bw != null) {
-                        caps.put(NGpuUtils.MEMORY_BANDWIDTH_GBPS, String.valueOf(bw));
+                        caps.put(NGpuDevice.MEMORY_BANDWIDTH_GBPS, String.valueOf(bw));
                     }
 
-                    list.add(new NGpu(name, new NRam(name, totalBytes, usedBytes, freeBytes), caps));
+                    list.add(new DefaultNGpuDevice(name, new NRam(name, totalBytes, usedBytes, freeBytes), caps));
                 }
-
             }
         } catch (Exception ignored) {
             //
@@ -272,8 +269,8 @@ public class NEnvLocal extends NEnvBase {
     }
 
     // --- Linux sysfs: mem_info_vram_total is already in bytes ---
-    private static List<NGpu> tryLinuxSysfs() {
-        List<NGpu> list = new ArrayList<>();
+    private static List<NGpuDevice> tryLinuxSysfs() {
+        List<NGpuDevice> list = new ArrayList<>();
         try {
             java.io.File drm = new java.io.File("/sys/class/drm");
             java.io.File[] cards = drm.listFiles();
@@ -283,7 +280,6 @@ public class NEnvLocal extends NEnvBase {
                     java.io.File totalFile = new java.io.File(f, "device/mem_info_vram_total");
                     java.io.File usedFile = new java.io.File(f, "device/mem_info_vram_used");
                     if (totalFile.exists()) {
-
                         long totalBytes = NLiteral.of(NPath.of(totalFile).readString().trim()).asLong().orElse(-1L);
                         if (totalBytes >= 0) {
                             long usedBytes = -1;
@@ -291,7 +287,7 @@ public class NEnvLocal extends NEnvBase {
                                 usedBytes = NLiteral.of(NPath.of(usedFile).readString().trim()).asLong().orElse(-1L);
                             }
                             long freeBytes = usedBytes >= 0 ? totalBytes - usedBytes : -1;
-                            list.add(new NGpu(f.getName(), new NRam(f.getName(), totalBytes, usedBytes, freeBytes), Collections.emptyMap()));
+                            list.add(new DefaultNGpuDevice(f.getName(), new NRam(f.getName(), totalBytes, usedBytes, freeBytes), Collections.emptyMap()));
                         }
                     }
                 }
@@ -301,9 +297,28 @@ public class NEnvLocal extends NEnvBase {
         return list;
     }
 
-    // --- Windows WMIC: AdapterRAM is already in bytes ---
-    private static List<NGpu> tryWindowsWmic() {
-        List<NGpu> list = new ArrayList<>();
+    // --- Windows query: PowerShell Get-CimInstance with WMIC fallback ---
+    private static List<NGpuDevice> tryWindowsWmic() {
+        List<NGpuDevice> list = new ArrayList<>();
+        try {
+            for (String line : NStringUtils.splitLines(NExec.ofSystem("powershell", "-NoProfile", "-Command",
+                            "Get-CimInstance Win32_VideoController | Select-Object Name,AdapterRAM | ForEach-Object { \"$($_.Name),$($_.AdapterRAM)\" }")
+                    .grabbedOut())) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2 && !NBlankable.isBlank(parts[0])) {
+                    String name = parts[0].trim();
+                    long totalBytes = -1;
+                    if (parts.length > 1 && parts[1].trim().matches("\\d+")) {
+                        totalBytes = Long.parseLong(parts[1].trim());
+                    }
+                    list.add(new DefaultNGpuDevice(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (!list.isEmpty()) {
+            return list;
+        }
         try {
             for (String line : NStringUtils.splitLines(NExec.ofSystem("cmd", "/c",
                             "wmic path win32_VideoController get name,AdapterRAM /format:csv")
@@ -312,7 +327,7 @@ public class NEnvLocal extends NEnvBase {
                 if (parts.length == 3 && !NBlankable.isBlank(parts[1]) && parts[1].matches("\\d+")) {
                     long totalBytes = Long.parseLong(parts[1].trim());
                     String name = parts[2].trim();
-                    list.add(new NGpu(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
+                    list.add(new DefaultNGpuDevice(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
                 }
             }
         } catch (Exception ignored) {
@@ -321,8 +336,8 @@ public class NEnvLocal extends NEnvBase {
     }
 
     // --- macOS system_profiler: reports MB or GB text, normalize to bytes ---
-    private static List<NGpu> tryMacSystemProfiler() {
-        List<NGpu> list = new ArrayList<>();
+    private static List<NGpuDevice> tryMacSystemProfiler() {
+        List<NGpuDevice> list = new ArrayList<>();
         try {
             String name = null;
             for (String line : NStringUtils.splitLines(NExec.ofSystem("system_profiler", "SPDisplaysDataType")
@@ -336,7 +351,7 @@ public class NEnvLocal extends NEnvBase {
                         long totalBytes = line.contains("GB")
                                 ? value * 1024L * 1024L * 1024L
                                 : value * 1024L * 1024L;
-                        list.add(new NGpu(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
+                        list.add(new DefaultNGpuDevice(name, new NRam(name, totalBytes, -1, -1), new LinkedHashMap<>()));
                     }
                 }
             }
@@ -345,15 +360,14 @@ public class NEnvLocal extends NEnvBase {
         return list;
     }
 
-
     @Override
     protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
-        return NParallelProcessorFamily.detectAvailable();
+        return DefaultNParallelProcessorDetector.detectAvailable();
     }
 
     @Override
     protected boolean isParallelProcessorDetectionSupported() {
-        return NParallelProcessorFamily.canDetect();
+        return DefaultNParallelProcessorDetector.canProbe();
     }
 
     @Override

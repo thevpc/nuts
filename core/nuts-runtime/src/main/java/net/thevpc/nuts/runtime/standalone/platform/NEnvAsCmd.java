@@ -550,7 +550,7 @@ public class NEnvAsCmd extends NEnvBase {
     }
 
     @Override
-    public List<NGpu> gpus() {
+    public List<NGpuDevice> gpus() {
         switch (osFamily()) {
             case UNIX:
             case LINUX:
@@ -563,8 +563,8 @@ public class NEnvAsCmd extends NEnvBase {
         return new ArrayList<>();
     }
 
-    private List<NGpu> gpusLinux() {
-        List<NGpu> result = new ArrayList<>();
+    private List<NGpuDevice> gpusLinux() {
+        List<NGpuDevice> result = new ArrayList<>();
         // Prefer nvidia-smi: gives real name + total/used/free VRAM in MiB
         String NVIDIA_SMI_SCRIPT =
                 "if command -v nvidia-smi >/dev/null 2>&1; then " +
@@ -580,7 +580,7 @@ public class NEnvAsCmd extends NEnvBase {
                         long totalMb = Long.parseLong(p[1].trim());
                         long usedMb = Long.parseLong(p[2].trim());
                         long freeMb = Long.parseLong(p[3].trim());
-                        result.add(new NGpu(name, new NRam(name,
+                        result.add(new DefaultNGpuDevice(name, new NRam(name,
                                 totalMb * 1024L * 1024L,
                                 freeMb * 1024L * 1024L,
                                 usedMb * 1024L * 1024L),new HashMap<>()));
@@ -601,14 +601,14 @@ public class NEnvAsCmd extends NEnvBase {
             for (String line : lspciOut.trim().split("\\r?\\n")) {
                 int idx = line.indexOf(": ");
                 String name = idx >= 0 ? line.substring(idx + 2).trim() : line.trim();
-                result.add(new NGpu(name, new NRam(name, 0, 0, 0),new HashMap<>()));
+                result.add(new DefaultNGpuDevice(name, new NRam(name, 0, 0, 0),new HashMap<>()));
             }
         }
         return result;
     }
 
-    private List<NGpu> gpusMacos() {
-        List<NGpu> result = new ArrayList<>();
+    private List<NGpuDevice> gpusMacos() {
+        List<NGpuDevice> result = new ArrayList<>();
         String out = envCmdSPI.exec("system_profiler SPDisplaysDataType");
         if (out != null) {
             String currentName = null;
@@ -617,7 +617,7 @@ public class NEnvAsCmd extends NEnvBase {
                 String line = raw.trim();
                 if (line.startsWith("Chipset Model:")) {
                     if (currentName != null) {
-                        result.add(new NGpu(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
+                        result.add(new DefaultNGpuDevice(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
                     }
                     currentName = line.substring("Chipset Model:".length()).trim();
                     vramBytes = null;
@@ -630,14 +630,14 @@ public class NEnvAsCmd extends NEnvBase {
                 }
             }
             if (currentName != null) {
-                result.add(new NGpu(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
+                result.add(new DefaultNGpuDevice(currentName, new NRam(currentName, vramBytes == null ? 0 : vramBytes, 0, 0),new HashMap<>()));
             }
         }
         return result;
     }
 
-    private List<NGpu> gpusWindows() {
-        List<NGpu> result = new ArrayList<>();
+    private List<NGpuDevice> gpusWindows() {
+        List<NGpuDevice> result = new ArrayList<>();
         // AdapterRAM in WMI is a 32-bit field and often wrong/capped at 4GB for modern GPUs,
         // so try nvidia-smi first for accurate figures.
         String nvidiaOut = envCmdSPI.exec(
@@ -652,7 +652,7 @@ public class NEnvAsCmd extends NEnvBase {
                         long totalMb = Long.parseLong(p[1].trim());
                         long usedMb = Long.parseLong(p[2].trim());
                         long freeMb = Long.parseLong(p[3].trim());
-                        result.add(new NGpu(name,
+                        result.add(new DefaultNGpuDevice(name,
                                 new NRam(name, totalMb * 1024L * 1024L,
                                         freeMb * 1024L * 1024L,
                                         usedMb * 1024L * 1024L), new LinkedHashMap<>()));
@@ -679,7 +679,7 @@ public class NEnvAsCmd extends NEnvBase {
                     ram = Long.parseLong(trimmed.substring(lastComma + 1).trim());
                 } catch (NumberFormatException ignored) {
                 }
-                result.add(new NGpu(name, new NRam(name, ram, 0, 0),new HashMap<>()));
+                result.add(new DefaultNGpuDevice(name, new NRam(name, ram, 0, 0),new HashMap<>()));
             }
         }
         return result;

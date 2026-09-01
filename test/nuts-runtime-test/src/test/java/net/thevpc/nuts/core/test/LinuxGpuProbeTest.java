@@ -1,8 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.platform.NGpu;
+import net.thevpc.nuts.platform.NGpuDevice;
 import net.thevpc.nuts.platform.NGpuDeviceType;
-import net.thevpc.nuts.platform.NGpuUtils;
 import net.thevpc.nuts.platform.NGpuVendor;
 import net.thevpc.nuts.runtime.standalone.platform.NLinuxGpuProbe;
 import org.junit.jupiter.api.Assertions;
@@ -21,12 +20,6 @@ import java.util.function.Function;
 /**
  * Covers the linux probe itself, against fixture directories standing in for
  * {@code /sys} and {@code /proc} and a stub standing in for the vendor tool.
- * <p>
- * The suite in {@code GpuDetectionTest} exercises the capability bag over hand
- * built devices, which says nothing about the reading that fills it. This one
- * covers the reading : machines the developer's own hardware cannot represent,
- * an AMD card, a card left to the open source driver, a driver too old for the
- * pcie fields, and a container with no device at all.
  *
  * @author thevpc
  */
@@ -37,23 +30,17 @@ public class LinuxGpuProbeTest {
     private static final String INTEL_VENDOR = "0x8086";
     private static final String DISPLAY_CLASS = "0x030000";
 
-    // -------------------------------------------------------------------------
-    // readings no vendor tool takes part in
-    // -------------------------------------------------------------------------
-
     @Test
     public void testAmdVramIsReadFromSysfsWithoutAnyVendorTool(@TempDir Path root) throws IOException {
-        // the regression this guards : an AMD only machine used to report
-        // unknown memory, the probe answering before the sysfs read happened
         Path device = pciDevice(root, "0000:03:00.0", AMD_VENDOR, "0x744c");
         write(device.resolve("mem_info_vram_total"), "17163091968");
         write(device.resolve("mem_info_vram_used"), "1073741824");
 
-        List<NGpu> gpus = probe(root, refuseEveryCommand()).detect();
+        List<NGpuDevice> gpus = probe(root, refuseEveryCommand()).detect();
 
         Assertions.assertEquals(1, gpus.size());
-        NGpu amd = gpus.get(0);
-        Assertions.assertEquals(NGpuVendor.AMD, NGpuUtils.vendor(amd));
+        NGpuDevice amd = gpus.get(0);
+        Assertions.assertEquals(NGpuVendor.AMD, amd.vendor());
         Assertions.assertEquals(17163091968L, amd.vram().total());
         Assertions.assertEquals(1073741824L, amd.vram().used());
         Assertions.assertEquals(17163091968L - 1073741824L, amd.vram().free());
@@ -63,12 +50,11 @@ public class LinuxGpuProbeTest {
     public void testVramStaysUnknownWhenSysfsPublishesNone(@TempDir Path root) throws IOException {
         pciDevice(root, "0000:00:02.0", INTEL_VENDOR, "0xa78b");
 
-        List<NGpu> gpus = probe(root, refuseEveryCommand()).detect();
+        List<NGpuDevice> gpus = probe(root, refuseEveryCommand()).detect();
 
         Assertions.assertEquals(1, gpus.size());
         Assertions.assertEquals(-1, gpus.get(0).vram().total());
-        // an unknown amount must not be mistaken for a device that is absent
-        Assertions.assertEquals(NGpuVendor.INTEL, NGpuUtils.vendor(gpus.get(0)));
+        Assertions.assertEquals(NGpuVendor.INTEL, gpus.get(0).vendor());
     }
 
     @Test
@@ -76,18 +62,16 @@ public class LinuxGpuProbeTest {
         pciDevice(root, "0000:00:02.0", INTEL_VENDOR, "0xa78b");
         pciDevice(root, "0000:03:00.0", AMD_VENDOR, "0x744c");
 
-        List<NGpu> gpus = probe(root, refuseEveryCommand()).detect();
+        List<NGpuDevice> gpus = probe(root, refuseEveryCommand()).detect();
 
         Assertions.assertEquals(2, gpus.size());
-        // sorted by pci address, so the root bus device comes first
-        Assertions.assertEquals(NGpuDeviceType.INTEGRATED_GPU, NGpuUtils.deviceType(gpus.get(0)));
-        Assertions.assertEquals(NGpuDeviceType.DEDICATED_GPU, NGpuUtils.deviceType(gpus.get(1)));
+        Assertions.assertEquals(NGpuDeviceType.INTEGRATED_GPU, gpus.get(0).deviceType());
+        Assertions.assertEquals(NGpuDeviceType.DEDICATED_GPU, gpus.get(1).deviceType());
     }
 
     @Test
     public void testNonDisplayPciDevicesAreIgnored(@TempDir Path root) throws IOException {
         pciDevice(root, "0000:03:00.0", AMD_VENDOR, "0x744c");
-        // a network controller, class 0x02, sitting next to the gpu
         Path nic = root.resolve("sys/bus/pci/devices").resolve("0000:04:00.0");
         Files.createDirectories(nic);
         write(nic.resolve("class"), "0x020000");
@@ -105,13 +89,8 @@ public class LinuxGpuProbeTest {
 
     @Test
     public void testAnUnreadableSysfsIsNotAFailure(@TempDir Path root) {
-        // a container without the pci filesystem mounted at all
         Assertions.assertTrue(probe(root, refuseEveryCommand()).detect().isEmpty());
     }
-
-    // -------------------------------------------------------------------------
-    // the bound kernel module, which is the capability gate
-    // -------------------------------------------------------------------------
 
     @Test
     public void testNvidiaCardOnTheProprietaryModuleIsComputeCapable(@TempDir Path root) throws IOException {
@@ -120,13 +99,13 @@ public class LinuxGpuProbeTest {
         nvidiaProc(root, "0000:01:00.0", "NVIDIA GeForce RTX 4050 Laptop GPU", "GPU-abcdef");
         write(root.resolve("sys/module/nvidia/version"), "580.159.03");
 
-        NGpu gpu = probe(root, nvidiaSmi(6144, 512)).detect().get(0);
+        NGpuDevice gpu = probe(root, nvidiaSmi(6144, 512)).detect().get(0);
 
-        Assertions.assertTrue(NGpuUtils.isComputeCapable(gpu));
+        Assertions.assertTrue(gpu.isComputeCapable());
         Assertions.assertEquals("NVIDIA GeForce RTX 4050 Laptop GPU", gpu.name());
-        Assertions.assertEquals("580.159.03", gpu.capability(NGpuUtils.DRIVER_VERSION).get());
-        Assertions.assertEquals("GPU-abcdef", gpu.capability(NGpuUtils.UUID).get());
-        Assertions.assertEquals(890, NGpuUtils.computeCapability(gpu));
+        Assertions.assertEquals("580.159.03", gpu.capability(NGpuDevice.DRIVER_VERSION).get());
+        Assertions.assertEquals("GPU-abcdef", gpu.capability(NGpuDevice.UUID).get());
+        Assertions.assertEquals(890, gpu.computeCapability());
     }
 
     @Test
@@ -134,19 +113,13 @@ public class LinuxGpuProbeTest {
         Path device = pciDevice(root, "0000:01:00.0", NVIDIA_VENDOR, "0x28e1");
         Assumptions.assumeTrue(bindDriver(device, "nouveau"), "symbolic links unsupported");
 
-        NGpu gpu = probe(root, refuseEveryCommand()).detect().get(0);
+        NGpuDevice gpu = probe(root, refuseEveryCommand()).detect().get(0);
 
-        // the hardware is present and drives the display, cuda is not available
-        Assertions.assertEquals(NGpuVendor.NVIDIA, NGpuUtils.vendor(gpu));
-        Assertions.assertEquals("nouveau", gpu.capability(NGpuUtils.KERNEL_DRIVER).get());
-        Assertions.assertFalse(NGpuUtils.isComputeCapable(gpu));
-        // the driver version belongs to the proprietary module, not to this one
-        Assertions.assertFalse(gpu.capability(NGpuUtils.DRIVER_VERSION).isPresent());
+        Assertions.assertEquals(NGpuVendor.NVIDIA, gpu.vendor());
+        Assertions.assertEquals("nouveau", gpu.capability(NGpuDevice.KERNEL_DRIVER).get());
+        Assertions.assertFalse(gpu.isComputeCapable());
+        Assertions.assertFalse(gpu.capability(NGpuDevice.DRIVER_VERSION).isPresent());
     }
-
-    // -------------------------------------------------------------------------
-    // vendor tool, present, absent and outdated
-    // -------------------------------------------------------------------------
 
     @Test
     public void testOldDriverRejectingPcieFieldsStillYieldsComputeCapabilityAndMemory(@TempDir Path root)
@@ -158,7 +131,6 @@ public class LinuxGpuProbeTest {
             @Override
             protected String answer(String query) {
                 if (query.contains("pcie")) {
-                    // nvidia-smi rejects a whole query over one unknown field
                     return null;
                 }
                 if (query.contains("memory.total")) {
@@ -167,12 +139,11 @@ public class LinuxGpuProbeTest {
                 return "00000000:01:00.0, 6.1\n";
             }
         };
-        NGpu gpu = probe(root, runner).detect().get(0);
+        NGpuDevice gpu = probe(root, runner).detect().get(0);
 
-        Assertions.assertEquals(610, NGpuUtils.computeCapability(gpu));
+        Assertions.assertEquals(610, gpu.computeCapability());
         Assertions.assertEquals(6144L * 1024 * 1024, gpu.vram().total());
-        // only the pcie keys are lost, and losing them costs nothing else
-        Assertions.assertFalse(gpu.capability(NGpuUtils.PCIE_GEN_MAX).isPresent());
+        Assertions.assertFalse(gpu.capability(NGpuDevice.PCIE_GEN_MAX).isPresent());
         Assertions.assertEquals(3, runner.queries.size());
     }
 
@@ -182,14 +153,12 @@ public class LinuxGpuProbeTest {
         Assumptions.assumeTrue(bindDriver(device, "nvidia"), "symbolic links unsupported");
         nvidiaProc(root, "0000:01:00.0", "NVIDIA GeForce RTX 4050 Laptop GPU", "GPU-abcdef");
 
-        NGpu gpu = probe(root, refuseEveryCommand()).detect().get(0);
+        NGpuDevice gpu = probe(root, refuseEveryCommand()).detect().get(0);
 
-        // nothing the kernel publishes depends on the tool being installed
         Assertions.assertEquals("NVIDIA GeForce RTX 4050 Laptop GPU", gpu.name());
-        Assertions.assertTrue(NGpuUtils.isComputeCapable(gpu));
-        Assertions.assertEquals("0000:01:00.0", gpu.capability(NGpuUtils.PCI_BUS_ID).get());
-        // and what only the tool reports degrades to unknown rather than failing
-        Assertions.assertTrue(NGpuUtils.computeCapability(gpu) < 0);
+        Assertions.assertTrue(gpu.isComputeCapable());
+        Assertions.assertEquals("0000:01:00.0", gpu.capability(NGpuDevice.PCI_BUS_ID).get());
+        Assertions.assertTrue(gpu.computeCapability() < 0);
         Assertions.assertEquals(-1, gpu.vram().total());
     }
 
@@ -199,10 +168,9 @@ public class LinuxGpuProbeTest {
         pciDevice(root, "0000:01:00.0", NVIDIA_VENDOR, "0x28e1");
         nvidiaProc(root, "0000:01:00.0", "NVIDIA GeForce RTX 4050 Laptop GPU", null);
 
-        NGpu gpu = probe(root, nvidiaSmi(6144, 512)).detect().get(0);
+        NGpuDevice gpu = probe(root, nvidiaSmi(6144, 512)).detect().get(0);
 
-        // the reading is only merged at all if the two forms are reconciled
-        Assertions.assertEquals(890, NGpuUtils.computeCapability(gpu));
+        Assertions.assertEquals(890, gpu.computeCapability());
         Assertions.assertEquals(6144L * 1024 * 1024, gpu.vram().total());
     }
 
@@ -211,14 +179,10 @@ public class LinuxGpuProbeTest {
         pciDevice(root, "0000:01:00.0", NVIDIA_VENDOR, "0x28e1");
         nvidiaProc(root, "0000:01:00.0", "NVIDIA GeForce RTX 4090", null);
 
-        NGpu gpu = probe(root, refuseEveryCommand()).detect().get(0);
+        NGpuDevice gpu = probe(root, refuseEveryCommand()).detect().get(0);
 
-        Assertions.assertEquals("1008.0", gpu.capability(NGpuUtils.MEMORY_BANDWIDTH_GBPS).get());
+        Assertions.assertEquals("1008.0", gpu.capability(NGpuDevice.MEMORY_BANDWIDTH_GBPS).get());
     }
-
-    // -------------------------------------------------------------------------
-    // identity is cached, memory is not
-    // -------------------------------------------------------------------------
 
     @Test
     public void testMemoryIsRereadOnEveryCallWhileIdentityIsProbedOnce(@TempDir Path root) throws IOException {
@@ -239,7 +203,6 @@ public class LinuxGpuProbeTest {
 
         Assertions.assertEquals(512L * 1024 * 1024, probe.detect().get(0).vram().used());
         used[0] = 4096;
-        // the whole point : a caller asking twice must not get a stale figure
         Assertions.assertEquals(4096L * 1024 * 1024, probe.detect().get(0).vram().used());
         probe.detect();
 
@@ -256,15 +219,10 @@ public class LinuxGpuProbeTest {
         Assertions.assertEquals(probe.detect().get(0).capabilities(), probe.detect().get(0).capabilities());
     }
 
-    // -------------------------------------------------------------------------
-    // helpers
-    // -------------------------------------------------------------------------
-
     private static NLinuxGpuProbe probe(Path root, Function<String[], String> runner) {
         return NLinuxGpuProbe.of(root, runner);
     }
 
-    /** creates a pci display controller node under the fixture root */
     private static Path pciDevice(Path root, String pciBusId, String vendorId, String deviceId) throws IOException {
         Path device = root.resolve("sys/bus/pci/devices").resolve(pciBusId);
         Files.createDirectories(device);
@@ -274,12 +232,6 @@ public class LinuxGpuProbeTest {
         return device;
     }
 
-    /**
-     * Binds a kernel module the way the kernel does, as a {@code driver}
-     * symbolic link whose target name is the module.
-     *
-     * @return false when the filesystem refuses symbolic links
-     */
     private static boolean bindDriver(Path device, String moduleName) {
         try {
             Path module = device.getParent().getParent().resolve("modules").resolve(moduleName);
@@ -308,7 +260,6 @@ public class LinuxGpuProbeTest {
         Files.write(path, content.getBytes(StandardCharsets.UTF_8));
     }
 
-    /** a machine where the vendor tool is not installed at all */
     private static Function<String[], String> refuseEveryCommand() {
         return new RecordingRunner() {
             @Override
@@ -318,7 +269,6 @@ public class LinuxGpuProbeTest {
         };
     }
 
-    /** a working nvidia-smi, reporting mebibytes as the real one does */
     private static Function<String[], String> nvidiaSmi(final long totalMib, final long usedMib) {
         return new RecordingRunner() {
             @Override
@@ -341,7 +291,6 @@ public class LinuxGpuProbeTest {
         return n;
     }
 
-    /** records the queries issued, so that caching can be asserted on */
     private abstract static class RecordingRunner implements Function<String[], String> {
 
         final List<String> queries = new ArrayList<>();

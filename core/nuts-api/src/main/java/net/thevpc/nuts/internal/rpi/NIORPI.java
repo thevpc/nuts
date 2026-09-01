@@ -10,11 +10,14 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.mon.NProgressHandler;
 import net.thevpc.nuts.mon.NProgressMonitor;
 import net.thevpc.nuts.mon.NProgressRunner;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.text.NMsgTemplate;
+import net.thevpc.nuts.platform.NGpuDevice;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
@@ -859,4 +862,8 @@ public interface NIORPI extends NComponent {
     NPathInfo createPathInfoNotFound(String path);
 
     NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group);
+
+    NOptional<NGpuDevice> primaryGpu(List<NGpuDevice> gpus);
+
+    NEnv createEnv(NConnectionString connectionString);
 }

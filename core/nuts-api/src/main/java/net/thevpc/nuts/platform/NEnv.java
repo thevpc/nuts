@@ -3,6 +3,7 @@ package net.thevpc.nuts.platform;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.net.NConnectionStringBuilder;
 import net.thevpc.nuts.spi.NComponent;
@@ -39,28 +40,7 @@ public interface NEnv extends NComponent {
      * @return of result
      */
     static NEnv of(NConnectionString connectionString) {
-        if (NBlankable.isBlank(connectionString) || NBlankable.isBlank(connectionString.host())) {
-            /**
-             * Creates a new instance of of.
-             *
-             * @return of result
-             */
-            return of();
-        }
-
-        NConnectionStringBuilder connectionStringBuilder = connectionString.builder()
-                //remove 'path' query param because target is independent of path
-                .path(null);
-        NConnectionString normalizedConnectionStringWithUse = connectionString.normalize();
-
-        NConnectionString normalizedConnectionStringWithoutUse = connectionStringBuilder
-                //remove 'use' query param because target is independent of transport
-                .setQueryParam("use", null)
-                .build();
-
-
-        Map<NConnectionString, NEnv> cache = NWorkspace.of().getOrComputeProperty(NEnv.class + "::Cache", () -> (Map<NConnectionString, NEnv>) new ConcurrentHashMap<NConnectionString, NEnv>());
-        return cache.computeIfAbsent(normalizedConnectionStringWithoutUse, x -> NExtensions.of().createSupported(NEnv.class, normalizedConnectionStringWithUse).get());
+        return NIORPI.of().createEnv(connectionString);
     }
 
     /**
@@ -73,12 +53,6 @@ public interface NEnv extends NComponent {
         if (NBlankable.isBlank(connectionString)) {
             return NEnv.of();
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NConnectionString.of(connectionString) n connection string.of(connection string)
-         * @return of result
-         */
         return of(NConnectionString.of(connectionString));
     }
 
@@ -269,11 +243,20 @@ public interface NEnv extends NComponent {
     NRam ram();
 
     /**
-     * GPU RAMs
-     * @return GPU RAMs
+     * GPU Devices, ordered such that the primary GPU device (if present) is at position 0.
+     * @return GPU Devices
      * @since 1.0.0
      */
-    List<NGpu> gpus();
+    List<NGpuDevice> gpus();
+
+    /**
+     * Primary GPU Device detected on this environment (always the device at position 0 of {@link #gpus()}).
+     * @return Primary GPU Device, empty when none is eligible
+     * @since 1.0.0
+     */
+    default NOptional<NGpuDevice> gpu() {
+        return NGpuDevice.primary(gpus());
+    }
 
     /**
      * Parallel processing runtimes available on this environment, each reporting

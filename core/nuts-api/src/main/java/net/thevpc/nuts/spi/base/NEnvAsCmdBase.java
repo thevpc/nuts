@@ -233,7 +233,7 @@ public abstract class NEnvAsCmdBase implements NEnv {
     }
 
     @Override
-    public List<NGpu> gpus() {
+    public List<NGpuDevice> gpus() {
         return defEnv.gpus();
     }
 

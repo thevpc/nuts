@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
-import net.thevpc.nuts.platform.NGpu;
+import net.thevpc.nuts.platform.NGpuDevice;
 import net.thevpc.nuts.platform.NGpuDeviceType;
-import net.thevpc.nuts.platform.NGpuUtils;
 import net.thevpc.nuts.platform.NGpuVendor;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NRam;
@@ -24,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * Discovers GPU devices on linux, as {@link NGpu} instances carrying the
- * capabilities declared by {@link NGpuUtils}.
+ * Discovers GPU devices on linux, as {@link NGpuDevice} instances carrying the
+ * capabilities declared by {@link NGpuDevice}.
  * <p>
  * Detection is layered by cost. The kernel exposes vendor, pci identity, bound
  * module, device count, model name and uuid as plain files, and those readings
@@ -178,7 +177,7 @@ public class NLinuxGpuProbe {
      *
      * @return detected devices sorted by pci address, empty when none is found
      */
-    public static List<NGpu> gpus() {
+    public static List<NGpuDevice> gpus() {
         if (NOsFamily.current() != NOsFamily.LINUX) {
             return Collections.emptyList();
         }
@@ -192,21 +191,21 @@ public class NLinuxGpuProbe {
      *
      * @return detected devices sorted by pci address, empty when none is found
      */
-    public List<NGpu> detect() {
+    public List<NGpuDevice> detect() {
         List<Device> devices = identities();
         if (devices.isEmpty()) {
             return Collections.emptyList();
         }
         Map<String, long[]> memory = readMemory(devices);
-        List<NGpu> all = new ArrayList<>();
+        List<NGpuDevice> all = new ArrayList<>();
         for (Device device : devices) {
             long[] m = memory.get(device.pciBusId);
             NRam vram = m == null
                     ? new NRam(device.modelName, -1, -1, -1)
                     : new NRam(device.modelName, m[0], m[1], m[2]);
-            all.add(new NGpu(device.modelName, vram, device.capabilities));
+            all.add(new DefaultNGpuDevice(device.modelName, vram, device.capabilities));
         }
-        return Collections.unmodifiableList(all);
+        return DefaultNGpuDevice.orderWithPrimaryFirst(all);
     }
 
     private List<Device> identities() {
@@ -244,30 +243,30 @@ public class NLinuxGpuProbe {
             String kernelDriver = pci[3];
 
             Map<String, String> caps = new LinkedHashMap<>();
-            put(caps, NGpuUtils.PCI_BUS_ID, pciBusId);
-            put(caps, NGpuUtils.PCI_DEVICE_ID, pci[2]);
-            put(caps, NGpuUtils.VENDOR, vendor.id());
-            put(caps, NGpuUtils.DEVICE_TYPE, resolveDeviceType(vendor, pciBusId).id());
-            put(caps, NGpuUtils.KERNEL_DRIVER, kernelDriver);
+            put(caps, NGpuDevice.PCI_BUS_ID, pciBusId);
+            put(caps, NGpuDevice.PCI_DEVICE_ID, pci[2]);
+            put(caps, NGpuDevice.VENDOR, vendor.id());
+            put(caps, NGpuDevice.DEVICE_TYPE, resolveDeviceType(vendor, pciBusId).id());
+            put(caps, NGpuDevice.KERNEL_DRIVER, kernelDriver);
 
             String modelName = null;
 
             if (vendor == NGpuVendor.NVIDIA) {
                 String[] info = readNvidiaProcInformation(pciBusId);
                 modelName = info[0];
-                put(caps, NGpuUtils.UUID, info[1]);
+                put(caps, NGpuDevice.UUID, info[1]);
                 if ("nvidia".equals(kernelDriver)) {
-                    put(caps, NGpuUtils.DRIVER_VERSION, nvidiaDriverVersion);
+                    put(caps, NGpuDevice.DRIVER_VERSION, nvidiaDriverVersion);
                 }
                 String[] smiRow = smi.get(pciBusId);
                 if (smiRow != null) {
                     // published in the major.minor form the vendor tool reports,
                     // matching the key the nvidia-smi based detection already fills
-                    put(caps, NGpuUtils.COMPUTE_CAPABILITY, smiRow[0]);
-                    put(caps, NGpuUtils.PCIE_GEN_CURRENT, smiRow[1]);
-                    put(caps, NGpuUtils.PCIE_GEN_MAX, smiRow[2]);
-                    put(caps, NGpuUtils.PCIE_WIDTH_CURRENT, smiRow[3]);
-                    put(caps, NGpuUtils.PCIE_WIDTH_MAX, smiRow[4]);
+                    put(caps, NGpuDevice.COMPUTE_CAPABILITY, smiRow[0]);
+                    put(caps, NGpuDevice.PCIE_GEN_CURRENT, smiRow[1]);
+                    put(caps, NGpuDevice.PCIE_GEN_MAX, smiRow[2]);
+                    put(caps, NGpuDevice.PCIE_WIDTH_CURRENT, smiRow[3]);
+                    put(caps, NGpuDevice.PCIE_WIDTH_MAX, smiRow[4]);
                 }
             }
             if (modelName == null) {
@@ -277,7 +276,7 @@ public class NLinuxGpuProbe {
             // or not a vendor tool answered
             Double bandwidth = NEnvLocal.KNOWN_BANDWIDTH_GBPS.get(modelName);
             if (bandwidth != null) {
-                put(caps, NGpuUtils.MEMORY_BANDWIDTH_GBPS, String.valueOf(bandwidth));
+                put(caps, NGpuDevice.MEMORY_BANDWIDTH_GBPS, String.valueOf(bandwidth));
             }
             all.add(new Device(pciBusId, modelName, vendor, caps));
         }
