@@ -32,29 +32,136 @@ import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 /**
- * NutsLock is simply an adapter to standard {@link Lock}.
- * It adds no extra functionality but rather is provided as
- * a base for future changes.
+ * NutsLock extends {@link Lock} with describing capabilities, convenience execution methods,
+ * and support for local, file-based, companion, and distributed locks.
  *
  * @app.category Input Output
  * @since 0.5.8
  */
 public interface NLock extends Lock, NDescribable {
+
     /**
-     * Creates a new instance of of.
+     * Creates a new lock for the given target object, ID, or file.
      *
-     * @param source source
-     * @return of result
+     * @param target target object or identifier
+     * @return lock instance
      */
-    static NLock of(Object source) {
-        return NLockBuilder.of().source(source).build();
+    static NLock of(Object target) {
+        return NLockBuilder.of().target(target).build();
+    }
+
+    /**
+     * Creates a named lock for the given identifier using the default lock factory.
+     *
+     * @param lockId unique lock identifier
+     * @return lock instance
+     */
+    static NLock of(String lockId) {
+        return NLockBuilder.of().id(lockId).build();
+    }
+
+    /**
+     * Creates a direct file lock where the specified file IS the lock file.
+     *
+     * @param lockFile lock file path
+     * @return lock instance
+     */
+    static NLock ofFile(NPath lockFile) {
+        return NLockBuilder.of().lockFile(lockFile).build();
+    }
+
+    /**
+     * Creates a direct file lock where the specified file IS the lock file.
+     *
+     * @param lockFile lock file path
+     * @return lock instance
+     */
+    static NLock ofFile(Path lockFile) {
+        return ofFile(NPath.of(lockFile));
+    }
+
+    /**
+     * Creates a direct file lock where the specified file IS the lock file.
+     *
+     * @param lockFile lock file
+     * @return lock instance
+     */
+    static NLock ofFile(File lockFile) {
+        return ofFile(NPath.of(lockFile));
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory.
+     *
+     * @param targetPath file or directory to protect
+     * @return lock instance
+     */
+    static NLock ofCompanion(NPath targetPath) {
+        return NLockBuilder.of().companion(targetPath).build();
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory.
+     *
+     * @param targetPath file or directory to protect
+     * @return lock instance
+     */
+    static NLock ofCompanion(Path targetPath) {
+        return ofCompanion(NPath.of(targetPath));
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory.
+     *
+     * @param targetPath file or directory to protect
+     * @return lock instance
+     */
+    static NLock ofCompanion(File targetPath) {
+        return ofCompanion(NPath.of(targetPath));
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory using a custom suffix or companion name.
+     *
+     * @param targetPath            file or directory to protect
+     * @param companionNameOrSuffix custom lock suffix (e.g. {@code ".lock"}) or filename
+     * @return lock instance
+     */
+    static NLock ofCompanion(NPath targetPath, String companionNameOrSuffix) {
+        return NLockBuilder.of().companion(targetPath, companionNameOrSuffix).build();
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory using a custom suffix or companion name.
+     *
+     * @param targetPath            file or directory to protect
+     * @param companionNameOrSuffix custom lock suffix or filename
+     * @return lock instance
+     */
+    static NLock ofCompanion(Path targetPath, String companionNameOrSuffix) {
+        return ofCompanion(NPath.of(targetPath), companionNameOrSuffix);
+    }
+
+    /**
+     * Creates a companion lock protecting the given file or directory using a custom suffix or companion name.
+     *
+     * @param targetPath            file or directory to protect
+     * @param companionNameOrSuffix custom lock suffix or filename
+     * @return lock instance
+     */
+    static NLock ofCompanion(File targetPath, String companionNameOrSuffix) {
+        return ofCompanion(NPath.of(targetPath), companionNameOrSuffix);
     }
 
     /**
@@ -74,7 +181,7 @@ public interface NLock extends Lock, NDescribable {
      * @return of path companion result
      */
     static NLock ofPathCompanion(NPath source) {
-        return NLockBuilder.of().source(source).resource(source.resolveSibling(source.name() + ".lock")).build();
+        return ofCompanion(source);
     }
 
     /**
@@ -95,21 +202,8 @@ public interface NLock extends Lock, NDescribable {
      */
     static NLock ofId(NId id) {
         if (NWorkspace.of().bootOptions().isolationLevel().orNull() == NIsolationLevel.MEMORY) {
-            /**
-             * Creates a new instance of of.
-             *
-             * @param id.longId() id.long id()
-             * @return of result
-             */
             return of(id.longId());
         } else {
-            /**
-             * Creates a new instance of of id path.
-             *
-             * @param id id
-             * @param NStoreScope.WORKSPACE n store scope.workspace
-             * @return of id path result
-             */
             return ofIdPath(id, NStoreScope.WORKSPACE);
         }
     }
@@ -122,14 +216,6 @@ public interface NLock extends Lock, NDescribable {
      * @return of id path result
      */
     static NLock ofIdPath(NId id, NStoreScope storeScope) {
-        /**
-         * Creates a new instance of of id path.
-         *
-         * @param id id
-         * @param storeScope store scope
-         * @param null null
-         * @return of id path result
-         */
         return ofIdPath(id, storeScope, null);
     }
 
@@ -142,10 +228,43 @@ public interface NLock extends Lock, NDescribable {
      * @return of id path result
      */
     static NLock ofIdPath(NId id, NStoreScope storeScope, String path) {
-        if(NBlankable.isBlank(path)){
-            path="nuts-" + NStringUtils.firstNonBlankStripped(id.face(), "content") + ".lock";
+        if (NBlankable.isBlank(path)) {
+            path = "nuts-" + NStringUtils.firstNonBlankStripped(id.face(), "content") + ".lock";
         }
         return NLockBuilder.of().source(id.longId()).resource(NPath.of(NStoreKey.ofRun(id).scope(storeScope)).resolve(path).toPath().get()).build();
+    }
+
+    /**
+     * Returns the lock identifier, if applicable.
+     *
+     * @return lock identifier or null
+     * @since 0.8.8
+     */
+    @NGetter
+    default String lockId() {
+        return null;
+    }
+
+    /**
+     * Returns the configured lease duration, if applicable.
+     *
+     * @return lease duration or null
+     * @since 0.8.8
+     */
+    @NGetter
+    default NDuration leaseDuration() {
+        return null;
+    }
+
+    /**
+     * Renews the lock lease duration if supported.
+     *
+     * @param leaseDuration new lease duration
+     * @return true if renewed
+     * @since 0.8.8
+     */
+    default boolean renew(NDuration leaseDuration) {
+        return false;
     }
 
     /**
@@ -165,54 +284,124 @@ public interface NLock extends Lock, NDescribable {
     boolean isHeldByCurrentThread();
 
     /**
-     * Run with.
+     * Runs the given runnable while holding this lock.
      *
      * @param runnable runnable
      */
-    void runWith(Runnable runnable);
+    default void runWith(Runnable runnable) {
+        lock();
+        try {
+            runnable.run();
+        } finally {
+            unlock();
+        }
+    }
 
     /**
-     * Call with.
+     * Calls the given callable while holding this lock.
      *
      * @param callable callable
-     * @return call with result
+     * @param <T>      return type
+     * @return result of callable
      */
-    <T> T callWith(Callable<T> callable);
+    default <T> T callWith(Callable<T> callable) {
+        lock();
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            throw NException.ofUncheckedException(e);
+        } finally {
+            unlock();
+        }
+    }
 
     /**
-     * Run with immediately.
+     * Runs the given runnable immediately if the lock can be acquired without waiting.
      *
      * @param runnable runnable
-     * @return run with immediately result
+     * @return true if lock was acquired and runnable executed
      */
-    boolean runWithImmediately(Runnable runnable);
+    default boolean runWithImmediately(Runnable runnable) {
+        if (tryLock()) {
+            try {
+                runnable.run();
+                return true;
+            } finally {
+                unlock();
+            }
+        }
+        return false;
+    }
 
     /**
-     * Run with.
+     * Runs the given runnable if the lock can be acquired within the specified timeout.
      *
      * @param runnable runnable
-     * @param time time
-     * @param unit unit
-     * @return run with result
+     * @param time     time
+     * @param unit     unit
+     * @return true if lock was acquired and runnable executed
      */
-    boolean runWith(Runnable runnable, long time, TimeUnit unit);
+    default boolean runWith(Runnable runnable, long time, TimeUnit unit) {
+        try {
+            if (tryLock(time, unit)) {
+                try {
+                    runnable.run();
+                    return true;
+                } finally {
+                    unlock();
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
+    }
 
     /**
-     * Call with immediately.
+     * Calls the given callable immediately if the lock can be acquired without waiting.
      *
      * @param callable callable
-     * @return call with immediately result
+     * @param <T>      return type
+     * @return optional containing the result if acquired
      */
-    <T> NOptional<T> callWithImmediately(Callable<T> callable);
+    default <T> NOptional<T> callWithImmediately(Callable<T> callable) {
+        if (tryLock()) {
+            try {
+                return NOptional.of(callable.call());
+            } catch (Exception e) {
+                return NOptional.ofError(NMsg.ofC("error call %s", e), e);
+            } finally {
+                unlock();
+            }
+        }
+        return NOptional.ofEmpty();
+    }
 
     /**
-     * Call with.
+     * Calls the given callable if the lock can be acquired within the specified timeout.
      *
      * @param callable callable
-     * @param time time
-     * @param unit unit
-     * @return call with result
+     * @param time     time
+     * @param unit     unit
+     * @param <T>      return type
+     * @return optional containing the result if acquired
      */
-    <T> NOptional<T> callWith(Callable<T> callable, long time, TimeUnit unit);
-
+    default <T> NOptional<T> callWith(Callable<T> callable, long time, TimeUnit unit) {
+        try {
+            if (tryLock(time, unit)) {
+                try {
+                    return NOptional.of(callable.call());
+                } catch (Exception e) {
+                    return NOptional.ofError(NMsg.ofC("error call %s", e), e);
+                } finally {
+                    unlock();
+                }
+            } else {
+                return NOptional.ofEmpty();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return NOptional.ofError(NMsg.ofC("error call %s", e), e);
+        }
+    }
 }

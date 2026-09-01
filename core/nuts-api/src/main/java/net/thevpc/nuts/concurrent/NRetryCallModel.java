@@ -51,7 +51,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
     /**
      * Optional handler invoked after call completion.
      */
-    private NRetryCall.Handler<?> handler;
+    private NRetryHandler<?> handler;
     /**
      * Function that calculates the retry period dynamically based on attempt index.
      */
@@ -102,7 +102,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
      * @return handler result
      */
     @NGetter
-    public NRetryCall.Handler<?> handler() {
+    public NRetryHandler<?> handler() {
         return handler;
     }
 
@@ -113,7 +113,7 @@ public class NRetryCallModel implements Cloneable, NCopiable {
      * @return handler result
      */
     @NSetter
-    public NRetryCallModel handler(NRetryCall.Handler<?> handler) {
+    public NRetryCallModel handler(NRetryHandler<?> handler) {
         this.handler = handler;
         return this;
     }

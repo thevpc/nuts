@@ -32,6 +32,8 @@ import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NSetter;
 
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 /**
@@ -43,6 +45,39 @@ public interface NConcurrentRPI extends NComponent {
     }
 
     NTaskSet taskSet();
+
+    // --------------------
+    // Locks
+    // --------------------
+
+    /**
+     * Sets the lock factory used by this component.
+     *
+     * @param lockFactory the factory to set
+     */
+    @NSetter
+    void lockFactory(NLockFactory lockFactory);
+
+    /**
+     * Returns a memory-only lock factory.
+     *
+     * @return memory lock factory
+     */
+    NLockFactory memoryLockFactory();
+
+    /**
+     * Returns the default lock factory.
+     *
+     * @return default lock factory
+     */
+    NLockFactory defaultLockFactory();
+
+    /**
+     * Returns the currently configured lock factory.
+     *
+     * @return lock factory
+     */
+    NLockFactory lockFactory();
 
     // --------------------
     // Cached Values
@@ -308,6 +343,11 @@ public interface NConcurrentRPI extends NComponent {
      */
     NSagaCallableBuilder sagaCallBuilder();
 
+    /**
+     * @since 0.8.8
+     */
+    NSagaCallableBuilder sagaCallBuilder(String id);
+
     // --------------------
     // Work Balancer
     // --------------------
@@ -376,5 +416,40 @@ public interface NConcurrentRPI extends NComponent {
 
     NRetryPeriodFunction retryExponentialPeriod(NDuration base, double multiplier);
 
+
+    // --------------------
+    // Executor
+    // --------------------
+
+    /**
+     * Returns the underlying {@link ExecutorService} used by this component
+     * for asynchronous task execution.
+     *
+     * @return the executor service
+     */
+    ExecutorService executorService();
+
+
+    // --------------------
+    // Sleep Utilities
+    // --------------------
+    /**
+     * @since 0.8.7
+     */
+    void sleep(NDuration durationMillis) throws NInterruptedException;
+
+    /**
+     * @since 0.8.7
+     */
+    void sleep(Duration durationMillis) throws NInterruptedException;
+
+
+    /**
+     * handy sleep method that wraps InterruptedException into an unchecked exception
+     * @param durationMillis durationMillis
+     * @return {@code this}
+     * @throws NInterruptedException when InterruptedException is thrown
+     */
+    void sleep(long durationMillis) throws NInterruptedException;
 
 }

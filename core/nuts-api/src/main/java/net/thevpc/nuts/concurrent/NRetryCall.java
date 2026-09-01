@@ -3,7 +3,6 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.concurrent.Future;
@@ -93,7 +92,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @return this instance
      */
     @NSetter
-    NRetryCall<T> handler(Handler<T> handler);
+    NRetryCall<T> handler(NRetryHandler<T> handler);
 
     /**
      * Executes the call, blocking until a result is obtained.
@@ -126,67 +125,8 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
     /**
      * Returns a {@link Future} representing the asynchronous execution of this retry call.
      *
-     * @return a future with the {@link Result} of the call
+     * @return a future with the {@link NRetryResult} of the call
      */
-    Future<Result<T>> callFuture();
-
-    /**
-     * Handler for processing results of the retry call.
-     *
-     * @param <T> type of the result
-     */
-    interface Handler<T> {
-        /**
-         * Handle.
-         *
-         * @param result result
-         */
-        void handle(Result<T> result);
-    }
-
-    /**
-     * Encapsulates the result of a retry call, including status and value.
-     *
-     * @param <T> type of the result
-     */
-    interface Result<T> {
-        /**
-         * Unique identifier of the retry call.
-         *
-         * @return the call ID
-         */
-        @NGetter
-        String id();
-
-        /**
-         * Returns the {@link NRetryCall} instance associated with this result.
-         *
-         * @return the retry call
-         */
-        NRetryCall<T> value();
-
-        /**
-         * Returns true if the result is valid (call succeeded or recovery succeeded).
-         *
-         * @return true if valid
-         */
-        @NGetter
-        boolean isValid();
-
-        /**
-         * Returns true if the call failed.
-         *
-         * @return true if error occurred
-         */
-        @NGetter
-        boolean isError();
-
-        /**
-         * Returns the actual result of the call.
-         *
-         * @return the result value
-         */
-        T result();
-    }
+    Future<NRetryResult<T>> callFuture();
 
 }

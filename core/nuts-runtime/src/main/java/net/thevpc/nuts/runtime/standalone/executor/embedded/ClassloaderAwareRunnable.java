@@ -80,7 +80,7 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
 
     public void runAndWaitFor() throws Throwable {
         try {
-            NConcurrent.of().executorService().submit(this).get();
+            NConcurrent.executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }

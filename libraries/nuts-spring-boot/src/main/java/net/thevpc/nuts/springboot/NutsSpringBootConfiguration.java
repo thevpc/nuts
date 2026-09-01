@@ -83,13 +83,6 @@ public class NutsSpringBootConfiguration {
         });
     }
 
-    @Bean
-    public NConcurrent nutsConcurrent(@Autowired ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).callWith(() -> {
-            return NConcurrent.of();
-        });
-    }
-
     private Object resolveValidSpringBootApplication(NWorkspace workspace, ApplicationArguments applicationArguments) {
         Map<String, Object> bootApps = new HashMap<>();
         for (Map.Entry<String, Object> e : sac.getBeansWithAnnotation(SpringBootApplication.class).entrySet()) {

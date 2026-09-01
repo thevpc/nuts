@@ -43,7 +43,8 @@ public class NSagaContextModel implements Serializable, Cloneable {
     // optional: timestamps
     private long startTime;
     private long endTime;
-    private Throwable firstFailStepError;
+    private transient Throwable firstFailStepError;
+    private String firstFailStepErrorMessage;
     private String firstFailStepId;
     private String firstFailStepName;
 
@@ -55,6 +56,30 @@ public class NSagaContextModel implements Serializable, Cloneable {
      * @return n saga context model result
      */
     public NSagaContextModel() {
+    }
+
+    /**
+     * First fail step error message.
+     *
+     * @return first fail step error message
+     * @since 0.8.8
+     */
+    @NGetter
+    public String firstFailStepErrorMessage() {
+        return firstFailStepErrorMessage;
+    }
+
+    /**
+     * First fail step error message.
+     *
+     * @param message error message
+     * @return this instance
+     * @since 0.8.8
+     */
+    @NSetter
+    public NSagaContextModel firstFailStepErrorMessage(String message) {
+        this.firstFailStepErrorMessage = message;
+        return this;
     }
 
     /**
@@ -120,6 +145,9 @@ public class NSagaContextModel implements Serializable, Cloneable {
     @NSetter
     public NSagaContextModel firstFailStepError(Throwable firstFailStepThrowable) {
         this.firstFailStepError = firstFailStepThrowable;
+        if (firstFailStepThrowable != null) {
+            this.firstFailStepErrorMessage = firstFailStepThrowable.getMessage();
+        }
         return this;
     }
 
@@ -347,12 +375,12 @@ public class NSagaContextModel implements Serializable, Cloneable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NSagaContextModel that = (NSagaContextModel) o;
-        return startTime == that.startTime && endTime == that.endTime && Objects.equals(stackStepId, that.stackStepId) && Objects.equals(stackStepGroup, that.stackStepGroup) && Objects.equals(stackStepIndex, that.stackStepIndex) && Objects.equals(values, that.values) && Objects.equals(stepsToCompensate, that.stepsToCompensate) && status == that.status && Objects.equals(firstFailStepError, that.firstFailStepError) && Objects.equals(firstFailStepId, that.firstFailStepId) && Objects.equals(firstFailStepName, that.firstFailStepName) && Objects.equals(lastResult, that.lastResult);
+        return startTime == that.startTime && endTime == that.endTime && Objects.equals(stackStepId, that.stackStepId) && Objects.equals(stackStepGroup, that.stackStepGroup) && Objects.equals(stackStepIndex, that.stackStepIndex) && Objects.equals(values, that.values) && Objects.equals(stepsToCompensate, that.stepsToCompensate) && status == that.status && Objects.equals(firstFailStepError, that.firstFailStepError) && Objects.equals(firstFailStepErrorMessage, that.firstFailStepErrorMessage) && Objects.equals(firstFailStepId, that.firstFailStepId) && Objects.equals(firstFailStepName, that.firstFailStepName) && Objects.equals(lastResult, that.lastResult);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stackStepId, stackStepGroup, stackStepIndex, values, stepsToCompensate, status, startTime, endTime, firstFailStepError, firstFailStepId, firstFailStepName, lastResult);
+        return Objects.hash(stackStepId, stackStepGroup, stackStepIndex, values, stepsToCompensate, status, startTime, endTime, firstFailStepError, firstFailStepErrorMessage, firstFailStepId, firstFailStepName, lastResult);
     }
 
     @Override
@@ -367,6 +395,9 @@ public class NSagaContextModel implements Serializable, Cloneable {
         copy.startTime = startTime;
         copy.endTime = endTime;
         copy.firstFailStepError = firstFailStepError;
+        copy.firstFailStepErrorMessage = firstFailStepErrorMessage;
+        copy.firstFailStepId = firstFailStepId;
+        copy.firstFailStepName = firstFailStepName;
         copy.lastResult = lastResult;
         return copy;
     }

@@ -5,8 +5,10 @@ import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.time.NDuration;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 public class DefaultNConcurrentRPI implements NConcurrentRPI {
@@ -14,6 +16,26 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
     @Override
     public NTaskSet taskSet() {
         return new NTaskSetImpl();
+    }
+
+    @Override
+    public void lockFactory(NLockFactory lockFactory) {
+        NWorkspaceExt.of().getModel().lockFactory = lockFactory;
+    }
+
+    @Override
+    public NLockFactory memoryLockFactory() {
+        return NWorkspaceExt.of().getModel().memoryLockFactory;
+    }
+
+    @Override
+    public NLockFactory defaultLockFactory() {
+        return memoryLockFactory();
+    }
+
+    @Override
+    public NLockFactory lockFactory() {
+        return NWorkspaceExt.of().getModel().lockFactory == null ? defaultLockFactory() : NWorkspaceExt.of().getModel().lockFactory;
     }
 
     @Override
@@ -207,6 +229,11 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
     }
 
     @Override
+    public NSagaCallableBuilder sagaCallBuilder(String id) {
+        return sagaFactory().ofBuilder(id);
+    }
+
+    @Override
     public NWorkBalancerFactory defaultWorkBalancerFactory() {
         return NWorkspaceExt.of().getModel().memoryWorkBalancerCallFactory;
     }
@@ -276,5 +303,32 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
         };
     }
 
+
+    @Override
+    public ExecutorService executorService() {
+        return NWorkspaceExt.of().getModel().configModel.executorService();
+    }
+
+
+    @Override
+    public void sleep(NDuration durationMillis) throws NInterruptedException {
+        sleep(durationMillis == null ? 0 : durationMillis.toMillis());
+    }
+
+    @Override
+    public void sleep(Duration durationMillis) throws NInterruptedException {
+        sleep(durationMillis == null ? 0 : durationMillis.toMillis());
+    }
+
+    @Override
+    public void sleep(long durationMillis) throws NInterruptedException {
+        if (durationMillis > 0) {
+            try {
+                Thread.sleep(durationMillis);
+            } catch (InterruptedException e) {
+                throw new NInterruptedException(e);
+            }
+        }
+    }
 
 }

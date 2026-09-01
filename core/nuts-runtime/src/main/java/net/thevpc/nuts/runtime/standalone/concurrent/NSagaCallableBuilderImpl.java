@@ -2,19 +2,45 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
+    private String id;
+    private NSagaStore store;
     private final AtomicInteger idCounter = new AtomicInteger(1);
-    private final NSagaStore store;
-    private final List<NSagaNodeModel> roots=new ArrayList<>();
+    private final List<NSagaNodeModel> roots = new ArrayList<>();
 
     public NSagaCallableBuilderImpl(NSagaStore store) {
+        this(null, store);
+    }
+
+    public NSagaCallableBuilderImpl(String id, NSagaStore store) {
+        this.id = id;
         this.store = store;
+    }
+
+    @Override
+    public NSagaCallableBuilder id(String id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
+    @Override
+    public NSagaCallableBuilder store(NSagaStore store) {
+        this.store = store;
+        return this;
+    }
+
+    @Override
+    public NSagaStore store() {
+        return store;
     }
 
     @Override
@@ -24,26 +50,79 @@ public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
 
     @Override
     public NSagaCallable build() {
+        String sagaId = id != null && !id.trim().isEmpty() ? id : UUID.randomUUID().toString();
         NSagaModel saga = new NSagaModel();
-        if(!roots.isEmpty()) {
-            if(roots.size()==1) {
+        saga.id(sagaId);
+
+        if (!roots.isEmpty()) {
+            if (roots.size() == 1) {
                 saga.node(roots.get(0));
-            }else{
+            } else {
                 NSagaNodeModel m = new NSagaNodeModel();
                 m.type(NSagaNodeType.SUITE);
-                m.id(UUID.randomUUID().toString());
+                m.id(sagaId + "-root");
                 m.compensationStrategy(NCompensationStrategy.ABORT);
                 m.name("<root>");
-                m.children(roots.stream().map(x->x.copy()).collect(Collectors.toList()));
+                m.children(roots.stream().map(x -> x.copy()).collect(Collectors.toList()));
                 saga.node(m);
             }
         }
-        return new NSagaCallableImpl(saga.clone(),store);
+
+        if (store != null) {
+            NSagaModel existing = store.load(sagaId);
+            if (existing != null && existing.context() != null) {
+                saga.context(existing.context().clone());
+                restoreNodeStatuses(saga.node(), existing.node());
+                return new NSagaCallableImpl(saga, store);
+            }
+        }
+        return new NSagaCallableImpl(saga.clone(), store);
+    }
+
+    private void restoreNodeStatuses(NSagaNodeModel current, NSagaNodeModel existing) {
+        if (current == null || existing == null) {
+            return;
+        }
+        Map<String, NSagaNodeModel> existingNodesById = new HashMap<>();
+        collectNodes(existing, existingNodesById);
+        applyStatuses(current, existingNodesById);
+    }
+
+    private void collectNodes(NSagaNodeModel node, Map<String, NSagaNodeModel> map) {
+        if (node == null) return;
+        if (node.id() != null) map.put(node.id(), node);
+        if (node.children() != null) {
+            for (NSagaNodeModel c : node.children()) collectNodes(c, map);
+        }
+        if (node.elseIfBranches() != null) {
+            for (NSagaNodeModel c : node.elseIfBranches()) collectNodes(c, map);
+        }
+        if (node.otherwiseBranch() != null) {
+            for (NSagaNodeModel c : node.otherwiseBranch()) collectNodes(c, map);
+        }
+    }
+
+    private void applyStatuses(NSagaNodeModel node, Map<String, NSagaNodeModel> map) {
+        if (node == null) return;
+        NSagaNodeModel existing = map.get(node.id());
+        if (existing != null && existing.status() != null) {
+            node.status(existing.status());
+        }
+        if (node.children() != null) {
+            for (NSagaNodeModel c : node.children()) applyStatuses(c, map);
+        }
+        if (node.elseIfBranches() != null) {
+            for (NSagaNodeModel c : node.elseIfBranches()) applyStatuses(c, map);
+        }
+        if (node.otherwiseBranch() != null) {
+            for (NSagaNodeModel c : node.otherwiseBranch()) applyStatuses(c, map);
+        }
     }
 
     private String nextId() {
         return "node-" + idCounter.getAndIncrement();
     }
+
     // -------------------------
     // Suite Implementation
     // -------------------------
@@ -128,7 +207,6 @@ public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
             return this;
         }
 
-
         @Override
         public If<P> elseIf(String name, NSagaCondition condition) {
             NSagaNodeModel node = new NSagaNodeModel()
@@ -174,7 +252,7 @@ public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
                     .stepCondition(condition)
                     .type(NSagaNodeType.IF);
             currentNodes.add(node);
-            return new IfImpl<If<P>>(this,node);
+            return new IfImpl<If<P>>(this, node);
         }
 
         @Override
@@ -187,7 +265,6 @@ public class NSagaCallableBuilderImpl implements NSagaCallableBuilder {
             currentNodes.add(node);
             return new WhileImpl<>(this, node.children(), node);
         }
-
     }
 
     // -------------------------

@@ -207,6 +207,6 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (out != null) {
             out.run(NTerminalCmd.MOVE_LINE_START);
         }
-        return NConcurrent.of().executorService().submit(() -> pb.exitCode());
+        return NConcurrent.executorService().submit(() -> pb.exitCode());
     }
 }

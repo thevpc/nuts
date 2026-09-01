@@ -45,8 +45,8 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
     private String id;
     private String name;
     private NSagaNodeType type;           // STEP / IF / WHILE
-    private NSagaStep stepCall;             // for STEP nodes: NSagaStep class name
-    private NSagaCondition stepCondition;        // for IF / WHILE nodes: NSagaCondition class name
+    private transient NSagaStep stepCall;             // for STEP nodes: NSagaStep instance
+    private transient NSagaCondition stepCondition;        // for IF / WHILE nodes: NSagaCondition instance
     private List<NSagaNodeModel> children = new ArrayList<>();
     private List<NSagaNodeModel> elseIfBranches = new ArrayList<>();   // only for IF nodes
     private List<NSagaNodeModel> otherwiseBranch = new ArrayList<>();  // only for IF nodes
@@ -187,7 +187,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel children(List<NSagaNodeModel> children) {
-        this.children = children;
+        this.children = children == null ? new ArrayList<>() : children;
         return this;
     }
 
@@ -198,6 +198,9 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      * @return add child result
      */
     public NSagaNodeModel addChild(NSagaNodeModel child) {
+        if (this.children == null) {
+            this.children = new ArrayList<>();
+        }
         this.children.add(child);
         return this;
     }
@@ -220,7 +223,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel elseIfBranches(List<NSagaNodeModel> elseIfBranches) {
-        this.elseIfBranches = elseIfBranches;
+        this.elseIfBranches = elseIfBranches == null ? new ArrayList<>() : elseIfBranches;
         return this;
     }
 
@@ -242,7 +245,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel otherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
-        this.otherwiseBranch = otherwiseBranch;
+        this.otherwiseBranch = otherwiseBranch == null ? new ArrayList<>() : otherwiseBranch;
         return this;
     }
 
@@ -312,9 +315,15 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
         copy.compensationStrategy = this.compensationStrategy;
 
         // clone children recursively
-        for (NSagaNodeModel c : this.children) copy.children.add(c.clone());
-        for (NSagaNodeModel c : this.elseIfBranches) copy.elseIfBranches.add(c.clone());
-        for (NSagaNodeModel c : this.otherwiseBranch) copy.otherwiseBranch.add(c.clone());
+        if (this.children != null) {
+            for (NSagaNodeModel c : this.children) copy.children.add(c.clone());
+        }
+        if (this.elseIfBranches != null) {
+            for (NSagaNodeModel c : this.elseIfBranches) copy.elseIfBranches.add(c.clone());
+        }
+        if (this.otherwiseBranch != null) {
+            for (NSagaNodeModel c : this.otherwiseBranch) copy.otherwiseBranch.add(c.clone());
+        }
 
         return copy;
     }

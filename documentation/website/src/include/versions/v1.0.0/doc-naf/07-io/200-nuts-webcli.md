@@ -70,15 +70,15 @@ NWebCli.of().POST("/upload")
 
 ## Resilience & Asynchronous Execution
 
-To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine (NConcurrent):
+To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine:
 
 ```java
 // Run asynchronously using a custom Executor or your NConcurrent ExecutorService
 CompletableFuture<NWebResponse> asyncResponse = NWebCli.of()
         .GET("/long-task")
-        .runAsync(NConcurrent.of().executorService());
+        .runAsync(NConcurrent.executorService());
 
-// Combine NWebCli and NConcurrent for robust network retry behaviors
+// Combine NWebCli and NConcurrent executor service for robust network retry behaviors
 try(NRetryCall retry = NRetryCall.of(() -> NWebCli.of().GET("/flaky-service").run())){
     NWebResponse resilientResponse=retry.run();
 }

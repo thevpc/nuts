@@ -63,7 +63,7 @@ public class RetryCallTest {
             NRetryCallFactory factory = NRetryCallFactory.of()
                     .withStore(jdbcStore);
             factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-                    .handler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+                    .handler(NBeanRef.of("resultSomeThingBean").as(NRetryHandler.class))
                     .maxRetries(5)
                     .retryPeriod(NRetryPeriodFunction.ofMultiplied(NDuration.ofSeconds(1), 1))
                     .callAsync();

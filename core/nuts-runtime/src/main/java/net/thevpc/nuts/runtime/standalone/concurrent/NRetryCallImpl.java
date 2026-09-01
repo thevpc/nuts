@@ -80,7 +80,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public NRetryCall<T> handler(Handler<T> handler) {
+    public NRetryCall<T> handler(NRetryHandler<T> handler) {
         synchronized (store) {
             model.handler(handler);
             store.save(model);
@@ -198,7 +198,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     private T handleResultAndFinish(T result) {
-        Handler<T> handler = (Handler<T>) model.handler();
+        NRetryHandler<T> handler = (NRetryHandler<T>) model.handler();
         if (handler != null) {
             try {
                 model.status(Status.HANDLING);
@@ -222,10 +222,10 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
         return result;
     }
 
-    private Result<T> newCallResult() {
+    private NRetryResult<T> newCallResult() {
         T result = (T) model.result();
         Status status = model.status();
-        return new Result<T>() {
+        return new NRetryResult<T>() {
             @Override
             public String id() {
                 return model.id();
@@ -285,8 +285,8 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public Future<Result<T>> callFuture() {
-        ExecutorService executor = NConcurrent.of().executorService(); // or your own
+    public Future<NRetryResult<T>> callFuture() {
+        ExecutorService executor = NConcurrent.executorService(); // or your own
         return executor.submit(() -> {
             T result = call();
             return newCallResult();

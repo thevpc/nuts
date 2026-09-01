@@ -38,7 +38,6 @@ Now you can inject Nuts objects in your beans
 public class MyBean {
     @Autowired NSession session;
     @Autowired NWorkspace workspace;
-    @Autowired NConcurrent concurrent;
     @Autowired NTerminal term;
     @Autowired NPrintStream out;
 }
@@ -59,15 +58,15 @@ NRetryCallFactory factory = NRetryCallFactory.of(jdbcStore); // optional persist
 
 // Register Spring beans by reference using NBeanRef
 factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-       .handler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+       .handler(NBeanRef.of("resultSomeThingBean").as(NRetryHandler.class))
        .maxRetries(5)
-       .retryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1), 1))
+       .retryPeriod(NRetryPeriodFunction.ofMultipliedPeriod(NDuration.ofSeconds(1), 1))
        .callAsync();
 
 // Example: Custom handler implementation
-public class ResultSomeThingHandler implements NRetryCall.Handler {
+public class ResultSomeThingHandler implements NRetryHandler {
     @Override
-    public void handle(NRetryCall.Result result) {
+    public void handle(NRetryResult result) {
         if (result.isSuccess()) {
             logger.info("Retry call succeeded: {}", result.getValue());
         } else {

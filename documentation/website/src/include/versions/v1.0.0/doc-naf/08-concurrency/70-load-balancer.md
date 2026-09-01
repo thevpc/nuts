@@ -26,7 +26,7 @@ context.getWorkerName(),
 context.getJobName(),
 context.getJobId()
 ));
-NConcurrent.of().sleep(50 + new Random().nextInt(50));
+NConcurrent.sleep(50 + new Random().nextInt(50));
 return "hello from " + context.getWorkerName();
 });
 
@@ -57,7 +57,7 @@ context.getWorkerName(),
 context.getJobName(),
 context.getJobId()
 ));
-NConcurrent.of().sleep(50 + new Random().nextInt(50));
+NConcurrent.sleep(50 + new Random().nextInt(50));
 return "hello from " + context.getWorkerName();
 });
 

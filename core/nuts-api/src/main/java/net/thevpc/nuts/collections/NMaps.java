@@ -244,24 +244,24 @@ public class NMaps {
     /**
      * Creates a new instance of.
      *
-     * @param a1 a1
-     * @param b1 b1
-     * @param a2 a2
-     * @param b2 b2
-     * @param a3 a3
-     * @param b3 b3
-     * @param a4 a4
-     * @param b4 b4
-     * @param a5 a5
-     * @param b5 b5
-     * @param a6 a6
-     * @param b6 b6
-     * @param a7 a7
-     * @param b7 b7
-     * @param a8 a8
-     * @param b8 b8
-     * @param a9 a9
-     * @param b9 b9
+     * @param a1  a1
+     * @param b1  b1
+     * @param a2  a2
+     * @param b2  b2
+     * @param a3  a3
+     * @param b3  b3
+     * @param a4  a4
+     * @param b4  b4
+     * @param a5  a5
+     * @param b5  b5
+     * @param a6  a6
+     * @param b6  b6
+     * @param a7  a7
+     * @param b7  b7
+     * @param a8  a8
+     * @param b8  b8
+     * @param a9  a9
+     * @param b9  b9
      * @param a10 a10
      * @param b10 b10
      * @return of result
@@ -284,24 +284,24 @@ public class NMaps {
     /**
      * Creates a new instance of.
      *
-     * @param a1 a1
-     * @param b1 b1
-     * @param a2 a2
-     * @param b2 b2
-     * @param a3 a3
-     * @param b3 b3
-     * @param a4 a4
-     * @param b4 b4
-     * @param a5 a5
-     * @param b5 b5
-     * @param a6 a6
-     * @param b6 b6
-     * @param a7 a7
-     * @param b7 b7
-     * @param a8 a8
-     * @param b8 b8
-     * @param a9 a9
-     * @param b9 b9
+     * @param a1  a1
+     * @param b1  b1
+     * @param a2  a2
+     * @param b2  b2
+     * @param a3  a3
+     * @param b3  b3
+     * @param a4  a4
+     * @param b4  b4
+     * @param a5  a5
+     * @param b5  b5
+     * @param a6  a6
+     * @param b6  b6
+     * @param a7  a7
+     * @param b7  b7
+     * @param a8  a8
+     * @param b8  b8
+     * @param a9  a9
+     * @param b9  b9
      * @param a10 a10
      * @param b10 b10
      * @param a11 a11
@@ -327,24 +327,24 @@ public class NMaps {
     /**
      * Creates a new instance of.
      *
-     * @param a1 a1
-     * @param b1 b1
-     * @param a2 a2
-     * @param b2 b2
-     * @param a3 a3
-     * @param b3 b3
-     * @param a4 a4
-     * @param b4 b4
-     * @param a5 a5
-     * @param b5 b5
-     * @param a6 a6
-     * @param b6 b6
-     * @param a7 a7
-     * @param b7 b7
-     * @param a8 a8
-     * @param b8 b8
-     * @param a9 a9
-     * @param b9 b9
+     * @param a1  a1
+     * @param b1  b1
+     * @param a2  a2
+     * @param b2  b2
+     * @param a3  a3
+     * @param b3  b3
+     * @param a4  a4
+     * @param b4  b4
+     * @param a5  a5
+     * @param b5  b5
+     * @param a6  a6
+     * @param b6  b6
+     * @param a7  a7
+     * @param b7  b7
+     * @param a8  a8
+     * @param b8  b8
+     * @param a9  a9
+     * @param b9  b9
      * @param a10 a10
      * @param b10 b10
      * @param a11 a11
@@ -455,7 +455,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @return fill result
@@ -468,7 +468,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -484,7 +484,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -503,7 +503,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -525,7 +525,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -550,7 +550,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -578,7 +578,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -609,7 +609,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -643,7 +643,7 @@ public class NMaps {
     /**
      * Fill.
      *
-     * @param m m
+     * @param m  m
      * @param a1 a1
      * @param b1 b1
      * @param a2 a2
@@ -690,7 +690,7 @@ public class NMaps {
      *
      * @return of case-insensitive result
      */
-    public static <T> Map<String,T> ofCaseInsensitiveMap() {
+    public static <T> Map<String, T> ofCaseInsensitiveMap() {
         return NUtilsRPI.of().createInsensitiveMap();
     }
 
@@ -700,12 +700,22 @@ public class NMaps {
      * @param other other
      * @return of case-insensitive result
      */
-    public static <T> Map<String,T> ofCaseInsensitiveMap(Map<String, T> other) {
-        Map<String,T> m = ofCaseInsensitiveMap();
-        if(other!=null){
+    public static <T> Map<String, T> ofCaseInsensitiveMap(Map<String, T> other) {
+        Map<String, T> m = ofCaseInsensitiveMap();
+        if (other != null) {
             m.putAll(other);
         }
         return m;
+    }
+
+    /**
+     * Creates a new instance of case-insensitive.
+     *
+     * @param other other
+     * @return of case-insensitive result
+     */
+    public static <T> NStringMap<T> ofStringMap(Map<String, T> other, char separator) {
+        return NStringMap.of(other, separator);
     }
 
     /**
@@ -713,7 +723,7 @@ public class NMaps {
      *
      * @return of format-insensitive result
      */
-    public static <T> Map<String,T> ofFormatInsensitiveStringMap() {
+    public static <T> Map<String, T> ofFormatInsensitiveStringMap() {
         return NUtilsRPI.of().createFormatInsensitiveMap();
     }
 
@@ -723,9 +733,9 @@ public class NMaps {
      * @param other other
      * @return of format-insensitive result
      */
-    public static <T> Map<String,T> ofFormatInsensitiveStringMap(Map<String, T> other) {
-        Map<String,T> m = ofFormatInsensitiveStringMap();
-        if(other!=null){
+    public static <T> Map<String, T> ofFormatInsensitiveStringMap(Map<String, T> other) {
+        Map<String, T> m = ofFormatInsensitiveStringMap();
+        if (other != null) {
             m.putAll(other);
         }
         return m;
@@ -737,7 +747,7 @@ public class NMaps {
      * @param normalizer normalizer
      * @return of result
      */
-    public static <T> Map<String,T> ofNormalizedStringMap(Function<String,String> normalizer) {
+    public static <T> Map<String, T> ofNormalizedStringMap(Function<String, String> normalizer) {
         return NUtilsRPI.of().createNormalizedMap(normalizer);
     }
 
@@ -745,12 +755,12 @@ public class NMaps {
      * Creates a new instance of.
      *
      * @param normalizer normalizer
-     * @param other other
+     * @param other      other
      * @return of result
      */
-    public static <T> Map<String,T> ofNormalizedStringMap(Function<String,String> normalizer,Map<String, T> other) {
-        Map<String,T> m = ofNormalizedStringMap(normalizer);
-        if(other!=null){
+    public static <T> Map<String, T> ofNormalizedStringMap(Function<String, String> normalizer, Map<String, T> other) {
+        Map<String, T> m = ofNormalizedStringMap(normalizer);
+        if (other != null) {
             m.putAll(other);
         }
         return m;

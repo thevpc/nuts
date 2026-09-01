@@ -35,8 +35,8 @@ NOut.println("Result: " + result);
 retryCall.callAsync();
 
 // Or retrieve a future
-Future<NRetryCall.Result<String>> future = retryCall.callFuture();
-NRetryCall.Result<String> result = future.get();
+Future<NRetryResult<String>> future = retryCall.callFuture();
+NRetryResult<String> result = future.get();
 if (result.isValid()) {
     NOut.println("Succeeded: " + result.result());
 } else {

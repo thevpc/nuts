@@ -27,7 +27,6 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
     /**
      * Creates a new cached value that uses the given supplier.
      * <p>
-     * Equivalent to {@code NConcurrent.of().cachedValue(supplier)}.
      *
      * @param supplier the supplier used to compute the value
      * @param <T>      the value type

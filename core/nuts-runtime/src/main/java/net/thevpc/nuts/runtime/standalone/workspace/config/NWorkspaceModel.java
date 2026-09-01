@@ -99,6 +99,9 @@ public class NWorkspaceModel {
     public NConcurrentRPI defaultConcurrentRPI;
 
 
+    public final NLockFactory memoryLockFactory = new NLockFactoryImpl(new NLockStoreMemory());
+    public NLockFactory lockFactory;
+
     public final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null);
     public NRateLimitValueFactory rateLimitValueFactory;
 
@@ -255,10 +258,6 @@ public class NWorkspaceModel {
             }
             case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
                 return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
-            }
-            case "net.thevpc.nuts.concurrent.NConcurrent": {
-                NConcurrent p = NExtensionTypeInfo.getOrComputeCachedBean(NConcurrentImpl.class, NConcurrent.class, NScopeType.WORKSPACE, NConcurrentImpl::new);
-                return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.platform.NEnv": {
                 if (supportCriteria == null) {

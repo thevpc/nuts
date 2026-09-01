@@ -30,7 +30,7 @@ public class WorkBalancerTest {
 
         NCallable<String> callable = workBalancer.of("hello", context -> {
             NOut.println(NMsg.ofC("call worker %s/%s:%s jobName:%s jobId:%s", context.workerIndex() + 1, context.workersCount(), context.workerName(), context.jobName(), context.jobId()));
-            NConcurrent.of().sleep(50 + new Random().nextInt(50));
+            NConcurrent.sleep(50 + new Random().nextInt(50));
             return "hello from " + context.workerName();
         });
         NTaskSet tasks = NTaskSet.of();
@@ -54,7 +54,7 @@ public class WorkBalancerTest {
 
         NCallable<String> callable = workBalancer.of("hello", context -> {
             NOut.println(NMsg.ofC("call worker %s/%s:%s jobName:%s jobId:%s", context.workerIndex() + 1, context.workersCount(), context.workerName(), context.jobName(), context.jobId()));
-            NConcurrent.of().sleep(50 + new Random().nextInt(50));
+            NConcurrent.sleep(50 + new Random().nextInt(50));
             return "hello from " + context.workerName();
         });
         NTaskSet tasks = NTaskSet.of();

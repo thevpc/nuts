@@ -73,4 +73,35 @@ public interface NSagaCallableFactory {
      */
     NSagaCallableBuilder ofBuilder();
 
+    /**
+     * Returns a new {@link NSagaCallableBuilder} instance configured with the specified saga ID.
+     *
+     * @param id saga identifier
+     * @return a new saga callable builder
+     * @since 0.8.8
+     */
+    NSagaCallableBuilder ofBuilder(String id);
+
+    /**
+     * Loads a saga model by its unique identifier from the configured store.
+     *
+     * @param id saga identifier
+     * @return loaded saga model, or null if not found or store is null
+     * @since 0.8.8
+     */
+    default NSagaModel load(String id) {
+        return store() == null ? null : store().load(id);
+    }
+
+    /**
+     * Deletes a saga record by its unique identifier from the configured store.
+     *
+     * @param id saga identifier
+     * @return true if deleted, false otherwise
+     * @since 0.8.8
+     */
+    default boolean delete(String id) {
+        return store() != null && store().delete(id);
+    }
+
 }

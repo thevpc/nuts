@@ -499,7 +499,7 @@ public class NJavaSdkUtils {
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(NPath.of(s)));
         }
-        return NConcurrent.of().executorService().submit(() -> {
+        return NConcurrent.executorService().submit(() -> {
             List<NRuntimeDistribution> locs = new ArrayList<>();
             for (Future<NRuntimeDistribution[]> nutsSdkLocationFuture : all) {
                 NRuntimeDistribution[] e = nutsSdkLocationFuture.get();
@@ -540,7 +540,7 @@ public class NJavaSdkUtils {
         } else if (s.isDirectory()) {
             for (NPath d : s.list()) {
                 all.add(
-                        NConcurrent.of().executorService().submit(() -> {
+                        NConcurrent.executorService().submit(() -> {
                             NRuntimeDistribution r = null;
                             try {
                                 r = resolveJdkLocation(d, null);
@@ -562,7 +562,7 @@ public class NJavaSdkUtils {
                 );
             }
         }
-        return NConcurrent.of().executorService().submit(() -> {
+        return NConcurrent.executorService().submit(() -> {
             List<NRuntimeDistribution> locs = new ArrayList<>();
             for (Future<NRuntimeDistribution> nutsSdkLocationFuture : all) {
                 NRuntimeDistribution e = nutsSdkLocationFuture.get();

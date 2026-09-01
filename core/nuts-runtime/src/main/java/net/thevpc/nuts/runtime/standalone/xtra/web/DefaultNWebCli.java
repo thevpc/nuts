@@ -398,7 +398,7 @@ public class DefaultNWebCli implements NWebCli {
         if (executor == null) {
             executor = this.executor;
             if (executor == null) {
-                executor = NConcurrent.of().executorService();
+                executor = NConcurrent.executorService();
             }
         }
         return CompletableFuture.supplyAsync(() -> run(r), executor);
@@ -486,7 +486,6 @@ public class DefaultNWebCli implements NWebCli {
                         NLog.of(DefaultNWebCli.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
                                 .withDurationNanos(System.nanoTime() - startTime)
                                 .withIntent((rCode != null && rCode.isOk()) ? NMsgIntent.READ : NMsgIntent.FAIL)
-                                .withThrowable(seenError)
                         );
                     }
                 }

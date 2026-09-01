@@ -25,44 +25,25 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdWriter;
-import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScoredValue;
-import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
-import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
 import net.thevpc.nuts.runtime.standalone.extension.*;
-import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
-import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
-import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter;
-import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
-import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.net.NWebCli;
 import net.thevpc.nuts.collections.NListMultiValueMap;
 
 import java.net.URL;
