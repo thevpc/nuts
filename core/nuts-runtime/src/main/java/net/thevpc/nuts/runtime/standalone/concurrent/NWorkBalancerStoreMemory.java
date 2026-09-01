@@ -7,18 +7,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NWorkBalancerStoreMemory implements NWorkBalancerStore {
-    Map<String, NWorkBalancerModel> values = new HashMap<>();
+    private final Map<String, NWorkBalancerModel> values = new HashMap<>();
 
     @Override
     public NWorkBalancerModel load(String id) {
         if (id == null) {
             id = "";
         }
-        return values.get(id);
+        NWorkBalancerModel v = values.get(id);
+        return v == null ? null : v.copy();
     }
 
     @Override
     public void save(NWorkBalancerModel model) {
-        values.put(model.id(), model);
+        synchronized (values) {
+            model = model.copy();
+            values.put(model.id(), model);
+        }
     }
+
+    @Override
+    public boolean delete(String id) {
+        synchronized (values) {
+            return values.remove(id) != null;
+        }
+    }
+
 }

@@ -1,9 +1,10 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.*;
+
+import java.util.Objects;
 
 /**
  * Represents the configuration and runtime metadata of a bulkhead-protected call.
@@ -144,7 +145,7 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return copied model
      */
-    public NBulkheadCallModel copy(){
+    public NBulkheadCallModel copy() {
         /**
          * Clone.
          *
@@ -158,13 +159,13 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
      *
      * @return cloned model
      */
-    protected NBulkheadCallModel clone(){
+    protected NBulkheadCallModel clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
+            /**
+             * Return.
+             *
+             * @param super.clone(super.clone(
+             */
             return (NBulkheadCallModel) super.clone();
         } catch (CloneNotSupportedException e) {
             /**
@@ -173,7 +174,29 @@ public class NBulkheadCallModel implements Cloneable, NCopiable {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NBulkheadCallModel that = (NBulkheadCallModel) o;
+        return maxConcurrent == that.maxConcurrent && Objects.equals(id, that.id) && Objects.equals(permitExpiry, that.permitExpiry) && Objects.equals(caller, that.caller);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, maxConcurrent, permitExpiry, caller);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("id", id)
+                .add("maxConcurrent", maxConcurrent)
+                .add("permitExpiry", permitExpiry)
+                .add("caller", caller)
+                .build();
     }
 }

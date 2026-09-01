@@ -31,6 +31,8 @@ import net.thevpc.nuts.core.NStoreStrategy;
 import net.thevpc.nuts.platform.NHomeLocation;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -181,7 +183,7 @@ public final class NWorkspaceConfigBoot507 extends NConfigItem implements Clonea
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 
@@ -243,7 +245,7 @@ public final class NWorkspaceConfigBoot507 extends NConfigItem implements Clonea
             try {
                 return (ExtensionConfig) clone();
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
             }
         }
     }

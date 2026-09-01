@@ -2,11 +2,9 @@ package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -241,5 +239,25 @@ public class NScopedStack<T> {
         if (s == null || s.isEmpty()) return null;
         int index = s.size() - 1 - levelFromTop;
         return (index >= 0) ? s.get(index) : null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NScopedStack<?> that = (NScopedStack<?>) o;
+        return Objects.equals(holder, that.holder) && Objects.equals(defaultSupplier, that.defaultSupplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(holder, defaultSupplier);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("holder", holder)
+                .add("defaultSupplier", defaultSupplier)
+                .build();
     }
 }

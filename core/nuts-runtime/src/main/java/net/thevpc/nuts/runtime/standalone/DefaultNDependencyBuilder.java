@@ -242,7 +242,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
                 .artifactId(artifactId())
                 .version(version())
                 .condition(condition())
-                .setProperties(m).build()
+                .properties(m).build()
                 ;
     }
 

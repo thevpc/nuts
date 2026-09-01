@@ -111,9 +111,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     static NCmdLine ofArgs(String... args) {
         NShellFamily current = NShellFamily.current();
-        if (NWorkspace.get().isNotPresent()) {
-            return new DefaultNCmdLine(args, current);
-        }
         return NCmdLineRPI.of().createCmdLineByArgs(args, current);
     }
 
@@ -125,9 +122,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return of args result
      */
     static NCmdLine ofArgs(NShellFamily family, String... args) {
-        if (NWorkspace.get().isNotPresent()) {
-            return new DefaultNCmdLine(args, family);
-        }
         return NCmdLineRPI.of().createCmdLineByArgs(args, family);
     }
 
@@ -170,10 +164,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return new command line instance
      */
     static NOptional<NCmdLine> parseDefault(String line) {
-        if (NWorkspace.get().isNotPresent()) {
-            return DefaultNCmdLine.parseDefaultList(line)
-                    .map(args -> new DefaultNCmdLine(args, NShellFamily.BASH));
-        }
         return NCmdLineRPI.of().parseCmdLine(line, NShellFamily.BASH, false);
     }
 

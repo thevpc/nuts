@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{:: pageId='landing'}}
+    {{:: pageId='landing'; assetPrefix=''}}
     <title>Nuts — The Java Package Manager</title>
     {{:include $'$projectRoot/src/include/template/v1/01-preamble.html'}}
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-landing.css"/>
@@ -58,7 +58,7 @@ nuts netbeans</code></pre>
                 <a href="download.html" class="btn-nuts-primary">
                     <i class="fas fa-download"></i> Download Nuts
                 </a>
-                <a href="doc-nuts.html" class="btn-nuts-secondary">
+                <a href="versions/v{{latestApiVersion}}/doc-nuts.html" class="btn-nuts-secondary">
                     Read the docs →
                 </a>
             </div>
@@ -127,8 +127,8 @@ nuts netbeans</code></pre>
                     </button>
                 </div>
                 <p class="nuts-install__channels">
-                    <span class="nuts-badge nuts-badge--stable">LTS</span> Stable on Maven Central &nbsp;·&nbsp;
-                    <span class="nuts-badge nuts-badge--preview">Latest</span> Preview on maven.thevpc.net
+                    <span class="nuts-badge nuts-badge--stable">Stable</span> Stable on Maven Central &nbsp;·&nbsp;
+                    <span class="nuts-badge nuts-badge--latest">Latest</span> Latest on maven.thevpc.net
                 </p>
             </div>
         </div>
@@ -294,5 +294,6 @@ nuts netbeans</code></pre>
 </div>
 
 {{:include $'$projectRoot/src/include/template/v1/99-epilog.html'}}
+<script src="assets/js/common.js"></script>
 <script src="assets/js/nuts-landing.js"></script>
 </html>

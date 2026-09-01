@@ -182,7 +182,7 @@ public class NBootStringMapFormat {
             while (true) {
                 r = reader.read();
                 if (r == -1) {
-                    throw new RuntimeException("Expected " + cr);
+                    throw new NBootException(NBootMsg.ofC("paring error: Expected %s",cr));
                 }
                 image.append(cr);
                 if (r == cr) {
@@ -191,7 +191,7 @@ public class NBootStringMapFormat {
                 if (r == '\\') {
                     r = reader.read();
                     if (r == -1) {
-                        throw new RuntimeException("Expected " + cr);
+                        throw new NBootException(NBootMsg.ofC("paring error: Expected %s",cr));
                     }
                     image.append((char) r);
                     switch ((char) r) {

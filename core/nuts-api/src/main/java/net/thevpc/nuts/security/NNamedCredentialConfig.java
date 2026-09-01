@@ -26,6 +26,8 @@
 package net.thevpc.nuts.security;
 
 import net.thevpc.nuts.core.NConfigItem;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 /**
  * @author thevpc
@@ -97,13 +99,7 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
             NNamedCredentialConfig o =(NNamedCredentialConfig) super.clone();
             return o;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

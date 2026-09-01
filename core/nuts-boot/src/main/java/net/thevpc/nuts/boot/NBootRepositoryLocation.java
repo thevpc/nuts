@@ -422,7 +422,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
         try {
             return (NBootRepositoryLocation) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new UnsupportedOperationException("clone not supported for "+getClass().getName(),e);
         }
     }
 

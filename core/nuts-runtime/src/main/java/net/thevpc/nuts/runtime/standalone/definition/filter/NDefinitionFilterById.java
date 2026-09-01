@@ -38,7 +38,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NDefinitionFilterById extends AbstractDefinitionFilter {
+public class NDefinitionFilterById extends DefinitionFilterBase {
 
     private NIdFilter id;
 

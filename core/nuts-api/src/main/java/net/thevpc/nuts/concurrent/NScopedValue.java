@@ -1,7 +1,9 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NToStringBuilder;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -249,5 +251,25 @@ public class NScopedValue<T> {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NScopedValue<?> that = (NScopedValue<?>) o;
+        return Objects.equals(holder, that.holder) && Objects.equals(defaultSupplier, that.defaultSupplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(holder, defaultSupplier);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("holder", holder)
+                .add("defaultSupplier", defaultSupplier)
+                .build();
     }
 }

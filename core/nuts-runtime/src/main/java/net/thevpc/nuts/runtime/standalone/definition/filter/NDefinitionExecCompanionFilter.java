@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author thevpc
  */
-public class NDefinitionExecCompanionFilter extends AbstractDefinitionFilter {
+public class NDefinitionExecCompanionFilter extends DefinitionFilterBase {
     private NId apiId;
     private Set<String> companions;
     public NDefinitionExecCompanionFilter(NId apiId, String[] shortIds) {

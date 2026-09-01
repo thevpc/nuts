@@ -14,18 +14,17 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.spi.base.NIdFilterBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 import net.thevpc.nuts.util.*;
 
 /**
  * @author thevpc
  */
-public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
+public class NPatternIdFilter extends NIdFilterBase implements NIdFilter {
 
     private NId id;
     private Pattern g;
@@ -103,7 +102,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         return true;
     }
 
-    private static class PredicateStaticKey extends AbstractNPredicate<Map<String, String>> {
+    private static class PredicateStaticKey extends NPredicateBase<Map<String, String>> {
 
         private final String key;
         private final String val;
@@ -127,7 +126,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         }
     }
 
-    private static class PredicateWildKey extends AbstractNPredicate<Map<String, String>> {
+    private static class PredicateWildKey extends NPredicateBase<Map<String, String>> {
 
         private Pattern keyPattern;
         private Pattern valPattern;

@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.*;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPs implements NPs {
 
-    private NExecutionEngineFamily platformFamily;
+    private NRuntimeDistributionFamily platformFamily;
     private NConnectionString connectionString;
     private boolean failFast;
 
@@ -128,11 +128,11 @@ public class DefaultNPs implements NPs {
 
 
     @Override
-    public NExecutionEngineFamily platformFamily() {
+    public NRuntimeDistributionFamily platformFamily() {
         return platformFamily;
     }
 
-    public NPs platformFamily(NExecutionEngineFamily platformFamily) {
+    public NPs platformFamily(NRuntimeDistributionFamily platformFamily) {
         this.platformFamily = platformFamily;
         return this;
     }
@@ -147,10 +147,10 @@ public class DefaultNPs implements NPs {
         }
         NWorkspace workspace = NWorkspace.of();
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.get(version).get().toFilter();
-        NExecutionEngineLocation[] availableJava = NExecutionEngines.of().findExecutionEngines(NExecutionEngineFamily.JAVA,
-                java -> NExecutionEngineLocation.JAVA_PRODUCT_JDK.equals(java.product()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.version()).get()))
-        ).toArray(NExecutionEngineLocation[]::new);
-        for (NExecutionEngineLocation java : availableJava) {
+        NRuntimeDistribution[] availableJava = NRuntimeDistributionManager.of().findRuntimeDistributions(NRuntimeDistributionFamily.JAVA,
+                java -> NRuntimeDistribution.JAVA_PRODUCT_JDK.equals(java.product()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.version()).get()))
+        ).toArray(NRuntimeDistribution[]::new);
+        for (NRuntimeDistribution java : availableJava) {
             detectedJavaHomes.add(java.path());
             v = getJpsJavaHome(java.path());
             if (v != null) {
@@ -181,7 +181,7 @@ public class DefaultNPs implements NPs {
     public NStream<NPsInfo> getResultList() {
         NEnv target = NEnv.of(connectionString);
         NOsFamily cmdOsFamily = target.osFamily();
-        NExecutionEngineFamily processType = NUtils.firstNonNull(platformFamily, NExecutionEngineFamily.OS);
+        NRuntimeDistributionFamily processType = NUtils.firstNonNull(platformFamily, NRuntimeDistributionFamily.OS);
         switch (processType) {
             case JAVA:
                 return getResultListJava(target, cmdOsFamily);

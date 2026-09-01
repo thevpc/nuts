@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts.internal.rpi;
 
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.collections.*;
 import net.thevpc.nuts.concurrent.NRunnable;
 import net.thevpc.nuts.elem.NElement;
@@ -34,6 +37,7 @@ import net.thevpc.nuts.io.NDataSerializer;
 import net.thevpc.nuts.io.NPageStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.pipeline.*;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NMsgType;
@@ -85,7 +89,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator to stream.
      *
-     * @param str str
+     * @param str     str
      * @param onClose on close
      * @return iterator to stream result
      */
@@ -148,7 +152,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create chunked store builder.
      *
-     * @param folder folder
+     * @param folder       folder
      * @param storeFactory store factory
      * @return create chunked store builder result
      */
@@ -169,12 +173,12 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create btree plus.
      *
-     * @param store store
-     * @param order order
+     * @param store           store
+     * @param order           order
      * @param allowDuplicates allow duplicates
-     * @param keySerializer key serializer
-     * @param valSerializer val serializer
-     * @param comparator comparator
+     * @param keySerializer   key serializer
+     * @param valSerializer   val serializer
+     * @param comparator      comparator
      * @return create btree plus result
      */
     <K, V> NBPlusTree<K, V> createBtreePlus(NPageStore store, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer, Comparator<K> comparator);
@@ -190,7 +194,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create file page store.
      *
-     * @param path path
+     * @param path     path
      * @param pageSize page size
      * @return create file page store result
      */
@@ -207,7 +211,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create class map.
      *
-     * @param keyType key type
+     * @param keyType   key type
      * @param valueType value type
      * @return create class map result
      */
@@ -218,8 +222,8 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param baseKey1Type base key1 type
      * @param baseKey2Type base key2 type
-     * @param valueType value type
-     * @param symmetric symmetric
+     * @param valueType    value type
+     * @param symmetric    symmetric
      * @return create class pair map result
      */
     <A, B, V> NClassPairMap<A, B, V> createClassPairMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
@@ -229,8 +233,8 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param baseKey1Type base key1 type
      * @param baseKey2Type base key2 type
-     * @param valueType value type
-     * @param symmetric symmetric
+     * @param valueType    value type
+     * @param symmetric    symmetric
      * @return create class pair multi map result
      */
     <A, B, V> NClassPairMultiMap<A, B, V> createClassPairMultiMap(Class<A> baseKey1Type, Class<B> baseKey2Type, Class<V> valueType, boolean symmetric);
@@ -238,8 +242,8 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create class map.
      *
-     * @param keyType key type
-     * @param valueType value type
+     * @param keyType         key type
+     * @param valueType       value type
      * @param initialCapacity initial capacity
      * @return create class map result
      */
@@ -257,7 +261,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @return create insensitive map result
      */
-    <T> NNormalizedStringMap<T> createInsensitiveMap();
+    <T> Map<String, T> createInsensitiveMap();
 
     /**
      * Creates a new instance of create multi key map.
@@ -269,7 +273,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create string map.
      *
-     * @param map map
+     * @param map       map
      * @param separator separator
      * @return create string map result
      */
@@ -278,9 +282,9 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator with description.
      *
-     * @param base base
+     * @param base        base
      * @param description description
-     * @param onClose on close
+     * @param onClose     on close
      * @return iterator with description result
      */
     <T> NIterator<T> iteratorWithDescription(NIterator<T> base, Supplier<NElement> description, Runnable onClose);
@@ -288,7 +292,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create iterator auto closable.
      *
-     * @param t t
+     * @param t     t
      * @param close close
      * @return create iterator auto closable result
      */
@@ -298,7 +302,7 @@ public interface NUtilsRPI extends NComponent {
      * Creates a new instance of create iterator safe.
      *
      * @param type type
-     * @param t t
+     * @param t    t
      * @return create iterator safe result
      */
     <T> NIterator<T> createIteratorSafe(NIteratorErrorHandlerType type, NIterator<T> t);
@@ -386,9 +390,9 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator convert non null.
      *
-     * @param from from
+     * @param from      from
      * @param converter converter
-     * @param name name
+     * @param name      name
      * @return iterator convert non null result
      */
     <F, T> NIterator<T> iteratorConvertNonNull(NIterator<F> from, Function<F, T> converter, String name);
@@ -413,7 +417,7 @@ public interface NUtilsRPI extends NComponent {
      * Iterator to tree set.
      *
      * @param it it
-     * @param c c
+     * @param c  c
      * @return iterator to tree set result
      */
     <T> Set<T> iteratorToTreeSet(NIterator<T> it, NComparator<T> c);
@@ -421,8 +425,8 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator sort.
      *
-     * @param it it
-     * @param c c
+     * @param it               it
+     * @param c                c
      * @param removeDuplicates remove duplicates
      * @return iterator sort result
      */
@@ -439,7 +443,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator distinct.
      *
-     * @param it it
+     * @param it        it
      * @param converter converter
      * @return iterator distinct result
      */
@@ -448,7 +452,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Iterator collector.
      *
-     * @param it it
+     * @param it       it
      * @param consumer consumer
      * @return iterator collector result
      */
@@ -566,7 +570,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create class multi map.
      *
-     * @param key1Type key1 type
+     * @param key1Type  key1 type
      * @param valueType value type
      * @return create class multi map result
      */
@@ -575,7 +579,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create class decision filter.
      *
-     * @param type type
+     * @param type            type
      * @param defaultDecision default decision
      * @return create class decision filter result
      */
@@ -584,9 +588,9 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create decision filter.
      *
-     * @param type type
+     * @param type             type
      * @param decisionConflict decision conflict
-     * @param defaultDecision default decision
+     * @param defaultDecision  default decision
      * @return create decision filter result
      */
     <T> NDecisionFilter<T> createDecisionFilter(Class<T> type, NDecisionConflict decisionConflict, NDecision defaultDecision);
@@ -611,7 +615,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @return create format insensitive map result
      */
-    <T> NNormalizedStringMap<T> createFormatInsensitiveMap();
+    <T> Map<String, T> createFormatInsensitiveMap();
 
     /**
      * Creates a new instance of create normalized map.
@@ -619,7 +623,7 @@ public interface NUtilsRPI extends NComponent {
      * @param normalizer normalizer
      * @return create normalized map result
      */
-    <T> NNormalizedStringMap<T> createNormalizedMap(Function<String, String> normalizer);
+    <T> Map<String, T> createNormalizedMap(Function<String, String> normalizer);
 
     /**
      * Creates a new instance of create lru map.
@@ -627,7 +631,7 @@ public interface NUtilsRPI extends NComponent {
      * @param size size
      * @return create lru map result
      */
-    <K, V> NLRUMap<K, V> createLruMap(int size);
+    <K, V> NCappedMap<K, V> createLruMap(int size);
 
     /**
      * Creates a new instance of create evicting byte queue.
@@ -687,8 +691,8 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Extract message params.
      *
-     * @param msg msg
-     * @param type type
+     * @param msg                 msg
+     * @param type                type
      * @param customMessageTypeId custom message type id
      * @return extract message params result
      */
@@ -714,7 +718,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param values values
      * @param offset offset
-     * @param size size
+     * @param size   size
      * @return create byte list result
      */
     NByteList createByteList(byte[] values, int offset, int size);
@@ -739,7 +743,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param values values
      * @param offset offset
-     * @param size size
+     * @param size   size
      * @return create int list result
      */
     NIntList createIntList(int[] values, int offset, int size);
@@ -764,7 +768,7 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param values values
      * @param offset offset
-     * @param size size
+     * @param size   size
      * @return create long list result
      */
     NLongList createLongList(long[] values, int offset, int size);
@@ -789,10 +793,35 @@ public interface NUtilsRPI extends NComponent {
      *
      * @param values values
      * @param offset offset
-     * @param size size
+     * @param size   size
      * @return create double list result
      */
     NDoubleList createDoubleList(double[] values, int offset, int size);
+
+    /**
+     * Creates a new instance of create float list.
+     *
+     * @param initialSize initial size
+     * @return create float list result
+     */
+    NFloatList createFloatList(int initialSize);
+
+    /**
+     * Creates a new instance of create float list.
+     *
+     * @return create float list result
+     */
+    NFloatList createFloatList();
+
+    /**
+     * Creates a new instance of create float list.
+     *
+     * @param values values
+     * @param offset offset
+     * @param size   size
+     * @return create float list result
+     */
+    NFloatList createFloatList(float[] values, int offset, int size);
 
     /**
      * Creates a new instance of create properties.
@@ -879,7 +908,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create char queue.
      *
-     * @param size size
+     * @param size      size
      * @param increment increment
      * @return create char queue result
      */
@@ -911,7 +940,7 @@ public interface NUtilsRPI extends NComponent {
     /**
      * Creates a new instance of create byte queue.
      *
-     * @param size size
+     * @param size      size
      * @param increment increment
      * @return create byte queue result
      */
@@ -924,4 +953,19 @@ public interface NUtilsRPI extends NComponent {
      * @return create byte queue result
      */
     NByteQueue createByteQueue(byte[] content);
+
+
+    <A, B> List<B> createImmutableConvertedList(List<A> base, Function<A, B> converter);
+
+    <K, V> NCappedMap<K, V> createConcurrentReadWriteLRUMap(int size);
+
+    <T, K> NCollectionDiffBuilder<T, K> createCollectionDiffBuilder();
+
+    NRuntimeDistribution createRuntimeDistribution(NId id, String vendor, String product, String variant, String name, String path, String version, String packaging, int priority);
+
+    NLiteral createLiteral(Object any);
+
+    NArg createCmdlineArg(String value, NCmdLine cmdline);
+
+    NStringBuilder createStringBuilder(String value);
 }

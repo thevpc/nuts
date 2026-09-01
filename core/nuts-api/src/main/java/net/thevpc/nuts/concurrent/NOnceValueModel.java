@@ -1,9 +1,9 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -170,7 +170,7 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      *
      * @return a cloned instance
      */
-    public NOnceValueModel copy(){
+    public NOnceValueModel copy() {
         /**
          * Clone.
          *
@@ -184,13 +184,13 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      *
      * @return clone result
      */
-    protected NOnceValueModel clone(){
+    protected NOnceValueModel clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
+            /**
+             * Return.
+             *
+             * @param super.clone(super.clone(
+             */
             return (NOnceValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
             /**
@@ -199,7 +199,31 @@ public class NOnceValueModel implements Cloneable, NCopiable {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NOnceValueModel that = (NOnceValueModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(value, that.value) && Objects.equals(error, that.error) && Objects.equals(errorState, that.errorState) && Objects.equals(supplier, that.supplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, value, error, errorState, supplier);
+    }
+
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("id", id)
+                .add("value", value)
+                .add("error", error)
+                .add("errorState", errorState)
+                .add("supplier", supplier)
+                .build();
     }
 }

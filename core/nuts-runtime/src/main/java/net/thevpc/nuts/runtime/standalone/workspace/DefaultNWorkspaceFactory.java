@@ -25,44 +25,25 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NIdWriter;
-import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NWorkspace;
 
 import net.thevpc.nuts.core.NWorkspaceExtension;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScoredValue;
-import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
-import net.thevpc.nuts.runtime.standalone.elem.parser.DefaultNElementReader;
 import net.thevpc.nuts.runtime.standalone.extension.*;
-import net.thevpc.nuts.runtime.standalone.platform.NEnvLocal;
 import net.thevpc.nuts.runtime.standalone.util.FixedNScoredValue;
 import net.thevpc.nuts.runtime.standalone.collections.NClassClassMap;
 import net.thevpc.nuts.runtime.standalone.collections.NListMultiValueMapImpl;
-import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectObjectWriter;
-import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdWriter;
-import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
-import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.net.NWebCli;
 import net.thevpc.nuts.collections.NListMultiValueMap;
 
 import java.net.URL;
@@ -149,11 +130,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 return NOptional.of(u);
             }
         }
-        switch (type.getName()) {
-            case "net.thevpc.nuts.app.NApp": {
-                return NOptional.of((T) NWorkspaceExt.of().getApp());
-            }
-        }
         NScorableContext context = NScorableContext.of(supportCriteria);
         List<NScoredValue<T>> all = createAllScored(type, context);
         for (NScoredValue<T> a : all) {
@@ -172,95 +148,21 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
             }
         }
-
-        //fallback needed in bootstrap or if the extensions are broken!
-        switch (type.getName()) {
-            case "net.thevpc.nuts.text.NObjectObjectWriter": {
-                NObjectObjectWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNObjectObjectWriter.class, NObjectObjectWriter.class, NScopeType.SESSION, DefaultNObjectObjectWriter::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.io.NIO": {
-                NIO p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIO.class, NIO.class, NScopeType.WORKSPACE, DefaultNIO::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.elem.NElements": {
-                NElements p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElements.class, NElements.class, NScopeType.SESSION, DefaultNElements::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.elem.NElementWriter": {
-                NElementWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementWriter.class, NElementWriter.class, NScopeType.SESSION, DefaultNElementWriter::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.elem.NElementReader": {
-                NElementReader p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNElementReader.class, NElementReader.class, NScopeType.SESSION, DefaultNElementReader::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.io.NDigest": {
-                NDigest p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNDigest.class, NDigest.class, NScopeType.SESSION, DefaultNDigest::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.artifact.NIdWriter": {
-                NIdWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNIdWriter.class, NIdWriter.class, NScopeType.SESSION, DefaultNIdWriter::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.text.NVersionWriter": {
-                NVersionWriter p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNVersionWriter.class, NVersionWriter.class, NScopeType.SESSION, DefaultNVersionWriter::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.command.NExec": {
-                NExec p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNExec.class, NExec.class, NScopeType.SESSION, DefaultNExec::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.net.NWebCli": {
-                NWebCli p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNWebCli.class, NWebCli.class, NScopeType.SESSION, DefaultNWebCli::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.artifact.NIdBuilder": {
-                return NOptional.of((T) new DefaultNIdBuilder());
-            }
-            case "net.thevpc.nuts.artifact.NDependencyBuilder": {
-                return NOptional.of((T) new DefaultNDependencyBuilder());
-            }
-            case "net.thevpc.nuts.artifact.NEnvConditionBuilder": {
-                return NOptional.of((T) new DefaultNEnvConditionBuilder());
-            }
-            case "net.thevpc.nuts.artifact.NDescriptorBuilder": {
-                return NOptional.of((T) new DefaultNDescriptorBuilder());
-            }
-            case "net.thevpc.nuts.core.NBootOptionsBuilder": {
-                return NOptional.of((T) new DefaultNBootOptionsBuilder());
-            }
-            case "net.thevpc.nuts.core.NWorkspaceOptionsBuilder": {
-                return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
-            }
-            case "net.thevpc.nuts.concurrent.NConcurrent": {
-                NConcurrent p = NExtensionTypeInfo.getOrComputeCachedBean(NConcurrentImpl.class, NConcurrent.class, NScopeType.WORKSPACE, NConcurrentImpl::new);
-                return NOptional.of((T) p);
-            }
-            case "net.thevpc.nuts.platform.NEnv": {
-                if (supportCriteria == null) {
-                    NEnvLocal env = model.getEnv();
-                    return NOptional.of((T) env);
+        NOptional<T> v = model.createDefault(type, supportCriteria);
+        if(v.isNotPresent()){
+            if (all.isEmpty()) {
+                if (NFailSafeHelper.isWorkspaceInitializing()) {
+                    NFailSafeHelper.log(err -> {
+                        err.println("[Nuts] unable to resolve " + type);
+                        Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
+                        err.println("[Nuts] extensionTypes =  " + extensionTypes);
+                        dump(type);
+                        new Throwable().printStackTrace(err);
+                    });
                 }
-                break;
-            }
-            default: {
-                //wont use NLog because not yet initialized!
             }
         }
-        if (all.isEmpty()) {
-            if (NFailSafeHelper.isWorkspaceInitializing()) {
-                NFailSafeHelper.log(err -> {
-                    err.println("[Nuts] unable to resolve " + type);
-                    Set<Class<? extends T>> extensionTypes = getExtensionTypes(type);
-                    err.println("[Nuts] extensionTypes =  " + extensionTypes);
-                    dump(type);
-                    new Throwable().printStackTrace(err);
-                });
-            }
-        }
-
-        return NOptional.ofNamedEmpty(NMsg.ofC("missing %s", type));
+        return v;
     }
 
     @Override

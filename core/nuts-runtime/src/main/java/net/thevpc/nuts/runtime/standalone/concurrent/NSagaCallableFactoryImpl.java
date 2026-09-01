@@ -27,6 +27,11 @@ public class NSagaCallableFactoryImpl implements NSagaCallableFactory {
 
     @Override
     public NSagaCallableBuilder ofBuilder() {
-        return new NSagaCallableBuilderImpl(store);
+        return ofBuilder(null);
+    }
+
+    @Override
+    public NSagaCallableBuilder ofBuilder(String id) {
+        return new NSagaCallableBuilderImpl(id, store);
     }
 }

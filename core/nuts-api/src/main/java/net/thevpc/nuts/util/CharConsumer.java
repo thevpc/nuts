@@ -6,6 +6,7 @@ package net.thevpc.nuts.util;
  * for {@code char}. Unlike most other functional interfaces, {@code CharConsumer} is expected
  * to operate via side-effects.
  */
+@NJdkExtension("Missing from java.util — JDK only provides Consumer<T>")
 @FunctionalInterface
 public interface CharConsumer {
 

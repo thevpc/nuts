@@ -48,12 +48,12 @@ public final class NullInputStream extends InputStream {
 
     @Override
     public int read(byte[] b)  {
-        return 0;
+        return (b == null || b.length == 0) ? 0 : -1;
     }
 
     @Override
     public int read(byte[] b, int off, int len) {
-        return 0;
+        return len == 0 ? 0 : -1;
     }
 
     @Override

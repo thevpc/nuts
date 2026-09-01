@@ -17,6 +17,7 @@ import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
+import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPathInfo;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
@@ -30,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.DefaultNTextCursorTracker;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -52,6 +54,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -615,8 +618,8 @@ public class DefaultNIORPI implements NIORPI {
             name = "";
         }
         rootFolder.mkdirs();
-        NStringBuilder ext = new NStringBuilder(NIOUtils.getFileExtension(name, false, true));
-        NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        NStringBuilder ext = new NStringBuilderImpl(NIOUtils.getFileExtension(name, false, true));
+        NStringBuilder prefix = new NStringBuilderImpl((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");
             if (!folder) {
@@ -1075,4 +1078,15 @@ public class DefaultNIORPI implements NIORPI {
         return monitor;
     }
 
+    @Override
+    public NPathInfo createPathInfoNotFound(String path) {
+        int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
+        String name=u<0?path:path.substring(u+1);
+        return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null, Collections.emptySet(),null,null);
+    }
+
+    @Override
+    public NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
+        return new DefaultNPathInfo(name,path,targetType, targetType,targetPath,size,symbolicLink,lastModified,lastAccess, creationTime, permissions,owner,group);
+    }
 }

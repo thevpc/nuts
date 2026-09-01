@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Builder interface for constructing {@link NSagaCallable} instances.
  * <p>
@@ -9,6 +11,48 @@ package net.thevpc.nuts.concurrent;
  * saga workflows to be built in a readable, declarative style.
  */
 public interface NSagaCallableBuilder {
+    static NSagaCallableBuilder of() {
+        return NConcurrentRPI.of().sagaCallBuilder();
+    }
+
+    static NSagaCallableBuilder of(String id) {
+        return NSagaCallableFactory.of().ofBuilder(id);
+    }
+
+    /**
+     * Sets the unique identifier for the saga.
+     *
+     * @param id saga id
+     * @return this builder
+     * @since 0.8.8
+     */
+    NSagaCallableBuilder id(String id);
+
+    /**
+     * Returns the unique identifier configured for the saga.
+     *
+     * @return saga id
+     * @since 0.8.8
+     */
+    String id();
+
+    /**
+     * Sets the backing store for the saga.
+     *
+     * @param store saga store
+     * @return this builder
+     * @since 0.8.8
+     */
+    NSagaCallableBuilder store(NSagaStore store);
+
+    /**
+     * Returns the backing store configured for the saga.
+     *
+     * @return saga store
+     * @since 0.8.8
+     */
+    NSagaStore store();
+
     /**
      * Starts the saga definition and returns the root suite for adding steps.
      *

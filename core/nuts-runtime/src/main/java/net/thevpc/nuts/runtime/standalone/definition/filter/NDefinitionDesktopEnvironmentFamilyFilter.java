@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionDesktopEnvironmentFamilyFilter extends AbstractDefinitionFilter {
+public class NDefinitionDesktopEnvironmentFamilyFilter extends DefinitionFilterBase {
 
     private Set<NDesktopEnvironmentFamily> accepted = new HashSet<>();
 

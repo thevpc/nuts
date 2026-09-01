@@ -52,6 +52,12 @@
 </head>
 
 <body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+    <meta name="dl-latest-jar" content="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar">
+    <meta name="dl-stable-jar" content="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar">
+    <meta name="dl-latest-version" content="1.0.0.0">
+    <meta name="dl-stable-version" content="0.8.9.0">
+    <meta name="dl-api-version" content="1.0.0">
+    <meta name="dl-stable-api-version" content="0.8.9">
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-download.css"/>
 
     <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
@@ -84,12 +90,19 @@
                 </a>
                 <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
                     <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        v0.8.3
+                        v0.8.9
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="doc-nuts.html">v0.8.4 (Latest)</a>
-                        <a class="dropdown-item active" href="versions/v0.8.3/doc-nuts.html">v0.8.3</a>
+                        <a class="dropdown-item " href="versions/v1.0.0/doc-nuts.html">v1.0.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="versions/v0.8.9/doc-nuts.html">v0.8.9</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.8/doc-nuts.html">v0.8.8</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.7/doc-nuts.html">v0.8.7</a>
+                        
+
                     </div>
                 </div>
             </div>
@@ -108,9 +121,11 @@
                         <a class="dropdown-toggle" href="#">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item "
-                                   href="doc-nuts.html">User Documentation</a></li>
+                                   href="versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="doc-naf.html">Developer Documentation</a></li>
+                                   href="versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item "
                                    href="faq.html">FAQ</a></li>
                             <li><a class="dropdown-item "
@@ -142,6 +157,7 @@
 </header>
 <!-- Header End -->
 
+
     <!-- PAGE HEADER -->
     <section class="dl-page-header">
         <div class="container dl-page-header__inner">
@@ -151,8 +167,8 @@
                 <span class="dl-version-pill dl-version-pill--latest">
                     <i class="fas fa-bolt"></i> Latest &nbsp;<strong>1.0.0.0</strong>
                 </span>
-                <span class="dl-version-pill dl-version-pill--lts">
-                    <i class="fas fa-shield-alt"></i> LTS &nbsp;<strong>0.8.9.0</strong>
+                <span class="dl-version-pill dl-version-pill--stable">
+                    <i class="fas fa-shield-alt"></i> Stable &nbsp;<strong>0.8.9.0</strong>
                 </span>
                 <span class="dl-version-pill dl-version-pill--java">
                     <i class="fab fa-java"></i> Requires Java 8+
@@ -187,12 +203,12 @@
                             </div>
                         </button>
 
-                        <button class="dl-choice dl-choice--version" data-version="lts">
+                        <button class="dl-choice dl-choice--version" data-version="stable">
                             <div class="dl-choice__icon dl-choice__icon--green">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
                             <div class="dl-choice__text">
-                                <span class="dl-choice__label">LTS</span>
+                                <span class="dl-choice__label">Stable</span>
                                 <span class="dl-choice__version">0.8.9.0</span>
                                 <span class="dl-choice__desc">Long-term support. Critical patches only. Recommended for production.</span>
                             </div>
@@ -397,7 +413,7 @@ nuts netbeans</code></pre>
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on <span id="build-time"></span>
         </p>
     </div>
 </footer>
@@ -422,6 +438,7 @@ nuts netbeans</code></pre>
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/nuts-docs.js"></script>
 </body>
+<script src="assets/js/common.js"></script>
 <script src="assets/js/nuts-download.js"></script>
 </body>
 </html>

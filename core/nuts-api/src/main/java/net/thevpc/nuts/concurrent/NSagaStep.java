@@ -30,4 +30,46 @@ public interface NSagaStep {
      * @param context the {@link NSagaContext} holding saga variables and state
      */
     void undo(NSagaContext context);
+
+    /**
+     * Creates a saga step with no undo action.
+     *
+     * @param call the execution function
+     * @return the saga step
+     */
+    static NSagaStep of(java.util.function.Function<NSagaContext, Object> call) {
+        return new NSagaStep() {
+            @Override
+            public Object call(NSagaContext context) {
+                return call == null ? null : call.apply(context);
+            }
+
+            @Override
+            public void undo(NSagaContext context) {
+            }
+        };
+    }
+
+    /**
+     * Creates a saga step with execution and compensation actions.
+     *
+     * @param call the execution function
+     * @param undo the compensation action
+     * @return the saga step
+     */
+    static NSagaStep of(java.util.function.Function<NSagaContext, Object> call, java.util.function.Consumer<NSagaContext> undo) {
+        return new NSagaStep() {
+            @Override
+            public Object call(NSagaContext context) {
+                return call == null ? null : call.apply(context);
+            }
+
+            @Override
+            public void undo(NSagaContext context) {
+                if (undo != null) {
+                    undo.accept(context);
+                }
+            }
+        };
+    }
 }

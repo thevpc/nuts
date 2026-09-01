@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect.mapper;
 
+import net.thevpc.nuts.util.NException;
+
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -34,19 +36,15 @@ public class TypeHelper {
             c = t.getConstructor();
             c.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
         return new ObjFactory<T>() {
             @Override
             public T newInstance() {
                 try {
                     return c.newInstance();
-                } catch (InstantiationException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e);
+                } catch (InstantiationException|IllegalAccessException|InvocationTargetException e) {
+                    throw NException.ofUncheckedException(e);
                 }
             }
         };
@@ -76,7 +74,7 @@ public class TypeHelper {
             declaredField.setAccessible(true);
             return declaredField.get(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 
@@ -87,7 +85,7 @@ public class TypeHelper {
             declaredField.setAccessible(true);
             declaredField.set(obj,value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 

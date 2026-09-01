@@ -6,6 +6,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.util.NException;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -116,7 +117,7 @@ public class SshConnectionPool {
             NLog.of(SshConnectionPool.class).log(NMsg.ofC("acquire ssh connection %s", connectionString).withIntent(NMsgIntent.REMOVE).asDebug());
             return take;
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 
 import java.util.function.Supplier;
 
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the value
  */
-public interface NOnceValue<T> extends Supplier<T>, NDescribable {
+public interface NOnceValue<T> extends Supplier<T>, NDescribable, AutoCloseable {
 
     /**
      * Creates a once value from a supplier.
@@ -25,7 +26,7 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable {
      * @return a new {@code NOnceValue} wrapping the given supplier
      */
     static <T> NOnceValue<T> ofSupplier(Supplier<T> supplier) {
-        return NConcurrent.of().onceValue(supplier);
+        return NConcurrentRPI.of().onceValue(supplier);
     }
 
     /**
@@ -93,4 +94,6 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable {
      */
     T orElse(T value);
 
+    @Override
+    void close();
 }

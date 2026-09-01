@@ -29,4 +29,12 @@ public interface NWorkBalancerStore {
      * @param model the work balancer model to save
      */
     void save(NWorkBalancerModel model);
+
+
+    /**
+     * delete a by its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

@@ -1,9 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -178,7 +177,7 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
              * @param e e
              * @return runtime exception result
              */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 
@@ -194,33 +193,16 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
         return Objects.hash(hostLoadFactor, hostCpuLoad, hostMemoryLoad, hostLatency, customMetrics);
     }
 
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("hostLoadFactor:").append(hostLoadFactor);
-
-        if (!Float.isNaN(hostCpuLoad)) {
-            sb.append(",hostCpuLoad:").append(hostCpuLoad);
-        }
-        if (!Float.isNaN(hostMemoryLoad)) {
-            sb.append(",hostMemoryLoad:").append(hostMemoryLoad);
-        }
-        if (hostLatency >= 0) {
-            sb.append(",hostLatency:").append(hostLatency);
-        }
-        if (customMetrics != null && !customMetrics.isEmpty()) {
-            sb.append(",customMetrics:{");
-            boolean first = true;
-            for (Map.Entry<String, NElement> e : customMetrics.entrySet()) {
-                if (!first) sb.append(",");
-                sb.append(e.getKey()).append(":").append(e.getValue());
-                first = false;
-            }
-            sb.append("}");
-        }
-
-        sb.append("}");
-        return sb.toString();
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("hostLoadFactor", hostLoadFactor)
+                .add("hostCpuLoad", hostCpuLoad)
+                .add("hostMemoryLoad", hostMemoryLoad)
+                .add("hostLatency", hostLatency)
+                .add("customMetrics", customMetrics)
+                .build();
     }
+
 }

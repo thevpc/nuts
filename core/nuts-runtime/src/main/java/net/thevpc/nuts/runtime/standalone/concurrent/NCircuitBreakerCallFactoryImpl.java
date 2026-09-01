@@ -52,7 +52,7 @@ public class NCircuitBreakerCallFactoryImpl implements NCircuitBreakerCallFactor
             id = UUID.randomUUID().toString();
         }
         return new NCircuitBreakerCallImpl<>(id, callable,
-                beanContainer, store == null ? NConcurrent.of().memoryCircuitBreakerCallFactory().store() : store);
+                beanContainer, store == null ? NCircuitBreakerCallFactory.ofMem().store() : store);
     }
 
 

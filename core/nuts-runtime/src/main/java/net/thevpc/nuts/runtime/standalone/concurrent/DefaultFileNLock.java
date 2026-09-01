@@ -69,7 +69,7 @@ public class DefaultFileNLock extends AbstractNLock {
         }
 
         public String serialize() {
-            NStringBuilder sb = new NStringBuilder();
+            NStringBuilder sb = NStringBuilder.of();
             sb.println("hostname=" + NStringUtils.strip(hostname));
             sb.println("pid=" + NStringUtils.strip(pid));
             sb.println("instant=" + instant);

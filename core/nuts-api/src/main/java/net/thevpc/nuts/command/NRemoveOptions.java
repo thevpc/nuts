@@ -28,6 +28,7 @@ package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.Objects;
 
@@ -77,8 +78,9 @@ public class NRemoveOptions {
 
     @Override
     public String toString() {
-        return "NutsRemoveOptions{" +
-                "erase=" + erase +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("erase", erase)
+                .build();
     }
+
 }

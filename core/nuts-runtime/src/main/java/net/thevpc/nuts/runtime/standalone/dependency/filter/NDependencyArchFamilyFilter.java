@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
+public class NDependencyArchFamilyFilter extends NDependencyFilterBase {
 
     private Set<NArchFamily> archs = EnumSet.noneOf(NArchFamily.class);
 

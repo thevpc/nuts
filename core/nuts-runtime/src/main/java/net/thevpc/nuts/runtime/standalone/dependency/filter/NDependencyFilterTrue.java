@@ -5,7 +5,7 @@ import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.util.NFilterOp;
 
-public final class NDependencyFilterTrue extends AbstractDependencyFilter{
+public final class NDependencyFilterTrue extends NDependencyFilterBase {
 
     public NDependencyFilterTrue() {
         super(NFilterOp.TRUE);

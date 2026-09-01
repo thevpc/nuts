@@ -6,6 +6,7 @@ package net.thevpc.nuts.util;
  * This is the {@code byte}-specialized version of {@link java.util.function.Predicate}.
  * </p>
  */
+@NJdkExtension("Missing from java.util.function — JDK only provides IntPredicate, LongPredicate, DoublePredicate")
 @FunctionalInterface
 public interface BytePredicate {
     /**

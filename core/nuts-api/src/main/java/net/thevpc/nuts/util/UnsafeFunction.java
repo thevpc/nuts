@@ -8,6 +8,8 @@ import java.util.function.Function;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension("Missing from java.util.function — JDK only provides Function that are safe")
+@FunctionalInterface
 public interface UnsafeFunction<T, V> {
 
     /**

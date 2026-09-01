@@ -82,7 +82,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                             NInputSourceBuilder.of(socket.getInputStream())
                                     .metadata(new DefaultNContentMetadata().message(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
                                     .createNonBlockingInputStream(), NOut.asPrintStream());
-                    NConcurrent.of().executorService().submit(rr);
+                    NConcurrent.executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));

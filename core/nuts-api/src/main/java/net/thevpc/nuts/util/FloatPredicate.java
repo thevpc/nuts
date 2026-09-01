@@ -6,6 +6,7 @@ package net.thevpc.nuts.util;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension("Missing from java.util.function — JDK only provides IntPredicate, LongPredicate, DoublePredicate")
 public interface FloatPredicate {
     /**
      * Test.

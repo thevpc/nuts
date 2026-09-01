@@ -8,6 +8,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPathInfo;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NTreeVisitResult;
 import net.thevpc.nuts.text.NTreeVisitor;
@@ -485,28 +486,19 @@ public class FilePath implements NPathSPI {
 
     @Override
     public Boolean isName(NPath basePath) {
-        return value.getNameCount() == 1 && value.getParent() == null;
-//        if (value.getNameCount() > 1) {
-//            return false;
-//        }
-//        String v = value.toString();
-//        switch (v) {
-//            case "/":
-//            case "\\":
-//            case ".":
-//            case "..": {
-//                return false;
-//            }
-//        }
-//        for (char c : v.toCharArray()) {
-//            switch (c) {
-//                case '/':
-//                case '\\': {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
+        if(value.getNameCount()!=1){
+            return false;
+        }
+        if(value.getParent()!=null){
+            return false;
+        }
+        String n = getName(basePath);
+        switch (n){
+            case ".":
+            case "..":
+             return false;
+        }
+        return true;
     }
 
     @Override
@@ -662,7 +654,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public boolean copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of().from(fastPath(value)).to(other).addOptions(options).run();
+        NCp.of().from(fastPath(value)).to(other).options(options).run();
         return true;
     }
 
@@ -1004,7 +996,7 @@ public class FilePath implements NPathSPI {
                 try {
                     raf.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 }
                 raf = null;
             }
@@ -1061,7 +1053,7 @@ public class FilePath implements NPathSPI {
                 close();
                 return false;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
         }
 

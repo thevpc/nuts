@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionFilter;
-import net.thevpc.nuts.spi.base.AbstractVersionFilter;
+import net.thevpc.nuts.spi.base.NVersionFilterBase;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NVersionFilterOr extends AbstractVersionFilter implements NExprIdFilter, NComplexExpressionString {
+public class NVersionFilterOr extends NVersionFilterBase implements NExprIdFilter, NComplexExpressionString {
 
     private NVersionFilter[] all;
 

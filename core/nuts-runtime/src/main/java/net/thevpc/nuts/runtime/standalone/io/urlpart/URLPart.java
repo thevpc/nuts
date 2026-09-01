@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
@@ -64,7 +65,7 @@ public abstract class URLPart {
                 File file = Paths.get(new URI(r)).toFile();
                 return new URLPartFile(null, file.getPath(), file);
             } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
         } else if (r.startsWith("http:") || r.startsWith("https:") || r.startsWith("ftp:")) {
             return new URLPartWeb(null, r, obj);

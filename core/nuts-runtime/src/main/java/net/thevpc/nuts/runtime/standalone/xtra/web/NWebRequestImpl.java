@@ -4,6 +4,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.*;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
@@ -105,7 +106,7 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebRequestImpl uri(String url, Object... vars) {
         NAssert.requireNamedNonNull(url, "url");
         NAssert.requireNamedNonNull(vars, "vars");
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         char[] charArray = url.toCharArray();
         char last = '\0';
         int index = 0;
@@ -138,31 +139,21 @@ public class NWebRequestImpl implements NWebRequest {
                     if (inParams) {
                         sb.append(c);
                     } else {
-                        if (i + 1 < charArray.length) {
-                            switch (charArray[i + 1]) {
-                                case '}': {
-                                    last = 's';
-                                    if (index >= vars.length) {
-                                        throw new IllegalArgumentException(NMsg.ofC("missing var at index %s in %s", index, url).toString());
-                                    }
-                                    if (!NBlankable.isBlank(vars[index])) {
-                                        sb.append(NHttpUrlEncoder.encodeObject(vars[index]));
-                                    } else {
-                                        if (!sb.endsWith("://") && sb.endsWith('/')) {
-                                            sb.removeLast();
-                                        }
-                                    }
-                                    i++;
-                                    index++;
-                                    break;
-                                }
-                                default: {
-                                    sb.append('{').append(charArray[i + 1]);
-                                    i++;
-                                    last = 'a';
-                                    break;
+                        int close = url.indexOf('}', i + 1);
+                        if (close > i) {
+                            last = 's';
+                            if (index >= vars.length) {
+                                throw new IllegalArgumentException(NMsg.ofC("missing var at index %s in %s", index, url).toString());
+                            }
+                            if (!NBlankable.isBlank(vars[index])) {
+                                sb.append(NHttpUrlEncoder.encodeObject(vars[index]));
+                            } else {
+                                if (!sb.endsWith("://") && sb.endsWith('/')) {
+                                    sb.removeLast();
                                 }
                             }
+                            i = close;
+                            index++;
                         } else {
                             sb.append(c);
                             last = 'a';
@@ -357,7 +348,7 @@ public class NWebRequestImpl implements NWebRequest {
     @Override
     public NWebRequest headers(Map<String, List<String>> headers) {
         this.headers.clear();
-        return this;
+        return addHeaders(headers);
     }
 
     @Override
@@ -382,7 +373,7 @@ public class NWebRequestImpl implements NWebRequest {
                 String k = e.getKey();
                 if (k != null && e.getValue() != null && !e.getValue().isEmpty()) {
                     for (String v : e.getValue()) {
-                        addHeader(k, v);
+                        addParameter(k, v);
                     }
                 }
             }
@@ -444,9 +435,10 @@ public class NWebRequestImpl implements NWebRequest {
         Map<String, List<String>> m = new LinkedHashMap<>();
         path.lines().forEach(x -> {
             x = NStringUtils.strip(x);
-            if (!x.startsWith("#")) {
+            if (!x.startsWith("#") && !x.isEmpty()) {
                 NArg a = NArg.of(x);
-                m.computeIfAbsent(a.key(), r -> new ArrayList<>()).add(String.valueOf(a.key()));
+                String val = a.getStringValue().orNull();
+                m.computeIfAbsent(a.key(), r -> new ArrayList<>()).add(val == null ? "" : val);
             }
         });
         return m;
@@ -548,20 +540,22 @@ public class NWebRequestImpl implements NWebRequest {
                 contentType("application/x-www-form-urlencoded");
                 StringBuilder sb = new StringBuilder();
                 boolean first = true;
-                for (Map.Entry<String, String> e : urlEncoded.entrySet()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        sb.append("&");
-                    }
-                    try {
-                        sb
-                                .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
-                                .append("=")
-                                .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
-                        ;
-                    } catch (UnsupportedEncodingException ex) {
-                        throw new RuntimeException(ex);
+                if (urlEncoded != null) {
+                    for (Map.Entry<String, String> e : urlEncoded.entrySet()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            sb.append("&");
+                        }
+                        try {
+                            sb
+                                    .append(URLEncoder.encode(NStringUtils.strip(e.getKey()), "UTF-8"))
+                                    .append("=")
+                                    .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
+                            ;
+                        } catch (UnsupportedEncodingException ex) {
+                            throw NException.ofUncheckedException(ex);
+                        }
                     }
                 }
                 return NInputSource.of(sb.toString().getBytes());
@@ -678,7 +672,7 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebRequest requestBody(String body) {
         this.requestBody = body == null ? null : NInputSource.of(new StringReader(body));
         setMode(body == null ? Mode.NONE : Mode.BODY);
-        return null;
+        return this;
     }
 
     @Override
@@ -822,7 +816,7 @@ public class NWebRequestImpl implements NWebRequest {
                             .append(URLEncoder.encode(NStringUtils.strip(e.getValue()), "UTF-8"))
                     ;
                 } catch (UnsupportedEncodingException ex) {
-                    throw new RuntimeException(ex);
+                    throw NException.ofUncheckedException(ex);
                 }
             }
         }

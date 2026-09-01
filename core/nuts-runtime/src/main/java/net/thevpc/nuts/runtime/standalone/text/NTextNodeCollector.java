@@ -5,14 +5,15 @@ import net.thevpc.nuts.text.NTextVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class NTextNodeCollector implements NTextVisitor {
+public class NTextNodeCollector implements Consumer<NText> {
     private List<NText> all = new ArrayList<>();
     public NTextNodeCollector() {
     }
 
     @Override
-    public void visit(NText node) {
+    public void accept(NText node) {
         all.add(node);
     }
 

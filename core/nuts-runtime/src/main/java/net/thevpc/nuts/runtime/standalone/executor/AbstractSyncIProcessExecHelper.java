@@ -12,6 +12,6 @@ public abstract class AbstractSyncIProcessExecHelper implements IProcessExecHelp
 
     @Override
     public Future<Integer> execAsync() {
-        return NConcurrent.of().executorService().submit(this::exec);
+        return NConcurrent.executorService().submit(this::exec);
     }
 }

@@ -2,10 +2,9 @@ package net.thevpc.nuts.runtime.standalone.definition;
 
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
-import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 
-public class NDefinitionFilterToNIdPredicate2 extends AbstractNPredicate<NId> {
+public class NDefinitionFilterToNIdPredicate2 extends NPredicateBase<NId> {
     private final NDefinitionFilter filter;
 
     public NDefinitionFilterToNIdPredicate2(NDefinitionFilter filter) {

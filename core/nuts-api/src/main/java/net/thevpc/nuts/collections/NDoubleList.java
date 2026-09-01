@@ -71,7 +71,7 @@ public interface NDoubleList {
      * @param index index
      * @param value value
      */
-    void add(int index, double value);
+    NDoubleList add(int index, double value);
 
     /**
      * Removes the specified all.
@@ -95,14 +95,14 @@ public interface NDoubleList {
      *
      * @param values values
      */
-    void addAll(NDoubleList values);
+    NDoubleList addAll(NDoubleList values);
 
     /**
      * Adds the specified all.
      *
      * @param values values
      */
-    void addAll(double... values);
+    NDoubleList addAll(double... values);
 
     /**
      * Insert all.
@@ -110,7 +110,7 @@ public interface NDoubleList {
      * @param offset offset
      * @param values values
      */
-    void insertAll(int offset, double... values);
+    NDoubleList insertAll(int offset, double... values);
 
     /**
      * Sub list.
@@ -128,19 +128,19 @@ public interface NDoubleList {
      * @param count count
      * @param replacement replacement
      */
-    void replaceSubList(int offset, int count, double... replacement);
+    NDoubleList replaceSubList(int offset, int count, double... replacement);
 
     /**
      * Adds add.
      *
      * @param value value
      */
-    void add(double value);
+    NDoubleList add(double value);
 
     /**
      * Trim to size.
      */
-    void trimToSize();
+    NDoubleList trimToSize();
 
     /**
      * Copy.
@@ -311,12 +311,12 @@ public interface NDoubleList {
      *
      * @param minCapacity min capacity
      */
-    void grow(int minCapacity);
+    NDoubleList grow(int minCapacity);
 
     /**
      * Ensure size.
      *
      * @param size size
      */
-    void ensureSize(int size);
+    NDoubleList ensureSize(int size);
 }

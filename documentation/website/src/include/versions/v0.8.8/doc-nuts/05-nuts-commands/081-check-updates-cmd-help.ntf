@@ -1,0 +1,7 @@
+---
+id: check-updates-help
+title: check-updates Cmdline
+---
+
+{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/check-updates.ntf"}}
+

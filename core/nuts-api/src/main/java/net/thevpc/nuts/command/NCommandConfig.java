@@ -31,6 +31,7 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -279,14 +280,15 @@ public class NCommandConfig extends NConfigItem {
 
     @Override
     public String toString() {
-        return "NutsCommandConfig{" +
-                "owner=" + owner +
-                ", name='" + name + '\'' +
-                ", factoryId='" + factoryId + '\'' +
-                ", command=" + command +
-                ", executorOptions=" + executorOptions +
-                ", helpCommand=" + helpCommand +
-                ", helpText='" + helpText + '\'' +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("owner", owner)
+                .add("name", name)
+                .add("factoryId", factoryId)
+                .add("command", command)
+                .add("executorOptions", executorOptions)
+                .add("helpCommand", helpCommand)
+                .add("helpText", helpText)
+                .build();
     }
+
 }

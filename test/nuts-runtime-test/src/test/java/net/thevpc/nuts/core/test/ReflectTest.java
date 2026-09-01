@@ -4,6 +4,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.reflect.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NAssignmentPolicy;
+import net.thevpc.nuts.util.NColor;
 import net.thevpc.nuts.util.NStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +57,7 @@ public class ReflectTest {
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});
             List<NReflectProperty> declaredProperties = type.declaredProperties();
-            NStringBuilder s = new NStringBuilder();
+            NStringBuilder s = NStringBuilder.of();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
             }
@@ -70,7 +71,7 @@ public class ReflectTest {
         {
             NReflectType type = typesRepository.getParametrizedType(D.class, null, new Type[]{Double.class, Integer.class});
             List<NReflectProperty> declaredProperties = type.declaredProperties();
-            NStringBuilder s = new NStringBuilder();
+            NStringBuilder s = NStringBuilder.of();
             for (NReflectProperty declaredProperty : declaredProperties) {
                 s.println(declaredProperty);
             }

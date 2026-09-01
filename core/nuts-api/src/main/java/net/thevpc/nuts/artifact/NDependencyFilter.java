@@ -28,7 +28,7 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NFilter;
 
@@ -412,7 +412,7 @@ public interface NDependencyFilter extends NFilter {
      * @param values accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
-    static NDependencyFilter ofPlatform(NExecutionEngineFamily... values){
+    static NDependencyFilter ofPlatform(NRuntimeDistributionFamily... values){
         return NDependencyFilterRPI.of().byPlatform(values);
     }
 

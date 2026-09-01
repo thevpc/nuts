@@ -1,5 +1,8 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+import net.thevpc.nuts.util.NSetter;
+
 import java.util.function.Supplier;
 
 /**
@@ -27,6 +30,60 @@ import java.util.function.Supplier;
  * @since 0.8.6
  */
 public interface NCachedValueFactory {
+    /**
+     * Creates a new {@link NCachedValueFactory} using the default store.
+     *
+     * @return a new cached value factory instance
+     */
+    static NCachedValueFactory of() {
+        return NConcurrentRPI.of().cachedValueFactory();
+    }
+
+    /**
+     * Creates a new {@link NCachedValueFactory} with a custom {@link NCachedValueStore}.
+     *
+     * @param store the backing store for cached values
+     * @return a new cached value factory instance using the provided store
+     */
+    static NCachedValueFactory of(NCachedValueStore store) {
+        return NConcurrentRPI.of().cachedValueFactory().withStore(store);
+    }
+
+    static NCachedValueFactory ofMem() {
+        return NConcurrentRPI.of().memoryCachedValueFactory();
+    }
+
+    static NCachedValueFactory ofDefault() {
+        return NConcurrentRPI.of().defaultCachedValueFactory();
+    }
+
+    /**
+     * Sets the cached the default value factory used by this component.
+     *
+     * @param factory factory
+     * @return this instance
+     */
+    @NSetter
+    static void configure(NCachedValueFactory factory) {
+        NConcurrentRPI.of().cachedValueFactory(factory);
+    }
+
+
+    /**
+     * Sets the backing {@link NCachedValueStore} for this factory.
+     *
+     * @param store the store to use
+     * @return this factory instance for method chaining
+     */
+    NCachedValueFactory withStore(NCachedValueStore store);
+
+    /**
+     * Returns the backing store used by this factory.
+     *
+     * @return the cached value store
+     */
+    NCachedValueStore store();
+
     /**
      * Creates a named cached value for the given supplier.
      * <p>

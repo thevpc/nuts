@@ -1,5 +1,8 @@
 package net.thevpc.nuts.reflect;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
+
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -36,13 +39,7 @@ public abstract class NTypeReference<T> implements Serializable {
     protected NTypeReference() {
         Type superclass = getClass().getGenericSuperclass();
         if (superclass instanceof Class) {
-            /**
-             * Runtime exception.
-             *
-             * @param parameter." parameter."
-             * @return runtime exception result
-             */
-            throw new RuntimeException("missing type parameter.");
+            throw NException.ofSafeUnexpectedException(NMsg.ofC("missing type parameter."));
         }
         this.type = ((ParameterizedType) superclass).getActualTypeArguments()[0];
     }

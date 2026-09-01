@@ -233,7 +233,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                 ).build();
                                             })
                                     .withDescription(NDescribables.ofDesc("getDependencies"))
-                    ).filter(NPredicates.nonNull())
+                    ).filter(NPredicate.ofNonNull())
                     .map(NFunction.of(NDependency::toId)
                             .withDescription(NDescribables.ofDesc("DependencyToId"))
                     )

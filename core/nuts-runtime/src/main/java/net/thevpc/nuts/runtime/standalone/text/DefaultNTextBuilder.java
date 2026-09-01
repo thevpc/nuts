@@ -354,7 +354,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     public NTextBuilder flatten() {
         if (!flattened) {
             NText build = build();
-            NText a = NText.transform(build, new NTextTransformConfig().flatten(true));
+            NText a = build.transform(new NTextTransformConfig().flatten(true));
             this.children.clear();
             fill(a);
             flattened = true;
@@ -372,7 +372,7 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
                 this.children.add(z);
             } else if (z instanceof NTextStyled) {
                 if (((NTextStyled) z).child() instanceof NTextList) {
-                    NText z2 = NText.transform(z, new NTextTransformConfig().flatten(true));
+                    NText z2 = z.transform( new NTextTransformConfig().flatten(true));
                 }
                 this.children.add(z);
             } else {

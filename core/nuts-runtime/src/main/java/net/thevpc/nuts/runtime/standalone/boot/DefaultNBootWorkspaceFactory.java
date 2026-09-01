@@ -35,6 +35,7 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.runtime.standalone.extension.NIdClassLoaderRegistry;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.reflect.NScorable;
@@ -71,6 +72,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             }
             return null;
         }
+        NIdClassLoaderRegistry.LEAF_PARENT(info2.classWorldLoader().orNull());
         return new DefaultNWorkspace(bOptions,info2);
     }
 

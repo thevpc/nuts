@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 
 import java.util.List;
 

@@ -241,7 +241,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart());
             NCp.of().from(
                     NPath.of(location)
-            ).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+            ).to(localPath).options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = NDigestUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {

@@ -197,10 +197,8 @@ public class NExtensionTypeInfo<T> {
                     return NWorkspace.of().getOrComputeProperty("scorer::" + c.getName(), () -> {
                         try {
                             return c.newInstance();
-                        } catch (InstantiationException e) {
-                            throw new RuntimeException(e);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
+                        } catch (InstantiationException|IllegalAccessException e) {
+                            throw NException.ofUncheckedException(e);
                         }
                     });
                 }

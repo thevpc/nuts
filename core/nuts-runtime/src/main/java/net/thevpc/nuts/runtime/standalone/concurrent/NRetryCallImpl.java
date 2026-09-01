@@ -9,11 +9,8 @@ import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.text.NMsg;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.function.IntFunction;
 
 public class NRetryCallImpl<T> implements NRetryCall<T> {
     private final NRetryCallStore store;
@@ -60,27 +57,12 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public NRetryCall<T> multipliedRetryPeriod(NDuration basePeriod, double multiplier) {
-        return retryPeriod(_retryMultipliedPeriod(basePeriod, multiplier));
-    }
-
-    @Override
-    public NRetryCall<T> exponentialRetryPeriod(NDuration basePeriod, double multiplier) {
-        return retryPeriod(_retryExponentialPeriod(basePeriod, multiplier));
-    }
-
-    @Override
     public NRetryCall<T> retryPeriod(NDuration period) {
-        return retryPeriod(_retryFixedPeriods(period));
+        return retryPeriod(NRetryPeriodFunction.ofFixedPeriod(period));
     }
 
     @Override
-    public NRetryCall<T> retryPeriods(NDuration... periods) {
-        return retryPeriod(_retryFixedPeriods(periods));
-    }
-
-    @Override
-    public NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod) {
+    public NRetryCall<T> retryPeriod(NRetryPeriodFunction retryPeriod) {
         synchronized (store) {
             model.retryPeriod(retryPeriod);
             store.save(model);
@@ -98,7 +80,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public NRetryCall<T> handler(Handler<T> handler) {
+    public NRetryCall<T> handler(NRetryHandler<T> handler) {
         synchronized (store) {
             model.handler(handler);
             store.save(model);
@@ -115,6 +97,14 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
                 return recover.call();
             }
             return null;
+        }
+    }
+
+    @Override
+    public void close(){
+        synchronized (store) {
+            String oldId = model.id();
+            store.delete(oldId);
         }
     }
 
@@ -208,7 +198,7 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     private T handleResultAndFinish(T result) {
-        Handler<T> handler = (Handler<T>) model.handler();
+        NRetryHandler<T> handler = (NRetryHandler<T>) model.handler();
         if (handler != null) {
             try {
                 model.status(Status.HANDLING);
@@ -232,10 +222,10 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
         return result;
     }
 
-    private Result<T> newCallResult() {
+    private NRetryResult<T> newCallResult() {
         T result = (T) model.result();
         Status status = model.status();
-        return new Result<T>() {
+        return new NRetryResult<T>() {
             @Override
             public String id() {
                 return model.id();
@@ -295,60 +285,12 @@ public class NRetryCallImpl<T> implements NRetryCall<T> {
     }
 
     @Override
-    public Future<Result<T>> callFuture() {
-        ExecutorService executor = NConcurrent.of().executorService(); // or your own
+    public Future<NRetryResult<T>> callFuture() {
+        ExecutorService executor = NConcurrent.executorService(); // or your own
         return executor.submit(() -> {
             T result = call();
             return newCallResult();
         });
     }
 
-
-    private IntFunction<NDuration> _retryFixedPeriods(NDuration... periods) {
-        List<NDuration> all = new ArrayList<>();
-        if (periods == null) {
-            all.add(NDuration.ofMillis(0));
-        } else {
-            for (NDuration period : periods) {
-                if (period != null) {
-                    all.add(period);
-                } else {
-                    all.add(NDuration.ofMillis(0));
-                }
-            }
-        }
-        return new IntFunction<NDuration>() {
-            @Override
-            public NDuration apply(int i) {
-                if (i < all.size()) {
-                    return all.get(i);
-                }
-                return all.get(all.size() - 1);
-            }
-        };
-    }
-
-    private IntFunction<NDuration> _retryMultipliedPeriod(NDuration base, double multiplier) {
-        if (base == null || base.isZero() || multiplier <= 0) {
-            return _retryFixedPeriods(NDuration.ofMillis(0));
-        }
-        return new IntFunction<NDuration>() {
-            @Override
-            public NDuration apply(int iteration) {
-                return base.mul(multiplier * iteration);
-            }
-        };
-    }
-
-    private IntFunction<NDuration> _retryExponentialPeriod(NDuration base, double multiplier) {
-        if (base == null || base.isZero() || multiplier <= 0) {
-            return _retryFixedPeriods(NDuration.ofMillis(0));
-        }
-        return new IntFunction<NDuration>() {
-            @Override
-            public NDuration apply(int iteration) {
-                return base.mul(Math.pow(multiplier, iteration));
-            }
-        };
-    }
 }

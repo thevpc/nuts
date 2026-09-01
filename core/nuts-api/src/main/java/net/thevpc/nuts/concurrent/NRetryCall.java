@@ -1,12 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.concurrent.Future;
-import java.util.function.IntFunction;
 
 /**
  * A retryable callable task.
@@ -18,7 +17,7 @@ import java.util.function.IntFunction;
  * @param <T> the type of the result returned by this retry call
  * @since 0.8.7
  */
-public interface NRetryCall<T> extends NCallable<T>, NDescribable {
+public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable {
 
     /**
      * Status of the retry call during its lifecycle.
@@ -36,7 +35,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(NCallable<T> callable) {
-        return NConcurrent.of().retryCall(callable);
+        return NConcurrentRPI.of().retryCall(callable);
     }
 
     /**
@@ -48,7 +47,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrent.of().retryCall(id, callable);
+        return NConcurrentRPI.of().retryCall(id, callable);
     }
 
     /**
@@ -66,25 +65,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @param retryPeriod function mapping attempt index to duration
      * @return this instance
      */
-    NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod);
-
-    /**
-     * Sets a multiplied retry period based on a base period and a multiplier factor.
-     *
-     * @param basePeriod base duration
-     * @param multiplier factor to multiply base duration for each retry
-     * @return this instance
-     */
-    NRetryCall<T> multipliedRetryPeriod(NDuration basePeriod, double multiplier);
-
-    /**
-     * Sets an exponential retry period.
-     *
-     * @param basePeriod base duration
-     * @param multiplier exponential growth factor
-     * @return this instance
-     */
-    NRetryCall<T> exponentialRetryPeriod(NDuration basePeriod, double multiplier);
+    NRetryCall<T> retryPeriod(NRetryPeriodFunction retryPeriod);
 
     /**
      * Sets a fixed retry period for all attempts.
@@ -94,15 +75,6 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      */
     @NSetter
     NRetryCall<T> retryPeriod(NDuration period);
-
-    /**
-     * Sets a sequence of retry periods for consecutive attempts.
-     *
-     * @param periods array of durations
-     * @return this instance
-     */
-    @NSetter
-    NRetryCall<T> retryPeriods(NDuration... periods);
 
     /**
      * Adds a recovery callable to execute if all retry attempts fail.
@@ -120,7 +92,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      * @return this instance
      */
     @NSetter
-    NRetryCall<T> handler(Handler<T> handler);
+    NRetryCall<T> handler(NRetryHandler<T> handler);
 
     /**
      * Executes the call, blocking until a result is obtained.
@@ -145,71 +117,16 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable {
      */
     void callAsync();
 
+    /**
+     * dispose of the retry call and delete it
+     */
+    void close();
 
     /**
      * Returns a {@link Future} representing the asynchronous execution of this retry call.
      *
-     * @return a future with the {@link Result} of the call
+     * @return a future with the {@link NRetryResult} of the call
      */
-    Future<Result<T>> callFuture();
-
-    /**
-     * Handler for processing results of the retry call.
-     *
-     * @param <T> type of the result
-     */
-    interface Handler<T> {
-        /**
-         * Handle.
-         *
-         * @param result result
-         */
-        void handle(Result<T> result);
-    }
-
-    /**
-     * Encapsulates the result of a retry call, including status and value.
-     *
-     * @param <T> type of the result
-     */
-    interface Result<T> {
-        /**
-         * Unique identifier of the retry call.
-         *
-         * @return the call ID
-         */
-        @NGetter
-        String id();
-
-        /**
-         * Returns the {@link NRetryCall} instance associated with this result.
-         *
-         * @return the retry call
-         */
-        NRetryCall<T> value();
-
-        /**
-         * Returns true if the result is valid (call succeeded or recovery succeeded).
-         *
-         * @return true if valid
-         */
-        @NGetter
-        boolean isValid();
-
-        /**
-         * Returns true if the call failed.
-         *
-         * @return true if error occurred
-         */
-        @NGetter
-        boolean isError();
-
-        /**
-         * Returns the actual result of the call.
-         *
-         * @return the result value
-         */
-        T result();
-    }
+    Future<NRetryResult<T>> callFuture();
 
 }

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Factory for creating and managing {@link NWorkBalancer} instances.
  * <p>
@@ -47,7 +49,19 @@ public interface NWorkBalancerFactory {
      * @return a new {@link NWorkBalancerFactory} instance
      */
     static NWorkBalancerFactory of() {
-        return NConcurrent.of().workBalancerFactory();
+        return NConcurrentRPI.of().workBalancerFactory();
+    }
+
+    static NWorkBalancerFactory ofMem() {
+        return NConcurrentRPI.of().memoryWorkBalancerFactory();
+    }
+
+    static NWorkBalancerFactory ofDefault() {
+        return NConcurrentRPI.of().defaultWorkBalancerFactory();
+    }
+
+    static void configure(NWorkBalancerFactory global) {
+        NConcurrentRPI.of().workBalancerCallFactory(global);
     }
 
     /**
@@ -57,7 +71,7 @@ public interface NWorkBalancerFactory {
      * @return a new {@link NWorkBalancerFactory} instance
      */
     static NWorkBalancerFactory of(NWorkBalancerStore store) {
-        return NConcurrent.of().workBalancerFactory().withStore(store);
+        return NConcurrentRPI.of().workBalancerFactory().withStore(store);
     }
 
     /**
@@ -68,7 +82,7 @@ public interface NWorkBalancerFactory {
      * for executing jobs across the configured workers.
      * </p>
      *
-     * @param id unique identifier for the balancer
+     * @param id  unique identifier for the balancer
      * @param <T> type of the result returned by jobs submitted to this balancer
      * @return a {@link NWorkBalancerBuilder} for configuring the balancer
      */

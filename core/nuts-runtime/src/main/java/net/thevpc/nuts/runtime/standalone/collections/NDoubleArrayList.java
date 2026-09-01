@@ -45,12 +45,13 @@ public class NDoubleArrayList implements NDoubleList {
     }
 
     @Override
-    public void add(int index, double value){
+    public NDoubleList add(int index, double value){
         ensureSize(size + 1);  // Increments modCount!!
         System.arraycopy(values, index, values, index + 1,
                 size - index);
         values[index] = value;
         size++;
+        return this;
     }
 
     private void rangeCheck(int index) {
@@ -98,23 +99,25 @@ public class NDoubleArrayList implements NDoubleList {
     }
 
     @Override
-    public void addAll(NDoubleList values) {
+    public NDoubleList addAll(NDoubleList values) {
         int toAddLength = values.size();
         ensureSize(size + toAddLength);
         System.arraycopy(values.toArray(), 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void addAll(double... values) {
+    public NDoubleList addAll(double... values) {
         int toAddLength = values.length;
         ensureSize(size + toAddLength);
         System.arraycopy(values, 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void insertAll(int offset, double... values) {
+    public NDoubleList insertAll(int offset, double... values) {
         if(offset<0){
             throw new IllegalArgumentException("offset should be >=0");
         }
@@ -123,6 +126,7 @@ public class NDoubleArrayList implements NDoubleList {
         System.arraycopy(this.values, offset, this.values, offset + values.length, size - offset);
         System.arraycopy(values, 0, this.values, offset, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
@@ -138,7 +142,7 @@ public class NDoubleArrayList implements NDoubleList {
     }
 
     @Override
-    public void replaceSubList(int offset, int count, double... replacement) {
+    public NDoubleList replaceSubList(int offset, int count, double... replacement) {
         if (offset < 0) {
             count += offset;
             offset = 0;
@@ -151,19 +155,22 @@ public class NDoubleArrayList implements NDoubleList {
         System.arraycopy(this.values, offset + count, this.values, offset + replacement.length, this.size - offset - count);
         System.arraycopy(replacement, 0, this.values, offset, replacement.length);
         this.size = newSize;
+        return this;
     }
 
     @Override
-    public void add(double value){
+    public NDoubleList add(double value){
         ensureSize(size+1);
         values[size++]=value;
+        return this;
     }
 
     @Override
-    public void trimToSize(){
+    public NDoubleList trimToSize(){
         if(size<values.length){
             values= Arrays.copyOf(values,size);
         }
+        return this;
     }
 
     @Override
@@ -312,9 +319,9 @@ public class NDoubleArrayList implements NDoubleList {
     }
 
     @Override
-    public void grow(int minCapacity) {
+    public NDoubleList grow(int minCapacity) {
         if(minCapacity<values.length){
-            return;
+            return this;
         }
         int oldCapacity = values.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
@@ -325,6 +332,7 @@ public class NDoubleArrayList implements NDoubleList {
         // minCapacity is usually close to size, so this is a win:
         values = Arrays.copyOf(values, newCapacity);
 //        System.out.println(">> "+oldCapacity+" -> "+newCapacity);
+        return this;
     }
 
     private static int hugeCapacity(int minCapacity) {
@@ -337,10 +345,11 @@ public class NDoubleArrayList implements NDoubleList {
     }
 
     @Override
-    public void ensureSize(int size) {
+    public NDoubleList ensureSize(int size) {
         grow(size);
         if (size > values.length) {
             values = Arrays.copyOf(values, size);
         }
+        return this;
     }
 }

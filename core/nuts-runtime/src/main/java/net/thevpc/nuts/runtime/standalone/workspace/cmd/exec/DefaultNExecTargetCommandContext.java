@@ -5,6 +5,7 @@ import net.thevpc.nuts.spi.NExecTargetCommandContext;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.NException;
 
 import java.io.*;
 
@@ -206,7 +207,7 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
                 try {
                     in.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
             if (onClose != null) {
@@ -237,7 +238,7 @@ public class DefaultNExecTargetCommandContext implements NExecTargetCommandConte
                 try {
                     out.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw NException.ofUncheckedException(e);
                 }
             }
             if (onClose != null) {

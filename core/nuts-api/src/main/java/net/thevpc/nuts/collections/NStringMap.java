@@ -41,7 +41,7 @@ import java.util.*;
 public interface NStringMap<V> extends NCopiable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance NStringMap.
      *
      * @param map map
      * @param separator separator

@@ -14,13 +14,25 @@ public class DefaultNWebCookie implements NWebCookie {
     private Map<String, String> properties = new HashMap<>();
 
     public DefaultNWebCookie(String expr) {
-        int index = expr.indexOf('=');
-        name = NHttpUrlEncoder.decode(expr.substring(0, index));
-        value = NHttpUrlEncoder.decode(expr.substring(index + 1));
-        int pv = value.indexOf(';');
-        if (pv > 0) {
-            properties = COOKIES_PARSER.parse(value.substring(pv + 1)).get();
-            value = value.substring(0, pv);
+        if (expr != null) {
+            int index = expr.indexOf('=');
+            if (index >= 0) {
+                name = NHttpUrlEncoder.decode(expr.substring(0, index).trim());
+                String rest = expr.substring(index + 1);
+                int pv = rest.indexOf(';');
+                if (pv >= 0) {
+                    value = NHttpUrlEncoder.decode(rest.substring(0, pv).trim());
+                    properties = COOKIES_PARSER.parse(rest.substring(pv + 1)).get();
+                    if (properties == null) {
+                        properties = new HashMap<>();
+                    }
+                } else {
+                    value = NHttpUrlEncoder.decode(rest.trim());
+                }
+            } else {
+                name = NHttpUrlEncoder.decode(expr.trim());
+                value = "";
+            }
         }
     }
 
@@ -41,10 +53,22 @@ public class DefaultNWebCookie implements NWebCookie {
 
     @Override
     public String domain() {
-        return properties.get("path");
+        if (properties != null) {
+            String d = properties.get("domain");
+            if (d == null) {
+                d = properties.get("Domain");
+            }
+            return d;
+        }
+        return null;
     }
 
     public static String formatCookie(NWebCookie cookie) {
-        return NHttpUrlEncoder.encode(cookie.name()) + "=" + NHttpUrlEncoder.encode(cookie.value());
+        if (cookie == null) {
+            return "";
+        }
+        return NHttpUrlEncoder.encode(cookie.name() == null ? "" : cookie.name())
+                + "="
+                + NHttpUrlEncoder.encode(cookie.value() == null ? "" : cookie.value());
     }
 }

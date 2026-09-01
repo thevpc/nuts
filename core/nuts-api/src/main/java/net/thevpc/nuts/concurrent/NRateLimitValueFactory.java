@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Factory interface for creating and configuring {@link NRateLimitValue} instances.
  * <p>
@@ -24,9 +26,21 @@ public interface NRateLimitValueFactory {
      * @return default factory instance
      */
     static NRateLimitValueFactory of() {
-        return NConcurrent.of().rateLimitValueFactory();
+        return NConcurrentRPI.of().rateLimitValueFactory();
     }
 
+
+    static NRateLimitValueFactory ofMem() {
+        return NConcurrentRPI.of().memoryRateLimitValueFactory();
+    }
+
+    static NRateLimitValueFactory ofDefault() {
+        return NConcurrentRPI.of().defaultRateLimitValueFactory();
+    }
+
+    static void configure(NRateLimitValueFactory factory) {
+        NConcurrentRPI.of().rateLimitValueFactory(factory);
+    }
 
     /**
      * Returns a factory instance that uses the given persistent store.
@@ -35,7 +49,7 @@ public interface NRateLimitValueFactory {
      * @return factory instance using the provided store
      */
     static NRateLimitValueFactory of(NRateLimitValueStore store) {
-        return NConcurrent.of().rateLimitValueFactory().withStore(store);
+        return NConcurrentRPI.of().rateLimitValueFactory().withStore(store);
     }
 
 

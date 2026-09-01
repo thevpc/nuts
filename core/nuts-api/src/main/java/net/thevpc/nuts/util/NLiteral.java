@@ -1,5 +1,6 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 import net.thevpc.nuts.math.NBigComplex;
 import net.thevpc.nuts.math.NDoubleComplex;
 import net.thevpc.nuts.math.NFloatComplex;
@@ -28,7 +29,7 @@ public interface NLiteral extends NBlankable {
      * @return of result
      */
     static NLiteral of(Object any) {
-        return DefaultNLiteral.of(any);
+        return NUtilsRPI.of().createLiteral(any);
     }
 
     /**

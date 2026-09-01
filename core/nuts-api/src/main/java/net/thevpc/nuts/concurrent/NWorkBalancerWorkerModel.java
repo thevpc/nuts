@@ -1,13 +1,13 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.util.NCopiable;
-import net.thevpc.nuts.util.NGetter;
-import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Model representation of a {@link NWorkBalancerWorker}.
@@ -150,13 +150,7 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
         try {
             copy = (NWorkBalancerWorkerModel) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         copy.name = this.name;
         copy.options = this.options == null ? null : new HashMap<>(this.options);
@@ -164,11 +158,24 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NWorkBalancerWorkerModel that = (NWorkBalancerWorkerModel) o;
+        return Float.compare(weight, that.weight) == 0 && Objects.equals(name, that.name) && Objects.equals(options, that.options) && Objects.equals(hostLoadMetricsProvider, that.hostLoadMetricsProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, options, weight, hostLoadMetricsProvider);
+    }
+
+    @Override
     public String toString() {
-        return "NWorkBalancerWorkerModel{" +
-                "id='" + name + '\'' +
-                ", options=" + options +
-                ", loadSupplier=" + hostLoadMetricsProvider +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("name", name)
+                .add("options", options)
+                .add("weight", weight)
+                .add("hostLoadMetricsProvider", hostLoadMetricsProvider)
+                .build();
     }
 }

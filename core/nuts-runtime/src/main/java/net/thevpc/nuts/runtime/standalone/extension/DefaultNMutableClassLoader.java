@@ -25,13 +25,21 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.artifact.NClasspathEntry;
+import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NMutableClassLoader;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Simple Implementation of Nuts BootClassLoader
+ * Simple Implementation of Nuts Mutable ClassLoader for nuts extensions.
+ * Internally delegates through {@link NClassLoaderBase} which now behaves as
+ * a mutable composite of VM-shared leaves (obtained via
+ * {@link NIdClassLoaderRegistry}).
  *
  * @author thevpc
  * @app.category Boot
@@ -39,17 +47,19 @@ import net.thevpc.nuts.reflect.NMutableClassLoader;
 public class DefaultNMutableClassLoader extends NClassLoaderBase implements NMutableClassLoader {
 
     public DefaultNMutableClassLoader(String name, ClassLoader parent, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
-        this(name, parent, new NClasspathEntry[0],repositoryFilter,dependencyFilter);
+        this(name, parent, new NClasspathEntry[0], repositoryFilter, dependencyFilter);
     }
 
     public DefaultNMutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
-        super(name, parent, nodes,repositoryFilter,dependencyFilter);
+        super(name, parent, nodes, repositoryFilter, dependencyFilter);
     }
-
 
     @Override
     public NClassLoader immutable() {
-        return new DefaultImmutableNClassLoader(getName(), getParent(), baseEntries().toArray(new NClasspathEntry[0]), repositoryFilter, dependencyFilter);
+        // Create a snapshot composite that shares the same child leaves with us.
+        // The composite keeps the same parent for workspace-scoped extensions visibility.
+        List<NClassLoader> snapshot = new ArrayList<>(children);
+        return new DefaultNCompositeClassLoader(getName(), getParent(), snapshot);
     }
 
     @Override
@@ -59,6 +69,7 @@ public class DefaultNMutableClassLoader extends NClassLoaderBase implements NMut
 
     @Override
     public NMutableClassLoader copy() {
-        return new DefaultNMutableClassLoader(getName(), getParent(), baseEntries().toArray(new NClasspathEntry[0]), repositoryFilter, dependencyFilter);
+        NClasspathEntry[] entries = baseEntries.toArray(new NClasspathEntry[0]);
+        return new DefaultNMutableClassLoader(getName(), getParent(), entries, repositoryFilter, dependencyFilter);
     }
 }

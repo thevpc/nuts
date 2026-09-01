@@ -87,7 +87,7 @@ public class NMemoryMeter implements NTextFormattable {
        *
        * @param name name
        */
-        setName(name);
+        name(name);
       /**
        * Start.
        */
@@ -101,7 +101,7 @@ public class NMemoryMeter implements NTextFormattable {
      * @param name name
      * @return set name result
      */
-    public NMemoryMeter setName(String name) {
+    public NMemoryMeter name(String name) {
         this.name = name;
         return this;
     }

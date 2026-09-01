@@ -2,8 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockException;
-
-
+import net.thevpc.nuts.concurrent.NLockStore;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
@@ -13,128 +12,91 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNLockBuilder extends AbstractNLockBuilder {
-    Map<Object,DefaultMemLock> memLocks=new HashMap<>();
+    private final Map<Object, DefaultMemLock> memLocks = new HashMap<>();
+
     public DefaultNLockBuilder() {
         super();
     }
 
     @Override
     public NLock build() {
-        Object s = source();
-        Object lr = resource();
-        Path lrPath = null;
-        if (lr == null) {
-            if (s == null) {
-                throw new NLockException(NMsg.ofP("unsupported lock for null"), null, null);
+        NLockStore st = store();
+        if (st != null) {
+            String lockId = id();
+            if (lockId == null || lockId.trim().isEmpty()) {
+                if (target() != null) {
+                    lockId = target().toString();
+                } else {
+                    lockId = UUID.randomUUID().toString();
+                }
             }
-            Path p = toPath(s);
-            if (p == null) {
-                return memLocks.computeIfAbsent(s,e->new DefaultMemLock(e));
-                //throw new NLockException(NMsg.ofC("unsupported lock for %s", s.getClass().getName()), null, s);
-            }
-            lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
-            return new DefaultFileNLock(lrPath, s);
-        } else {
-            lrPath = toPath(lr);
-            if (lrPath == null) {
-                return memLocks.computeIfAbsent(lr,e->new DefaultMemLock(e));
-                //throw new NLockException(NMsg.ofC("unsupported lock %s", lr.getClass().getName()), lr, s);
-            }
-            return new DefaultFileNLock(lrPath, s);
+            return new NStoreNLock(st, lockId, null, leaseDuration(), timeout(), retryInterval(), isAutoRenew());
         }
+
+        NPath lf = lockFile();
+        if (lf != null) {
+            Path p = toPath(lf);
+            if (p != null) {
+                return new DefaultFileNLock(p, target() != null ? target() : lf);
+            }
+            return memLocks.computeIfAbsent(lf, e -> new DefaultMemLock(e));
+        }
+
+        Object tgt = target();
+        if (isCompanion()) {
+            NPath tgtPath = toNPath(tgt);
+            if (tgtPath == null) {
+                throw new NLockException(NMsg.ofP("companion lock requires a path target"), null, tgt);
+            }
+            NPath compPath = resolveCompanion(tgtPath, companionNameOrSuffix());
+            return new DefaultFileNLock(compPath.toPath().get(), tgt);
+        }
+
+        if (tgt != null) {
+            Path p = toPath(tgt);
+            if (p != null) {
+                NPath tgtPath = NPath.of(p);
+                NPath compPath = resolveCompanion(tgtPath, null);
+                return new DefaultFileNLock(compPath.toPath().get(), tgt);
+            }
+            return memLocks.computeIfAbsent(tgt, e -> new DefaultMemLock(e));
+        }
+
+        String lid = id();
+        if (lid != null && !lid.trim().isEmpty()) {
+            return memLocks.computeIfAbsent(lid, e -> new DefaultMemLock(e));
+        }
+
+        throw new NLockException(NMsg.ofP("unsupported lock for null"), null, null);
     }
-//
-//    @Override
-//    public <T> T call(Callable<T> runnable) {
-//        NLock lock = create();
-//        lock.lock();
-////        if () {
-////            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-////        }
-//        T value = null;
-//        try {
-//            value = runnable.call();
-//        } catch (Exception e) {
-//            if (e instanceof NException) {
-//                throw (NException) e;
-//            }
-//            throw new NException(NMsg.ofPlain("call failed"), e);
-//        } finally {
-//            lock.unlock();
-//        }
-//        return value;
-//    }
-//
-//    @Override
-//    public <T> T call(Callable<T> runnable, long time, TimeUnit unit) {
-//        NLock lock = create();
-//        boolean b = false;
-//        try {
-//            b = lock.tryLock(time, unit);
-//        } catch (InterruptedException e) {
-//            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-//        }
-//        if (!b) {
-//            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-//        }
-//        T value = null;
-//        try {
-//            value = runnable.call();
-//        } catch (Exception e) {
-//            if (e instanceof NException) {
-//                throw (NException) e;
-//            }
-//            throw new NException(NMsg.ofPlain("call failed"), e);
-//        } finally {
-//            lock.unlock();
-//        }
-//        return value;
-//    }
-//
-//    @Override
-//    public void run(Runnable runnable) {
-//        NLock lock = create();
-//        if (!lock.tryLock()) {
-//            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-//        }
-//        try {
-//            runnable.run();
-//        } catch (Exception e) {
-//            if (e instanceof NException) {
-//                throw (NException) e;
-//            }
-//            throw new NException(NMsg.ofPlain("call failed"), e);
-//        } finally {
-//            lock.unlock();
-//        }
-//    }
-//
-//    @Override
-//    public void run(Runnable runnable, long time, TimeUnit unit) {
-//        NLock lock = create();
-//        boolean b = false;
-//        try {
-//            b = lock.tryLock(time, unit);
-//        } catch (InterruptedException e) {
-//            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-//        }
-//        if (!b) {
-//            throw new NLockAcquireException(null, NUtils.firstNonNull(getResource(),getSource()), lock);
-//        }
-//        try {
-//            runnable.run();
-//        } catch (Exception e) {
-//            if (e instanceof NException) {
-//                throw (NException) e;
-//            }
-//            throw new NException(NMsg.ofPlain("lock action failed"), e);
-//        } finally {
-//            lock.unlock();
-//        }
-//    }
+
+    private NPath resolveCompanion(NPath target, String suffixOrName) {
+        if (suffixOrName != null && !suffixOrName.trim().isEmpty()) {
+            if (suffixOrName.startsWith(".")) {
+                return target.resolveSibling(target.name() + suffixOrName);
+            }
+            return target.isDirectory() ? target.resolve(suffixOrName) : target.resolveSibling(suffixOrName);
+        }
+        if (target.isDirectory()) {
+            return target.resolve(".nuts-lock");
+        }
+        return target.resolveSibling(target.name() + ".lock");
+    }
+
+    private NPath toNPath(Object obj) {
+        if (obj instanceof NPath) {
+            return (NPath) obj;
+        } else if (obj instanceof Path) {
+            return NPath.of((Path) obj);
+        } else if (obj instanceof File) {
+            return NPath.of((File) obj);
+        }
+        return null;
+    }
 
     private Path toPath(Object lockedObject) {
         if (lockedObject instanceof Path) {
@@ -143,12 +105,7 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
             return ((NPath) lockedObject).toPath().get();
         } else if (lockedObject instanceof File) {
             return ((File) lockedObject).toPath();
-            //when source is string it will be handled as memory lock!!
-//        } else if (lockedObject instanceof String) {
-//            return Paths.get((String) lockedObject);
         }
         return null;
     }
-
-
 }

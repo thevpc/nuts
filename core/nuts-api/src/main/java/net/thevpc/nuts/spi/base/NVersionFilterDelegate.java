@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  *
  * @author thevpc
  */
-public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
+public abstract class NVersionFilterDelegate extends NVersionFilterBase {
     /**
      * Base version filter.
      *

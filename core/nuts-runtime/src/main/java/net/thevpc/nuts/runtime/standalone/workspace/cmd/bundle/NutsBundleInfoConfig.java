@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 
 public class NutsBundleInfoConfig {
     public String target;
@@ -11,7 +12,7 @@ public class NutsBundleInfoConfig {
 
     @Override
     public String toString() {
-        NStringBuilder nuts_bundle_info_config = new NStringBuilder();
+        NStringBuilder nuts_bundle_info_config = new NStringBuilderImpl();
         if (target != null) {
             nuts_bundle_info_config.println("target=" + target);
         }

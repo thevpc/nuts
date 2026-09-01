@@ -74,7 +74,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
         queryMap.remove(NConstants.IdProperties.OPTIONAL);
         queryMap.remove(NConstants.IdProperties.SCOPE);
         queryMap.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.DESCRIPTOR);
-        id = id.builder().setProperties(queryMap).build();
+        id = id.builder().properties(queryMap).build();
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(id);
         long startTime = System.currentTimeMillis();

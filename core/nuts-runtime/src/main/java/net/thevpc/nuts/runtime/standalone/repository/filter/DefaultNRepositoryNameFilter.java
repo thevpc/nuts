@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
+public class DefaultNRepositoryNameFilter extends NRepositoryFilterBase {
 
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;

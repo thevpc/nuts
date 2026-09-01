@@ -11,6 +11,7 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -77,9 +78,9 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
             }
             NWorkspace ws = NWorkspace.of();
             this.cachePath = NPath.of(key)
-                    .resolve(ws.getDefaultIdFilename(key.id().builder().setFace(key.name() + ".value.cache").build()));
+                    .resolve(ws.getDefaultIdFilename(key.id().builder().face(key.name() + ".value.cache").build()));
             this.cacheIdPath = NPath.of(key)
-                    .resolve(ws.getDefaultIdFilename(key.id().builder().setFace(key.name() + ".id.cache").build()));
+                    .resolve(ws.getDefaultIdFilename(key.id().builder().face(key.name() + ".id.cache").build()));
         }
     }
 
@@ -176,7 +177,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                 } catch (RuntimeException ex) {
                     exception = ex;
                 } catch (Exception ex) {
-                    exception = new RuntimeException(ex);
+                    exception = NException.ofUncheckedException(ex);
                 }
                 if (value != null) {
                     try {
@@ -218,7 +219,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                 } catch (RuntimeException ex) {
                     exception = ex;
                 } catch (Exception ex) {
-                    exception = new RuntimeException(ex);
+                    exception = NException.ofUncheckedException(ex);
                 }
             }
             evaluated = true;

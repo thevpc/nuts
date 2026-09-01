@@ -5,9 +5,9 @@ import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.pipeline.NStream;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -28,24 +28,24 @@ public class DefaultNPlatformModel {
     }
 
 
-    public boolean addPlatform(NExecutionEngineLocation location) {
+    public boolean addPlatform(NRuntimeDistribution location) {
         return add0(location, true);
     }
 
-    public boolean add0(NExecutionEngineLocation location, boolean notify) {
+    public boolean add0(NRuntimeDistribution location, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
             NAssert.requireNamedNonBlank(location.product(), "platform location product");
             NAssert.requireNamedNonBlank(location.name(), "platform location product");
             NAssert.requireNamedNonBlank(location.version(), "platform location version");
             NAssert.requireNamedNonBlank(location.version(), "platform location path");
-            List<NExecutionEngineLocation> list = getPlatforms().get(location.executionEngineFamily());
+            List<NRuntimeDistribution> list = getPlatforms().get(location.family());
             if (list == null) {
                 list = new ArrayList<>();
-                wsModel.getConfigPlatforms().put(location.executionEngineFamily(), list);
+                wsModel.getConfigPlatforms().put(location.family(), list);
             }
-            NExecutionEngineLocation old = null;
-            for (NExecutionEngineLocation nutsPlatformLocation : list) {
+            NRuntimeDistribution old = null;
+            for (NRuntimeDistribution nutsPlatformLocation : list) {
                 if (Objects.equals(nutsPlatformLocation.product(), location.product())
                         && Objects.equals(nutsPlatformLocation.product(), location.product())) {
                     if (nutsPlatformLocation.name().equals(location.name())
@@ -80,7 +80,7 @@ public class DefaultNPlatformModel {
         return false;
     }
 
-    public boolean updatePlatform(NExecutionEngineLocation oldLocation, NExecutionEngineLocation newLocation) {
+    public boolean updatePlatform(NRuntimeDistribution oldLocation, NRuntimeDistribution newLocation) {
         boolean updated = false;
         updated |= removePlatform(oldLocation);
         updated |= removePlatform(newLocation);
@@ -88,9 +88,9 @@ public class DefaultNPlatformModel {
         return updated;
     }
 
-    public boolean removePlatform(NExecutionEngineLocation location) {
+    public boolean removePlatform(NRuntimeDistribution location) {
         if (location != null) {
-            List<NExecutionEngineLocation> list = getPlatforms().get(location.executionEngineFamily());
+            List<NRuntimeDistribution> list = getPlatforms().get(location.family());
             if (list != null) {
                 if (list.remove(location)) {
                     NWorkspaceExt.of()
@@ -103,17 +103,17 @@ public class DefaultNPlatformModel {
         return false;
     }
 
-    public NOptional<NExecutionEngineLocation> findPlatformByName(NExecutionEngineFamily type, String locationName) {
-        return findOneExecutionEngine(type, location -> location.name().equals(locationName));
+    public NOptional<NRuntimeDistribution> findPlatformByName(NRuntimeDistributionFamily type, String locationName) {
+        return findOneRuntimeDistribution(type, location -> location.name().equals(locationName));
     }
 
-    public NOptional<NExecutionEngineLocation> findPlatformByPath(NExecutionEngineFamily type, NPath path) {
+    public NOptional<NRuntimeDistribution> findPlatformByPath(NRuntimeDistributionFamily type, NPath path) {
         NAssert.requireNamedNonNull(path, "path");
-        return findOneExecutionEngine(type, location -> location.path() != null && location.path().equals(path.toString()));
+        return findOneRuntimeDistribution(type, location -> location.path() != null && location.path().equals(path.toString()));
     }
 
-    public NOptional<NExecutionEngineLocation> findPlatformByVersion(NExecutionEngineFamily type, String version) {
-        return findOneExecutionEngine(type, location -> location.version().equals(version));
+    public NOptional<NRuntimeDistribution> findPlatformByVersion(NRuntimeDistributionFamily type, String version) {
+        return findOneRuntimeDistribution(type, location -> location.version().equals(version));
     }
 
     //    public void setRepositoryEnabled(String repoName, boolean enabled) {
@@ -123,15 +123,15 @@ public class DefaultNPlatformModel {
 //            fireConfigurationChanged();
 //        }
 //    }
-    public NOptional<NExecutionEngineLocation> findPlatform(NExecutionEngineLocation location) {
+    public NOptional<NRuntimeDistribution> findPlatform(NRuntimeDistribution location) {
         if (location == null) {
             return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
         }
         String type = location.id().artifactId();
-        NExecutionEngineFamily ftype = NExecutionEngineFamily.parse(type).orElse(NExecutionEngineFamily.JAVA);
-        List<NExecutionEngineLocation> list = getPlatforms().get(ftype);
+        NRuntimeDistributionFamily ftype = NRuntimeDistributionFamily.parse(type).orElse(NRuntimeDistributionFamily.JAVA);
+        List<NRuntimeDistribution> list = getPlatforms().get(ftype);
         if (list != null) {
-            for (NExecutionEngineLocation location2 : list) {
+            for (NRuntimeDistribution location2 : list) {
                 if (location2.equals(location)) {
                     return NOptional.of(location2);
                 }
@@ -140,8 +140,8 @@ public class DefaultNPlatformModel {
         return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
     }
 
-    public NOptional<NExecutionEngineLocation> findPlatformByVersion(NExecutionEngineFamily executionEngineType, NVersionFilter versionFilter) {
-        return findOneExecutionEngine(executionEngineType,
+    public NOptional<NRuntimeDistribution> findPlatformByVersion(NRuntimeDistributionFamily family, NVersionFilter versionFilter) {
+        return findOneRuntimeDistribution(family,
                 location -> {
 
                     if (versionFilter == null) {
@@ -153,7 +153,7 @@ public class DefaultNPlatformModel {
                         return true;
                     }
                     // replace 1.6 by 6, and 1.8 by 8
-                    if (executionEngineType == NExecutionEngineFamily.JAVA || location.executionEngineFamily() == NExecutionEngineFamily.JAVA) {
+                    if (family == NRuntimeDistributionFamily.JAVA || location.family() == NRuntimeDistributionFamily.JAVA) {
                         int a = sVersion.indexOf('.');
                         if (a > 0) {
                             NLiteral p = NLiteral.of(sVersion.substring(0, a));
@@ -171,61 +171,61 @@ public class DefaultNPlatformModel {
         );
     }
 
-    public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType) {
-        if (executionEngineType == NExecutionEngineFamily.JAVA) {
+    public NStream<NRuntimeDistribution> searchSystemRuntimeDistributions(NRuntimeDistributionFamily family) {
+        if (family == NRuntimeDistributionFamily.JAVA) {
             try {
                 return NStream.ofArray(NJavaSdkUtils.of().searchJdkLocationsFuture().get());
             } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
         }
         return NStream.ofEmpty();
     }
 
-    public NStream<NExecutionEngineLocation> searchSystemExecutionEngines(NExecutionEngineFamily executionEngineType, NPath path) {
-        if (executionEngineType == NExecutionEngineFamily.JAVA) {
+    public NStream<NRuntimeDistribution> searchSystemRuntimeDistributions(NRuntimeDistributionFamily family, NPath path) {
+        if (family == NRuntimeDistributionFamily.JAVA) {
             return NStream.ofArray(NJavaSdkUtils.of().searchJdkLocations(path));
         }
         return NStream.ofEmpty();
     }
 
-    public NOptional<NExecutionEngineLocation> resolveExecutionEngine(NExecutionEngineFamily executionEngineType, NPath path, String preferredName) {
-        if (executionEngineType == NExecutionEngineFamily.JAVA) {
-            NExecutionEngineLocation z = NJavaSdkUtils.of().resolveJdkLocation(path, preferredName);
+    public NOptional<NRuntimeDistribution> resolveRuntimeDistribution(NRuntimeDistributionFamily family, NPath path, String preferredName) {
+        if (family == NRuntimeDistributionFamily.JAVA) {
+            NRuntimeDistribution z = NJavaSdkUtils.of().resolveJdkLocation(path, preferredName);
             if (z == null) {
-                return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", executionEngineType.id(), path));
+                return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", family.id(), path));
             }
             return NOptional.of(z);
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", executionEngineType.id(), path));
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", family.id(), path));
     }
 
     //
-    public void setExecutionEngines(NExecutionEngineLocation[] locations) {
+    public void setRuntimeDistributions(NRuntimeDistribution[] locations) {
         wsModel.getConfigPlatforms().clear();
-        for (NExecutionEngineLocation platform : locations) {
+        for (NRuntimeDistribution platform : locations) {
             add0(platform, false);
         }
     }
 
-    public NOptional<NExecutionEngineLocation> findOneExecutionEngine(NExecutionEngineFamily executionEngineType, Predicate<NExecutionEngineLocation> filter) {
-        NExecutionEngineLocation[] a = findPlatforms(executionEngineType, filter).toArray(NExecutionEngineLocation[]::new);
+    public NOptional<NRuntimeDistribution> findOneRuntimeDistribution(NRuntimeDistributionFamily family, Predicate<NRuntimeDistribution> filter) {
+        NRuntimeDistribution[] a = findPlatforms(family, filter).toArray(NRuntimeDistribution[]::new);
         if (a.length == 0) {
-            return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
+            return NOptional.ofNamedEmpty(family.id() + " platform");
         }
         if (a.length == 1) {
-            NExecutionEngineLocation r = a[0];
+            NRuntimeDistribution r = a[0];
             if (r == null) {
-                return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
+                return NOptional.ofNamedEmpty(family.id() + " platform");
             }
             return NOptional.of(r);
         }
         //find the best minimum version that is applicable!
-        NExecutionEngineLocation best = a[0];
+        NRuntimeDistribution best = a[0];
         for (int i = 1; i < a.length; i++) {
             NVersion v1 = NVersion.get(best.version()).get();
             NVersion v2 = NVersion.get(a[i].version()).get();
-            if (executionEngineType == NExecutionEngineFamily.JAVA) {
+            if (family == NRuntimeDistributionFamily.JAVA) {
                 double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersionString(v1.value()));
                 double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersionString(v2.value()));
                 if (d1 == d2) {
@@ -246,18 +246,18 @@ public class DefaultNPlatformModel {
             }
         }
         if (best == null) {
-            return NOptional.ofNamedEmpty(executionEngineType.id() + " platform");
+            return NOptional.ofNamedEmpty(family.id() + " platform");
         }
         return NOptional.of(best);
     }
 
-    public NStream<NExecutionEngineLocation> findPlatforms(NExecutionEngineFamily type, Predicate<NExecutionEngineLocation> filter) {
+    public NStream<NRuntimeDistribution> findPlatforms(NRuntimeDistributionFamily type, Predicate<NRuntimeDistribution> filter) {
         NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
-        NExecutionEngineLocation current = nJavaSdkUtils.getHostJvm();
+        NRuntimeDistribution current = nJavaSdkUtils.getHostJvm();
         if (filter == null) {
             if (type == null) {
-                List<NExecutionEngineLocation> list = new ArrayList<>();
-                for (List<NExecutionEngineLocation> value : wsModel.getConfigPlatforms().values()) {
+                List<NRuntimeDistribution> list = new ArrayList<>();
+                for (List<NRuntimeDistribution> value : wsModel.getConfigPlatforms().values()) {
                     list.addAll(value);
                 }
                 if (!list.contains(current)) {
@@ -265,7 +265,7 @@ public class DefaultNPlatformModel {
                 }
                 return NStream.ofIterable(list);
             }
-            List<NExecutionEngineLocation> list = getPlatforms().get(type);
+            List<NRuntimeDistribution> list = getPlatforms().get(type);
             if (list == null) {
                 list = new ArrayList<>();
                 getPlatforms().put(type, list);
@@ -275,19 +275,19 @@ public class DefaultNPlatformModel {
             }
             return NStream.ofIterable(list);
         }
-        List<NExecutionEngineLocation> ret = new ArrayList<>();
+        List<NRuntimeDistribution> ret = new ArrayList<>();
         if (type == null) {
-            for (List<NExecutionEngineLocation> found : getPlatforms().values()) {
-                for (NExecutionEngineLocation location : found) {
+            for (List<NRuntimeDistribution> found : getPlatforms().values()) {
+                for (NRuntimeDistribution location : found) {
                     if (filter.test(location)) {
                         ret.add(location);
                     }
                 }
             }
         } else {
-            List<NExecutionEngineLocation> found = getPlatforms().get(type);
+            List<NRuntimeDistribution> found = getPlatforms().get(type);
             if (found != null) {
-                for (NExecutionEngineLocation location : found) {
+                for (NRuntimeDistribution location : found) {
                     if (filter.test(location)) {
                         ret.add(location);
                     }
@@ -300,12 +300,12 @@ public class DefaultNPlatformModel {
             }
         }
         if (!ret.isEmpty()) {
-            ret.sort(new NExecutionEngineLocationSelectComparator());
+            ret.sort(new NRuntimeDistributionSelectComparator());
         }
         return NStream.ofIterable(ret);
     }
 
-    public Map<NExecutionEngineFamily, List<NExecutionEngineLocation>> getPlatforms() {
+    public Map<NRuntimeDistributionFamily, List<NRuntimeDistribution>> getPlatforms() {
         return wsModel.getConfigPlatforms();
     }
 }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.concurrent.Callable;
@@ -24,7 +25,7 @@ public abstract class AbstractNLock implements NLock {
         try {
             return callable.call();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         } finally {
             unlock();
         }

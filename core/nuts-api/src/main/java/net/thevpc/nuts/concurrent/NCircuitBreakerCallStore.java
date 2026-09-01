@@ -43,4 +43,11 @@ public interface NCircuitBreakerCallStore {
      * @param value the model containing the state to persist
      */
     void save(NCircuitBreakerCallModel value);
+
+    /**
+     * delete its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

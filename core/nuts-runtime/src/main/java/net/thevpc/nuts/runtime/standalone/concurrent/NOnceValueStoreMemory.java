@@ -6,8 +6,8 @@ import net.thevpc.nuts.concurrent.NOnceValueStore;
 import java.util.HashMap;
 import java.util.Map;
 
-class NOnceValueStoreMemory implements NOnceValueStore {
-    Map<String, NOnceValueModel> values = new HashMap<>();
+public class NOnceValueStoreMemory implements NOnceValueStore {
+    private final Map<String, NOnceValueModel> values = new HashMap<>();
 
     @Override
     public NOnceValueModel load(String id) {
@@ -16,10 +16,19 @@ class NOnceValueStoreMemory implements NOnceValueStore {
 
     @Override
     public void save(NOnceValueModel value) {
-        if (value.value() != null) {
-            values.put(value.id(), value);
-        } else {
-            values.remove(value.id());
+        synchronized (values) {
+            if (value.value() != null) {
+                values.put(value.id(), value);
+            } else {
+                values.remove(value.id());
+            }
+        }
+    }
+
+    @Override
+    public boolean delete(String id) {
+        synchronized (values) {
+            return values.remove(id) != null;
         }
     }
 

@@ -3,10 +3,12 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a node within a saga workflow model.
@@ -43,8 +45,8 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
     private String id;
     private String name;
     private NSagaNodeType type;           // STEP / IF / WHILE
-    private NSagaStep stepCall;             // for STEP nodes: NSagaStep class name
-    private NSagaCondition stepCondition;        // for IF / WHILE nodes: NSagaCondition class name
+    private transient NSagaStep stepCall;             // for STEP nodes: NSagaStep instance
+    private transient NSagaCondition stepCondition;        // for IF / WHILE nodes: NSagaCondition instance
     private List<NSagaNodeModel> children = new ArrayList<>();
     private List<NSagaNodeModel> elseIfBranches = new ArrayList<>();   // only for IF nodes
     private List<NSagaNodeModel> otherwiseBranch = new ArrayList<>();  // only for IF nodes
@@ -185,7 +187,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel children(List<NSagaNodeModel> children) {
-        this.children = children;
+        this.children = children == null ? new ArrayList<>() : children;
         return this;
     }
 
@@ -196,6 +198,9 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      * @return add child result
      */
     public NSagaNodeModel addChild(NSagaNodeModel child) {
+        if (this.children == null) {
+            this.children = new ArrayList<>();
+        }
         this.children.add(child);
         return this;
     }
@@ -218,7 +223,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel elseIfBranches(List<NSagaNodeModel> elseIfBranches) {
-        this.elseIfBranches = elseIfBranches;
+        this.elseIfBranches = elseIfBranches == null ? new ArrayList<>() : elseIfBranches;
         return this;
     }
 
@@ -240,7 +245,7 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
      */
     @NSetter
     public NSagaNodeModel otherwiseBranch(List<NSagaNodeModel> otherwiseBranch) {
-        this.otherwiseBranch = otherwiseBranch;
+        this.otherwiseBranch = otherwiseBranch == null ? new ArrayList<>() : otherwiseBranch;
         return this;
     }
 
@@ -310,38 +315,45 @@ public class NSagaNodeModel implements Serializable, Cloneable, NCopiable {
         copy.compensationStrategy = this.compensationStrategy;
 
         // clone children recursively
-        for (NSagaNodeModel c : this.children) copy.children.add(c.clone());
-        for (NSagaNodeModel c : this.elseIfBranches) copy.elseIfBranches.add(c.clone());
-        for (NSagaNodeModel c : this.otherwiseBranch) copy.otherwiseBranch.add(c.clone());
+        if (this.children != null) {
+            for (NSagaNodeModel c : this.children) copy.children.add(c.clone());
+        }
+        if (this.elseIfBranches != null) {
+            for (NSagaNodeModel c : this.elseIfBranches) copy.elseIfBranches.add(c.clone());
+        }
+        if (this.otherwiseBranch != null) {
+            for (NSagaNodeModel c : this.otherwiseBranch) copy.otherwiseBranch.add(c.clone());
+        }
 
         return copy;
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("NSagaNodeModel{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", type=" + type +
-                ", status=" + status +
-                ", compensationStrategy=" + compensationStrategy
-        );
-        if (stepCall != null) {
-            sb.append(", stepCall=" + stepCall);
-        }
-        if (stepCondition != null) {
-            sb.append(", stepCondition=" + stepCondition);
-        }
-        if (children != null && !children.isEmpty()) {
-            sb.append(", children=" + children);
-        }
-        if (elseIfBranches != null && !elseIfBranches.isEmpty()) {
-            sb.append(", elseIfBranches=" + elseIfBranches);
-        }
-        if (otherwiseBranch != null && !otherwiseBranch.isEmpty()) {
-            sb.append(", otherwiseBranch=" + otherwiseBranch);
-        }
-        sb.append('}');
-        return sb.toString();
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NSagaNodeModel that = (NSagaNodeModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type && Objects.equals(stepCall, that.stepCall) && Objects.equals(stepCondition, that.stepCondition) && Objects.equals(children, that.children) && Objects.equals(elseIfBranches, that.elseIfBranches) && Objects.equals(otherwiseBranch, that.otherwiseBranch) && status == that.status && compensationStrategy == that.compensationStrategy;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type, stepCall, stepCondition, children, elseIfBranches, otherwiseBranch, status, compensationStrategy);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("id", id)
+                .add("name", name)
+                .add("type", type)
+                .add("status", status)
+                .add("compensationStrategy", compensationStrategy)
+                .add("stepCall", stepCall)
+                .add("stepCondition", stepCondition)
+                .add("children", children)
+                .add("elseIfBranches", elseIfBranches)
+                .add("otherwiseBranch", otherwiseBranch)
+                .build();
+    }
+
 }

@@ -47,12 +47,13 @@ public class NByteArrayList implements NByteList {
     }
 
     @Override
-    public void add(int index, byte value) {
+    public NByteList add(int index, byte value) {
         ensureSize(size + 1);  // Increments modCount!!
         System.arraycopy(values, index, values, index + 1,
                 size - index);
         values[index] = value;
         size++;
+        return this;
     }
 
     private void rangeCheck(int index) {
@@ -100,23 +101,25 @@ public class NByteArrayList implements NByteList {
     }
 
     @Override
-    public void addAll(NByteList values) {
+    public NByteList addAll(NByteList values) {
         int toAddLength = values.size();
         ensureSize(size + toAddLength);
         System.arraycopy(values.toArray(), 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void addAll(byte... values) {
+    public NByteList addAll(byte... values) {
         int toAddLength = values.length;
         ensureSize(size + toAddLength);
         System.arraycopy(values, 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void insertAll(int offset, byte... values) {
+    public NByteList insertAll(int offset, byte... values) {
         if (offset < 0) {
             throw new IllegalArgumentException("offset should be >=0");
         }
@@ -125,6 +128,7 @@ public class NByteArrayList implements NByteList {
         System.arraycopy(this.values, offset, this.values, offset + values.length, size - offset);
         System.arraycopy(values, 0, this.values, offset, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
@@ -140,7 +144,7 @@ public class NByteArrayList implements NByteList {
     }
 
     @Override
-    public void replaceSubList(int offset, int count, byte... replacement) {
+    public NByteList replaceSubList(int offset, int count, byte... replacement) {
         if (offset < 0) {
             count += offset;
             offset = 0;
@@ -153,19 +157,22 @@ public class NByteArrayList implements NByteList {
         System.arraycopy(this.values, offset + count, this.values, offset + replacement.length, this.size - offset - count);
         System.arraycopy(replacement, 0, this.values, offset, replacement.length);
         this.size = newSize;
+        return this;
     }
 
     @Override
-    public void add(byte value) {
+    public NByteList add(byte value) {
         ensureSize(size + 1);
         values[size++] = value;
+        return this;
     }
 
     @Override
-    public void trimToSize() {
+    public NByteList trimToSize() {
         if (size < values.length) {
             values = Arrays.copyOf(values, size);
         }
+        return this;
     }
 
     @Override
@@ -332,9 +339,9 @@ public class NByteArrayList implements NByteList {
     }
 
     @Override
-    public void grow(int minCapacity) {
+    public NByteList grow(int minCapacity) {
         if (minCapacity < values.length) {
-            return;
+            return this;
         }
         int oldCapacity = values.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
@@ -345,6 +352,7 @@ public class NByteArrayList implements NByteList {
         // minCapacity is usually close to size, so this is a win:
         values = Arrays.copyOf(values, newCapacity);
 //        System.out.println(">> "+oldCapacity+" -> "+newCapacity);
+        return this;
     }
 
     private static int hugeCapacity(int minCapacity) {
@@ -357,10 +365,11 @@ public class NByteArrayList implements NByteList {
     }
 
     @Override
-    public void ensureSize(int size) {
+    public NByteList ensureSize(int size) {
         grow(size);
         if (size > values.length) {
             values = Arrays.copyOf(values, size);
         }
+        return this;
     }
 }

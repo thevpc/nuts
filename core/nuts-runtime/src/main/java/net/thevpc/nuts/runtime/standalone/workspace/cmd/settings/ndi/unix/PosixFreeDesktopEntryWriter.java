@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -113,7 +114,7 @@ public class PosixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter 
             NPath menuFile = folder4menus.resolve(menuFileName);
             all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile, "UpdateScript")));
         } catch (ParserConfigurationException | TransformerException ex) {
-            throw new RuntimeException(ex);
+            throw NException.ofUncheckedException(ex);
         }
         if (all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
             updateDesktopMenus();

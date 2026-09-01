@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Nuts Java Package Manager Website">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-navbar.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2SH2Y1383S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2SH2Y1383S');
+    </script>
+
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+    <title>API Compatibility — Nuts Package Manager</title>
+    <!-- Doc-specific overrides -->
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet-docs.css"/>
+</head>
+<body>
+<div id="main-wrapper" class="documentation-main-wrapper">
+    <!-- Header -->
+<header id="header" class="sticky-top">
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+
+            <!-- Mobile sidebar toggler -->
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
+
+            <!-- Logo + brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="index.html" title="Nuts Package Manager">
+                    <img src="assets/images/nuts-icon.png" alt="Nuts" width="28"/>
+                    <span class="nuts-brand__name">Nuts</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.9
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="versions/v1.0.0/doc-nuts.html">v1.0.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="versions/v0.8.9/doc-nuts.html">v0.8.9</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.8/doc-nuts.html">v0.8.8</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.7/doc-nuts.html">v0.8.7</a>
+                        
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile collapse toggler -->
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <!-- Nav links -->
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item not-active"
+                                   href="compatibility.html">API Compatibility</a></li>
+                            <li><a class="dropdown-item "
+                                   href="faq.html">FAQ</a></li>
+                            <li><a class="dropdown-item "
+                                   href="contrib.html">Contributing</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="blog.html"
+                           class="">Blog</a></li>
+
+                    <li><a href="apps.html"
+                           class="">Apps</a></li>
+
+                    <li><a href="download.html"
+                           class="">Download</a></li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github">
+                        <i class="fab fa-github"></i>
+                    </a></li>
+
+                    <li><a href="naf.html" class="nuts-nav__dev-cta">For developers &rarr;</a></li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</header>
+<!-- Header End -->
+
+
+    <!-- Content
+    ============================ -->
+    <div id="content" role="main">
+
+        <!-- Sidebar Navigation
+        ============================ -->
+        <div class="idocs-navigation bg-light">
+            <div class="nav-search">
+                <input type="text" id="docs-search-input" placeholder="Search documentation..." autocomplete="off">
+            </div>
+            <ul class="nav flex-column ">
+                
+                <li class="nav-item"><a class="nav-link" href="#U6c01ed70632991aec6ab99253fec18f32a29dedd">1 API Compatibility Overview</a>
+                    
+                    
+                    <ul class="nav flex-column">
+                        
+                        <li class="nav-item"><a class="nav-link" href="#Ude96892cfdbf865fb2f2b0aef69fa09870dec02b">1.1 Pre-1.0 (0.8.x → 1.0.0) API Compatibility Matrix</a>
+                            
+                            
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+            </ul>
+        </div>
+
+        <!-- Docs Content
+        ============================ -->
+        <div class="idocs-content">
+            <div class="container">
+
+                
+                    <!--pageLevel1-->
+                    <section id="U6c01ed70632991aec6ab99253fec18f32a29dedd" >
+                        <h2 class="main-section1"><a href="#U6c01ed70632991aec6ab99253fec18f32a29dedd">1 API Compatibility Overview</a></h2>
+                        <div class="text-card">
+                        <H4 class="md-title-1">API Compatibility</H4><p class="md-phrase">This section tracks binary and source compatibility across Nuts releases generated by <a href="https://lvc.github.io/japi-compliance-checker/" class="md-link">JAPI-Compliance-Checker</a>.</p>
+                        </div>
+                        
+                            <!--pageLevel2-->
+                            <section id="Ude96892cfdbf865fb2f2b0aef69fa09870dec02b" >
+                                <h3 class="main-section2"><a href="#Ude96892cfdbf865fb2f2b0aef69fa09870dec02b">1.1 Pre-1.0 (0.8.x → 1.0.0) API Compatibility Matrix</a></h3>
+                                <div class="text-card">
+                                This compatibility matrix tracks the API evolution across the Pre-1.0 development series (from `0.8.0` up to `1.0.0`).
+Each cell in the matrix links to a detailed JAPI-Compliance-Checker report comparing version X to version Y, offering an exact view of binary compatibility levels.
+Green indicates 100% binary compatibility, while color gradations show the proportion of preserved API surface.
+
+<table>
+  <tr>
+    <th>From \ To</th>
+    <th>0.8.0</th>
+    <th>0.8.1</th>
+    <th>0.8.2</th>
+    <th>0.8.3</th>
+    <th>0.8.4</th>
+    <th>0.8.5</th>
+    <th>0.8.6</th>
+    <th>0.8.7</th>
+    <th>0.8.8</th>
+    <th>0.8.9</th>
+    <th>1.0.0</th>
+  </tr>
+  <tr>
+    <th>0.8.0</th>
+    <td class="na">-</td>
+  <td style="background:#dd6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.1/compat_report.html" target="_blank">0.8.0→0.8.1 (19.10%)</a></td>
+  <td style="background:#de6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.2/compat_report.html" target="_blank">0.8.0→0.8.2 (18.60%)</a></td>
+  <td style="background:#e95f50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.3/compat_report.html" target="_blank">0.8.0→0.8.3 (12.50%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.4/compat_report.html" target="_blank">0.8.0→0.8.4 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.5/compat_report.html" target="_blank">0.8.0→0.8.5 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.6/compat_report.html" target="_blank">0.8.0→0.8.6 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.7/compat_report.html" target="_blank">0.8.0→0.8.7 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.8/compat_report.html" target="_blank">0.8.0→0.8.8 (0.00%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_0.8.9/compat_report.html" target="_blank">0.8.0→0.8.9 (0.10%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.0_to_1.0.0/compat_report.html" target="_blank">0.8.0→1.0.0 (0.10%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.1</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#59c150;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.2/compat_report.html" target="_blank">0.8.1→0.8.2 (94.30%)</a></td>
+  <td style="background:#c57750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.3/compat_report.html" target="_blank">0.8.1→0.8.3 (33.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.4/compat_report.html" target="_blank">0.8.1→0.8.4 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.5/compat_report.html" target="_blank">0.8.1→0.8.5 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.6/compat_report.html" target="_blank">0.8.1→0.8.6 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.7/compat_report.html" target="_blank">0.8.1→0.8.7 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.8/compat_report.html" target="_blank">0.8.1→0.8.8 (0.00%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_0.8.9/compat_report.html" target="_blank">0.8.1→0.8.9 (0.10%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.1_to_1.0.0/compat_report.html" target="_blank">0.8.1→1.0.0 (0.10%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.2</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#c47750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.3/compat_report.html" target="_blank">0.8.2→0.8.3 (33.30%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.4/compat_report.html" target="_blank">0.8.2→0.8.4 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.5/compat_report.html" target="_blank">0.8.2→0.8.5 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.6/compat_report.html" target="_blank">0.8.2→0.8.6 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.7/compat_report.html" target="_blank">0.8.2→0.8.7 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.8/compat_report.html" target="_blank">0.8.2→0.8.8 (0.00%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_0.8.9/compat_report.html" target="_blank">0.8.2→0.8.9 (0.10%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.2_to_1.0.0/compat_report.html" target="_blank">0.8.2→1.0.0 (0.10%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.3</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.4/compat_report.html" target="_blank">0.8.3→0.8.4 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.5/compat_report.html" target="_blank">0.8.3→0.8.5 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.6/compat_report.html" target="_blank">0.8.3→0.8.6 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.7/compat_report.html" target="_blank">0.8.3→0.8.7 (0.00%)</a></td>
+  <td style="background:#ff5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.8/compat_report.html" target="_blank">0.8.3→0.8.8 (0.00%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_0.8.9/compat_report.html" target="_blank">0.8.3→0.8.9 (0.10%)</a></td>
+  <td style="background:#fe5050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.3_to_1.0.0/compat_report.html" target="_blank">0.8.3→1.0.0 (0.10%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.4</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#cb7350;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.5/compat_report.html" target="_blank">0.8.4→0.8.5 (29.30%)</a></td>
+  <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.6/compat_report.html" target="_blank">0.8.4→0.8.6 (28.60%)</a></td>
+  <td style="background:#e36250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.7/compat_report.html" target="_blank">0.8.4→0.8.7 (15.60%)</a></td>
+  <td style="background:#e36250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.8/compat_report.html" target="_blank">0.8.4→0.8.8 (15.60%)</a></td>
+  <td style="background:#eb5d50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.9/compat_report.html" target="_blank">0.8.4→0.8.9 (11.10%)</a></td>
+  <td style="background:#f15950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_1.0.0/compat_report.html" target="_blank">0.8.4→1.0.0 (7.80%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.5</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#75ae50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.6/compat_report.html" target="_blank">0.8.5→0.8.6 (78.80%)</a></td>
+  <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.7/compat_report.html" target="_blank">0.8.5→0.8.7 (34.50%)</a></td>
+  <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.8/compat_report.html" target="_blank">0.8.5→0.8.8 (34.50%)</a></td>
+  <td style="background:#e06550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html" target="_blank">0.8.5→0.8.9 (17.70%)</a></td>
+  <td style="background:#e95e50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_1.0.0/compat_report.html" target="_blank">0.8.5→1.0.0 (12.10%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.6</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
+  <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
+  <td style="background:#de6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (18.50%)</a></td>
+  <td style="background:#e95e50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (12.20%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.7</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#50c750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8 (99.50%)</a></td>
+  <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (28.70%)</a></td>
+  <td style="background:#db6850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_1.0.0/compat_report.html" target="_blank">0.8.7→1.0.0 (20.40%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.8</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (28.80%)</a></td>
+  <td style="background:#db6850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_1.0.0/compat_report.html" target="_blank">0.8.8→1.0.0 (20.50%)</a></td>
+  </tr>
+  <tr>
+    <th>0.8.9</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  <td style="background:#9b9450;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (56.70%)</a></td>
+  </tr>
+  <tr>
+    <th>1.0.0</th>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+    <td class="na">-</td>
+  </tr>
+</table>
+
+                                </div>
+                                
+                            </section>
+                            <hr class="divider">
+                        
+                    </section>
+                    <hr class="divider">
+                
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Content end -->
+
+    <!-- Footer
+============================ -->
+<footer id="footer">
+    <div class="container">
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
+        </ul>
+        <p>
+            Copyright © 2018-2026 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on <span id="build-time"></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+</div>
+<!-- Document Wrapper end -->
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/nuts-docs.js"></script>
+</body>
+<script src="assets/js/common.js"></script>
+</body>
+</html>

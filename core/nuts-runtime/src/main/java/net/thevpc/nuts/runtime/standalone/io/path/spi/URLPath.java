@@ -406,7 +406,7 @@ public class URLPath implements NPathSPI {
         try {
             return DefaultNWebCli.prepareGlobalOpenStream(url);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
     }
 

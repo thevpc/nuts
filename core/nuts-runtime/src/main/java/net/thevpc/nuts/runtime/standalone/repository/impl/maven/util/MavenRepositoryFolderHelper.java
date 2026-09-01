@@ -103,7 +103,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Iterator<NId> searchVersions(NId id, final NDefinitionFilter filter, boolean deep) {
-        String singleVersion = id.version().asSingleValue().orNull();
+        String singleVersion = id.version().singleValue().orNull();
         if (singleVersion != null) {
             NId id1 = id.builder().version(singleVersion).faceDescriptor().build();
             NPath localFile = getIdLocalFile(id1);

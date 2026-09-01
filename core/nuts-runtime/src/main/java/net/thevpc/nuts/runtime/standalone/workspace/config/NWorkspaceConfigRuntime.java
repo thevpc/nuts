@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 public class NWorkspaceConfigRuntime extends NConfigItem implements Cloneable{
     private static final long serialVersionUID = 2;
@@ -45,7 +47,7 @@ public class NWorkspaceConfigRuntime extends NConfigItem implements Cloneable{
         try {
             return (NWorkspaceConfigRuntime) clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

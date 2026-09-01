@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone;
 
+import net.thevpc.nuts.concurrent.NInterruptedException;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
 
@@ -23,7 +24,7 @@ public class NWorkspaceProfilerImpl {
             try {
                 Thread.sleep(ms);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw new NInterruptedException(e);
             }
             of(name).accumulateAndGet(ms, Long::sum);
             of("sleep").accumulateAndGet(ms, Long::sum);

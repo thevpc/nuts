@@ -108,7 +108,7 @@ public class CoreNIdUtils {
         Map<String, String> q = id.properties();
         q.put(NConstants.IdProperties.PACKAGING, NStringUtils.strip(desc.packaging()));
         q.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.CONTENT);
-        return id.builder().setProperties(q).build();
+        return id.builder().properties(q).build();
     }
 
     public static boolean isApiId(NId id) {

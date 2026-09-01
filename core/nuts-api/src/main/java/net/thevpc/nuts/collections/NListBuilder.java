@@ -128,4 +128,9 @@ public class NListBuilder<T> {
     public List<T> build() {
         return base;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(base);
+    }
 }

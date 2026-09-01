@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NDefinitionExecRuntimeFilter extends AbstractDefinitionFilter {
+public class NDefinitionExecRuntimeFilter extends DefinitionFilterBase {
     private NId apiId;
     private boolean communityRuntime;
     public NDefinitionExecRuntimeFilter(NId apiId, boolean communityRuntime) {

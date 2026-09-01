@@ -36,7 +36,7 @@ public class TemurinProvider implements JavaProvider {
             if (!toCache.exists()) {
                 NCp.of().from(p.get().path)
                         .to(toCache.mkParentDirs())
-                        .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                        .options(NPathOption.LOG, NPathOption.TRACE)
                         .run();
             }
             boolean checkFolder = false;

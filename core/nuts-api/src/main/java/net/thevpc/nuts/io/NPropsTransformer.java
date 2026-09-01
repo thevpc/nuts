@@ -396,7 +396,7 @@ public class NPropsTransformer {
         List<Row> rows = new ArrayList<>();
         while (true) {
             String line = null;
-            NStringBuilder sb = null;
+            StringBuilder sb = null;
             while (true) {
                 try {
                     line = bReader.readLine();
@@ -408,12 +408,12 @@ public class NPropsTransformer {
                 } else {
                     if (line.endsWith("\\")) {
                         if (sb == null) {
-                            sb = new NStringBuilder();
+                            sb = new StringBuilder();
                         }
-                        sb.println(line);
+                        sb.append(line).append("\n");
                     } else {
                         if (sb == null) {
-                            sb = new NStringBuilder();
+                            sb = new StringBuilder();
                         }
                         sb.append(line);
                         break;
@@ -546,7 +546,7 @@ public class NPropsTransformer {
             }
         }
         Row row = new Row(RowType.KEY_VAL, key, value);
-        if (comments.size() > 0) {
+        if (!comments.isEmpty()) {
             row.headers = comments;
         }
         return row;

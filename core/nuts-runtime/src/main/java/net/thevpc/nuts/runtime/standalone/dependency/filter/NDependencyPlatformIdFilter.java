@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
+public class NDependencyPlatformIdFilter extends NDependencyFilterBase {
 
     private Set<NId> accepted = new HashSet<>();
 

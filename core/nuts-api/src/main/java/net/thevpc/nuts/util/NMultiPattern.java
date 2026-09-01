@@ -1,6 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.collections.NCollections;
+import net.thevpc.nuts.collections.NMaps;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -346,6 +346,6 @@ public class NMultiPattern {
      * @return map result
      */
     public Map<String, NPatternInfo> map() {
-        return NCollections.unmodifiableMap(map);
+        return NMaps.unmodifiableMap(map);
     }
 }

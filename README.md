@@ -29,47 +29,58 @@ Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 **Nuts** does not require any custom descriptors or build tools, does not change classloading behavior, it just solves dependency tree, builds the classpath and runs the application. 
 
 What makes **Nuts** unique is that it shares the same workspace across all applications, enables installing multiple versions of the same app, and automatically provisions the required platform binaries (JDK).
-A simple `nuts install myapp` is all what one needs to install the latest version of myapp and all its dependencies including the JDK while optimizing network and disk usage.
+A simple `nuts install myapp` is all you need to install the latest version of `myapp` and all its dependencies—including the required JDK—while optimizing network and disk usage.
 
-Think of **Nuts** as `npm`/`nvm`, or `uv`, but for the java ecosystem.
+Think of **Nuts** as **`uv`** (or `npx`/`pipx`), but for the Java ecosystem: combining runtime dependency resolution, JDK auto-provisioning, workspace isolation, and instant app execution.
 
 ---
 
 ## Installation
 
-### Latest (recommended)
+Nuts can be installed via enterprise packages (RPM/DEB), standalone binaries, or quick automated scripts.
 
-🐧 Linux / 🍏 macOS
+### 📦 Enterprise & Download Packages (Recommended)
+
+Visit the official **[Nuts Download Page](https://thevpc.github.io/nuts/download.html)** for:
+- **RPM & DEB Packages** (RedHat / SUSE / Debian / Ubuntu)
+- **GUI & Console Installers**
+- **Offline Binaries & Standalone Executable JARs** (`nuts-app.jar` for zero-install execution)
+- **Version Archives & Release LTS Builds**
+
+#### Quick Standalone Execution (No Install Required):
+Download `nuts-app-1.0.0.jar` from the [Download Page](https://thevpc.github.io/nuts/download.html) and run:
 ```bash
+java -jar nuts-app-1.0.0.jar -Zy
+```
+
+---
+
+### ⚡ Quick Script Installation (Developer / Evaluation)
+
+#### 🐧 Linux / 🍏 macOS
+```bash
+# Latest Release (Recommended for Developers)
 curl -s https://thevpc.net/nuts/install-latest.sh | bash
+
+# Stable Release (Production Systems)
+curl -s https://thevpc.net/nuts/install-stable.sh | bash
 ```
 
-🪟 Windows (PowerShell)
-```bash
+#### 🪟 Windows (PowerShell)
+```powershell
+# Latest Release
 powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"
+
+# Stable Release
+powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"
 ```
 
-Restart your terminal, then verify:
-
+*Restart your terminal, then verify:*
 ```bash
 nuts --version
 ```
 
-### Stable (for production)
-
-🐧 Linux / 🍏 macOS
-```bash
-curl -s https://thevpc.net/nuts/install-stable.sh | bash
-```
-
-🪟 Windows (PowerShell)
-```bash
-powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"
-```
-
-
 ### Update existing installation
-
 ```bash
 nuts update
 ```
@@ -92,7 +103,7 @@ nuts update
 | `nuts org.springframework.boot:spring-boot-cli init --dependencies=web my-app` | scaffold a Spring Boot project                                |
 | `nuts jd-gui`                                                                  | decompile a JAR                                               |
 | `nuts uninstall jd-gui#1.6.6`                                                  | uninstall version jd-gui version 1.6.6                        |
-| `nuts update nsh`                                                              | update to to the newest version of java bash compatible shell |
+| `nuts update nsh`                                                              | update to the newest version of java bash compatible shell    |
 | `nuts org.postgresql:postgresql-server initdb -D ~/pgdata`                     | initialize a portable PostgreSQL instance (not a java app)    |
 | `nuts --at=ssh://me@myserver install myapp:2.0`                                | deploy to remote server                                       |
 | `nuts settings bundle`                                                         | create offline deployment bundle (air-gapped deployment)      |
@@ -110,6 +121,7 @@ nuts update
 | Tool | What it does | Relationship to **Nuts** |
 |---|---|---|
 | Maven / Gradle | Compile-time dependency resolution | **Nuts** reuses their descriptors at runtime |
+| uv / uvx | Python runtime provisioning, package management & instant tool execution | **Nuts** provides the equivalent all-in-one experience for the JVM (JDK auto-provisioning + Maven runtime resolution + instant app execution) |
 | jbang | Run Java scripts and JARs | **Nuts** adds workspaces, platforms, lifecycle, deployment |
 | sdkman / jenv | Manage JDK versions | **Nuts** subsumes this as part of workspace platform management |
 | Docker | Isolated application environments | **Nuts** is lighter — no daemon, no root, no image layers |
@@ -125,7 +137,7 @@ nuts update
 
 **Nuts** is open-source and actively developed. Contributions welcome.
 
-[Contribute on GitHub](https://github.com/thevpc/nuts)  
+[Contribute on GitHub](CONTRIBUTING.md)  
 [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
 ---

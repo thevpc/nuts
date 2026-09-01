@@ -235,7 +235,7 @@ public class NTaskSetImpl implements NTaskSet {
     private ExecutorService pickExecutor(ExecutorService exec) {
         if (exec != null) return exec;
         if (executor != null) return executor;
-        return NConcurrent.of().executorService();
+        return NConcurrent.executorService();
     }
 
     @Override

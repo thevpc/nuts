@@ -29,6 +29,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.internal.NReservedUtils;
+import net.thevpc.nuts.internal.artifact.NIdImpl;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
@@ -73,7 +74,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
         this.classifier = NStringUtils.stripToNull(classifier);
         this.version = version == null ? NVersion.BLANK : version;
         condition(condition);
-        setProperties(properties);
+        properties(properties);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
             version(id.version());
             classifier(id.classifier());
             condition(id.condition());
-            setPropertiesQuery(id.propertiesQuery());
+            propertiesQuery(id.propertiesQuery());
         }
         return this;
     }
@@ -97,7 +98,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
         groupId(null);
         artifactId(null);
         version((NVersion) null);
-        setPropertiesQuery("");
+        propertiesQuery("");
         return this;
     }
 
@@ -109,7 +110,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
             groupId(id.groupId());
             artifactId(id.artifactId());
             version(id.version());
-            setPropertiesQuery(id.propertiesQuery());
+            propertiesQuery(id.propertiesQuery());
         }
         return this;
     }
@@ -163,19 +164,19 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdBuilder setFace(String value) {
+    public NIdBuilder face(String value) {
         return setProperty(NConstants.IdProperties.FACE, NStringUtils.stripToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NIdBuilder faceContent() {
-        return setFace(NConstants.QueryFaces.CONTENT);
+        return face(NConstants.QueryFaces.CONTENT);
     }
 
     @Override
     public NIdBuilder faceDescriptor() {
-        return setFace(NConstants.QueryFaces.DESCRIPTOR);
+        return face(NConstants.QueryFaces.DESCRIPTOR);
     }
 
 //    @Override
@@ -290,7 +291,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
 
     @Override
-    public NIdBuilder setProperties(Map<String, String> queryMap) {
+    public NIdBuilder properties(Map<String, String> queryMap) {
         for (Map.Entry<String, String> e : queryMap.entrySet()) {
             setProperty(e.getKey(), e.getValue());
         }
@@ -304,8 +305,8 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
+    public NIdBuilder propertiesQuery(String propertiesQuery) {
+        properties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
         return this;
     }
 
@@ -400,7 +401,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NId build() {
-        return new DefaultNId(
+        return new NIdImpl(
                 groupId, artifactId, classifier, version, properties, condition.build()
         );
     }

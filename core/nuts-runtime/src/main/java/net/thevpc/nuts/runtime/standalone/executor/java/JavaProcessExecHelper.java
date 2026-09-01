@@ -62,7 +62,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     executionContext.err(),
                     executionContext.runAs(),
                     executionContext.executorOptions().toArray(new String[0]),
-                    executionContext.isDry(), executionContext.session()
+                    executionContext.isDry()
             ).exec();
         }
         return preExec().exec();
@@ -89,7 +89,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 executionContext.err(),
                 executionContext.runAs(),
                 executionContext.executorOptions().toArray(new String[0]),
-                executionContext.isDry(), executionContext.session()
+                executionContext.isDry()
         );
     }
 

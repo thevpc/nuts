@@ -27,9 +27,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.command.NCommandFactoryConfig;
 import net.thevpc.nuts.core.NConfigItem;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.core.NRepositoryRef;
 import net.thevpc.nuts.runtime.NutsRuntimeConfigConstants;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,7 +52,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
     private boolean enablePreviewRepositories= NutsRuntimeConfigConstants.ENABLE_PREVIEW_REPOSITORIES;
     private List<NCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
-    private List<NExecutionEngineLocation> platforms = new ArrayList<>();
+    private List<NRuntimeDistribution> platforms = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
     public NWorkspaceConfigMain() {
@@ -87,7 +89,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
         return this;
     }
 
-    public NWorkspaceConfigMain setPlatforms(List<NExecutionEngineLocation> platforms) {
+    public NWorkspaceConfigMain setPlatforms(List<NRuntimeDistribution> platforms) {
         this.platforms = platforms;
         return this;
     }
@@ -101,7 +103,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
         return this;
     }
 
-    public List<NExecutionEngineLocation> getPlatforms() {
+    public List<NRuntimeDistribution> getPlatforms() {
         return platforms;
     }
 
@@ -129,7 +131,7 @@ public final class NWorkspaceConfigMain extends NConfigItem implements Cloneable
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

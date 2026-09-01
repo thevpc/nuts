@@ -129,7 +129,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         stream.close();
                     }
                 }
-                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")
                         , "artifact descriptor");
                 return nutsDescriptor;
@@ -175,7 +175,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         stream.close();
                     }
                 }
-                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
                         , "artifact descriptor");
                 return nutsDescriptor;

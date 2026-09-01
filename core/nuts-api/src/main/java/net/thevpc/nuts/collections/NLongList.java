@@ -68,7 +68,7 @@ public interface NLongList {
      * @param index index
      * @param value value
      */
-    void add(int index, long value);
+    NLongList add(int index, long value);
 
     /**
      * Removes the specified all.
@@ -92,14 +92,14 @@ public interface NLongList {
      *
      * @param values values
      */
-    void addAll(NLongList values);
+    NLongList addAll(NLongList values);
 
     /**
      * Adds the specified all.
      *
      * @param values values
      */
-    void addAll(long... values);
+    NLongList addAll(long... values);
 
     /**
      * Insert all.
@@ -107,7 +107,7 @@ public interface NLongList {
      * @param offset offset
      * @param values values
      */
-    void insertAll(int offset, long... values);
+    NLongList insertAll(int offset, long... values);
 
     /**
      * Sub list.
@@ -125,19 +125,19 @@ public interface NLongList {
      * @param count count
      * @param replacement replacement
      */
-    void replaceSubList(int offset, int count, long... replacement);
+    NLongList replaceSubList(int offset, int count, long... replacement);
 
     /**
      * Adds add.
      *
      * @param value value
      */
-    void add(long value);
+    NLongList add(long value);
 
     /**
      * Trim to size.
      */
-    void trimToSize();
+    NLongList trimToSize();
 
     /**
      * Copy.
@@ -315,12 +315,12 @@ public interface NLongList {
      *
      * @param minCapacity min capacity
      */
-    void grow(int minCapacity);
+    NLongList grow(int minCapacity);
 
     /**
      * Ensure size.
      *
      * @param size size
      */
-    void ensureSize(int size);
+    NLongList ensureSize(int size);
 }

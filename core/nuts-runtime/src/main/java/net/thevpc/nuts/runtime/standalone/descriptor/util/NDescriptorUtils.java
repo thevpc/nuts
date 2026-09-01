@@ -212,7 +212,7 @@ public class NDescriptorUtils {
                 .condition(applyNutsConditionProperties(child.condition(), properties))
                 .classifier(CoreNUtils.applyStringProperties(child.classifier(), properties))
                 .packaging(CoreNUtils.applyStringProperties(child.packaging(), properties))
-                .setProperties(CoreNUtils.applyMapProperties(child.properties(), properties))
+                .properties(CoreNUtils.applyMapProperties(child.properties(), properties))
                 .build();
     }
 
@@ -240,7 +240,7 @@ public class NDescriptorUtils {
         b.artifactId(CoreNUtils.applyStringProperties(b.artifactId(), properties));
         b.version(CoreNUtils.applyStringProperties(b.version().value(), properties));
         b.classifier(CoreNUtils.applyStringProperties(b.classifier(), properties));
-        b.setProperties(CoreNUtils.applyMapProperties(b.properties(), properties));
+        b.properties(CoreNUtils.applyMapProperties(b.properties(), properties));
         return b;
     }
 

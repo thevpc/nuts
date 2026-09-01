@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * @author thevpc
  */
-public class NDefinitionFilterByVersion extends AbstractDefinitionFilter {
+public class NDefinitionFilterByVersion extends DefinitionFilterBase {
 
     private NVersionFilter versionFilter;
 

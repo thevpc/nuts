@@ -203,7 +203,7 @@ public class NRepositoryMirroringHelper {
             repo = nonTransitiveSession.callWith(() -> this.repo.config().getMirror(repository).orNull());
         }
         if (repo != null) {
-            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc)
+            NId effId = CoreNIdUtils.createContentFaceId(id.builder().propertiesQuery("").build(), desc)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NDeployRepositoryCmd dep = NWorkspaceUtils.of().toRepositorySPI(repo).deploy()

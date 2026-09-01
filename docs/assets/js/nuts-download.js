@@ -1,32 +1,36 @@
-/* nuts-download.js — 3-step download wizard */
-latestJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
-apiVersion="1.0.0";
-runtimeVersion="1.0.0.0";
-
-stableJarLocation="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar";
-stableRuntimeVersion="0.8.9.0";
+/* nuts-download.js — 3-step download wizard (templated by nsite) */
+// var latestJarLocation = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
+// var apiVersion = "1.0.0";
+// var runtimeVersion = "1.0.0.0";
+//
+// var stableJarLocation = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar";
+// var stableApiVersion = "0.8.9";
+// var stableRuntimeVersion = "0.8.9.0";
 
 (function () {
     'use strict';
 
-    /* ---- Version-specific URLs (nsite vars are already resolved in HTML,
-            so we read them from the page or fall back to placeholders) ---- */
+    function getMeta(name, fallback) {
+        var el = document.querySelector('meta[name="' + name + '"]');
+        return (el && el.content) ? el.content : fallback;
+    }
+
+    /* ---- Version-specific URLs ---- */
     var URLS = {
         latest: {
-            jar:    document.querySelector('meta[name="dl-latest-jar"]')
-                ? document.querySelector('meta[name="dl-latest-jar"]').content
-                : latestJarLocation,
-            version: runtimeVersion,
+            jar:     getMeta('dl-latest-jar', latestJarLocation),
+            version: getMeta('dl-latest-version', runtimeVersion),
+            api:     getMeta('dl-api-version', apiVersion),
             stable:  false
         },
-        lts: {
-            jar:    document.querySelector('meta[name="dl-lts-jar"]')
-                ? document.querySelector('meta[name="dl-lts-jar"]').content
-                : stableJarLocation,
-            version: stableRuntimeVersion,
+        stable: {
+            jar:     getMeta('dl-stable-jar', stableJarLocation),
+            version: getMeta('dl-stable-version', stableRuntimeVersion),
+            api:     getMeta('dl-stable-api-version', stableApiVersion),
             stable:  true
         }
     };
+    //URLS.lts = URLS.stable;
 
     /* ---- State ---- */
     var state = { version: null, platform: null, method: null };
@@ -36,6 +40,7 @@ stableRuntimeVersion="0.8.9.0";
         linux: [
             { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl / wget',      desc: 'One-liner install. Recommended.' },
             { id: 'offline', icon: 'fas fa-cube',        label: 'Offline bundle',   desc: 'No internet after download. Air-gapped environments.' },
+            { id: 'deb',     icon: 'fab fa-ubuntu',     label: 'DEB package',      desc: 'Debian, Ubuntu, Mint, Pop!_OS.' },
             { id: 'rpm',     icon: 'fas fa-box',         label: 'RPM package',      desc: 'RedHat, Fedora, OpenSuSE.' }
         ],
         macos: [
@@ -55,9 +60,11 @@ stableRuntimeVersion="0.8.9.0";
 
     /* ---- Install content per (platform, method, version) ---- */
     function getInstallContent(platform, method, ver) {
-        var u = URLS[ver];
+        if (!ver) ver = 'latest';
+        var u = URLS[ver] || URLS.latest;
         var v = u.version;
         var jar = u.jar;
+        var api = u.api || apiVersion;
 
         var tip = {
             linux:   '<div class="dl-notice dl-notice--tip"><i class="fas fa-terminal"></i> Configures <code>~/.bashrc</code> automatically. Also supports <code>zsh</code>, <code>fish</code> and other shells. Open a new terminal after install.</div>',
@@ -74,12 +81,16 @@ stableRuntimeVersion="0.8.9.0";
                 ]) + tip.linux,
 
                 offline: dlTable([
-                    { name: 'Linux x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-linux-x64-' + v + '.zip' },
-                    { name: 'Linux x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-linux64-bin-with-java-' + v + '.zip', badge: 'JRE included' }
+                    { name: 'Linux x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux-x64-' + v + '.zip' },
+                    { name: 'Linux x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-bin-with-java-' + v + '.zip', badge: 'JRE included' }
+                ]) + tip.linux,
+
+                deb: dlTable([
+                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' }
                 ]) + tip.linux,
 
                 rpm: dlTable([
-                    { name: 'RedHat / OpenSuSE RPM', desc: 'RPM with all dependencies.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-linux64-rpm-' + v + '.rpm' }
+                    { name: 'RedHat / OpenSuSE RPM', desc: 'RPM with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-rpm-' + v + '.rpm' }
                 ]) + tip.linux
             },
 
@@ -89,7 +100,7 @@ stableRuntimeVersion="0.8.9.0";
                 ]) + tip.macos,
 
                 offline: dlTable([
-                    { name: 'macOS x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-mac64-' + v + '.app.zip' }
+                    { name: 'macOS x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-mac64-' + v + '.app.zip' }
                 ]) + tip.macos
             },
 
@@ -107,8 +118,8 @@ stableRuntimeVersion="0.8.9.0";
                 ]) + tip.windows,
 
                 offline: dlTable([
-                    { name: 'Windows x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-windows64-' + v + '.exe' },
-                    { name: 'Windows x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + apiVersion + '/nuts-app-full-windows64-with-java-' + v + '.zip', badge: 'JRE included' }
+                    { name: 'Windows x64 Offline Binaries', desc: 'Requires Java 8+.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-windows64-' + v + '.exe' },
+                    { name: 'Windows x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-windows64-with-java-' + v + '.zip', badge: 'JRE included' }
                 ]) + tip.windows
             },
 
@@ -125,9 +136,9 @@ stableRuntimeVersion="0.8.9.0";
 
                 dockerfile: [
                     '<p class="dl-docker__desc">Use the bootstrap script in your Dockerfile — <code>NUTS_VERSION</code> controls which version is installed:</p>',
-                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install &lt;your-application&gt;\nCMD ["nuts", "-y", "&lt;your-application&gt;"]' }]),
+                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<p class="dl-docker__desc" style="margin-top:20px">Or pin the jar directly for reproducible builds:</p>',
-                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install &lt;your-application&gt;\nCMD ["nuts", "-y", "&lt;your-application&gt;"]' }]),
+                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<div class="dl-notice dl-notice--tip" style="margin-top:16px"><i class="fas fa-lightbulb"></i> The base image JDK is just a bootstrap ladder. Nuts provisions the correct JDK for each app it manages.</div>'
                 ].join('')
             }
@@ -172,6 +183,7 @@ stableRuntimeVersion="0.8.9.0";
     function renderMethodChoices(platform) {
         var methods = METHODS[platform] || [];
         var container = document.getElementById('method-choices');
+        if (!container) return;
         container.innerHTML = '<div class="dl-choice-grid dl-choice-grid--' + methods.length + '">'
             + methods.map(function (m) {
                 return '<button class="dl-choice dl-choice--method" data-method="' + m.id + '">'
@@ -208,7 +220,8 @@ stableRuntimeVersion="0.8.9.0";
     }
 
     /* ---- Selection handlers ---- */
-    function selectVersion(ver) {
+    function selectVersion(ver, preventScroll) {
+        if (!ver || (!URLS[ver] && !URLS.latest)) ver = 'latest';
         state.version = ver;
         state.platform = null;
         state.method = null;
@@ -217,9 +230,10 @@ stableRuntimeVersion="0.8.9.0";
             b.classList.toggle('dl-choice--active', b.dataset.version === ver);
         });
 
-        var label = ver === 'latest'
+        var u = URLS[ver] || URLS.latest;
+        var label = (ver === 'latest')
             ? 'Latest ' + URLS.latest.version
-            : 'LTS ' + URLS.lts.version;
+            : 'Stable ' + u.version;
         setSelection('sel-version', label);
 
         unlockStep('step-platform');
@@ -227,9 +241,15 @@ stableRuntimeVersion="0.8.9.0";
         setSelection('sel-platform', '');
         setSelection('sel-method', '');
 
-        document.getElementById('install-content').style.display = 'none';
-        document.getElementById('install-content').innerHTML = '';
-        document.getElementById('dl-verify').style.display = 'none';
+        var installEl = document.getElementById('install-content');
+        if (installEl) {
+            installEl.style.display = 'none';
+            installEl.innerHTML = '';
+        }
+        var verifyEl = document.getElementById('dl-verify');
+        if (verifyEl) {
+            verifyEl.style.display = 'none';
+        }
 
         /* reset platform choices */
         document.querySelectorAll('.dl-choice--platform').forEach(function (b) {
@@ -237,10 +257,21 @@ stableRuntimeVersion="0.8.9.0";
         });
 
         /* scroll to step 2 */
-        scrollToStep('step-platform');
+        if (!preventScroll) {
+            scrollToStep('step-platform');
+        }
     }
 
     function selectPlatform(platform) {
+        if (!state.version) {
+            state.version = 'latest';
+            document.querySelectorAll('.dl-choice--version').forEach(function (b) {
+                b.classList.toggle('dl-choice--active', b.dataset.version === 'latest');
+            });
+            setSelection('sel-version', 'Latest ' + URLS.latest.version);
+            unlockStep('step-platform');
+        }
+
         state.platform = platform;
         state.method = null;
 
@@ -254,15 +285,24 @@ stableRuntimeVersion="0.8.9.0";
         unlockStep('step-method');
         setSelection('sel-method', '');
 
-        document.getElementById('install-content').style.display = 'none';
-        document.getElementById('install-content').innerHTML = '';
-        document.getElementById('dl-verify').style.display = 'none';
+        var installEl = document.getElementById('install-content');
+        if (installEl) {
+            installEl.style.display = 'none';
+            installEl.innerHTML = '';
+        }
+        var verifyEl = document.getElementById('dl-verify');
+        if (verifyEl) {
+            verifyEl.style.display = 'none';
+        }
 
         renderMethodChoices(platform);
         scrollToStep('step-method');
     }
 
     function selectMethod(method) {
+        if (!state.version) {
+            state.version = 'latest';
+        }
         state.method = method;
 
         document.querySelectorAll('.dl-choice--method').forEach(function (b) {
@@ -276,22 +316,26 @@ stableRuntimeVersion="0.8.9.0";
         /* render install content */
         var html = getInstallContent(state.platform, method, state.version);
         var content = document.getElementById('install-content');
-        content.innerHTML = html;
-        content.style.display = 'block';
+        if (content) {
+            content.innerHTML = html;
+            content.style.display = 'block';
 
-        /* syntax highlight new blocks */
-        if (window.Prism) {
-            content.querySelectorAll('code').forEach(function (el) {
-                Prism.highlightElement(el);
-            });
+            /* syntax highlight new blocks */
+            if (window.Prism) {
+                content.querySelectorAll('code').forEach(function (el) {
+                    Prism.highlightElement(el);
+                });
+            }
+
+            /* bind copy buttons in new content */
+            bindCopyButtons(content);
         }
 
-        /* bind copy buttons in new content */
-        bindCopyButtons(content);
-
         /* show verify section (not for docker) */
-        document.getElementById('dl-verify').style.display =
-            (state.platform === 'docker') ? 'none' : 'block';
+        var verifyEl = document.getElementById('dl-verify');
+        if (verifyEl) {
+            verifyEl.style.display = (state.platform === 'docker') ? 'none' : 'block';
+        }
 
         scrollToStep('install-content');
     }
@@ -351,6 +395,9 @@ stableRuntimeVersion="0.8.9.0";
 
     /* ---- Static copy buttons (archive, verify) ---- */
     bindCopyButtons();
+
+    /* ---- Auto-select latest version by default so user can immediately click platform ---- */
+    selectVersion('latest', true);
 
     /* ---- Preloader ---- */
     window.addEventListener('load', function () {

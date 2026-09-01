@@ -2,31 +2,31 @@
 root:"../.."
 
 // define stable versions
-lts-api-version: "0.8.9"
-lts-app-version: "0.8.9"
-lts-runtime-version: "0.8.9.0"
+stable-api-version: "0.8.9"
+stable-app-version: "0.8.9"
+stable-runtime-version: "0.8.9.0"
 
 // enable more logging information
 trace:true
 verbose:true
 
 // enable nuts-app-full and installer fat jars
-build-jars:true
+build-jars:false
 
 // enable native executable generation
-build-native:true
+build-native:false
 
 // build documentation website and github readme.md
 build-site:true
 
 // build nuts-public and preview repo indexes
-build-repos:true
+build-repos:false
 
 // generate version compatibility html file, requires 'japi-compliance-checker' to be installed
-build-compat:true
+build-compat:false
 
 // publish (push) binaries to production server (thevpc.net)
-publish:true
+publish:false
 
 //update-version:false
 //keep-stamp:false

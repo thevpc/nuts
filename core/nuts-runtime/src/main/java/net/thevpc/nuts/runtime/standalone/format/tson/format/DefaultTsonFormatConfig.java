@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format.tson.format;
 
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
+
 public class DefaultTsonFormatConfig implements Cloneable {
     boolean ignoreObjectEmptyArrayFields;
     boolean ignoreObjectNullFields;
@@ -258,7 +261,7 @@ public class DefaultTsonFormatConfig implements Cloneable {
         try {
             return (DefaultTsonFormatConfig) this.clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalArgumentException("Cannot clone");
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 }

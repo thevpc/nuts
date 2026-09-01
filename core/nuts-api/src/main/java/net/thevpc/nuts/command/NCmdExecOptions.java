@@ -29,6 +29,7 @@ package net.thevpc.nuts.command;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.io.Serializable;
 import java.util.List;
@@ -181,7 +182,7 @@ public class NCmdExecOptions implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(env, directory, failFast, executionType,executorOptions);
+        int result = Objects.hash(env, directory, failFast, executionType, executorOptions);
         return result;
     }
 
@@ -199,12 +200,12 @@ public class NCmdExecOptions implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsCommandExecOptions{" +
-                "executorOptions=" + executorOptions +
-                ", env=" + env +
-                ", directory='" + directory + '\'' +
-                ", failFast=" + failFast +
-                ", executionType=" + executionType +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("executorOptions", executorOptions)
+                .add("env", env)
+                .add("directory", directory)
+                .add("failFast", failFast)
+                .add("executionType", executionType)
+                .build();
     }
 }

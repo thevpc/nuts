@@ -1,6 +1,11 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Event representing the execution lifecycle of a single job in a {@link NWorkBalancer}.
@@ -91,4 +96,29 @@ public class NWorkBalancerStrategyEvent implements java.io.Serializable {
     public Throwable error() {
         return error;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NWorkBalancerStrategyEvent that = (NWorkBalancerStrategyEvent) o;
+        return startTimeNanos == that.startTimeNanos && endTimeNanos == that.endTimeNanos && Objects.equals(jobId, that.jobId) && Objects.equals(jobName, that.jobName) && Objects.equals(workerName, that.workerName) && Objects.equals(error, that.error);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jobId, jobName, workerName, startTimeNanos, endTimeNanos, error);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true).omitProcessingSuppliers(true)
+                .add("jobId", jobId)
+                .add("jobName", jobName)
+                .add("workerName", workerName)
+                .add("startTimeNanos", startTimeNanos)
+                .add("endTimeNanos", endTimeNanos)
+                .add("error", error)
+                .build();
+    }
+
 }

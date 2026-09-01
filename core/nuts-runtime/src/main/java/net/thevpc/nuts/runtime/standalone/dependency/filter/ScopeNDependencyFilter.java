@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
 
-public class ScopeNDependencyFilter extends AbstractDependencyFilter{
+public class ScopeNDependencyFilter extends NDependencyFilterBase {
 
     private EnumSet<NDependencyScope> scopes = EnumSet.noneOf(NDependencyScope.class);
 

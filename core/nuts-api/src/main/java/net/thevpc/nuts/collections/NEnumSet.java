@@ -1202,26 +1202,8 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
             public NEnumSet<T> apply(Set<T> ts, Class<T> aClass) {
                 try {
                     return d.newInstance(ts, aClass, this);
-                } catch (InstantiationException | IllegalAccessException e) {
-                    /**
-                     * Runtime exception.
-                     *
-                     * @param e e
-                     * @return runtime exception result
-                     */
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    Throwable t = e.getTargetException();
-                    if (t instanceof RuntimeException) {
-                        throw (RuntimeException) t;
-                    }
-                    /**
-                     * Runtime exception.
-                     *
-                     * @param t t
-                     * @return runtime exception result
-                     */
-                    throw new RuntimeException(t);
+                } catch (InstantiationException | IllegalAccessException|InvocationTargetException e) {
+                    throw NException.ofUncheckedException(e);
                 }
             }
         };

@@ -33,7 +33,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.platform.NOsFamily;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 
 import java.util.Collection;
 
@@ -264,7 +264,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
      * @param pf accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
-    NDependencyFilter byPlatform(NExecutionEngineFamily... pf);
+    NDependencyFilter byPlatform(NRuntimeDistributionFamily... pf);
 
     /**
      * accept only dependencies that match any of the given Platform

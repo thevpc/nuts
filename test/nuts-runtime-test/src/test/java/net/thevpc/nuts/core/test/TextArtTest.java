@@ -196,6 +196,15 @@ public class TextArtTest {
                 .addRow(NTableCell.of(NText.of("another")));
         NOut.println(art.tableRenderer().get().render(table));
     }
+    @Test
+    public void test10b() {
+        NOut.println("TEST 10 ");
+        NTextArt art = NTextArt.of();
+        NMutableTableModel table = NTableModel.of()
+                .addRow(NTableCell.of(NText.of("tall\ncell\nvery\ntall")).builder().colspan(2).build(), NTableCell.of(NText.of("short")))
+                .addRow(NTableCell.of(NText.of("another")));
+        NOut.println(art.tableRenderer().get().render(table));
+    }
 
     @Test
     public void test11() {

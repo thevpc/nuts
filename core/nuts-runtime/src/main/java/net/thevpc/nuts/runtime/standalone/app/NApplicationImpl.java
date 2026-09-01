@@ -84,7 +84,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         try {
             cloned = (NApplicationImpl) this.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         cloned.sourceType = this.sourceType();
         cloned.application = this.handler();
@@ -144,62 +144,13 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     }
 
     public void prepare(NAppInitInfo appInitInfo) {
+        AppClassInfo appClassInfo = resolveAppClassInfo(appInitInfo);
+        NId expectedId = NId.getForClass(appClassInfo.appClass).orNull();
         if (prepared) {
-            throw new NIllegalStateException(NMsg.ofC("application already prepared"));
+            throw new NIllegalStateException(NMsg.ofC("application already prepared : was %s (%s), now %s (%s)", id, sourceType, expectedId, appClassInfo.appClass));
         }
         prepared = true;
         String[] args0 = appInitInfo.args();
-        Class<?> appClass = appInitInfo.sourceType();
-        Object source = appInitInfo.source();
-        NApplicationHandler application = appInitInfo.application();
-        if (appClass == null && source == null) {
-            if (application != null) {
-                source = application;
-                appClass = application.getClass();
-            } else {
-                application = resolveApplicationCustomResolver();
-                if (application != null) {
-                    appClass = NReflectUtils.unproxyType(application.getClass());
-                    source = application;
-                } else {
-                    appClass = resolveApplicationFromStackTrace();
-                    if (appClass == null) {
-                        throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
-                    }
-                    NAssert.requireNamedNonNull(appClass, "applicationType");
-                    source = createInstance(appClass);
-                    application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
-                }
-            }
-        } else {
-            if (appClass != null) {
-                if (source == null) {
-                    source = createInstance(appClass);
-                } else {
-                    if (!appClass.isInstance(source)) {
-                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
-                    }
-                }
-            }
-            if (source != null) {
-                if (appClass == null) {
-                    appClass = NReflectUtils.unproxyType(source.getClass());
-                } else {
-                    if (!appClass.isInstance(source)) {
-                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
-                    }
-                }
-            }
-            if (application == null) {
-                application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
-            }
-        }
-//        Class appClass =
-//                (applicationInstance instanceof NApplications.AnnotationClassNApplication) ?
-//                        ((NApplications.AnnotationClassNApplication) applicationInstance).getAppInstance().getClass()
-//                        : applicationInstance.getClass();
-
-
         NClock startTime = appInitInfo.startTime();
         this.storeLocationResolver = appInitInfo.storeLocationSupplier();
         List<String> args = new ArrayList<>();
@@ -213,7 +164,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         }
         this.startTime = startTime == null ? NClock.now() : startTime;
         NArgCompletePosition wordIndex = null;
-        if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
+        if (!args.isEmpty() && args.get(0).startsWith("--nuts-exec-mode=")) {
             NCmdLine execModeCommand = NCmdLine.parseDefault(
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get();
             if (execModeCommand.hasNext()) {
@@ -260,16 +211,16 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         NId _appId = this.id; // if already set!
         if (NBlankable.isBlank(this.id)) {
             //("=== Inherited "+_appId);
-            _appId = NId.getForClass(appClass).orNull();
+            _appId = NId.getForClass(appClassInfo.appClass).orNull();
             if (NBlankable.isBlank(_appId)) {
-                throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
+                throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClassInfo.appClass.getName()), NExecutionException.ERROR_255);
             }
             this.id = _appId;
         }
         this.args = new ArrayList<>(args);
-        this.sourceType = appClass == null ? null : NReflectUtils.unproxyType(appClass);
-        this.application = application;
-        this.source = source;
+        this.sourceType = appClassInfo.appClass;
+        this.application = appClassInfo.application;
+        this.source = appClassInfo.source;
         for (NStoreType folder : NStoreType.values()) {
             this.setFolder(folder, NPath.of(NStoreKey.of(this.id).type(folder)));
             this.setSharedFolder(folder, NPath.of(NStoreKey.ofShared(this.id).type(folder)));
@@ -282,6 +233,67 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         if (bundleName == null) {
             bundleName = resolveAppNameFromClass(this.sourceType, _appId.artifactId());
         }
+    }
+
+    private static class AppClassInfo {
+        private Class<?> appClass;
+        private Object source;
+        private NApplicationHandler application;
+
+        public AppClassInfo(Class<?> appClass, Object source, NApplicationHandler application) {
+            this.appClass = appClass;
+            this.source = source;
+            this.application = application;
+        }
+    }
+
+    private AppClassInfo resolveAppClassInfo(NAppInitInfo appInitInfo) {
+        Class<?> appClass = appInitInfo.sourceType();
+        Object source = appInitInfo.source();
+        NApplicationHandler application = appInitInfo.application();
+        if (appClass == null && source == null) {
+            if (application != null) {
+                source = application;
+                appClass = application.getClass();
+            } else {
+                application = resolveApplicationCustomResolver();
+                if (application != null) {
+                    appClass = NReflectUtils.unproxyType(application.getClass());
+                    source = application;
+                } else {
+                    appClass = resolveApplicationFromStackTrace();
+                    if (appClass == null) {
+                        throw new NIllegalArgumentException(NMsg.ofC("unable to resolve application class from the current stacktrace"));
+                    }
+                    NAssert.requireNamedNonNull(appClass, "applicationType");
+                    source = createInstance(appClass);
+                    application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
+                }
+            }
+        } else {
+            if (appClass != null) {
+                if (source == null) {
+                    source = createInstance(appClass);
+                } else {
+                    if (!appClass.isInstance(source)) {
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
+                    }
+                }
+            }
+            if (source != null) {
+                if (appClass == null) {
+                    appClass = NReflectUtils.unproxyType(source.getClass());
+                } else {
+                    if (!appClass.isInstance(source)) {
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid application instance (%s). Expected %s", source.getClass(), appClass));
+                    }
+                }
+            }
+            if (application == null) {
+                application = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(source);
+            }
+        }
+        return new AppClassInfo(appClass == null ? null : NReflectUtils.unproxyType(appClass), source, application);
     }
 
     private NApplicationHandler resolveApplicationCustomResolver() {
@@ -460,7 +472,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         }
         if (h != null) {
             try {
-                h = NText.transform(h, new NTextTransformConfig()
+                h = h.transform(new NTextTransformConfig()
                         .processTitleNumbers(true)
                         .normalize(true)
                         .flatten(true)
@@ -476,7 +488,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     @Override
     public void printHelp() {
         NText h = NWorkspaceExt.of().resolveDefaultHelp(sourceType());
-        h = NText.transform(h, new NTextTransformConfig()
+        h = h.transform(new NTextTransformConfig()
                 .processTitleNumbers(true)
                 .normalize(true)
                 .flatten(true)

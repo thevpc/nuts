@@ -464,7 +464,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         logVerbose(NMsg.ofC("[FILE] CREATE FILE %s",NMsg.ofStyledPath(resource)));
         String lineSeparator = NNewLineMode.system().value();
         if (getClass().getResource(resource) == null) {
-            throw new RuntimeException("resource not found " + resource);
+            throw new NNoSuchElementException(NMsg.ofC("resource not found %s", resource));
         }
         try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(resource)))) {
             String line = null;

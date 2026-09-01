@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDependencyOsFilter extends AbstractDependencyFilter  {
+public class NDependencyOsFilter extends NDependencyFilterBase {
 
     private Set<NOsFamily> os = EnumSet.noneOf(NOsFamily.class);
 

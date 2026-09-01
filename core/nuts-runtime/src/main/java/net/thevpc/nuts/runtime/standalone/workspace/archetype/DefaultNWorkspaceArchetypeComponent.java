@@ -28,16 +28,11 @@ import java.util.*;
 
 import net.thevpc.nuts.artifact.NDependencyFilter;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
 
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.core.NIsolationLevel;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;

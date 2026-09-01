@@ -6,19 +6,14 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author thevpc
@@ -40,5 +35,62 @@ public class TextTest {
         split = NText.of(NText.of("a/:b/c/"))
                 .split("/:",true);
         TestUtils.println(split);
+    }
+
+    @Test
+    public void testVisitDFS() {
+        NText tree = NText.ofList(
+                NText.ofStyled(NText.ofPlain("hello"), NTextStyle.error()),
+                NText.ofTitle(NText.ofPlain("world"), 1),
+                NTextBuilder.of().append(NText.ofPlain("child1")).append(NText.ofPlain("child2")).build()
+        );
+
+        List<String> events = new ArrayList<>();
+        tree.traverseDFS(new NTextVisitor() {
+            @Override
+            public void enter(NText node) {
+                events.add("enter:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
+            }
+
+            @Override
+            public void exit(NText node) {
+                events.add("exit:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
+            }
+        });
+
+        List<String> expected = Arrays.asList(
+                "enter:LIST", "enter:STYLED", "enter:PLAIN(hello)", "exit:PLAIN(hello)", "exit:STYLED", "enter:TITLE", "enter:PLAIN(world)", "exit:PLAIN(world)", "exit:TITLE",
+                "enter:PLAIN(child1child2)", "exit:PLAIN(child1child2)", "exit:LIST"
+        );
+        Assertions.assertEquals(expected, events);
+    }
+
+    @Test
+    public void testVisitBFS() {
+        NText tree = NText.ofList(
+                NText.ofStyled(NText.ofPlain("hello"), NTextStyle.error()),
+                NText.ofTitle(NText.ofPlain("world"), 1),
+                NTextBuilder.of().append(NText.ofPlain("child1")).append(NText.ofPlain("child2")).build()
+        );
+
+        List<String> events = new ArrayList<>();
+        tree.traverseBFS(new NTextVisitor() {
+            @Override
+            public void enter(NText node) {
+                events.add("enter:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
+            }
+
+            @Override
+            public void exit(NText node) {
+                events.add("exit:" + node.type() + (node instanceof NTextPlain ? "(" + ((NTextPlain) node).value() + ")" : ""));
+            }
+        });
+
+        List<String> expected = Arrays.asList(
+                "enter:LIST", "enter:STYLED", "enter:TITLE", "enter:PLAIN(child1child2)", "enter:PLAIN(hello)", "enter:PLAIN(world)",
+                "exit:PLAIN(world)", "exit:PLAIN(hello)", "exit:PLAIN(child1child2)", "exit:TITLE", "exit:STYLED", "exit:LIST"
+        );
+        Assertions.assertEquals(expected, events);
+
     }
 }

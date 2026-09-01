@@ -656,7 +656,7 @@ public class JCshConnection extends SshConnectionBase {
         try {
             channel = sshSession.openChannel("exec");
         } catch (JSchException e) {
-            throw new RuntimeException(e);
+            throw NException.ofUncheckedException(e);
         }
         ((ChannelExec) channel).setCommand(command);
         return channel;

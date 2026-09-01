@@ -2,14 +2,11 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementDeserializerContext;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.artifact.DefaultNEnvCondition;
+import net.thevpc.nuts.internal.artifact.NEnvConditionImpl;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
-
-import java.lang.reflect.Type;
 
 public class NElementMapperNEnvConditionBuilder implements NElementMapper<NEnvConditionBuilder> {
 
@@ -29,7 +26,7 @@ public class NElementMapperNEnvConditionBuilder implements NElementMapper<NEnvCo
 
     @Override
     public NEnvConditionBuilder toObject(NElementDeserializerContext context) {
-        NEnvCondition builder = context.defaultToObject(context.element(), DefaultNEnvCondition.class);
+        NEnvCondition builder = context.defaultToObject(context.element(), NEnvConditionImpl.class);
         return new DefaultNEnvConditionBuilder(builder);
     }
 

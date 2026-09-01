@@ -1,5 +1,6 @@
 package net.thevpc.nuts.net;
 
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -130,13 +131,7 @@ public class NHttpUrlEncoder {
         try {
             return URLDecoder.decode(any, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw NException.ofSafeIOException(e);
         }
     }
 
@@ -150,13 +145,7 @@ public class NHttpUrlEncoder {
         try {
             return URLEncoder.encode(any, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw NException.ofSafeIOException(e);
         }
     }
 }

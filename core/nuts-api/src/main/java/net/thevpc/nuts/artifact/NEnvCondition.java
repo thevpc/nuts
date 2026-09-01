@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.internal.artifact.NEnvConditionImpl;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NGetter;
 
@@ -38,7 +39,7 @@ import java.util.Map;
  * @since 0.8.3
  */
 public interface NEnvCondition extends NBlankable {
-    NEnvCondition BLANK=new DefaultNEnvCondition();
+    NEnvCondition BLANK=new NEnvConditionImpl();
     /**
      * supported profiles (such as maven profiles)
      *

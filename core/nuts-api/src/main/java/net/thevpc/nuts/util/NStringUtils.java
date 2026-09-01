@@ -194,12 +194,12 @@ public class NStringUtils {
         while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
             len--;
         }
-      /**
-       * Return.
-       *
-       * @param value.subSequence(st value.sub sequence(st
-       * @param value.toString( value.to string(
-       */
+        /**
+         * Return.
+         *
+         * @param value.subSequence(st value.sub sequence(st
+         * @param value.toString(value.to string(
+         */
         return ((st > 0) || (len < len0)) ? value.subSequence(st, len) : value.toString();
     }
 
@@ -355,7 +355,7 @@ public class NStringUtils {
      * First index of.
      *
      * @param string string
-     * @param chars chars
+     * @param chars  chars
      * @return first index of result
      */
     public static int firstIndexOf(String string, char... chars) {
@@ -640,8 +640,8 @@ public class NStringUtils {
     /**
      * Format align.
      *
-     * @param text text
-     * @param size size
+     * @param text     text
+     * @param size     size
      * @param position position
      * @return format align result
      */
@@ -712,7 +712,7 @@ public class NStringUtils {
     /**
      * Format string literal.
      *
-     * @param text text
+     * @param text      text
      * @param quoteType quote type
      * @return format string literal result
      */
@@ -731,7 +731,7 @@ public class NStringUtils {
     /**
      * Format string literal.
      *
-     * @param text text
+     * @param text      text
      * @param quoteType quote type
      * @param condition condition
      * @return format string literal result
@@ -753,10 +753,10 @@ public class NStringUtils {
     /**
      * Format string literal.
      *
-     * @param text text
-     * @param quoteType quote type
-     * @param condition condition
-     * @param skipBoundaries skip boundaries
+     * @param text             text
+     * @param quoteType        quote type
+     * @param condition        condition
+     * @param skipBoundaries   skip boundaries
      * @param extraEscapeChars extra escape chars
      * @return format string literal result
      */
@@ -775,16 +775,16 @@ public class NStringUtils {
                                     NCharEscape.BACKSLASH)));
         }
 
-        AbstractNStringLiteralFormat fmt;
+        NStringLiteralFormatBase fmt;
         switch (quoteType) {
             case LINE_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             case BLOCK_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             default:
-                fmt = AbstractNStringLiteralFormat.ofEscapeChar(
+                fmt = NStringLiteralFormatBase.ofEscapeChar(
                         quoteType, effectiveCondition, escapeSet, NCharEscape.BACKSLASH);
                 break;
         }
@@ -835,7 +835,7 @@ public class NStringUtils {
     /**
      * Repeat.
      *
-     * @param c c
+     * @param c     c
      * @param count count
      * @return repeat result
      */
@@ -848,7 +848,7 @@ public class NStringUtils {
     /**
      * Repeat.
      *
-     * @param str str
+     * @param str   str
      * @param count count
      * @return repeat result
      */
@@ -878,7 +878,7 @@ public class NStringUtils {
     /**
      * Align left.
      *
-     * @param s s
+     * @param s     s
      * @param width width
      * @return align left result
      */
@@ -897,7 +897,7 @@ public class NStringUtils {
     /**
      * Align right.
      *
-     * @param s s
+     * @param s     s
      * @param width width
      * @return align right result
      */
@@ -916,9 +916,9 @@ public class NStringUtils {
     /**
      * Split.
      *
-     * @param value value
-     * @param chars chars
-     * @param strip strip
+     * @param value       value
+     * @param chars       chars
+     * @param strip       strip
      * @param ignoreEmpty ignore empty
      * @return split result
      */
@@ -1060,8 +1060,8 @@ public class NStringUtils {
     /**
      * Parse place holder.
      *
-     * @param text text
-     * @param pattern pattern
+     * @param text           text
+     * @param pattern        pattern
      * @param patternVarName pattern var name
      * @return parse place holder result
      */
@@ -1207,9 +1207,9 @@ public class NStringUtils {
                     return true;
                 }
                 while (p < length) {
-                  /**
-                   * Fill once.
-                   */
+                    /**
+                     * Fill once.
+                     */
                     fillOnce();
                     if (ready()) {
                         return true;
@@ -1357,9 +1357,9 @@ public class NStringUtils {
                     return true;
                 }
                 while (p < length) {
-                  /**
-                   * Fill once.
-                   */
+                    /**
+                     * Fill once.
+                     */
                     fillOnce();
                     if (ready()) {
                         return true;
@@ -1510,11 +1510,11 @@ public class NStringUtils {
     public static String[] stacktraceArray(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-          /**
-           * Try.
-           *
-           * @param PrintWriter(sw) print writer(sw)
-           */
+            /**
+             * Try.
+             *
+             * @param PrintWriter(sw) print writer(sw)
+             */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -1540,11 +1540,11 @@ public class NStringUtils {
     public static String stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-          /**
-           * Try.
-           *
-           * @param PrintWriter(sw) print writer(sw)
-           */
+            /**
+             * Try.
+             *
+             * @param PrintWriter(sw) print writer(sw)
+             */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -1559,7 +1559,7 @@ public class NStringUtils {
      * Last index of.
      *
      * @param string string
-     * @param chars chars
+     * @param chars  chars
      * @return last index of result
      */
     public static int lastIndexOf(String string, char[] chars) {
@@ -1581,7 +1581,7 @@ public class NStringUtils {
      * Index of.
      *
      * @param string string
-     * @param chars chars
+     * @param chars  chars
      * @return index of result
      */
     public static int indexOf(String string, char[] chars) {
@@ -1602,8 +1602,8 @@ public class NStringUtils {
     /**
      * Levenshtein closest.
      *
-     * @param threshold threshold
-     * @param str1 str1
+     * @param threshold  threshold
+     * @param str1       str1
      * @param dictionary dictionary
      * @return levenshtein closest result
      */
@@ -1764,7 +1764,7 @@ public class NStringUtils {
      * Pjoin.
      *
      * @param delimiter delimiter
-     * @param items items
+     * @param items     items
      * @return pjoin result
      */
     public static String pjoin(String delimiter, String... items) {
@@ -1805,7 +1805,7 @@ public class NStringUtils {
     /**
      * Truncate.
      *
-     * @param s s
+     * @param s         s
      * @param maxLength max length
      * @return truncate result
      */
@@ -1824,9 +1824,9 @@ public class NStringUtils {
     /**
      * Truncate.
      *
-     * @param s s
+     * @param s         s
      * @param maxLength max length
-     * @param suffix suffix
+     * @param suffix    suffix
      * @return truncate result
      */
     public static String truncate(String s, int maxLength, String suffix) {
@@ -1850,7 +1850,7 @@ public class NStringUtils {
     /**
      * Replace tail.
      *
-     * @param s s
+     * @param s       s
      * @param oldTail old tail
      * @param newTail new tail
      * @return replace tail result
@@ -1869,7 +1869,7 @@ public class NStringUtils {
     /**
      * Replace head.
      *
-     * @param s s
+     * @param s       s
      * @param oldHead old head
      * @param newHead new head
      * @return replace head result
@@ -1892,17 +1892,17 @@ public class NStringUtils {
      * @return strip result
      */
     public static StringBuilder strip(StringBuilder sb) {
-      /**
-       * Strip left.
-       *
-       * @param sb sb
-       */
+        /**
+         * Strip left.
+         *
+         * @param sb sb
+         */
         stripLeft(sb);
-      /**
-       * Strip right.
-       *
-       * @param sb sb
-       */
+        /**
+         * Strip right.
+         *
+         * @param sb sb
+         */
         stripRight(sb);
         return sb;
     }
@@ -1934,50 +1934,50 @@ public class NStringUtils {
     public static String escapeChar(char c) {
         switch (c) {
             case '\b':
-              /**
-               * Return.
-               *
-               * @param "\\b" "\\b"
-               */
+                /**
+                 * Return.
+                 *
+                 * @param "\\b" "\\b"
+                 */
                 return ("\\b");
             case '\t':
                 return "\\t";
             case '\n':
-              /**
-               * Return.
-               *
-               * @param "\\n" "\\n"
-               */
+                /**
+                 * Return.
+                 *
+                 * @param "\\n" "\\n"
+                 */
                 return ("\\n");
             case '\f':
-              /**
-               * Return.
-               *
-               * @param "\\f" "\\f"
-               */
+                /**
+                 * Return.
+                 *
+                 * @param "\\f" "\\f"
+                 */
                 return ("\\f");
             case '\r':
-              /**
-               * Return.
-               *
-               * @param "\\r" "\\r"
-               */
+                /**
+                 * Return.
+                 *
+                 * @param "\\r" "\\r"
+                 */
                 return ("\\r");
             case '\\':
-              /**
-               * Return.
-               *
-               * @param "\\\\" "\\\\"
-               */
+                /**
+                 * Return.
+                 *
+                 * @param "\\\\" "\\\\"
+                 */
                 return ("\\\\");
             default: {
                 if (c < 0x20 || c > 0x7e) {
                     String s = "0000" + Integer.toString(c, 16);
-                  /**
-                   * Return.
-                   *
-                   * @param 4) 4)
-                   */
+                    /**
+                     * Return.
+                     *
+                     * @param 4) 4)
+                     */
                     return ("\\u" + s.substring(s.length() - 4));
                 } else {
                     return String.valueOf(c);
@@ -2055,7 +2055,7 @@ public class NStringUtils {
          * Accept.
          *
          * @param buffer buffer
-         * @param c c
+         * @param c      c
          * @return accept result
          */
         boolean accept(String buffer, char c);
@@ -2064,7 +2064,7 @@ public class NStringUtils {
     /**
      * Common prefix.
      *
-     * @param all all
+     * @param all          all
      * @param prefixFilter prefix filter
      * @return common prefix result
      */
@@ -2173,5 +2173,45 @@ public class NStringUtils {
         char[] chars = new char[charBuffer.remaining()];
         charBuffer.get(chars);
         return chars;
+    }
+
+    public static String indent(String str, String prefix, boolean skipFirstLine) {
+        if (str == null) {
+            str = "";
+        }
+        if (prefix == null || prefix.isEmpty()) {
+            return str;
+        }
+        char[] charArray = str.toCharArray();
+        boolean wasNewLine = true;
+        StringBuilder data = new StringBuilder();
+        boolean firstLine = true;
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            if (c == '\r') {
+                if (i + 1 < charArray.length && charArray[i + 1] == '\n') {
+                    i++;
+                    data.append('\r');
+                    data.append('\n');
+                } else {
+                    data.append('\r');
+                }
+                wasNewLine = true;
+                firstLine = false;
+            } else if (c == '\n') {
+                data.append('\n');
+                wasNewLine = true;
+                firstLine = false;
+            } else {
+                if (wasNewLine) {
+                    if (!firstLine || !skipFirstLine) {
+                        data.append(prefix);
+                    }
+                }
+                data.append(c);
+                wasNewLine = false;
+            }
+        }
+        return data.toString();
     }
 }

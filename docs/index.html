@@ -75,12 +75,19 @@
                 </a>
                 <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
                     <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        v0.8.3
+                        v0.8.9
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="doc-nuts.html">v0.8.4 (Latest)</a>
-                        <a class="dropdown-item active" href="versions/v0.8.3/doc-nuts.html">v0.8.3</a>
+                        <a class="dropdown-item " href="versions/v1.0.0/doc-nuts.html">v1.0.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="versions/v0.8.9/doc-nuts.html">v0.8.9</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.8/doc-nuts.html">v0.8.8</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.7/doc-nuts.html">v0.8.7</a>
+                        
+
                     </div>
                 </div>
             </div>
@@ -99,9 +106,11 @@
                         <a class="dropdown-toggle" href="#">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item "
-                                   href="doc-nuts.html">User Documentation</a></li>
+                                   href="versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="doc-naf.html">Developer Documentation</a></li>
+                                   href="versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item "
                                    href="faq.html">FAQ</a></li>
                             <li><a class="dropdown-item "
@@ -132,6 +141,7 @@
     </nav>
 </header>
 <!-- Header End -->
+
 
     <!-- ===================== HERO ===================== -->
     <section class="nuts-hero">
@@ -173,7 +183,7 @@ nuts netbeans</code></pre>
                 <a href="download.html" class="btn-nuts-primary">
                     <i class="fas fa-download"></i> Download Nuts
                 </a>
-                <a href="doc-nuts.html" class="btn-nuts-secondary">
+                <a href="versions/v1.0.0/doc-nuts.html" class="btn-nuts-secondary">
                     Read the docs →
                 </a>
             </div>
@@ -242,8 +252,8 @@ nuts netbeans</code></pre>
                     </button>
                 </div>
                 <p class="nuts-install__channels">
-                    <span class="nuts-badge nuts-badge--stable">LTS</span> Stable on Maven Central &nbsp;·&nbsp;
-                    <span class="nuts-badge nuts-badge--preview">Latest</span> Preview on maven.thevpc.net
+                    <span class="nuts-badge nuts-badge--stable">Stable</span> Stable on Maven Central &nbsp;·&nbsp;
+                    <span class="nuts-badge nuts-badge--latest">Latest</span> Latest on maven.thevpc.net
                 </p>
             </div>
         </div>
@@ -421,7 +431,7 @@ nuts netbeans</code></pre>
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on <span id="build-time"></span>
         </p>
     </div>
 </footer>
@@ -447,5 +457,6 @@ nuts netbeans</code></pre>
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/nuts-docs.js"></script>
 </body>
+<script src="assets/js/common.js"></script>
 <script src="assets/js/nuts-landing.js"></script>
 </html>

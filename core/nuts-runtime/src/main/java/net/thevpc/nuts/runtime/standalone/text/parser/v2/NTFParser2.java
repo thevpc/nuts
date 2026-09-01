@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTextVisitor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Consumer;
 
 public class NTFParser2 extends AbstractNTextNodeParser {
     private StringBuffer buffer = new StringBuffer();
@@ -532,18 +533,18 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     @Override
-    public long parseRemaining(NTextVisitor visitor) {
+    public long parseRemaining(Consumer<NText> visitor) {
         long b = 0;
         while (true) {
             NText n = readFully();
             if (n != null) {
                 b++;
-                visitor.visit(n);
+                visitor.accept(n);
             } else {
                 if(q.hasNext()){
                     n = readFully();
                     if(n!=null){
-                        visitor.visit(n);
+                        visitor.accept(n);
                     }else {
                         throw new IllegalArgumentException("parseRemaining failed because readFull returns null whereas the stream is not empty?");
                     }
@@ -555,14 +556,14 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     @Override
-    public long parseIncremental(char[] buf, int off, int len, NTextVisitor visitor) {
+    public long parseIncremental(char[] buf, int off, int len, Consumer<NText> visitor) {
         offer(buf, off, len);
         long b = 0;
         while (true) {
             NText n = read();
             if (n != null) {
                 b++;
-                visitor.visit(n);
+                visitor.accept(n);
             } else {
                 break;
             }

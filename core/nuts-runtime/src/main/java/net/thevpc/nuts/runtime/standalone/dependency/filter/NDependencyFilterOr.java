@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NDependencyFilterOr extends AbstractDependencyFilter implements NComplexExpressionString {
+public class NDependencyFilterOr extends NDependencyFilterBase implements NComplexExpressionString {
 
     private final NDependencyFilter[] all;
 

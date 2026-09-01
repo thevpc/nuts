@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.definition.filter;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDefinitionFilter;
 import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.collections.NCollections;
@@ -14,13 +14,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
+public class NDefinitionPlatformFamilyFilter extends DefinitionFilterBase {
 
-    private Set<NExecutionEngineFamily> accepted = new HashSet<>();
+    private Set<NRuntimeDistributionFamily> accepted = new HashSet<>();
 
-    public NDefinitionPlatformFamilyFilter(Collection<NExecutionEngineFamily> accepted) {
+    public NDefinitionPlatformFamilyFilter(Collection<NRuntimeDistributionFamily> accepted) {
         super(NFilterOp.CUSTOM);
-        LinkedHashSet<NExecutionEngineFamily> s2 = new LinkedHashSet<>();
+        LinkedHashSet<NRuntimeDistributionFamily> s2 = new LinkedHashSet<>();
         NCollections.addAllNonNull(s2, accepted);
         this.accepted = new LinkedHashSet<>(s2);
     }
@@ -28,14 +28,14 @@ public class NDefinitionPlatformFamilyFilter extends AbstractDefinitionFilter {
 
     @Override
     public boolean acceptDefinition(NDefinition def) {
-        List<NExecutionEngineFamily> current = NStream.ofIterable(def.descriptor().condition().platform()).nonBlank()
-                .map(x -> NExecutionEngineFamily.parse(x).orNull())
+        List<NRuntimeDistributionFamily> current = NStream.ofIterable(def.descriptor().condition().platform()).nonBlank()
+                .map(x -> NRuntimeDistributionFamily.parse(x).orNull())
                 .nonBlank()
                 .toList();
         if (current.isEmpty() || accepted.isEmpty()) {
             return true;
         }
-        for (NExecutionEngineFamily osf : accepted) {
+        for (NRuntimeDistributionFamily osf : accepted) {
             if (CoreFilterUtils.matchesEnum(osf, current)) {
                 return true;
             }

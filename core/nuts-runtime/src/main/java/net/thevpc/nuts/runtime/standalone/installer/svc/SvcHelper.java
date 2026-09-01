@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.installer.svc;
 
+import net.thevpc.nuts.util.NException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,7 +21,7 @@ public class SvcHelper {
             try {
                 if (!((line2 = br2.readLine()) != null)) break;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw NException.ofUncheckedException(e);
             }
             lines.add(line2);
         }

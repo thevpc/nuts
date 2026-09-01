@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NCopiable;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 public class InstallFlags implements Cloneable, NCopiable {
     protected boolean force = false;
@@ -26,7 +28,7 @@ public class InstallFlags implements Cloneable, NCopiable {
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

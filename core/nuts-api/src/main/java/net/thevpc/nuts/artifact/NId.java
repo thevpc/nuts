@@ -26,6 +26,7 @@
 package net.thevpc.nuts.artifact;
 
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.internal.artifact.NIdImpl;
 import net.thevpc.nuts.internal.rpi.NIORPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.internal.NReservedUtils;
@@ -52,7 +53,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     Pattern PATTERN = Pattern.compile("^((?<group>[a-zA-Z0-9_.${}*-]*):)?(?<artifact>[a-zA-Z0-9_.${}*-]*)(:(?<classifier>[a-zA-Z0-9_.${}*-]*))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     Pattern GROUP_ID_PATTERN = Pattern.compile("^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)*$");
     Pattern ARTIFACT_ID_PATTERN = Pattern.compile("^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*$");
-    NId BLANK = new DefaultNId();
+    NId BLANK = new NIdImpl();
 
     /**
      * Returns the list.
@@ -88,7 +89,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      * @return get result
      */
     static NOptional<NId> get(String groupId, String artifactId) {
-        return NOptional.of(new DefaultNId(groupId, artifactId, null));
+        return NOptional.of(new NIdImpl(groupId, artifactId, null));
     }
 
     /**
@@ -100,7 +101,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      * @return get result
      */
     static NOptional<NId> get(String groupId, String artifactId, NVersion version) {
-        return NOptional.of(new DefaultNId(groupId, artifactId, version));
+        return NOptional.of(new NIdImpl(groupId, artifactId, version));
     }
 
     /**
@@ -112,7 +113,7 @@ public interface NId extends Comparable<NId>, NBlankable {
      * @return get result
      */
     static NOptional<NId> get(String groupId, String artifactId, String version) {
-        return NVersion.get(version).map(x -> new DefaultNId(groupId, artifactId, x));
+        return NVersion.get(version).map(x -> new NIdImpl(groupId, artifactId, x));
     }
 
     /**

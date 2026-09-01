@@ -2,13 +2,12 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.collections.NNormalizedStringMap;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class NNormalizedStringMapImpl<T> extends AbstractMap<String, T> implements NNormalizedStringMap<T> {
+public class NNormalizedStringMapImpl<T> extends AbstractMap<String, T>{
     private final Map<String, Map.Entry<String, T>> map = new HashMap<>();
     private final Function<String, String> normalizer;
     public static <T> NNormalizedStringMapImpl<T> ofCaseInsensitive(){

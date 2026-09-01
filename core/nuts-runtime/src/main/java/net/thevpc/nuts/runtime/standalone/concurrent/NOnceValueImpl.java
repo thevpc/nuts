@@ -182,4 +182,11 @@ public final class NOnceValueImpl<T> implements NOnceValue<T> {
             return "<pending...>";
         }
     }
+
+    @Override
+    public void close() {
+        synchronized (store){
+            store.delete(model.id());
+        }
+    }
 }

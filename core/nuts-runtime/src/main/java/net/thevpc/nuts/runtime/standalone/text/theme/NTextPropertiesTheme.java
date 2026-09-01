@@ -69,6 +69,14 @@ public class NTextPropertiesTheme implements NTextTheme {
             }
         }
     }
+    public NTextPropertiesTheme(NPath path, NWorkspace workspace) {
+        this.workspace = workspace;
+        try (InputStream is = path.inputStream()) {
+            props.load(is);
+        } catch (IOException e) {
+            throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", path), e);
+        }
+    }
 
     @Override
     public String name() {

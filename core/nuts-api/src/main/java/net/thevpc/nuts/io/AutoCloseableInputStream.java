@@ -1,5 +1,7 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.util.NJdkExtension;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,6 +11,7 @@ import java.io.InputStream;
  * @author thevpc
  * @since 0.8.0
  */
+@NJdkExtension
 public class AutoCloseableInputStream extends java.io.InputStream implements AutoCloseable {
     private java.io.InputStream base;
     private boolean closed;

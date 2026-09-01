@@ -57,4 +57,11 @@ public interface NCachedValueStore {
      * @param model the model to store; must not be {@code null}
      */
     void save(NCachedValueModel model);
+
+    /**
+     * delete its identifier.
+     * @param id id
+     * @return true if deleted
+     */
+    boolean delete(String id);
 }

@@ -48,12 +48,13 @@ public class NIntArrayList implements NIntList {
     }
 
     @Override
-    public void add(int index, int value) {
+    public NIntList add(int index, int value) {
         ensureSize(size + 1);  // Increments modCount!!
         System.arraycopy(values, index, values, index + 1,
                 size - index);
         values[index] = value;
         size++;
+        return this;
     }
 
     private void rangeCheck(int index) {
@@ -101,23 +102,25 @@ public class NIntArrayList implements NIntList {
     }
 
     @Override
-    public void addAll(NIntList values) {
+    public NIntList addAll(NIntList values) {
         int toAddLength = values.size();
         ensureSize(size + toAddLength);
         System.arraycopy(values.toArray(), 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void addAll(int... values) {
+    public NIntList addAll(int... values) {
         int toAddLength = values.length;
         ensureSize(size + toAddLength);
         System.arraycopy(values, 0, this.values, size, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
-    public void insertAll(int offset, int... values) {
+    public NIntList insertAll(int offset, int... values) {
         if (offset < 0) {
             throw new IllegalArgumentException("offset should be >=0");
         }
@@ -126,6 +129,7 @@ public class NIntArrayList implements NIntList {
         System.arraycopy(this.values, offset, this.values, offset + values.length, size - offset);
         System.arraycopy(values, 0, this.values, offset, toAddLength);
         this.size += toAddLength;
+        return this;
     }
 
     @Override
@@ -141,7 +145,7 @@ public class NIntArrayList implements NIntList {
     }
 
     @Override
-    public void replaceSubList(int offset, int count, int... replacement) {
+    public NIntList replaceSubList(int offset, int count, int... replacement) {
         if (offset < 0) {
             count += offset;
             offset = 0;
@@ -154,19 +158,22 @@ public class NIntArrayList implements NIntList {
         System.arraycopy(this.values, offset + count, this.values, offset + replacement.length, this.size - offset - count);
         System.arraycopy(replacement, 0, this.values, offset, replacement.length);
         this.size = newSize;
+        return this;
     }
 
     @Override
-    public void add(int value) {
+    public NIntList add(int value) {
         ensureSize(size + 1);
         values[size++] = value;
+        return this;
     }
 
     @Override
-    public void trimToSize() {
+    public NIntList trimToSize() {
         if (size < values.length) {
             values = Arrays.copyOf(values, size);
         }
+        return this;
     }
 
     @Override
@@ -324,9 +331,9 @@ public class NIntArrayList implements NIntList {
     }
 
     @Override
-    public void grow(int minCapacity) {
+    public NIntList grow(int minCapacity) {
         if (minCapacity < values.length) {
-            return;
+            return this;
         }
         int oldCapacity = values.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
@@ -337,6 +344,7 @@ public class NIntArrayList implements NIntList {
         // minCapacity is usually close to size, so this is a win:
         values = Arrays.copyOf(values, newCapacity);
 //        System.out.println(">> "+oldCapacity+" -> "+newCapacity);
+        return this;
     }
 
     private static int hugeCapacity(int minCapacity) {
@@ -349,10 +357,11 @@ public class NIntArrayList implements NIntList {
     }
 
     @Override
-    public void ensureSize(int size) {
+    public NIntList ensureSize(int size) {
         grow(size);
         if (size > values.length) {
             values = Arrays.copyOf(values, size);
         }
+        return this;
     }
 }

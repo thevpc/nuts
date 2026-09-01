@@ -16,7 +16,7 @@ import net.thevpc.nuts.time.NDuration;
  *
  * @since 0.8.8
  */
-public interface NRateLimitValue extends NDescribable {
+public interface NRateLimitValue extends NDescribable , AutoCloseable{
     /**
      * Creates a builder for a new {@link NRateLimitValue} using the default
      * (in-memory) {@link NRateLimitValueFactory}.
@@ -181,4 +181,6 @@ public interface NRateLimitValue extends NDescribable {
      */
     <T> NRateLimitValueResult claimAndCall(int count, NDuration timeout, NCallable<T> callable);
 
+    @Override
+    void close();
 }

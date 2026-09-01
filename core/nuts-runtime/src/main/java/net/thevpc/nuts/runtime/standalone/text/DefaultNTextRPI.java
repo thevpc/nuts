@@ -3,14 +3,12 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.NScoredCallable;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.math.NDoubleFormat;
 import net.thevpc.nuts.math.NNumberFormat;
-import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.format.NDescriptorInputSourceWriterSPI;
@@ -27,7 +25,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.reflect.NUseDefaultUtils;
-import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellSpecBuilder;
+import net.thevpc.nuts.runtime.standalone.text.art.table.DefaultNTableCellBuilder;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.collections.NClassMapImpl;
@@ -38,7 +36,6 @@ import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.mon.NChronometerView;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.util.NRef;
 
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
@@ -426,8 +423,8 @@ public class DefaultNTextRPI implements NTextRPI {
     }
 
     @Override
-    public NTableCellSpecBuilder createCellSpecBuilder() {
-        return new DefaultNTableCellSpecBuilder();
+    public NTableCellBuilder createCellSpecBuilder() {
+        return new DefaultNTableCellBuilder();
     }
 
     @Override
@@ -435,7 +432,7 @@ public class DefaultNTextRPI implements NTextRPI {
         return new NTreeNode() {
             @Override
             public NText content() {
-                return text == null ? NText.ofBlank():text;
+                return text == null ? NText.ofBlank() : text;
             }
 
             @Override
@@ -725,7 +722,7 @@ public class DefaultNTextRPI implements NTextRPI {
     }
 
     public NOptional<NTextTheme> getTheme(String name) {
-        return shared.getTheme(name);
+        return shared.getThemeByName(name);
     }
 
     @Override
@@ -735,12 +732,6 @@ public class DefaultNTextRPI implements NTextRPI {
 
     @Override
     public NTextRPI setTheme(NTextTheme theme) {
-        shared.setTheme(theme);
-        return this;
-    }
-
-    @Override
-    public NTextRPI setTheme(String theme) {
         shared.setTheme(theme);
         return this;
     }
@@ -909,417 +900,9 @@ public class DefaultNTextRPI implements NTextRPI {
         return new DefaultNTextTitle(start, level, child);
     }
 
-    @Override
-    public NNormalizedText normalize(NText text) {
-        return normalize(text, null, null);
-    }
-
-    @Override
-    public NNormalizedText normalize(NText text, NTextTransformConfig config) {
-        return normalize(text, null, config);
-    }
-
-    @Override
-    public NNormalizedText normalize(NText text, NTextTransformer transformer, NTextTransformConfig config) {
-        List<NNormalizedText> li = normalizeStream(text, transformer, config).toList();
-        if (li.isEmpty()) {
-            return (NNormalizedText) NText.ofBlank();
-        }
-        if (li.size() == 1) {
-            return li.get(0);
-        }
-        return NText.ofList(li.toArray(new NNormalizedText[0]));
-    }
 
 
-    public NStream<NNormalizedText> normalizeStream(NText text, NTextTransformer transformer, NTextTransformConfig config) {
-        if (config == null) {
-            config = new NTextTransformConfig();
-        }
-        config.flatten(true);
-        config.normalize(true);
-        NText z = transform(text, transformer, config);
-        return NStream.ofIterator(new Iterator<NText>() {
-            final Deque<NText> queue = new ArrayDeque<>();
 
-            {
-                if (z != null) {
-                    queue.addFirst(z);
-                }
-                refactorNext();
-            }
-
-            private void refactorNext() {
-                while (!queue.isEmpty()) {
-                    NText z = queue.peek();
-                    switch (z.type()) {
-                        case PLAIN:
-                        case CODE:
-                        case ANCHOR:
-                        case LINK:
-                        case COMMAND:
-                        case TITLE:
-                        case STYLED: {
-                            return;
-                        }
-                        case LIST: {
-                            NTextList t = (NTextList) z;
-                            queue.removeFirst();
-                            List<NText> children = t.children();
-                            if (children.size() > 0) {
-                                for (int i = children.size() - 1; i >= 0; i--) {
-                                    queue.addFirst(children.get(i));
-                                }
-                            }
-                            break;
-                        }
-                        case BUILDER: {
-                            NTextBuilder t = (NTextBuilder) z;
-                            queue.removeFirst();
-                            List<NText> children = t.children();
-                            if (children.size() > 0) {
-                                for (int i = children.size() - 1; i >= 0; i--) {
-                                    queue.addFirst(children.get(i));
-                                }
-                            }
-                            break;
-                        }
-                        case INCLUDE:
-                        default: {
-                            //won't be processed!
-                            queue.removeFirst();
-                            break;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-                refactorNext();
-                return !queue.isEmpty();
-            }
-
-            @Override
-            public NText next() {
-                refactorNext();
-                return queue.remove();
-            }
-        }).instanceOf(NNormalizedText.class).withDescription(NDescribables.ofDesc("flattened text"));
-    }
-
-    @Override
-    public NText transform(NText text, NTextTransformConfig config) {
-        if (NBlankable.isBlank(config)) {
-            return text;
-        }
-        return transform(text, null, config);
-    }
-
-    int resolveRootLevel(NText text) {
-        NRef<Integer> level = NRef.ofNull();
-        traverseDFS(text, n -> {
-            if (n.type() == NTextType.TITLE) {
-                int lvl = ((NTextTitle) n).level();
-                if (level.isNull() || level.get() > lvl) {
-                    level.set(lvl);
-                }
-            }
-        });
-        return level.isNull() ? 0 : level.get();
-    }
-
-    @Override
-    public NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config) {
-        if (text == null) {
-            return null;
-        }
-        if (NBlankable.isBlank(config) && transformer == null) {
-            return text;
-        }
-        if (config == null) {
-            config = new NTextTransformConfig();
-        }
-        // start by processing includes
-        if (config.isProcessIncludes()) {
-            NTextTransformConfig iconfig = config.copy();
-            iconfig.processIncludes(true);
-            iconfig.importClassLoader(config.importClassLoader());
-            NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig);
-            text = transform(text, c.defaultTransformer(), c);
-            config = config.copy().processIncludes(false).importClassLoader(null);
-        }
-
-        if (NBlankable.isBlank(config) && transformer == null) {
-            return text;
-        }
-
-        Integer rootLevel = config.rootLevel();
-        if (rootLevel != null) {
-            config = config.copy().rootLevel(null);
-            //find root level
-            int level = resolveRootLevel(text);
-            if (level != rootLevel) {
-                int offset = rootLevel - level;
-                NTextTransformerContext c = new DefaultNTextTransformerContext(config);
-                text = transform(text, (text1, context) -> {
-                    if (text1.type() == NTextType.TITLE) {
-                        NTextTitle t = (NTextTitle) text1;
-                        return createTitle(t.child(), t.level() + offset);
-                    }
-                    return text1;
-                }, c);
-            }
-        }
-
-        if (NBlankable.isBlank(config) && transformer == null) {
-            return text;
-        }
-
-        String anchor = config.anchor();
-        if (anchor != null) {
-            config = config.copy().anchor(null);
-        }
-
-        if (transformer != null || !config.isBlank()) {
-            NTextTransformerContext c = new DefaultNTextTransformerContext(config);
-            if (transformer == null) {
-                transformer = c.defaultTransformer();
-            }
-            text = transform(text, transformer == null ? c.defaultTransformer() : transformer, c);
-        }
-
-        if (anchor != null) {
-            List<NText> ok = new ArrayList<>();
-            boolean foundAnchor = false;
-            if (text.type() == NTextType.LIST) {
-                for (NText o : ((NTextList) text)) {
-                    if (foundAnchor) {
-                        ok.add(o);
-                    } else if (o.type() == NTextType.ANCHOR) {
-                        if (anchor.equals(((DefaultNTextAnchor) o).value())) {
-                            foundAnchor = true;
-                        }
-                    }
-                }
-            }
-            if (foundAnchor) {
-                text = createList(ok).simplify();
-            }
-        }
-        return text;
-    }
-
-    @Override
-    public void traverseDFS(NText text, NTextVisitor visitor) {
-        if (text == null) {
-            return;
-        }
-        switch (text.type()) {
-            case PLAIN:
-            case CODE:
-            case ANCHOR:
-            case LINK:
-            case COMMAND: {
-                visitor.visit(text);
-                break;
-            }
-            case TITLE: {
-                NTextTitle t = (NTextTitle) text;
-                NText child = t.child();
-                if (child != null) {
-                    visitor.visit(child);
-                }
-                visitor.visit(t);
-                break;
-            }
-            case STYLED: {
-                NTextStyled t = (NTextStyled) text;
-                NText child = t.child();
-                if (child != null) {
-                    visitor.visit(child);
-                }
-                visitor.visit(t);
-                break;
-            }
-            case LIST: {
-                NTextList t = (NTextList) text;
-                for (NText child : t.children()) {
-                    if (child != null) {
-                        visitor.visit(child);
-                    }
-                }
-                visitor.visit(t);
-                break;
-            }
-            case BUILDER: {
-                NTextBuilder t = (NTextBuilder) text;
-                for (NText child : t.children()) {
-                    if (child != null) {
-                        visitor.visit(child);
-                    }
-                }
-                visitor.visit(t);
-                break;
-            }
-            case INCLUDE: {
-                NTextInclude t = (NTextInclude) text;
-                visitor.visit(t);
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void traverseBFS(NText text, NTextVisitor visitor) {
-        Queue<NText> q = new ArrayDeque<>();
-        q.add(text);
-        while (!q.isEmpty()) {
-            NText u = q.remove();
-            switch (text.type()) {
-                case PLAIN:
-                case CODE:
-                case ANCHOR:
-                case LINK:
-                case COMMAND: {
-                    visitor.visit(text);
-                    break;
-                }
-                case TITLE: {
-                    NTextTitle t = (NTextTitle) text;
-                    NText child = t.child();
-                    if (child != null) {
-                        q.add(child);
-                    }
-                    visitor.visit(t);
-                    break;
-                }
-                case STYLED: {
-                    NTextStyled t = (NTextStyled) text;
-                    NText child = t.child();
-                    if (child != null) {
-                        q.add(child);
-                    }
-                    visitor.visit(t);
-                    break;
-                }
-                case LIST: {
-                    NTextList t = (NTextList) text;
-                    for (NText child : t.children()) {
-                        if (child != null) {
-                            q.add(child);
-                        }
-                    }
-                    visitor.visit(t);
-                    break;
-                }
-                case BUILDER: {
-                    NTextBuilder t = (NTextBuilder) text;
-                    for (NText child : t.children()) {
-                        if (child != null) {
-                            q.add(child);
-                        }
-                    }
-                    visitor.visit(t);
-                    break;
-                }
-                case INCLUDE: {
-                    NTextInclude t = (NTextInclude) text;
-                    visitor.visit(t);
-                    break;
-                }
-            }
-        }
-    }
-
-    private NText transform(NText text, NTextTransformer transformer, NTextTransformerContext c) {
-        if (text == null) {
-            return null;
-        }
-        NText pt = transformer.preTransform(text, c);
-        if (pt != text) {
-            return pt;
-        }
-        switch (text.type()) {
-            case PLAIN:
-            case CODE:
-            case ANCHOR:
-            case LINK:
-            case COMMAND: {
-                return transformer.postTransform(text, c);
-            }
-            case TITLE: {
-                NTextTitle t = (NTextTitle) text;
-                NText child = t.child();
-                if (child == null) {
-                    return null;
-                }
-                child = transform(child, transformer, c);
-                return transformer.postTransform(createTitle(child, t.level()), c);
-            }
-            case STYLED: {
-                NTextStyled t = (NTextStyled) text;
-                NText child = t.child();
-                if (child == null) {
-                    return null;
-                }
-                child = transform(child, transformer, c);
-                return transformer.postTransform(createStyled(child, t.styles()), c);
-            }
-            case LIST: {
-                NTextList t = (NTextList) text;
-                List<NText> li = new ArrayList<>();
-                boolean wasNullInclude = false; // used to track when a newline is
-                for (NText child : t.children()) {
-                    if (child != null) {
-                        NText oldChild = child;
-                        child = transform(child, transformer, c);
-                        if (child != null) {
-                            if (child.isNewLine() && wasNullInclude) {
-                                //just ignore
-                            } else {
-                                li.add(child);
-                            }
-                            wasNullInclude = false;
-                        } else if (oldChild instanceof NTextInclude) {
-                            // starts with new line, then include, then newline
-                            wasNullInclude = true;
-                        }
-                    }
-                }
-                if (li.size() > 0) {
-                    if (li.size() == 1) {
-                        return transformer.postTransform(li.get(0), c);
-                    }
-                    return transformer.postTransform(createList(li), c);
-                }
-                return null;
-            }
-            case BUILDER: {
-                NTextBuilder t = (NTextBuilder) text;
-                List<NText> li = new ArrayList<>();
-                for (NText child : t.children()) {
-                    if (child != null) {
-                        child = transform(child, transformer, c);
-                        if (child != null) {
-                            li.add(child);
-                        }
-                    }
-                }
-                if (li.size() > 0) {
-                    if (li.size() == 1) {
-                        return transformer.postTransform(li.get(0), c);
-                    }
-                    return transformer.postTransform(createList(li), c);
-                }
-                return null;
-            }
-            case INCLUDE: {
-                return null;
-            }
-        }
-        return null;
-    }
 
     @Override
     public String escapeText(String str) {
@@ -1349,7 +932,7 @@ public class DefaultNTextRPI implements NTextRPI {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             NText parsed = NTextParser.of().parse(new StringReader(text));
-            parsed = NText.transform(parsed, new NTextTransformConfig().filtered(true));
+            parsed = parsed.transform(new NTextTransformConfig().filtered(true));
             writeFilteredText(parsed, out);
             return out.toString();
         } catch (Exception ex) {
@@ -1381,11 +964,6 @@ public class DefaultNTextRPI implements NTextRPI {
             }
         }
         return NOptional.ofNamedEmpty("format for " + format.getClass().getSimpleName());
-    }
-
-    @Override
-    public NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern) {
-        return createStringFormat(type, pattern, Number.class);
     }
 
     @Override
@@ -1631,5 +1209,20 @@ public class DefaultNTextRPI implements NTextRPI {
         }
     }
 
+    @Override
+    public NOptional<NTextTheme> createThemeByName(String name) {
+        if(NBlankable.isBlank(name)) {
+            return shared.getThemeByName(name);
+        }
+        NPath n = NPath.of(name);
+        if(n.isName()){
+            return shared.getThemeByName(n.name());
+        }
+        return createThemeByPath(n);
+    }
 
+    @Override
+    public NOptional<NTextTheme> createThemeByPath(NPath path) {
+        return shared.getThemeByPath(path);
+    }
 }

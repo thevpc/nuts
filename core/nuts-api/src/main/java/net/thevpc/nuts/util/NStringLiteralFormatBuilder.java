@@ -167,7 +167,7 @@ public class NStringLiteralFormatBuilder {
      *
      * @return build result
      */
-    public AbstractNStringLiteralFormat build() {
+    public NStringLiteralFormatBase build() {
         NSupportMode effectiveCondition = skipBoundaries ? NSupportMode.NEVER : condition;
 
         // Build the char-escape set: start from the standard set and append extras if any
@@ -180,17 +180,17 @@ public class NStringLiteralFormatBuilder {
                 escapeSet = NCharEscapeSet.combine(escapeSet, escapeSets.get(i));
             }
         }
-        AbstractNStringLiteralFormat fmt;
+        NStringLiteralFormatBase fmt;
         NElementType quoteType = NUtils.firstNonNull(this.elementType, NElementType.DOUBLE_QUOTED_STRING);
         switch (quoteType) {
             case LINE_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             case BLOCK_STRING:
-                fmt = AbstractNStringLiteralFormat.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
+                fmt = NStringLiteralFormatBase.ofPrefix("¶¶ ", "\n", effectiveCondition, escapeSet);
                 break;
             default:
-                fmt = AbstractNStringLiteralFormat.ofEscapeChar(
+                fmt = NStringLiteralFormatBase.ofEscapeChar(
                         quoteType, effectiveCondition, escapeSet, NCharEscape.BACKSLASH);
                 break;
         }

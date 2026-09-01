@@ -9,14 +9,14 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.platform.NExecutionEngines;
-import net.thevpc.nuts.platform.NExecutionEngineLocation;
+import net.thevpc.nuts.platform.NRuntimeDistributionManager;
+import net.thevpc.nuts.platform.NRuntimeDistribution;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.text.NMutableTableModel;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.platform.NExecutionEngineFamily;
+import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.text.NTableCell;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextArt;
@@ -47,7 +47,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         NSession session = NSession.of();
         NPrintStream out = session.out();
         NWorkspace workspace = NWorkspace.of();
-        NExecutionEngines pinstaller = NExecutionEngines.of();
+        NRuntimeDistributionManager pinstaller = NRuntimeDistributionManager.of();
         if (cmdLine.next("add java", "java add").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
@@ -55,13 +55,13 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     extraLocations.add(cmdLine.next().get().image());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NExecutionEngineLocation loc : pinstaller.searchHostExecutionEngines(NExecutionEngineFamily.JAVA)) {
-                        pinstaller.addExecutionEngine(loc);
+                    for (NRuntimeDistribution loc : pinstaller.searchHostRuntimeDistributions(NRuntimeDistributionFamily.JAVA)) {
+                        pinstaller.addRuntimeDistribution(loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NExecutionEngineLocation loc : pinstaller.searchHostExecutionEngines(NExecutionEngineFamily.JAVA, NPath.of(extraLocation))) {
-                            pinstaller.addExecutionEngine(loc);
+                        for (NRuntimeDistribution loc : pinstaller.searchHostRuntimeDistributions(NRuntimeDistributionFamily.JAVA, NPath.of(extraLocation))) {
+                            pinstaller.addRuntimeDistribution(loc);
                         }
                     }
                 }
@@ -73,26 +73,30 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 while (cmdLine.hasNext()) {
                     NRef<String> ver = NRef.ofNull();
                     NRef<String> product = NRef.ofNull();
+                    NRef<String> vendor = NRef.ofNull();
                     cmdLine
                             .matcher()
                             .when("--version").asEntry(a -> ver.set(a.stringValue()))
-                            .when("--jdk").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JDK))
-                            .when("--jre").asTrueFlag(a -> product.set(NExecutionEngineLocation.JAVA_PRODUCT_JRE))
+                            .when("--jdk").asTrueFlag(a -> product.set(NRuntimeDistribution.JAVA_PRODUCT_JDK))
+                            .when("--jre").asTrueFlag(a -> product.set(NRuntimeDistribution.JAVA_PRODUCT_JRE))
+                            .when("--vendor").asEntry(a -> vendor.set(a.stringValue()))
                             .require();
-                    NExecutionEngineLocation loc = pinstaller.downloadRemoteExecutionEngine(
-                            NExecutionEngineFamily.JAVA,
-                            NStringUtils.firstNonBlank(product.get(), NExecutionEngineLocation.JAVA_PRODUCT_JDK), null, NStringUtils.firstNonBlank(ver.get(), String.valueOf(NJavaSdkUtils.defaultJavaMajorVersion()))
+                    NRuntimeDistribution loc = pinstaller.downloadRemoteRuntimeDistribution(
+                            NRuntimeDistributionFamily.JAVA,
+                            NStringUtils.firstNonBlank(product.get(), NRuntimeDistribution.JAVA_PRODUCT_JDK),
+                            vendor.get(),
+                            NStringUtils.firstNonBlank(ver.get(), String.valueOf(NJavaSdkUtils.defaultJavaMajorVersion()))
                     ).orNull();
                     if (loc != null) {
-                        pinstaller.addExecutionEngine(loc);
+                        pinstaller.addRuntimeDistribution(loc);
                     }
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NExecutionEngineLocation loc = pinstaller.resolveExecutionEngine(NExecutionEngineFamily.JAVA,
+                    NRuntimeDistribution loc = pinstaller.resolveRuntimeDistribution(NRuntimeDistributionFamily.JAVA,
                             NPath.of(cmdLine.next().get().image()), null).orNull();
                     if (loc != null) {
-                        pinstaller.addExecutionEngine(loc);
+                        pinstaller.addRuntimeDistribution(loc);
                     }
                 }
                 if (autoSave) {
@@ -103,15 +107,15 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove java", "java remove").isPresent()) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().get().image();
-                NExecutionEngineLocation loc = pinstaller.findExecutionEngineByName(NExecutionEngineFamily.JAVA, name).orNull();
+                NRuntimeDistribution loc = pinstaller.findRuntimeDistributionByName(NRuntimeDistributionFamily.JAVA, name).orNull();
                 if (loc == null) {
-                    loc = pinstaller.findExecutionEngineByName(NExecutionEngineFamily.JAVA, name).orNull();
+                    loc = pinstaller.findRuntimeDistributionByName(NRuntimeDistributionFamily.JAVA, name).orNull();
                     if (loc == null) {
-                        loc = pinstaller.findExecutionEngineByVersion(NExecutionEngineFamily.JAVA, name).orNull();
+                        loc = pinstaller.findRuntimeDistributionByVersion(NRuntimeDistributionFamily.JAVA, name).orNull();
                     }
                 }
                 if (loc != null) {
-                    pinstaller.removeExecutionEngine(loc);
+                    pinstaller.removeRuntimeDistribution(loc);
                 }
             }
             if (autoSave) {
@@ -134,10 +138,10 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 //}
             }
             if (cmdLine.isExecMode()) {
-                NExecutionEngineLocation[] sdks = pinstaller.findExecutionEngines(NExecutionEngineFamily.JAVA, null).toArray(NExecutionEngineLocation[]::new);
-                Arrays.sort(sdks, new Comparator<NExecutionEngineLocation>() {
+                NRuntimeDistribution[] sdks = pinstaller.findRuntimeDistributions(NRuntimeDistributionFamily.JAVA, null).toArray(NRuntimeDistribution[]::new);
+                Arrays.sort(sdks, new Comparator<NRuntimeDistribution>() {
                     @Override
-                    public int compare(NExecutionEngineLocation o1, NExecutionEngineLocation o2) {
+                    public int compare(NRuntimeDistribution o1, NRuntimeDistribution o2) {
                         int x = o1.name().compareTo(o2.name());
                         if (x != 0) {
                             return x;
@@ -153,7 +157,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                         return x;
                     }
                 });
-                for (NExecutionEngineLocation jloc : sdks) {
+                for (NRuntimeDistribution jloc : sdks) {
                     m.addRow(NTableCell.of(NText.of(jloc.name())), NTableCell.of(NText.of(jloc.version())), NTableCell.of(NText.of(jloc.path())));
                 }
                 out.print(NTextArt.of().tableRenderer().get().render(m));

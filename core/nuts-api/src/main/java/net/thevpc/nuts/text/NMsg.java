@@ -938,12 +938,11 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of j.
+     * Creates a new instance of j.
      *
      * @param message message
      * @return of j result
      */
-    @Deprecated
     public static NMsg ofJ(String message) {
         /**
          * Creates a new instance of of.

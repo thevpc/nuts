@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.internal.rpi.NTextRPI;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NSetter;
@@ -49,6 +50,38 @@ public interface NTextTheme {
     }
 
     /**
+     * resolve theme by name or path.
+     *
+     * when a simple name, it is read from classpath:/META-INF/ntf-themes/*.ntf-theme.
+     * Themes loaded by name are cached.
+     *
+     * when a path (contains separators), it is loaded using NPath
+     * Themes loaded by path are not necessarily cached (do not rely on that).
+     *
+     * when no name or path is passed (null or blank), the default theme is loaded.
+     *
+     * the default theme can be configured using --theme in nuts bootstrapping. When none is configured,
+     * the implementation will create one of its own. That one can even (and usually is) OS dependent.
+     * @param name theme name or path
+     * @return optional of a theme
+     */
+    @NGetter
+    static NOptional<NTextTheme> of(String name){
+        return NTextRPI.of().createThemeByName(name);
+    }
+
+    /**
+     * resolve theme from path.
+     * when null is passed an empty optional is returned.
+     *
+     * @return optional of the loaded theme
+     */
+    @NGetter
+    static NOptional<NTextTheme> of(NPath path){
+        return NTextRPI.of().createThemeByPath(path);
+    }
+
+    /**
      * Sets the set.
      *
      * @param theme theme
@@ -56,26 +89,6 @@ public interface NTextTheme {
     @NSetter
     static void set(NTextTheme theme){
         NTextRPI.of().setTheme(theme);
-    }
-
-    /**
-     * Sets the set.
-     *
-     * @param themeName theme name
-     */
-    @NSetter
-    static void set(String themeName){
-        NTextRPI.of().setTheme(themeName);
-    }
-
-    /**
-     * Returns the get.
-     *
-     * @param name name
-     * @return get result
-     */
-    static NOptional<NTextTheme> get(String name){
-        return NTextRPI.of().getTheme(name);
     }
 
     /**

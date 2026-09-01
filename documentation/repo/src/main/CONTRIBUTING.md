@@ -11,8 +11,6 @@ An easy way to get started helping the project is to *file an issue*.
 You can do that on the `nuts` issues page by clicking on the green button at the right. 
 Issues can include bugs to fix, features to add, or documentation that looks outdated.
 
-For some tips on contributing to open source, this [post is helpful](http://blog.smartbear.com/programming/14-ways-to-contribute-to-open-source-without-being-a-programming-genius-or-a-rock-star/).
-
 ## Contributions
 
 `nuts` welcomes contributions from everyone.
@@ -29,7 +27,8 @@ To contribute to `nuts` Package Management Development you need the following so
 * You favorite IDE (I'm using Netbeans and sometimes IntellijIdea and very sporadically Eclipse)
 
 ## Compiling Nuts
-Here is the typical commands to get your own local copy of `nuts` sources and to compile them:
+
+Before running release tools or testing local builds, compile the repository using Maven:
 
 ```bash
 git clone https://github.com/thevpc/nuts.git
@@ -37,40 +36,46 @@ cd nuts
 mvn clean install
 ```
 
-and here is how to compile/generate the website and documentation (assuming you are under `nuts` repo root folder)
+> **Target Compatibility**: You must compile `nuts` targeting Java 8 (`nuts` must remain compatible from Java 8 through Java 24+). Do not use features or APIs deprecated/removed in Java 9+ (e.g., Nashorn JS engine, RMI activation).
+
+---
+
+## Updating Documentation & Website (`nuts-release-tool` & `nsite`)
+
+The website and root Markdown files (`README.md`, `CONTRIBUTING.md`, etc.) are generated using [nsite](https://github.com/thevpc/nsite) via [nuts-release-tool](https://github.com/thevpc/nuts-release-tool).
+
+⚠️ **CRITICAL RULES**:
+- **Do NOT edit root `README.md` or `CONTRIBUTING.md` directly!** They are generated from template files in `documentation/repo/src/main/`.
+- **Do NOT edit the `docs/` directory directly!** The root `docs/` folder contains generated static HTML output. Any changes in `docs/` will be overwritten when `nuts-release-tool` runs.
+- For complete details on website source folders, templates, and deprecated folders (such as `documentation/website/archive/`), see **[documentation/website/README.md](documentation/website/README.md)**.
+
+### How to update website and root docs:
+1. First, ensure the project is compiled: `mvn clean install`.
+2. Make your changes in the template source files inside `documentation/repo/src/main/` (or website files in `documentation/website/src/`).
+3. Run `nuts-release-tool` **directly from the repository root**:
 
 ```bash
-cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-{{runtimeVersion}}.jar
+# On Linux / macOS (executed under nuts repo root):
+./nuts-release-tool
+
+# On Windows (Command Prompt / PowerShell under nuts repo root):
+nuts-release-tool.bat
 ```
 
-You can now play with your development version of nuts using the generated `nuts-dev` script.
-You may want to update the following line to match your java 8 JDK install location or simply add it to your shell `rcfile`. 
+The script directly invokes `java -jar` using your locally compiled Maven artifacts (`~/.m2/repository` or `target/`), downloading the release runtime if no local build is found.
 
-```sh
-NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
-```
+`nuts-release-tool` will:
+- Parse `nuts-release-tool.tson` configuration at repository root.
+- Pre-process markdown templates using `nsite` (replacing variables like `{{runtimeVersion}}` and `{{stableRuntimeVersion}}`).
+- Generate root `README.md`, `CONTRIBUTING.md`, and update the static HTML site in `docs/` (including `docs/download.html`, published at [https://thevpc.github.io/nuts/download.html](https://thevpc.github.io/nuts/download.html)).
 
-Indeed, you must compile `nuts` with java 8 because nuts needs to be working on Java 8 and all later java versions (
-this means that compiling on more recent versions of java should pass successfully as well). So you must
-not use deprecated features (in java9+) in nuts source code (examples : js nashorn, rmi activation, etc...) 
+---
 
 ## Pull Request Checklist
 
-- Branch from the master branch and, if needed, rebase to the current master
-  branch before submitting your pull request. If it doesn't merge cleanly with
-  master you may be asked to rebase your changes.
-
-- Commits should be as small as possible, while ensuring that each commIt's
-  correct independently (i.e., each commit should compile and pass tests).
-
-- Don't put sub-module updates in your pull request unless they are to landed
-  commits.
-
-- If your patch is not getting reviewed or you need a specific person to review
-  it, you can @-reply a reviewer asking for a review in the pull request or a
-  comment.
-
+- Branch from the `master` branch and ensure commits compile and pass tests cleanly (`mvn clean test`).
+- Commits should be as small as possible while ensuring each commit builds independently.
+- If updating documentation or root README, ensure changes are made in `documentation/repo/src/main/` or `documentation/website/` and verified by running `./nuts-release-tool` at repo root.
 - Add tests relevant to the fixed bug or new feature.
 
 
@@ -88,24 +93,24 @@ You can contribute in a myriad of ways:
 * writing in press about nuts 
 
 ## Quick Look on sources organization
-The repository is organized in several folders described here after:
+The repository is organized into several key sub-projects:
 
-* **[.dir-template]** : contains template files for generating `README.md` and `METADATA` (among other) files according to the current `nuts` development version
-* **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
-* **[companions]**    : contains the 'companion' aka main applications bundled with `nuts` (mainly `nsh`).
-* **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
-* **[extensions]**    : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
-* **[incubating]**    : ignore this for the moment :), It's a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
-* **[libraries]**     : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
-* **[test]**          : contains unit test projects
-* **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features. This includes `nsh` the shell companion
-* **[tutorials]**     : contains a suite of tutorial applications on how to use `nuts` and a framework and its integration with other frameworks such as `spring`
-* **[web-toolbox]**   : contains a suite of web applications that are based on `nuts` and that complement `nuts` features. This includes `nwar`, a servlet implementation to serve `nuts` workspaces.
-* **[documentation]** : contains the sources of `nuts`'s documentations
-  * **[website]**                     : contains the sources of `nuts`'s docusaurus based website.
-  * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using `ndoc`) that will handle things like `nuts` version variables, documentation structure etc and hence prepare the `docusaurus` base folder. And then, we run `docusaurus` to generate the effective `html`/`js` for the statically compiled website.
-  * **[presentations]**               : contains several presentations about `nuts`
-  * **[media]**                       : contains images/logos/icons
+* **[core]**          : contains the core of `nuts` package manager:
+  * `nuts-boot`: Zero-dependency workspace bootstrapper library.
+  * `nuts-api`: Core public API contracts and SPI interfaces.
+  * `nuts-runtime`: Execution engine loaded dynamically at runtime by `nuts-boot`.
+  * `nuts-app`: Lightweight CLI launcher JAR.
+  * `nuts-app-full`: Standalone fat binary with embedded runtime.
+* **[installers]**    : contains GUI installers and `nuts-release-tool`.
+* **[libraries]**     : contains standard integration libraries (`nuts-spring-boot`, `nuts-slf4j`, `nuts-swing`, etc.).
+* **[extensions]**    : contains optional plugins (e.g. `nuts-term`, `nuts-ssh`).
+* **[toolbox]** & **[companions]**: contains CLI applications built on top of `nuts` (e.g. `nsh` shell).
+* **[documentation]** : contains site sources and template files:
+  * `documentation/repo/src/main/`: Templates for root `README.md`, `CONTRIBUTING.md`, and dev scripts.
+  * `documentation/website/src/main/`: Source HTML pages (`download.html`, `doc-nuts.html`, `index.html`) processed by `nsite`.
+  * `documentation/website/src/include/`: Modular markdown inclusions (`include/download/`, `include/doc-nuts/`, etc.).
+* **[docs]**          : static HTML site output generated by `nsite` via `nuts-release-tool` and published on GitHub Pages.
+* **[test]**          : integration and unit test projects.
 
 ## Running, testing and Working with nuts-dev, in development environment
 

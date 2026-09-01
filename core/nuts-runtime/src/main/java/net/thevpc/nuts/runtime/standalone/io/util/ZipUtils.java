@@ -30,6 +30,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -302,7 +303,7 @@ public class ZipUtils {
 //                }
 //            });
 //        } catch (IOException e) {
-//            throw new RuntimeIOException(e);
+//                    throw NException.ofUncheckedException(e);
 //        }
 //    }
     public static boolean visitZipStream(NPath zipFile, InputStreamVisitor visitor) {

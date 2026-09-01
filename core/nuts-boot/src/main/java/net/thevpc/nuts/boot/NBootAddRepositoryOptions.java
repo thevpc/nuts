@@ -132,7 +132,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
             o.config = o.config == null ? null : o.config.copy();
             return o;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new UnsupportedOperationException("clone not supported for "+getClass().getName(),e);
         }
     }
 

@@ -566,13 +566,13 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorBuilder replaceDependency(Predicate<NDependency> filter, UnaryOperator<NDependency> converter) {
+    public NDescriptorBuilder replaceDependency(NDependencyFilter filter, UnaryOperator<NDependency> converter) {
         if (converter == null) {
             return this;
         }
         ArrayList<NDependency> dependenciesList = new ArrayList<>();
         for (NDependency d : dependencies()) {
-            if (filter == null || filter.test(d)) {
+            if (filter == null || filter.acceptDependency(d,null)) {
                 d = converter.apply(d);
                 if (d != null) {
                     dependenciesList.add(d);
@@ -586,13 +586,13 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorBuilder removeDependency(Predicate<NDependency> dependency) {
+    public NDescriptorBuilder removeDependency(NDependencyFilter dependency) {
         if (dependency == null) {
             return this;
         }
         for (Iterator<NDependency> it = dependencies.iterator(); it.hasNext(); ) {
             NDependency d = it.next();
-            if (dependency.test(d)) {
+            if (dependency.acceptDependency(d,null)) {
                 //do not add
                 it.remove();
             }

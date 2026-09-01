@@ -27,6 +27,8 @@ package net.thevpc.nuts.security;
 
 import net.thevpc.nuts.core.NConfigItem;
 import net.thevpc.nuts.internal.NReservedLangUtils;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,13 +130,7 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
             }
             return o;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

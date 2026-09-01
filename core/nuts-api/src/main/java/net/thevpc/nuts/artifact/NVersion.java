@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.artifact;
 
+import net.thevpc.nuts.internal.artifact.NVersionImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
@@ -50,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable {
     Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
-    NVersion BLANK = new DefaultNVersion("");
+    NVersion BLANK = new NVersionImpl("");
 
     /**
      * parses the version or create error
@@ -64,7 +65,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
         }
         String version2 = NStringUtils.strip(version);
         if (PATTERN.matcher(version2).matches()) {
-            return NOptional.of(new DefaultNVersion(version2));
+            return NOptional.of(new NVersionImpl(version2));
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid version format : %s", version));
     }
@@ -211,7 +212,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      *
      * @return as single value result
      */
-    NOptional<String> asSingleValue();
+    NOptional<String> singleValue();
 
     /**
      * return true if this is a filter

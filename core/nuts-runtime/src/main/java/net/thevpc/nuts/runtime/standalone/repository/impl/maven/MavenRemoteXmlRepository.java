@@ -77,7 +77,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     SafeNDefinitionFilter safeFilter = new SafeNDefinitionFilter(idFilter, NMsg.ofC("repo %s", name()));
                     try {
                         try {
-                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.longId()));
+                            metadataStream = openStream(id, metadataURL, id.builder().face(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", NMsg.ofC("retrieve %s",id.longId()));
                         } catch (UncheckedIOException | NIOException ex) {
                             return NIterator.ofEmpty();
                         }

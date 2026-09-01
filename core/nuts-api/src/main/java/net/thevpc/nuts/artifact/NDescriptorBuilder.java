@@ -587,7 +587,7 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param converter function to provide new value to replace with
      * @return {@code this} instance
      */
-    NDescriptorBuilder replaceDependency(Predicate<NDependency> filter, UnaryOperator<NDependency> converter);
+    NDescriptorBuilder replaceDependency(NDependencyFilter filter, UnaryOperator<NDependency> converter);
 
     /**
      * create a new instance of descriptor with removed dependencies that match the predicate
@@ -595,7 +595,7 @@ public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent
      * @param dependency predicate to test against
      * @return {@code this} instance
      */
-    NDescriptorBuilder removeDependency(Predicate<NDependency> dependency);
+    NDescriptorBuilder removeDependency(NDependencyFilter dependency);
 
     /**
      * create new Descriptor filled with this builder fields.

@@ -51,7 +51,7 @@ public class NativeImageHelper {
             NNewLineMode.parse("");
             NNameSelectorStrategy.parse("");
             NMsgType.parse("");
-            NExecutionEngineFamily.parse("");
+            NRuntimeDistributionFamily.parse("");
             NPathStandardOption.parse("");
             NAffixType.parse("");
             NDependencyScopePattern.parse("");

@@ -3,6 +3,7 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 /**
  * Immutable snapshot of runtime metrics for a bulkhead.
@@ -140,4 +141,20 @@ public class NBulkheadMetrics implements NDescribable {
                 .set("maxHoldTimeMillis", maxHoldTimeMillis)
                 .build();
     }
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("bulkheadId", bulkheadId)
+                .add("maxConcurrent", maxConcurrent)
+                .add("activeCalls", activeCalls)
+                .add("availableSlots", availableSlots)
+                .add("totalAcquired", totalAcquired)
+                .add("totalReleased", totalReleased)
+                .add("totalRejected", totalRejected)
+                .add("rejectionRate", rejectionRate())
+                .add("maxWaitTimeMillis", maxWaitTimeMillis)
+                .add("maxHoldTimeMillis", maxHoldTimeMillis)
+                .build();
+    }
+
 }

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.artifact.DefaultNEnvCondition;
+import net.thevpc.nuts.internal.artifact.NEnvConditionImpl;
 import net.thevpc.nuts.artifact.NEnvCondition;
 import net.thevpc.nuts.artifact.NEnvConditionBuilder;
 import net.thevpc.nuts.artifact.NId;
@@ -225,7 +225,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvCondition build() {
-        return new DefaultNEnvCondition(
+        return new NEnvConditionImpl(
                 arch(), os(), osDist(), platform(),
                 desktopEnvironment(),
                 profiles(),

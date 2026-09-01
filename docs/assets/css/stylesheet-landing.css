@@ -376,7 +376,7 @@ p {
   border-radius: 99px;
 }
 .nuts-badge--stable  { background: #1a4731; color: #4ade80; }
-.nuts-badge--preview { background: #1a3047; color: #60b4f5; }
+.nuts-badge--latest { background: #1a3047; color: #60b4f5; }
 .nuts-badge--sdk     { background: #2d1a47; color: #c084fc; }
 .nuts-badge--apps    { background: #1a3020; color: #4ade80; }
 

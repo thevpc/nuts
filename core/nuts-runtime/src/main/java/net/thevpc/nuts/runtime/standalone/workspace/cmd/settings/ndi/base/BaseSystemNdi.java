@@ -789,7 +789,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (p.exists()) {
                     NCp.of()
                             .from(p)
-                            .to(localIconPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
+                            .to(localIconPath).options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                             .run();
                     iconPath = localIconPath.toString();
                 }

@@ -252,7 +252,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
 
         NPath path = NPath.of(jarUrl);
         NCp.of().from(path).to(localPath)
-                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
+                .options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                 .run();
         return localPath;
     }

@@ -11,7 +11,7 @@ import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
+public class DefaultNRepositorySelectorFilter extends NRepositoryFilterBase {
 
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;

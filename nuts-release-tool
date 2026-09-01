@@ -1,4 +1,48 @@
 #!/bin/bash
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-nuts-dev -ZyS --stacktrace --sandbox --verbose -b net.thevpc.nuts.installers:nuts-release-tool
+# Default fallback version for remote downloads (update when changing release versions)
+NUTS_VERSION="1.0.0"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 1. Look for JAR in local build target directories
+NUTS_JAR=""
+if [ -f "$SCRIPT_DIR/core/nuts-app/target/nuts-app-"*.jar ]; then
+    NUTS_JAR=$(ls -t "$SCRIPT_DIR/core/nuts-app/target/nuts-app-"*.jar 2>/dev/null | head -n 1)
+elif [ -f "$SCRIPT_DIR/core/nuts-app-full/target/nuts-app-full-"*.jar ]; then
+    NUTS_JAR=$(ls -t "$SCRIPT_DIR/core/nuts-app-full/target/nuts-app-full-"*.jar 2>/dev/null | head -n 1)
+elif [ -f "$SCRIPT_DIR/nuts.jar" ]; then
+    NUTS_JAR="$SCRIPT_DIR/nuts.jar"
+fi
+
+# 2. Look in local Maven repository (~/.m2)
+if [ -z "$NUTS_JAR" ]; then
+    M2_JAR=$(find "$HOME/.m2/repository/net/thevpc/nuts/nuts-app" -name "nuts-app-*.jar" ! -name "*-sources.jar" ! -name "*-javadoc.jar" 2>/dev/null | sort -V | tail -n 1)
+    if [ -n "$M2_JAR" ]; then
+        NUTS_JAR="$M2_JAR"
+    fi
+fi
+
+# 3. Fallback download from maven.thevpc.net if not found locally
+if [ -z "$NUTS_JAR" ]; then
+    # Try reading version from core/nuts-app/pom.xml if present, else use top NUTS_VERSION
+    if [ -f "$SCRIPT_DIR/core/nuts-app/pom.xml" ]; then
+        DETECTED_VER=$(grep -m1 '<version>' "$SCRIPT_DIR/core/nuts-app/pom.xml" | sed -E 's/.*<version>(.*)<\/version>.*/\1/' | tr -d ' \r\n')
+        if [ -n "$DETECTED_VER" ]; then
+            NUTS_VERSION="$DETECTED_VER"
+        fi
+    fi
+
+    REMOTE_JAR_URL="https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar"
+    echo "No compiled nuts JAR found locally. Downloading $NUTS_VERSION from $REMOTE_JAR_URL..."
+    mkdir -p "$SCRIPT_DIR/target"
+    NUTS_JAR="$SCRIPT_DIR/target/nuts-app-${NUTS_VERSION}.jar"
+    curl -sSL "$REMOTE_JAR_URL" -o "$NUTS_JAR" || wget -q "$REMOTE_JAR_URL" -O "$NUTS_JAR"
+fi
+
+if [ ! -f "$NUTS_JAR" ]; then
+    echo "Error: Could not locate or download nuts JAR. Please run 'mvn clean install' first."
+    exit 1
+fi
+
+echo "Running nuts-release-tool using: $NUTS_JAR"
+exec java -jar "$NUTS_JAR" -ZyS --stacktrace --sandbox --verbose net.thevpc.nuts.installers:nuts-release-tool "$@"

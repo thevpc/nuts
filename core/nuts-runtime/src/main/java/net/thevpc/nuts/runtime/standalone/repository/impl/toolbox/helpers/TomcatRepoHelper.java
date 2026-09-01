@@ -138,7 +138,7 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         String zipUrl = getUrl(id.version(), ".zip");
         NPath localPath = NPath.of(ToolboxRepositoryModel.getIdLocalFile(id.builder().faceContent().build(), repository));
         NCp.of().from(NPath.of(zipUrl)).to(localPath)
-                .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
+                .options(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                 .run();
         // Optional: add checksum validation
         // String md5Url = zipUrl + ".md5";

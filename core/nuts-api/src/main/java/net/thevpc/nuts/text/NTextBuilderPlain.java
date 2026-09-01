@@ -734,10 +734,39 @@ public class NTextBuilderPlain implements NTextBuilder {
         if (NBlankable.isBlank(prefix)) {
             return this;
         }
-        NStringBuilder old = new NStringBuilder(sb.toString());
+        String old = sb.toString();
         sb.delete(0, sb.length());
-        sb.append(old.indent(prefix.filteredText(), skipFirstLine).toString());
+        sb.append(NStringUtils.indent(old,prefix.filteredText(), skipFirstLine));
         return null;
+    }
+
+    @Override
+    public NText transform(NTextTransformConfig config) {
+        return new ImmutableNTextPlain(filteredText());
+    }
+
+    @Override
+    public NText transform(NTextTransformer transformer, NTextTransformConfig config) {
+        return new ImmutableNTextPlain(filteredText());
+    }
+
+    @Override
+    public NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config) {
+        return NStream.ofSingleton(new ImmutableNTextPlain(filteredText()));
+    }
+
+    @Override
+    public NText traverseDFS(NTextVisitor visitor) {
+        visitor.enter(this);
+        visitor.exit(this);
+        return this;
+    }
+
+    @Override
+    public NText traverseBFS(NTextVisitor visitor) {
+        visitor.enter(this);
+        visitor.exit(this);
+        return this;
     }
 
     @NImmutable
@@ -755,7 +784,33 @@ public class NTextBuilderPlain implements NTextBuilder {
             this.str = str == null ? "" : str;
         }
 
+        @Override
+        public NText transform(NTextTransformConfig config) {
+            return this;
+        }
 
+        @Override
+        public NText transform(NTextTransformer transformer, NTextTransformConfig config) {
+            return this;
+        }
+
+        @Override
+        public NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config) {
+            return NStream.ofSingleton(this);
+        }
+        @Override
+        public NText traverseDFS(NTextVisitor visitor) {
+            visitor.enter(this);
+            visitor.exit(this);
+            return this;
+        }
+
+        @Override
+        public NText traverseBFS(NTextVisitor visitor) {
+            visitor.enter(this);
+            visitor.exit(this);
+            return this;
+        }
         @Override
         public NElement toElement() {
             return NElement.ofString(str);

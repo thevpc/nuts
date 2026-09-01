@@ -3,6 +3,7 @@ package net.thevpc.nuts.cmdline;
 import net.thevpc.nuts.boot.NBootCompleteResult;
 import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import net.thevpc.nuts.collections.NCollections;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.*;
 
@@ -184,5 +185,13 @@ public class DefaultNArgCompleteResult implements NArgCompleteResult {
     @Override
     public boolean isBlank() {
         return candidates.isEmpty() && flags.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("candidates",candidates)
+                .add("flags",flags)
+                .build();
     }
 }

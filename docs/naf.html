@@ -88,12 +88,19 @@
                 </a>
                 <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
                     <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerNafVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        v0.8.3
+                        v0.8.9
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="doc-naf.html">v0.8.4 (Latest)</a>
-                        <a class="dropdown-item active" href="versions/v0.8.3/doc-naf.html">v0.8.3</a>
+                        <a class="dropdown-item " href="versions/v1.0.0/doc-naf.html">v1.0.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="versions/v0.8.9/doc-naf.html">v0.8.9</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.8/doc-naf.html">v0.8.8</a>
+                        
+                        <a class="dropdown-item " href="versions/v0.8.7/doc-naf.html">v0.8.7</a>
+                        
+
                     </div>
                 </div>
             </div>
@@ -110,7 +117,11 @@
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item "
-                                   href="doc-naf.html">Developer Documentation</a></li>
+                                   href="versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item "
+                                   href="compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item "
                                    href="contrib.html">Contributing</a></li>
                             <li><a class="dropdown-item "
@@ -133,6 +144,7 @@
     </nav>
 </header>
 <!-- Header NAF End -->
+
 
     <!-- HERO -->
     <section class="naf-hero">
@@ -158,7 +170,7 @@
                     <span class="naf-pill">Maven Central</span>
                 </div>
                 <div class="naf-hero__ctas">
-                    <a href="doc-naf.html" class="btn-naf-primary">
+                    <a href="versions/v1.0.0/doc-naf.html" class="btn-naf-primary">
                         <i class="fas fa-book"></i> Developer Docs
                     </a>
                     <a href="contrib.html" class="btn-naf-secondary">Contributing &rarr;</a>
@@ -209,11 +221,11 @@ public class MyApp {
             </div>
             <div class="naf-maven__snippet">
                 <div class="nuts-snippet-tabs">
-                    <button class="nuts-snippet-tab active" data-target="dep-lts">LTS &mdash; Maven Central</button>
+                    <button class="nuts-snippet-tab active" data-target="dep-stable">Stable &mdash; Maven Central</button>
                     <button class="nuts-snippet-tab" data-target="dep-latest">Latest &mdash; thevpc</button>
                 </div>
                 <div class="nuts-snippet-body naf-snippet-body">
-                    <div class="nuts-snippet-block active" id="dep-lts">
+                    <div class="nuts-snippet-block active" id="dep-stable">
 <pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts&lt;/artifactId&gt;
@@ -243,8 +255,8 @@ public class MyApp {
                     </button>
                 </div>
                 <p class="naf-maven__note">
-                    <span class="nuts-badge nuts-badge--stable">LTS</span> 0.8.9 on Maven Central &nbsp;&middot;&nbsp;
-                    <span class="nuts-badge nuts-badge--preview">Latest</span> 1.0.0 on maven.thevpc.net
+                    <span class="nuts-badge nuts-badge--stable">Stable</span> 0.8.9 on Maven Central &nbsp;&middot;&nbsp;
+                    <span class="nuts-badge nuts-badge--latest">Latest</span> 1.0.0 on maven.thevpc.net
                 </p>
             </div>
         </div>
@@ -327,7 +339,7 @@ public class MyApp {
         <p>
             Copyright © 2018-2026 Nuts Package Manager Team.
             <br>
-            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on 2026-08-25-142347
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on <span id="build-time"></span>
         </p>
     </div>
 </footer>
@@ -353,6 +365,7 @@ public class MyApp {
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/nuts-docs.js"></script>
 </body>
+<script src="assets/js/common.js"></script>
 <script src="assets/js/nuts-docs.js"></script>
 <script src="assets/js/nuts-landing.js"></script>
 </body>

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NSetter;
 
@@ -54,7 +55,7 @@ import java.util.function.IntFunction;
  * @see NConcurrent#circuitBreakerCall(NCallable)
  * @since 0.8.7
  */
-public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
+public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, AutoCloseable {
 
     /**
      * The current state of the circuit breaker.
@@ -76,7 +77,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(NCallable<T> callable) {
-        return NConcurrent.of().circuitBreakerCall(callable);
+        return NConcurrentRPI.of().circuitBreakerCall(callable);
     }
 
     /**
@@ -88,7 +89,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrent.of().circuitBreakerCall(id, callable);
+        return NConcurrentRPI.of().circuitBreakerCall(id, callable);
     }
 
     /**
@@ -145,4 +146,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable {
      * @return the result of the main callable or the last successful value
      */
     T callOrLast();
+
+    @Override
+    void close();
 }

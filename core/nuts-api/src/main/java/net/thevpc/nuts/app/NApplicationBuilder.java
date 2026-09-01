@@ -6,11 +6,13 @@ import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NException;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Builder used to configure and execute a Nuts {@link NApplicationHandler}.
@@ -30,7 +32,7 @@ import java.util.List;
  *
  * <pre>{@code
  * public static void main(String[] args) {
- *     NApp.builder(args).run();
+ *     NApplication.builder(args).run();
  * }
  * }</pre>
  *
@@ -39,7 +41,7 @@ import java.util.List;
  * If you want the builder to instantiate your application class reflectively:
  *
  * <pre>{@code
- * NApp.builder(args)
+ * NApplication.builder(args)
  *     .type(MyApplication.class)
  *     .handleErrors()
  *     .run();
@@ -172,38 +174,9 @@ public class NApplicationBuilder {
     private Object createInstance(Class applicationType) {
         try {
             return applicationType == null ? null : applicationType.getConstructor().newInstance();
-        } catch (InstantiationException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw NException.ofUncheckedException(e);
         }
     }
 
@@ -307,10 +280,31 @@ public class NApplicationBuilder {
      */
     public void run() {
         NApplicationHandleMode.runHandled(this::prepare, handleMode());
-        if(preparedWorkspace!=null) {
+        if (preparedWorkspace != null) {
             preparedWorkspace.runApplication(this.handleMode());
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NApplicationBuilder that = (NApplicationBuilder) o;
+        return handleMode == that.handleMode && Objects.equals(instance, that.instance) && Objects.deepEquals(nutsArgs, that.nutsArgs) && Objects.deepEquals(args, that.args) && Objects.equals(preparedWorkspace, that.preparedWorkspace);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(handleMode, instance, Arrays.hashCode(nutsArgs), Arrays.hashCode(args), preparedWorkspace);
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("handleMode", handleMode)
+                .add("instance", instance)
+                .add("nutsArgs", nutsArgs)
+                .add("args", args)
+                .add("preparedWorkspace", preparedWorkspace)
+                .build();
+    }
 }

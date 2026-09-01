@@ -9,7 +9,6 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.pipeline.NStream;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -81,7 +80,7 @@ public class DefaultNClasspathBuilder implements NClasspathBuilder {
 
 
     @Override
-    public @NotNull Iterator<NClasspathEntry> iterator() {
+    public Iterator<NClasspathEntry> iterator() {
         return items.iterator();
     }
 

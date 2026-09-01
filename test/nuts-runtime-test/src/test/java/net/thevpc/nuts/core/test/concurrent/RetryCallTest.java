@@ -59,15 +59,13 @@ public class RetryCallTest {
                 return NOptional.ofNamed((T) beans.get(ref.id()), ref.id());
             }
         };
-        NBeanContainer.scopedStack().runWith(springContainer,()->{
-            NRetryCallFactory factory = NConcurrent.of()
-                    .retryCallFactory()
-                    .withStore(jdbcStore)
-                    ;
+        NBeanContainer.scopedStack().runWith(springContainer, () -> {
+            NRetryCallFactory factory = NRetryCallFactory.of()
+                    .withStore(jdbcStore);
             factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-                    .handler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+                    .handler(NBeanRef.of("resultSomeThingBean").as(NRetryHandler.class))
                     .maxRetries(5)
-                    .retryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1),1))
+                    .retryPeriod(NRetryPeriodFunction.ofMultiplied(NDuration.ofSeconds(1), 1))
                     .callAsync();
         });
     }

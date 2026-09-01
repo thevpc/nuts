@@ -29,6 +29,7 @@ public class NHttpCode {
     public static final NHttpCode REQUEST_TIMEOUT = of(408);
     public static final NHttpCode CONFLICT = of(409);
     public static final NHttpCode GONE = of(410);
+    public static final NHttpCode TOO_MANY_REQUESTS = of(429);
     public static final NHttpCode LENGTH_REQUIRED = of(411);
     public static final NHttpCode PRECONDITION_FAILED = of(412);
     public static final NHttpCode CONTENT_TOO_LARGE = of(413);
@@ -101,12 +102,34 @@ public class NHttpCode {
      * @return is server error result
      */
     public boolean isServerError() {
-      /**
-       * Return.
-       *
-       * @param 500 500
-       */
         return (code >= 500);
+    }
+
+    /**
+     * Checks if is error.
+     *
+     * @return is error result
+     */
+    public boolean isError() {
+        return (code >= 400);
+    }
+
+    /**
+     * Checks if is redirect.
+     *
+     * @return is redirect result
+     */
+    public boolean isRedirect() {
+        return (code >= 300 && code < 400);
+    }
+
+    /**
+     * Checks if is informational.
+     *
+     * @return is informational result
+     */
+    public boolean isInformational() {
+        return (code >= 100 && code < 200);
     }
 
     /**

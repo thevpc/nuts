@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Factory interface for creating {@link NSagaCallable} instances and their builders.
  * <p>
@@ -8,6 +10,37 @@ package net.thevpc.nuts.concurrent;
  * consistent way to obtain new saga builders and configure the underlying store.
  */
 public interface NSagaCallableFactory {
+
+    /**
+     * Creates a new default {@link NSagaCallableFactory} instance.
+     *
+     * @return a new saga callable factory instance
+     */
+    static NSagaCallableFactory of() {
+        return NConcurrentRPI.of().sagaFactory();
+    }
+
+    /**
+     * Creates a new {@link NSagaCallableFactory} using the provided store.
+     *
+     * @param store the saga store to use
+     * @return a new saga callable factory instance
+     */
+    static NSagaCallableFactory of(NSagaStore store) {
+        return NConcurrentRPI.of().sagaFactory().withStore(store);
+    }
+
+    static NSagaCallableFactory ofDefault() {
+        return NConcurrentRPI.of().defaultSagaFactory();
+    }
+
+    static NSagaCallableFactory ofMem() {
+        return NConcurrentRPI.of().memorySagaFactory();
+    }
+
+    static void configure(NSagaStore store) {
+        NConcurrentRPI.of().sagaFactory().withStore(store);
+    }
 
     /**
      * Returns the {@link NSagaStore} associated with this factory.
@@ -39,5 +72,36 @@ public interface NSagaCallableFactory {
      * @return a new saga callable builder
      */
     NSagaCallableBuilder ofBuilder();
+
+    /**
+     * Returns a new {@link NSagaCallableBuilder} instance configured with the specified saga ID.
+     *
+     * @param id saga identifier
+     * @return a new saga callable builder
+     * @since 0.8.8
+     */
+    NSagaCallableBuilder ofBuilder(String id);
+
+    /**
+     * Loads a saga model by its unique identifier from the configured store.
+     *
+     * @param id saga identifier
+     * @return loaded saga model, or null if not found or store is null
+     * @since 0.8.8
+     */
+    default NSagaModel load(String id) {
+        return store() == null ? null : store().load(id);
+    }
+
+    /**
+     * Deletes a saga record by its unique identifier from the configured store.
+     *
+     * @param id saga identifier
+     * @return true if deleted, false otherwise
+     * @since 0.8.8
+     */
+    default boolean delete(String id) {
+        return store() != null && store().delete(id);
+    }
 
 }

@@ -45,6 +45,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -292,10 +293,8 @@ public class XmlUtils {
             d.appendChild(elem);
             writeDocument(d, new StreamResult(b), true,false);
             return new String(b.toByteArray());
-        } catch (RuntimeException ex) {
-            throw ex;
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw NException.ofUncheckedException(ex);
         }
     }
 

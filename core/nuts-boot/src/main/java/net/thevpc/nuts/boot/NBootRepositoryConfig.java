@@ -73,7 +73,7 @@ public class NBootRepositoryConfig implements Serializable, Cloneable {
             }
             return o;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new UnsupportedOperationException("clone not supported for "+getClass().getName(),e);
         }
     }
 

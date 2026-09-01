@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigMa
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.collections.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.core.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
 import java.util.*;

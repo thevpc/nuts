@@ -1,10 +1,12 @@
 package net.thevpc.nuts.app;
 
 import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
+import net.thevpc.nuts.util.NToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * NMainArgs class.
@@ -62,7 +64,7 @@ public class NMainArgs {
      * Creates a new instance of of.
      *
      * @param application application
-     * @param args args
+     * @param args        args
      * @return of result
      */
     public static NMainArgs of(NApplicationHandler application, String[] args) {
@@ -73,7 +75,7 @@ public class NMainArgs {
      * Creates a new instance of of handled.
      *
      * @param application application
-     * @param args args
+     * @param args        args
      * @return of handled result
      */
     public static NMainArgs ofHandled(NApplicationHandler application, String[] args) {
@@ -84,7 +86,7 @@ public class NMainArgs {
      * Creates a new instance of of propagated.
      *
      * @param application application
-     * @param args args
+     * @param args        args
      * @return of propagated result
      */
     public static NMainArgs ofPropagated(NApplicationHandler application, String[] args) {
@@ -95,7 +97,7 @@ public class NMainArgs {
      * Creates a new instance of of exit.
      *
      * @param application application
-     * @param args args
+     * @param args        args
      * @return of exit result
      */
     public static NMainArgs ofExit(NApplicationHandler application, String[] args) {
@@ -177,7 +179,7 @@ public class NMainArgs {
     /**
      * Nuts args line.
      *
-     * @param nutsArgs nuts args
+     * @param nutsArgs  nuts args
      * @param extraArgs extra args
      * @return nuts args line result
      */
@@ -213,5 +215,28 @@ public class NMainArgs {
     public NMainArgs args(String[] args) {
         this.args = args;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NMainArgs nMainArgs = (NMainArgs) o;
+        return handleMode == nMainArgs.handleMode && Objects.equals(applicationInstance, nMainArgs.applicationInstance) && Objects.deepEquals(nutsArgs, nMainArgs.nutsArgs) && Objects.deepEquals(args, nMainArgs.args);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(handleMode, applicationInstance, Arrays.hashCode(nutsArgs), Arrays.hashCode(args));
+    }
+
+    @Override
+    public String toString() {
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("handleMode",handleMode)
+                .addIfNonBlank("applicationInstance",applicationInstance)
+                .addIfNonBlank("nutsArgs",nutsArgs)
+                .addIfNonBlank("args", args)
+                .build()
+                ;
     }
 }

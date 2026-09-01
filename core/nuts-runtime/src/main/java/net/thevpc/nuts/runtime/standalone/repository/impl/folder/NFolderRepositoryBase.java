@@ -190,7 +190,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         .from(getStream(id, "artifact binaries", "retrieve")).to(NPath.of(tempFile)).validator(new NCpValidator() {
                             @Override
                             public void validate(InputStream in) {
-                                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries");
+                                checkSHA1Hash(id.builder().face(NConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries");
                             }
                         }).run();
             } catch (UncheckedIOException | NIOException ex) {
@@ -248,7 +248,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     public NIterator<NId> findSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
-        String singleVersion = id.version().asSingleValue().orNull();
+        String singleVersion = id.version().singleValue().orNull();
         NSession session = workspace().currentSession();
         if (singleVersion != null) {
             String groupId = id.groupId();
@@ -290,7 +290,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public String getStreamAsString(NId id, String typeName, String action) {
         byte[] barr = NCp.of()
-                .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
+                .options(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
                 .from(getIdRemotePath(id))
                 .sourceOrigin(id)
                 .actionMessage(action == null ? NMsg.ofC("copy %s", id.longId()) : NMsg.ofC("%s %s", action, id.longId()))

@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NDefaultVersionDefinitionFilter extends AbstractDefinitionFilter implements NDefinitionFilter, NSimplifiable<NDefinitionFilter> {
+public class NDefaultVersionDefinitionFilter extends DefinitionFilterBase implements NDefinitionFilter, NSimplifiable<NDefinitionFilter> {
 
     private final Boolean defaultVersion;
 

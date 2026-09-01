@@ -249,7 +249,7 @@ public class NRepositoryFolderHelper {
         String singleVersion =
                 id.version().isLatest() ? null :
                         id.version().isRelease() ? null :
-                                id.version().asSingleValue().orNull();
+                                id.version().singleValue().orNull();
         if (singleVersion != null) {
             return NIteratorBuilder.ofSupplier(
                     () -> {
@@ -455,7 +455,7 @@ public class NRepositoryFolderHelper {
                                             StandardCharsets.UTF_8.name(), "descriptor hash"
                                     )
                             )
-                    ).to(descFile.resolveSibling(descFile.name() + ".sha1")).addOptions(NPathOption.SAFE).run();
+                    ).to(descFile.resolveSibling(descFile.name() + ".sha1")).options(NPathOption.SAFE).run();
             _LOG().log(NMsg.ofC("[%s] cached descriptor %s to %s", repo.name(), id,descFile).asFinest().withIntent(NMsgIntent.CACHE));
             return descFile;
         });
@@ -494,14 +494,14 @@ public class NRepositoryFolderHelper {
         }
         return NLock.ofId(id).callWith(() -> {
             NCp.of().from(content)
-                    .to(pckFile).addOptions(NPathOption.SAFE).run();
+                    .to(pckFile).options(NPathOption.SAFE).run();
             NCp.of().from(
                     CoreIOUtils.createBytesStream(NDigestUtils.evalSHA1Hex(pckFile).getBytes(),
                             NMsg.ofC("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
                             StandardCharsets.UTF_8.name(), null
                     )
-            ).to(pckFile.resolveSibling(pckFile.name() + ".sha1")).addOptions(NPathOption.SAFE).run();
+            ).to(pckFile.resolveSibling(pckFile.name() + ".sha1")).options(NPathOption.SAFE).run();
             return pckFile;
         });
     }

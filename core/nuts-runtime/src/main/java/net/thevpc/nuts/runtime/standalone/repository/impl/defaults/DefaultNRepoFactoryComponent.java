@@ -24,14 +24,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.impl.defaults;
 
-import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.*;
 
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.core.NRepositorySpec;
-import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.core.NRepositoryConfig;
 import net.thevpc.nuts.platform.NPlatformHome;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.reflect.NScorable;

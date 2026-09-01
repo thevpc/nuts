@@ -2,12 +2,13 @@ package net.thevpc.nuts.runtime.standalone.concurrent;
 
 import net.thevpc.nuts.concurrent.NRateLimitValueModel;
 import net.thevpc.nuts.concurrent.NRateLimitValueStore;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class NRateLimitValueStoreMemory implements NRateLimitValueStore {
-    Map<String, NRateLimitValueModel> values = new HashMap<>();
+public class NRateLimitValueStoreMemory implements NRateLimitValueStore {
+    private final Map<String, NRateLimitValueModel> values = new HashMap<>();
 
     @Override
     public NRateLimitValueModel load(String id) {
@@ -19,6 +20,16 @@ class NRateLimitValueStoreMemory implements NRateLimitValueStore {
 
     @Override
     public void save(NRateLimitValueModel model) {
-        values.put(model.id(), model);
+        NAssert.requireNamedNonNull(model, "model");
+        synchronized (values) {
+            values.put(model.id(), model.copy());
+        }
+    }
+
+    @Override
+    public boolean delete(String id) {
+        synchronized (values) {
+            return values.remove(id) != null;
+        }
     }
 }

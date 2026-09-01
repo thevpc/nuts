@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.cmdline.DefaultNCmdLine;
+import net.thevpc.nuts.runtime.standalone.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.internal.rpi.NCmdLineRPI;
 

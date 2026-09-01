@@ -77,7 +77,7 @@ public class DefaultInternalNExecutableCommand extends AbstractNExecutableInform
         if (n == null) {
             return super.helpText();
         }
-        return NText.transform(n,
+        return n.transform(
                 new NTextTransformConfig()
                         .processAll(true)
                         .rootLevel(1)

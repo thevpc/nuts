@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.format.yaml;
 
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Stack;
 
 public class YamlTokenizer {
-    private BufferedReader reader;
-    private List<YamlToken> buffer = new ArrayList<>();
+    private final BufferedReader reader;
+    private final List<YamlToken> buffer = new ArrayList<>();
     private YamlToken last;
 
 
@@ -33,7 +33,7 @@ public class YamlTokenizer {
             try {
                 return (Step) super.clone();
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
             }
         }
 
@@ -48,7 +48,7 @@ public class YamlTokenizer {
         }
     }
 
-    private Stack<String> flowMode = new Stack<>();
+    private final Stack<String> flowMode = new Stack<>();
 
     public YamlTokenizer(Reader reader) {
         this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
@@ -156,15 +156,15 @@ public class YamlTokenizer {
                             }
                             case '>':
                             case '|': {
-                                String scalarType = String.valueOf((char)icurr); // '>' or '|'
+                                String scalarType = String.valueOf((char) icurr); // '>' or '|'
                                 int indent = seenIndentation;
                                 reader.mark(1);
                                 int n = reader.read();
-                                if(n==-1){
+                                if (n == -1) {
                                     //
-                                }else if(n=='+' ||n=='-'){
-                                    scalarType+=String.valueOf((char) n);
-                                }else{
+                                } else if (n == '+' || n == '-') {
+                                    scalarType += String.valueOf((char) n);
+                                } else {
                                     reader.reset();
                                 }
                                 String value = readBlockScalar(scalarType, indent);
@@ -194,7 +194,7 @@ public class YamlTokenizer {
     }
 
     private String readBlockScalar(String type, int parentIndent) throws IOException {
-        NStringBuilder sb = new NStringBuilder();
+        NStringBuilder sb = new NStringBuilderImpl();
         int scalarIndent = -1;
 
         // Read all lines and process them
@@ -203,7 +203,7 @@ public class YamlTokenizer {
 
         while (true) {
             reader.mark(1024);
-            int currLineLength=0;
+            int currLineLength = 0;
             // Read indentation
             int c = reader.read();
             if (c == -1) break;
@@ -214,7 +214,7 @@ public class YamlTokenizer {
                 currLineLength++;
                 c = reader.read();
             }
-            if(scalarIndent>=0 && lineIndent<scalarIndent) {
+            if (scalarIndent >= 0 && lineIndent < scalarIndent) {
                 reader.reset();
                 break;
             }
@@ -420,7 +420,7 @@ public class YamlTokenizer {
     }
 
     private RuntimeException error(String message) {
-        return new RuntimeException(message + ":" + getLocation());
+        return new NIllegalArgumentException(NMsg.ofC("%s : %s", message, getLocation()));
     }
 
     ReaderLocation getLocation() {

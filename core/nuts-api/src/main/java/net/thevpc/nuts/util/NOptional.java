@@ -2,10 +2,10 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.internal.optional.NReservedOptionalEmpty;
-import net.thevpc.nuts.internal.optional.NReservedOptionalError;
-import net.thevpc.nuts.internal.optional.NReservedOptionalValidCallable;
-import net.thevpc.nuts.internal.optional.NReservedOptionalValidValue;
+import net.thevpc.nuts.internal.optional.NOptionalEmptyImpl;
+import net.thevpc.nuts.internal.optional.NOptionalErrorImpl;
+import net.thevpc.nuts.internal.optional.NOptionalValidCallableImpl;
+import net.thevpc.nuts.internal.optional.NOptionalValidValueImpl;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.text.NMsg;
 
@@ -178,7 +178,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of empty result
      */
     static <T> NOptional<T> ofEmpty(Supplier<NMsg> emptyMessage) {
-        return new NReservedOptionalEmpty<>(emptyMessage);
+        return new NOptionalEmptyImpl<>(emptyMessage);
     }
 
     /**
@@ -188,7 +188,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of empty result
      */
     static <T> NOptional<T> ofEmpty(NMsg emptyMessage) {
-        return new NReservedOptionalEmpty<>(() -> emptyMessage);
+        return new NOptionalEmptyImpl<>(() -> emptyMessage);
     }
 
     /**
@@ -249,7 +249,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of error result
      */
     static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage, Throwable throwable) {
-        return new NReservedOptionalError<>(errorMessage, throwable);
+        return new NOptionalErrorImpl<>(errorMessage, throwable);
     }
 
     /**
@@ -259,7 +259,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of error result
      */
     static <T> NOptional<T> ofError(Throwable throwable) {
-        return new NReservedOptionalError<>(null, throwable);
+        return new NOptionalErrorImpl<>(null, throwable);
     }
 
     /**
@@ -304,7 +304,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of nullable result
      */
     static <T> NOptional<T> ofNullable(T value, Supplier<NMsg> message) {
-        return new NReservedOptionalValidValue<>(value, message);
+        return new NOptionalValidValueImpl<>(value, message);
     }
 
     /**
@@ -315,7 +315,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofCallable(NCallable<T> value) {
         NAssert.requireNamedNonNull(value, "callable");
-        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.call()), null);
+        return new NOptionalValidCallableImpl<>(() -> NOptional.of(value.call()), null);
     }
 
     /**
@@ -326,7 +326,7 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
         NAssert.requireNamedNonNull(value, "supplier");
-        return new NReservedOptionalValidCallable<>(() -> NOptional.of(value.get()), null);
+        return new NOptionalValidCallableImpl<>(() -> NOptional.of(value.get()), null);
     }
 
     /**

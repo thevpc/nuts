@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
+public class DefaultNRepositoryUuidFilter extends NRepositoryFilterBase {
 
     private final Set<String> exactRepos;
 

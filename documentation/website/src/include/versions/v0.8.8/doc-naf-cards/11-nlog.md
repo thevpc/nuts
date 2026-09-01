@@ -1,0 +1,37 @@
+---
+title: Scoped, Context-Aware Logging (Beyond MDC)
+subTitle:  |
+  Traditional MDC allows you to store key-value pairs for the current
+  thread, but managing nested or dynamic contexts often becomes
+  cumbersome. NLog builds on and extends this concept by allowing
+  nested logging scopes, dynamic placeholders, message prefixes, and
+  custom log handlers — all without touching global configuration or
+  rewriting classes. Logs automatically inherit the correct context,
+  making them structured, expressive, and runtime-aware. With NLog,
+  you get the convenience of MDC plus the power of non-invasive,
+  modular, and scoped logging.
+contentType: java
+---
+
+class MyApp {
+    public void test() {
+        NLogs.of().runWith(
+            NLogContext.of()
+                    .withMessagePrefix(NMsg.ofC("[My Application]")) // Prefix added to every log message in this scope
+                    .withPlaceholder("user", "Adam") // Placeholder available to all logs in this scope
+                    .withLog(message -> NOut.println(NMsg.ofC("[SCOPED] %s", message))), // Custom log handler: redirect all messages to stdout with a [SCOPED] prefix
+            () -> {
+                OtherClass.doThis(); // Perform actions that generate logs
+            }
+        );
+    }
+}
+class OtherClass {
+    private static void doThis() {
+        // Standard logger: picks up class context but not the scoped stdout handler
+        NLog.of(LogTest.class).log(NMsg.ofC("hello %s", NMsg.placeholder("user")));
+        // Scoped logger: inherits context from outer scope (user=Adam) and uses the custom stdout handler
+        NLog.ofScoped(OtherClass.class).log(NMsg.ofV("hello $user"));
+    }
+}
+

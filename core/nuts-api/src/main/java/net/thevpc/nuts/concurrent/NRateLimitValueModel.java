@@ -3,7 +3,12 @@ package net.thevpc.nuts.concurrent;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.elem.NTupleElementBuilder;
+import net.thevpc.nuts.io.NClosable;
+import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.util.NCopiable;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NToStringBuilder;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -22,7 +27,7 @@ import java.util.Objects;
  *
  * @since 0.8.7
  */
-public class NRateLimitValueModel implements Serializable, NDescribable {
+public class NRateLimitValueModel implements Serializable, NDescribable, NCopiable, Cloneable {
     /**
      * Unique identifier of this rate-limited value.
      */
@@ -39,6 +44,13 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
 
 
     /**
+     * Constructs an empty {@code NRateLimitValueModel}.
+     */
+    public NRateLimitValueModel() {
+        this.id = "";
+    }
+
+    /**
      * Constructs a new {@code NRateLimitValueModel}.
      *
      * @param id         unique identifier of the value, or empty string if null
@@ -49,6 +61,39 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
         this.id = id == null ? "" : id;
         this.lastAccess = lastAccess;
         this.rules = rules;
+    }
+
+    /**
+     * Sets the unique identifier of this value.
+     *
+     * @param id identifier string
+     * @return this instance
+     */
+    public NRateLimitValueModel id(String id) {
+        this.id = id == null ? "" : id;
+        return this;
+    }
+
+    /**
+     * Sets the timestamp of the last access in milliseconds.
+     *
+     * @param lastAccess last access timestamp
+     * @return this instance
+     */
+    public NRateLimitValueModel lastAccess(long lastAccess) {
+        this.lastAccess = lastAccess;
+        return this;
+    }
+
+    /**
+     * Sets the array of rate-limit rules.
+     *
+     * @param rules array of rules
+     * @return this instance
+     */
+    public NRateLimitValueModel rules(NRateLimitRuleModel[] rules) {
+        this.rules = rules;
+        return this;
     }
 
     /**
@@ -83,6 +128,27 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
     }
 
     @Override
+    public NRateLimitValueModel copy() {
+        return clone();
+    }
+
+    @Override
+    protected NRateLimitValueModel clone() {
+        NRateLimitValueModel cloned = null;
+        try {
+            cloned = (NRateLimitValueModel) super.clone();
+            if(cloned.rules!=null) {
+                cloned.rules=Arrays.stream(cloned.rules)
+                        .map(x->x.copy())
+                        .toArray(NRateLimitRuleModel[]::new);
+            }
+        } catch (CloneNotSupportedException e) {
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
+        }
+        return cloned;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NRateLimitValueModel that = (NRateLimitValueModel) o;
@@ -94,13 +160,14 @@ public class NRateLimitValueModel implements Serializable, NDescribable {
         return Objects.hash(id, lastAccess, Arrays.hashCode(rules));
     }
 
+
     @Override
     public String toString() {
-        return "NLimitedValueData{" +
-                "id='" + id + '\'' +
-                ", lastAccess=" + lastAccess +
-                ", rules=" + Arrays.toString(rules) +
-                '}';
+        return NToStringBuilder.of(this).omitBlanks(true)
+                .add("id", id)
+                .add("lastAccess", lastAccess)
+                .add("rules", rules)
+                .build();
     }
 
     /**

@@ -261,7 +261,7 @@ public class DefaultNDependency implements NDependency {
                 .classifier(classifier())
                 .version(version())
                 .condition(condition())
-                .setProperties(m).build();
+                .properties(m).build();
         return ii;
     }
 

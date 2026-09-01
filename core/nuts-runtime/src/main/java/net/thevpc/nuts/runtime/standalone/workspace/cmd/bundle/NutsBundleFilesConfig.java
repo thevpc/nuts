@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NStringBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 
 class NutsBundleFilesConfig {
-    NStringBuilder text = new NStringBuilder();
+    NStringBuilder text = new NStringBuilderImpl();
 
     public void install(String from, String to) {
         text.println("install " + from

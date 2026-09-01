@@ -278,13 +278,7 @@ public class NStringMapFormat {
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
-                        /**
-                         * Runtime exception.
-                         *
-                         * @param cr cr
-                         * @return runtime exception result
-                         */
-                        throw new RuntimeException("Expected " + cr);
+                        throw NException.ofSafeIllegalArgumentException(NMsg.ofC("parsing error : expected %s",cr));
                     }
                     image.append(cr);
                     if (r == cr) {
@@ -293,13 +287,7 @@ public class NStringMapFormat {
                     if (r == '\\') {
                         r = reader.read();
                         if (r == -1) {
-                            /**
-                             * Runtime exception.
-                             *
-                             * @param cr cr
-                             * @return runtime exception result
-                             */
-                            throw new RuntimeException("Expected " + cr);
+                            throw NException.ofSafeIllegalArgumentException(NMsg.ofC("parsing error : expected %s",cr));
                         }
                         image.append((char) r);
                         switch ((char) r) {

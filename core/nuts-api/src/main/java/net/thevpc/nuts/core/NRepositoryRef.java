@@ -26,8 +26,10 @@
  */
 package net.thevpc.nuts.core;
 
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
+import net.thevpc.nuts.util.NUnexpectedException;
 
 import java.util.Objects;
 
@@ -189,20 +191,9 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
     @Override
     protected NRepositoryRef clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NRepositoryRef) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
-            throw new RuntimeException(e);
+            throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }
 

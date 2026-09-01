@@ -304,7 +304,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         this.wsModel.extensionModel = new DefaultNWorkspaceExtensionModel(this, bootFactory,
                 data.effectiveBootOptions.excludedExtensions().orElse(Collections.emptyList()));
         this.wsModel.filtersModel = new DefaultNFilterModel(this);
-        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel);
         this.wsModel.location = data.effectiveBootOptions.workspace().orNull();
         this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
@@ -315,6 +314,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NExtensions.of().createSupported(NLogFactorySPI.class, null).orElse(this.wsModel.logModel.getFactorySPI())
         );
         this.wsModel.textModel.loadExtensions();
+        this.wsModel.installedRepository = new DefaultNInstalledRepository(data.effectiveBootOptions);
         data.cfg = new NBootConfig();
         data.cfg.setWorkspace(workspaceLocation);
         data.cfg.setApiVersion(this.wsModel.askedApiVersion);
@@ -338,16 +338,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.wsModel.configModel.addPathFactory(nPathFactorySPI);
         }
 
-        try {
-            NTextTheme.of();
-        } catch (Exception ex) {
-            wsModel.LOG
-                    .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", data.effectiveBootOptions.theme())
-                            .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
-                    );
-            NTextRPI.of().setTheme("");//set default!
-        }
-
+        //load theme!!
+        NTextTheme.of();
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
         _initLog(data);
         wsModel.securityModel = new DefaultNWorkspaceSecurityModel(this);
@@ -648,7 +640,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader());
             NText n = NTextParser.of().parse(p);
-            n = NText.transform(n, new NTextTransformConfig()
+            n = n.transform(new NTextTransformConfig()
                     .currentDir(p.parent())
                     .importClassLoader(getClass().getClassLoader())
                     .processAll(true)
@@ -1229,7 +1221,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return callWith(() -> {
             NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/nuts-welcome.ntf", getClass().getClassLoader());
             NText n = NTextParser.of().parse(p);
-            n = NText.transform(n, new NTextTransformConfig().processAll(true)
+            n = n.transform(new NTextTransformConfig().processAll(true)
                     .importClassLoader(getClass().getClassLoader())
                     .currentDir(p.parent()));
             return (n == null ? NText.ofStyled("no welcome found!", NTextStyle.error()) : n);
@@ -1242,7 +1234,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return callWith(() -> {
             NPath path = NPath.of("classpath:/net/thevpc/nuts/runtime/nuts-help.ntf", getClass().getClassLoader());
             NText n = NTextParser.of().parse(path);
-            n = NText.transform(n, new NTextTransformConfig()
+            n = n.transform(new NTextTransformConfig()
                     .processAll(true)
                     .rootLevel(1));
             return (n == null ? NText.ofStyled("no help found", NTextStyle.error()) : n);
@@ -1256,7 +1248,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (nutsId != null) {
                 NPath urlPath = NPath.of("classpath:/" + nutsId.shortId().mavenFolder() + ".ntf", clazz == null ? null : clazz.getClassLoader());
                 NText n = NTextParser.of().parse(urlPath);
-                n = NText.transform(n, new NTextTransformConfig()
+                n = n.transform(new NTextTransformConfig()
                         .processAll(true)
                         .importClassLoader(clazz == null ? null : clazz.getClassLoader())
                         .currentDir(urlPath.parent())

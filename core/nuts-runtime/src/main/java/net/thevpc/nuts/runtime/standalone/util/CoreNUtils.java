@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.core.NConstants;
 
 
@@ -33,7 +32,6 @@ import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.command.NInstallInformation;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -302,7 +300,7 @@ public class CoreNUtils {
                         .groupId(group)
                         .artifactId(name)
                         .version(version)
-                        .setProperties(props).build();
+                        .properties(props).build();
             }
         }
         return child;
@@ -691,13 +689,6 @@ public class CoreNUtils {
         return NWorkspace.of().getCustomBootOption(name)
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
-    }
-
-    public static RuntimeException toUncheckedException(Throwable e) {
-        if (e instanceof RuntimeException) {
-            return (RuntimeException) e;
-        }
-        return new RuntimeException(e);
     }
 
     public static boolean isShowCommand() {
