@@ -2658,15 +2658,15 @@ NWebCli.of().POST(&quot;/upload&quot;)
 NWebCli.of().POST(&quot;/upload&quot;)
     .addPart(&quot;avatar&quot;, myFile)
     .run();
-</code></pre><H4 class="md-title-2">Resilience & Asynchronous Execution</H4>To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine (NConcurrent):<pre><code class="language-java">// Run asynchronously using a custom Executor or your NConcurrent ExecutorService
+</code></pre><H4 class="md-title-2">Resilience & Asynchronous Execution</H4>To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine:<pre><code class="language-java">// Run asynchronously using a custom Executor or your NConcurrent ExecutorService
 CompletableFuture&lt;NWebResponse&gt; asyncResponse = NWebCli.of()
         .GET(&quot;/long-task&quot;)
-        .runAsync(NConcurrent.of().executorService());
+        .runAsync(NConcurrent.executorService());
 
-// Combine NWebCli and NConcurrent for robust network retry behaviors
-NWebResponse resilientResponse = NConcurrent.of()
-        .retryCall(() -&gt; NWebCli.of().GET(&quot;/flaky-service&quot;).run())
-        .run();
+// Combine NWebCli and NConcurrent executor service for robust network retry behaviors
+try(NRetryCall retry = NRetryCall.of(() -&gt; NWebCli.of().GET(&quot;/flaky-service&quot;).run())){
+    NWebResponse resilientResponse=retry.run();
+}
 </code></pre>
                         </div>
 
@@ -2911,8 +2911,8 @@ NOut.println(&quot;Result: &quot; + result);
 </code></pre><H4 class="md-title-3">Asynchronous Execution</H4><pre><code class="language-java">retryCall.callAsync();
 
 // Or retrieve a future
-Future&lt;NRetryCall.Result&lt;String&gt;&gt; future = retryCall.callFuture();
-NRetryCall.Result&lt;String&gt; result = future.get();
+Future&lt;NRetryResult&lt;String&gt;&gt; future = retryCall.callFuture();
+NRetryResult&lt;String&gt; result = future.get();
 if (result.isValid()) {
     NOut.println(&quot;Succeeded: &quot; + result.result());
 } else {
@@ -2936,7 +2936,7 @@ String result = retryCall.callOrElse(() -&gt; &quot;Default Result&quot;);
     }
 });
 
-</code></pre><H4 class="md-title-3">Factory Usage with ID</H4><pre><code class="language-java">NRetryCallFactory factory = NConcurrent.of().retryCallFactory();
+</code></pre><H4 class="md-title-3">Factory Usage with ID, persistent</H4><pre><code class="language-java">NRetryCallFactory factory = NRetryCallFactory.of();
 
 NRetryCall&lt;String&gt; retryCallWithId = factory.of(&quot;myCallId&quot;, () -&gt; {
     return &quot;Task Result&quot;;
@@ -2945,6 +2945,15 @@ NRetryCall&lt;String&gt; retryCallWithId = factory.of(&quot;myCallId&quot;, () -
 retryCallWithId.setMaxRetries(3)
                .setRetryPeriod(Duration.ofSeconds(2))
         .call();
+
+</code></pre><H4 class="md-title-3">Factory Usage with ID, non persistent</H4>User random id, and dispose (try with resource)<pre><code class="language-java">NRetryCallFactory factory = NRetryCallFactory.of();
+
+try(NRetryCall&lt;String&gt; retryCallWithId = factory.of(&quot;myCallId-&quot;+UUID.randomUUID(), () -&gt; {
+    return &quot;Task Result&quot;;
+}).maxRetries(3)
+        .retryPeriod(Duration.ofSeconds(2))){
+    retryCallWithId.call();
+}
 
 </code></pre>
                         </div>
@@ -2978,7 +2987,7 @@ context.getWorkerName(),
 context.getJobName(),
 context.getJobId()
 ));
-NConcurrent.of().sleep(50 + new Random().nextInt(50));
+NConcurrent.sleep(50 + new Random().nextInt(50));
 return &quot;hello from &quot; + context.getWorkerName();
 });
 
@@ -3004,7 +3013,7 @@ context.getWorkerName(),
 context.getJobName(),
 context.getJobId()
 ));
-NConcurrent.of().sleep(50 + new Random().nextInt(50));
+NConcurrent.sleep(50 + new Random().nextInt(50));
 return &quot;hello from &quot; + context.getWorkerName();
 });
 
@@ -3046,15 +3055,15 @@ NWorkBalancer&lt;MyResult&gt; balancer2 = factory.ofBuilder(&quot;callId&quot;)
                         <div class="text-card">
                             <p class="md-phrase"><mark class="md-code md-code-ac1">NSagaCallable</mark> provides a structured way to define a series of steps with <b class="md-bold">automatic compensation</b> in case of failure.   Each step can succeed or fail, and the saga system ensures that failed steps are undone according to the defined strategy.</p>This is useful for workflows that require atomicity across multiple independent operations, like distributed transactions, workflow orchestration, or resilient pipelines.<H4 class="md-title-3">Example 1: Simple Saga with failure and compensation</H4><pre><code class="language-java">@Test
 public void testSaga() {
-    NSagaCallable&lt;Object&gt; saga = NConcurrent.of().sagaCallBuilder()
+    try(NSagaCallable&lt;Object&gt; saga = NSagaCallableBuilder.of()
             .start()
             .then(&quot;step 1&quot;, MyNSagaStep.asSuccessful(1))
             .then(&quot;step 2&quot;, MyNSagaStep.asSuccessful(2))
             .then(&quot;step 3&quot;, MyNSagaStep.asErroneous(3))
             .then(&quot;step 4&quot;, MyNSagaStep.asSuccessful(4))
-            .end().build();
-
-    saga.call();
+            .end().build()) {
+        saga.call();
+    }
 }
 
 private static class MyNSagaStep implements NSagaStep {
@@ -3090,7 +3099,7 @@ private static class MyNSagaStep implements NSagaStep {
         NOut.println(Instant.now() + &quot; : undo &quot; + name);
     }
 }
-</code></pre><H4 class="md-title-3">Example 2: Conditional Saga</H4><pre><code class="language-java">NSagaCallable&lt;Object&gt; conditionalSaga = NConcurrent.of().sagaCallBuilder()
+</code></pre><H4 class="md-title-3">Example 2: Conditional Saga</H4><pre><code class="language-java">NSagaCallable&lt;Object&gt; conditionalSaga = NSagaCallableBuilder.of()
         .start()
         .then(&quot;step 1&quot;, MyNSagaStep.asSuccessful(1))
         .thenIf(&quot;conditional step&quot;, ctx -&gt; ctx.getVar(&quot;shouldRun&quot;) != null &amp;&amp; (boolean)ctx.getVar(&quot;shouldRun&quot;))
@@ -3101,7 +3110,7 @@ private static class MyNSagaStep implements NSagaStep {
         .build();
 
 conditionalSaga.call();
-</code></pre><H4 class="md-title-3">Example 3: Saga with While Loop</H4><pre><code class="language-java">NSagaCallable&lt;Object&gt; loopSaga = NConcurrent.of().sagaCallBuilder()
+</code></pre><H4 class="md-title-3">Example 3: Saga with While Loop</H4><pre><code class="language-java">NSagaCallable&lt;Object&gt; loopSaga = NSagaCallableBuilder.of()
         .start()
         .then(&quot;init counter&quot;, ctx -&gt; {
             ctx.setVar(&quot;counter&quot;, 0);
@@ -4087,27 +4096,24 @@ public class AppExample {
 public class MyBean {
     @Autowired NSession session;
     @Autowired NWorkspace workspace;
-    @Autowired NConcurrent concurrent;
     @Autowired NTerminal term;
     @Autowired NPrintStream out;
 }
 
 </code></pre><H4 class="md-title-3">Using Spring-Managed Beans in Nuts</H4><p class="md-phrase">Nuts can automatically integrate with Spring's application context. By default, <mark class="md-code md-code-ac1">NBeanContainer</mark> is wired with the Spring context, which allows any object managed by Spring to be referenced in Nuts using <mark class="md-code md-code-ac1">NBeanRef</mark>.</p><p class="md-phrase">:: <b class="md-bold">Important:</b> Only the <mark class="md-code md-code-ac1">NBeanRef</mark> itself is serialized or persisted. At runtime, the actual bean is resolved dynamically from the current bean container (e.g., Spring context). This means you can safely serialize or store Nuts objects without worrying about serializing the full bean state.</p><H4 class="md-title-4">Example: Referencing Spring Beans</H4><pre><code class="language-java">// Assume jdbcStore is an instance of a persistent store
-NRetryCallFactory factory = NConcurrent.of()
-        .retryCallFactory()
-        .withStore(jdbcStore); // optional persistence
+NRetryCallFactory factory = NRetryCallFactory.of(jdbcStore); // optional persistence
 
 // Register Spring beans by reference using NBeanRef
 factory.of(&quot;something&quot;, NBeanRef.of(&quot;callSomeThingBean&quot;).as(NCallable.class))
-       .setHandler(NBeanRef.of(&quot;resultSomeThingBean&quot;).as(NRetryCall.Handler.class))
-       .setMaxRetries(5)
-       .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1), 1))
+       .handler(NBeanRef.of(&quot;resultSomeThingBean&quot;).as(NRetryHandler.class))
+       .maxRetries(5)
+       .retryPeriod(NRetryPeriodFunction.ofMultipliedPeriod(NDuration.ofSeconds(1), 1))
        .callAsync();
 
 // Example: Custom handler implementation
-public class ResultSomeThingHandler implements NRetryCall.Handler {
+public class ResultSomeThingHandler implements NRetryHandler {
     @Override
-    public void handle(NRetryCall.Result result) {
+    public void handle(NRetryResult result) {
         if (result.isSuccess()) {
             logger.info(&quot;Retry call succeeded: {}&quot;, result.getValue());
         } else {

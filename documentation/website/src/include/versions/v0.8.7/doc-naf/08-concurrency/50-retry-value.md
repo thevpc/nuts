@@ -48,7 +48,7 @@ if (result.isValid()) {
 Linear backoff increases the wait linearly with each attempt.
 
 ```java
-retryCall.multipliedRetryPeriod(Duration.ofSeconds(1), 2.0);
+retryCall.setMultipliedRetryPeriod(Duration.ofSeconds(1), 2.0);
 // Waits: 0s, 2s, 4s, 6s, 8s...
 ```
 
@@ -56,7 +56,7 @@ retryCall.multipliedRetryPeriod(Duration.ofSeconds(1), 2.0);
 Exponential backoff increases the wait exponentially with each attempt.
 
 ```java
-retryCall.exponentialRetryPeriod(Duration.ofSeconds(1), 2.0);
+retryCall.setExponentialRetryPeriod(Duration.ofSeconds(1), 2.0);
 // Waits: 1s, 2s, 4s, 8s, 16s...
 ```
 
@@ -64,7 +64,7 @@ retryCall.exponentialRetryPeriod(Duration.ofSeconds(1), 2.0);
 You can provide a recovery callable if all retries fail.
 
 ```java
-retryCall.recover(() -> {
+retryCall.setRecover(() -> {
     NOut.println("Recovering...");
     return "Recovered Result";
 });
@@ -76,7 +76,7 @@ String result = retryCall.callOrElse(() -> "Default Result");
 Handlers are notified of each result, success or failure.
 
 ```java
-retryCall.handler(result -> {
+retryCall.setHandler(result -> {
     if (result.isValid()) {
         NOut.println("Success: " + result.result());
     } else {
