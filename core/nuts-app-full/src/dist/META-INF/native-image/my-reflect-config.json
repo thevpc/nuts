@@ -425,6 +425,13 @@
     "allPublicConstructors": true
   },
   {
+    "name": "java.util.function.IntFunction",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true
+  },
+  {
     "name": "java.util.function.Predicate",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -3344,6 +3351,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.collections.NCappedMap",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.collections.NCharQueue",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -3610,20 +3631,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.collections.NLRUMap",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.collections.NListBuilder",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -3695,20 +3702,6 @@
   },
   {
     "name": "net.thevpc.nuts.collections.NMultiKeyMap",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.collections.NNormalizedStringMap",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -4870,7 +4863,49 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.concurrent.NLockFactory",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.concurrent.NLockModel",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.concurrent.NLockReleaseException",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.concurrent.NLockStore",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -5122,34 +5157,6 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.concurrent.NRetryCall$Handler",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
-    "name": "net.thevpc.nuts.concurrent.NRetryCall$Result",
-    "allPublicMethods": true,
-    "queryAllPublicMethods": true,
-    "allPublicFields": true,
-    "allPublicConstructors": true,
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "queryAllDeclaredConstructors": true,
-    "allowWrite": true
-  },
-  {
     "name": "net.thevpc.nuts.concurrent.NRetryCall$Status",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -5193,6 +5200,48 @@
   },
   {
     "name": "net.thevpc.nuts.concurrent.NRetryCallStore",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.concurrent.NRetryHandler",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.concurrent.NRetryPeriodFunction",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.concurrent.NRetryResult",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -9434,6 +9483,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.internal.rpi.NConcurrentRPI",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -12094,7 +12157,35 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.platform.NGpu",
+    "name": "net.thevpc.nuts.platform.NGpuDevice",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.platform.NGpuDeviceType",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.platform.NGpuVendor",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -12151,6 +12242,34 @@
   },
   {
     "name": "net.thevpc.nuts.platform.NOsServiceType",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.platform.NParallelProcessorFamily",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.platform.NParallelProcessorRuntime",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -15188,6 +15307,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentRPI",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -15398,7 +15531,21 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl",
+    "name": "net.thevpc.nuts.runtime.standalone.concurrent.NLockFactoryImpl",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.concurrent.NLockStoreMemory",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -15735,6 +15882,20 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.concurrent.NSagaStoreMemory",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.concurrent.NStoreNLock",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -25198,6 +25359,34 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.runtime.standalone.platform.DefaultNGpuDevice",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.platform.DefaultNParallelProcessorDetector",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.runtime.standalone.platform.NEnvAsCmd",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -25241,6 +25430,34 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.platform.NEnvUtils",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.platform.NLinuxGpuProbe",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.platform.NLinuxGpuProbe$Device",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -31303,6 +31520,20 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.util.NSpeedQualifiers",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -42825,6 +43056,20 @@
   },
   {
     "name": "net.thevpc.nuts.util.NToStringBuilder",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.util.NToStringBuilder$Entry",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

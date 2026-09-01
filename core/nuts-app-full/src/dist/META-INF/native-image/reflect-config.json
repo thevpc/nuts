@@ -259,6 +259,9 @@
   "name":"net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentRPI"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.concurrent.DefaultNLockBuilder"
 },
 {

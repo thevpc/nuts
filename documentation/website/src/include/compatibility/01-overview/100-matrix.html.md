@@ -88,7 +88,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
   <td style="background:#e36250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.7/compat_report.html" target="_blank">0.8.4→0.8.7 (15.60%)</a></td>
   <td style="background:#e36250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.8/compat_report.html" target="_blank">0.8.4→0.8.8 (15.60%)</a></td>
   <td style="background:#eb5d50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_0.8.9/compat_report.html" target="_blank">0.8.4→0.8.9 (11.10%)</a></td>
-  <td style="background:#f15950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_1.0.0/compat_report.html" target="_blank">0.8.4→1.0.0 (7.80%)</a></td>
+  <td style="background:#f35750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.4_to_1.0.0/compat_report.html" target="_blank">0.8.4→1.0.0 (6.30%)</a></td>
   </tr>
   <tr>
     <th>0.8.5</th>
@@ -102,7 +102,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.7/compat_report.html" target="_blank">0.8.5→0.8.7 (34.50%)</a></td>
   <td style="background:#c27950;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.8/compat_report.html" target="_blank">0.8.5→0.8.8 (34.50%)</a></td>
   <td style="background:#e06550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_0.8.9/compat_report.html" target="_blank">0.8.5→0.8.9 (17.70%)</a></td>
-  <td style="background:#e95e50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_1.0.0/compat_report.html" target="_blank">0.8.5→1.0.0 (12.10%)</a></td>
+  <td style="background:#eb5d50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.5_to_1.0.0/compat_report.html" target="_blank">0.8.5→1.0.0 (10.90%)</a></td>
   </tr>
   <tr>
     <th>0.8.6</th>
@@ -116,7 +116,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.7/compat_report.html" target="_blank">0.8.6→0.8.7 (44.90%)</a></td>
   <td style="background:#b08550;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.8/compat_report.html" target="_blank">0.8.6→0.8.8 (44.90%)</a></td>
   <td style="background:#de6650;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_0.8.9/compat_report.html" target="_blank">0.8.6→0.8.9 (18.50%)</a></td>
-  <td style="background:#e95e50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (12.20%)</a></td>
+  <td style="background:#eb5d50;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.6_to_1.0.0/compat_report.html" target="_blank">0.8.6→1.0.0 (11.10%)</a></td>
   </tr>
   <tr>
     <th>0.8.7</th>
@@ -130,7 +130,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
     <td class="na">-</td>
   <td style="background:#50c750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.8/compat_report.html" target="_blank">0.8.7→0.8.8 (99.50%)</a></td>
   <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_0.8.9/compat_report.html" target="_blank">0.8.7→0.8.9 (28.70%)</a></td>
-  <td style="background:#db6850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_1.0.0/compat_report.html" target="_blank">0.8.7→1.0.0 (20.40%)</a></td>
+  <td style="background:#dd6750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.7_to_1.0.0/compat_report.html" target="_blank">0.8.7→1.0.0 (19.20%)</a></td>
   </tr>
   <tr>
     <th>0.8.8</th>
@@ -144,7 +144,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
     <td class="na">-</td>
     <td class="na">-</td>
   <td style="background:#cc7250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_0.8.9/compat_report.html" target="_blank">0.8.8→0.8.9 (28.80%)</a></td>
-  <td style="background:#db6850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_1.0.0/compat_report.html" target="_blank">0.8.8→1.0.0 (20.50%)</a></td>
+  <td style="background:#dd6750;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.8_to_1.0.0/compat_report.html" target="_blank">0.8.8→1.0.0 (19.30%)</a></td>
   </tr>
   <tr>
     <th>0.8.9</th>
@@ -158,7 +158,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
     <td class="na">-</td>
     <td class="na">-</td>
     <td class="na">-</td>
-  <td style="background:#9b9450;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (56.70%)</a></td>
+  <td style="background:#9e9250;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (55.00%)</a></td>
   </tr>
   <tr>
     <th>1.0.0</th>
