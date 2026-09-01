@@ -7,7 +7,7 @@ import net.thevpc.nuts.util.NAssert;
 import java.util.HashMap;
 import java.util.Map;
 
-class NRateLimitValueStoreMemory implements NRateLimitValueStore {
+public class NRateLimitValueStoreMemory implements NRateLimitValueStore {
     private final Map<String, NRateLimitValueModel> values = new HashMap<>();
 
     @Override

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Factory interface for creating {@link NRetryCall} instances.
  * <p>
@@ -15,7 +17,19 @@ public interface NRetryCallFactory {
      * @return a new retry call factory instance
      */
     static NRetryCallFactory of() {
-        return NConcurrent.of().retryCallFactory();
+        return NConcurrentRPI.of().retryCallFactory();
+    }
+
+    static void configure(NRetryCallFactory global) {
+        NConcurrentRPI.of().retryCallFactory(global);
+    }
+
+    static NRetryCallFactory ofMem() {
+        return NConcurrentRPI.of().memoryRetryCallFactory();
+    }
+
+    static NRetryCallFactory ofDefault() {
+        return NConcurrentRPI.of().defaultRetryCallFactory();
     }
 
     /**
@@ -25,8 +39,9 @@ public interface NRetryCallFactory {
      * @return a new retry call factory instance
      */
     static NRetryCallFactory of(NRetryCallStore store) {
-        return NConcurrent.of().retryCallFactory().withStore(store);
+        return NConcurrentRPI.of().retryCallFactory().withStore(store);
     }
+
     /**
      * Returns the underlying store used to persist retry call models.
      *
@@ -49,7 +64,7 @@ public interface NRetryCallFactory {
      * recovery handlers, and executed synchronously or asynchronously.
      *
      * @param callable the callable to retry
-     * @param <T> the type of the result
+     * @param <T>      the type of the result
      * @return a new {@link NRetryCall} instance
      */
     <T> NRetryCall<T> of(NCallable<T> callable);
@@ -60,9 +75,9 @@ public interface NRetryCallFactory {
      * <p>
      * The identifier can be used for tracking or persisting the retry call's state.
      *
-     * @param id the unique identifier for the retry call
+     * @param id       the unique identifier for the retry call
      * @param callable the callable to retry
-     * @param <T> the type of the result
+     * @param <T>      the type of the result
      * @return a new {@link NRetryCall} instance
      */
     <T> NRetryCall<T> of(String id, NCallable<T> callable);

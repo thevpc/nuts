@@ -86,10 +86,10 @@ retryCall.setHandler(result -> {
 
 ```
 
-### Factory Usage with ID
+### Factory Usage with ID, persistent
 
 ```java
-NRetryCallFactory factory = NConcurrent.of().retryCallFactory();
+NRetryCallFactory factory = NRetryCallFactory.of();
 
 NRetryCall<String> retryCallWithId = factory.of("myCallId", () -> {
     return "Task Result";
@@ -98,5 +98,20 @@ NRetryCall<String> retryCallWithId = factory.of("myCallId", () -> {
 retryCallWithId.setMaxRetries(3)
                .setRetryPeriod(Duration.ofSeconds(2))
         .call();
+
+```
+
+### Factory Usage with ID, non persistent
+User random id, and dispose (try with resource)
+
+```java
+NRetryCallFactory factory = NRetryCallFactory.of();
+
+try(NRetryCall<String> retryCallWithId = factory.of("myCallId-"+UUID.randomUUID(), () -> {
+    return "Task Result";
+}).maxRetries(3)
+        .retryPeriod(Duration.ofSeconds(2))){
+    retryCallWithId.call();
+}
 
 ```

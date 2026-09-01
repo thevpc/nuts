@@ -37,7 +37,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
             id = UUID.randomUUID().toString();
         }
         return new NRetryCallImpl<>(id, callable,
-                store == null ? NConcurrent.of().memoryRetryCallFactory().store() : store);
+                store == null ? NRetryCallFactory.ofMem().store() : store);
     }
 
 

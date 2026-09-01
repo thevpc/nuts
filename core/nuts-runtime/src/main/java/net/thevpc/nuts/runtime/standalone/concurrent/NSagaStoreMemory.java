@@ -6,7 +6,7 @@ import net.thevpc.nuts.util.NAssert;
 import java.util.HashMap;
 import java.util.Map;
 
-class NSagaStoreMemory implements NSagaStore {
+public class NSagaStoreMemory implements NSagaStore {
     private final Map<String, NSagaModel> values = new HashMap<>();
 
     @Override

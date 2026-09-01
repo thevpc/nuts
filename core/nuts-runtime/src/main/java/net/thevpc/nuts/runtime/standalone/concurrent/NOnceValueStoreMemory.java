@@ -6,7 +6,7 @@ import net.thevpc.nuts.concurrent.NOnceValueStore;
 import java.util.HashMap;
 import java.util.Map;
 
-class NOnceValueStoreMemory implements NOnceValueStore {
+public class NOnceValueStoreMemory implements NOnceValueStore {
     private final Map<String, NOnceValueModel> values = new HashMap<>();
 
     @Override

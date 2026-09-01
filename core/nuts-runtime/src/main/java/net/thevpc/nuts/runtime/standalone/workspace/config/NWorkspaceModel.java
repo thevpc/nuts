@@ -3,13 +3,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.artifact.NIdWriter;
 import net.thevpc.nuts.command.NExec;
-import net.thevpc.nuts.concurrent.NConcurrent;
-import net.thevpc.nuts.concurrent.NScopedStack;
+import net.thevpc.nuts.concurrent.*;
 import net.thevpc.nuts.core.NBootOptions;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NIsolationLevel;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
@@ -30,8 +28,7 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNUtilsRPI;
-import net.thevpc.nuts.runtime.standalone.concurrent.DefaultNConcurrentRPI;
-import net.thevpc.nuts.runtime.standalone.concurrent.NConcurrentImpl;
+import net.thevpc.nuts.runtime.standalone.concurrent.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementRPI;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementWriter;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
@@ -100,6 +97,30 @@ public class NWorkspaceModel {
     public NTextRPI defaultNTextRPI;
     public NCmdLineRPI defaultNCmdLineRPI;
     public NConcurrentRPI defaultConcurrentRPI;
+
+
+    public final NRateLimitValueFactory memoryRateLimitValueFactory = new NRateLimitValueFactoryImpl(new NRateLimitValueStoreMemory(), null);
+    public NRateLimitValueFactory rateLimitValueFactory;
+
+    public final NSagaCallableFactory memorySagaFactory = new NSagaCallableFactoryImpl(new NSagaStoreMemory());
+    public NSagaCallableFactory sagaFactory;
+
+    public final NCachedValueFactory memoryCachedValueFactory = new NCachedValueFactoryImpl(new NCachedValueStoreMemory());
+    public NCachedValueFactory cachedValueFactory;
+    public final NOnceValueFactory memoryOnceValueFactory = new NOnceValueFactoryImpl(new NOnceValueStoreMemory());
+    public NOnceValueFactory onceValueFactory;
+
+    public final NRetryCallFactory memoryRetryValueFactory = new NRetryCallFactoryImpl(new NRetryCallStoreMemory());
+    public NRetryCallFactory retryValueFactory;
+
+    public final NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory = new NCircuitBreakerCallFactoryImpl(new NCircuitBreakerCallStoreMemory(), null);
+    public NCircuitBreakerCallFactory circuitBreakerCallFactory;
+
+    public final NWorkBalancerFactory memoryWorkBalancerCallFactory = new NWorkBalancerFactoryImpl(new NWorkBalancerStoreMemory(), null);
+    public NWorkBalancerFactory workBalancerCallFactory;
+
+    public final NBulkheadCallFactory memoryBulkheadCallFactory = new NBulkheadCallFactoryImpl(new NBulkheadCallBackendAsSemaphore(),new NBulkheadCallStoreMemory());
+    public NBulkheadCallFactory bulkheadCallFactory;
 
 
     public NExtensionCatalogManager extensionCatalogManager=new NExtensionCatalogManager();

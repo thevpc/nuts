@@ -1,5 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.util.NGetter;
 
 import java.util.function.Supplier;
@@ -27,7 +28,19 @@ public interface NOnceValueFactory {
      * @return a new once value factory instance
      */
     static NOnceValueFactory of() {
-        return NConcurrent.of().onceValueFactory();
+        return NConcurrentRPI.of().onceValueFactory();
+    }
+
+    static NOnceValueFactory ofDefault() {
+        return NConcurrentRPI.of().defaultOnceValueFactory();
+    }
+
+    static NOnceValueFactory ofMem() {
+        return NConcurrentRPI.of().memoryOnceValueFactory();
+    }
+
+    static void configure(NOnceValueFactory factory) {
+        NConcurrentRPI.of().onceValueFactory(factory);
     }
 
     /**
@@ -37,7 +50,7 @@ public interface NOnceValueFactory {
      * @return a new once value factory instance using the provided store
      */
     static NOnceValueFactory of(NOnceValueStore store) {
-        return NConcurrent.of().onceValueFactory().withStore(store);
+        return NConcurrentRPI.of().onceValueFactory().withStore(store);
     }
 
     /**
@@ -60,7 +73,7 @@ public interface NOnceValueFactory {
      * Creates a new {@link NOnceValue} with the given supplier.
      *
      * @param supplier the supplier to compute the value
-     * @param <T> the type of the value
+     * @param <T>      the type of the value
      * @return a once value instance
      */
     <T> NOnceValue<T> of(Supplier<T> supplier);
@@ -70,9 +83,9 @@ public interface NOnceValueFactory {
      * <p>
      * The identifier can be used to persist or retrieve the value from the backing store.
      *
-     * @param id the unique identifier for the once value
+     * @param id       the unique identifier for the once value
      * @param supplier the supplier to compute the value
-     * @param <T> the type of the value
+     * @param <T>      the type of the value
      * @return a once value instance
      */
     <T> NOnceValue<T> of(String id, Supplier<T> supplier);

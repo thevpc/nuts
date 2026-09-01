@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Builder interface for constructing {@link NSagaCallable} instances.
  * <p>
@@ -9,6 +11,9 @@ package net.thevpc.nuts.concurrent;
  * saga workflows to be built in a readable, declarative style.
  */
 public interface NSagaCallableBuilder {
+    static NSagaCallableBuilder of(){
+        return NConcurrentRPI.of().sagaCallBuilder();
+    }
     /**
      * Starts the saga definition and returns the root suite for adding steps.
      *

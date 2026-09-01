@@ -79,7 +79,7 @@ CompletableFuture<NWebResponse> asyncResponse = NWebCli.of()
         .runAsync(NConcurrent.of().executorService());
 
 // Combine NWebCli and NConcurrent for robust network retry behaviors
-NWebResponse resilientResponse = NConcurrent.of()
-        .retryCall(() -> NWebCli.of().GET("/flaky-service").run())
-        .run();
+try(NRetryCall retry = NRetryCall.of(() -> NWebCli.of().GET("/flaky-service").run())){
+    NWebResponse resilientResponse=retry.run();
+}
 ```

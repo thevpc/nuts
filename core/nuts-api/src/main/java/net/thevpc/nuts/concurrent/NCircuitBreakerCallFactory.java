@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.util.NGetter;
 
 /**
@@ -44,7 +45,18 @@ public interface NCircuitBreakerCallFactory {
      * @return a new circuit breaker call factory instance
      */
     static NCircuitBreakerCallFactory of() {
-        return NConcurrent.of().circuitBreakerCallFactory();
+        return NConcurrentRPI.of().circuitBreakerCallFactory();
+    }
+
+    static NCircuitBreakerCallFactory ofDefault() {
+        return NConcurrentRPI.of().defaultCircuitBreakerCallFactory();
+    }
+
+    static NCircuitBreakerCallFactory ofMem() {
+        return NConcurrentRPI.of().memoryCircuitBreakerCallFactory();
+    }
+    static void configure(NCircuitBreakerCallFactory factory) {
+        NConcurrentRPI.of().circuitBreakerCallFactory(factory);
     }
 
     /**
@@ -54,7 +66,7 @@ public interface NCircuitBreakerCallFactory {
      * @return a new circuit breaker call factory instance
      */
     static NCircuitBreakerCallFactory of(NCircuitBreakerCallStore store) {
-        return NConcurrent.of().circuitBreakerCallFactory().withStore(store);
+        return NConcurrentRPI.of().circuitBreakerCallFactory().withStore(store);
     }
 
     /**

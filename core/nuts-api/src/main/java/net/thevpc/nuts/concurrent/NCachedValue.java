@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
@@ -33,7 +34,7 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @return a new cached value
      */
     static <T> NCachedValue<T> of(Supplier<T> supplier) {
-        return NConcurrent.of().cachedValue(supplier);
+        return NConcurrentRPI.of().cachedValue(supplier);
     }
 
 
@@ -186,7 +187,8 @@ public interface NCachedValue<T> extends Supplier<T>, NDescribable {
      * @return this instance
      * @throws RuntimeException if the computation fails and the cache is not configured
      *                          to retain the last valid value
-     */    NCachedValue<T> update();
+     */
+    NCachedValue<T> update();
 
     /**
      * Directly sets the cached value and marks it as valid.

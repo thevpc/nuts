@@ -1,12 +1,12 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.concurrent.Future;
-import java.util.function.IntFunction;
 
 /**
  * A retryable callable task.
@@ -36,7 +36,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(NCallable<T> callable) {
-        return NConcurrent.of().retryCall(callable);
+        return NConcurrentRPI.of().retryCall(callable);
     }
 
     /**
@@ -48,7 +48,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrent.of().retryCall(id, callable);
+        return NConcurrentRPI.of().retryCall(id, callable);
     }
 
     /**
@@ -66,25 +66,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @param retryPeriod function mapping attempt index to duration
      * @return this instance
      */
-    NRetryCall<T> retryPeriod(IntFunction<NDuration> retryPeriod);
-
-    /**
-     * Sets a multiplied retry period based on a base period and a multiplier factor.
-     *
-     * @param basePeriod base duration
-     * @param multiplier factor to multiply base duration for each retry
-     * @return this instance
-     */
-    NRetryCall<T> multipliedRetryPeriod(NDuration basePeriod, double multiplier);
-
-    /**
-     * Sets an exponential retry period.
-     *
-     * @param basePeriod base duration
-     * @param multiplier exponential growth factor
-     * @return this instance
-     */
-    NRetryCall<T> exponentialRetryPeriod(NDuration basePeriod, double multiplier);
+    NRetryCall<T> retryPeriod(NRetryPeriodFunction retryPeriod);
 
     /**
      * Sets a fixed retry period for all attempts.
@@ -94,15 +76,6 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      */
     @NSetter
     NRetryCall<T> retryPeriod(NDuration period);
-
-    /**
-     * Sets a sequence of retry periods for consecutive attempts.
-     *
-     * @param periods array of durations
-     * @return this instance
-     */
-    @NSetter
-    NRetryCall<T> retryPeriods(NDuration... periods);
 
     /**
      * Adds a recovery callable to execute if all retry attempts fail.

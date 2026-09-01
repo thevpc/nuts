@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NSetter;
 
@@ -76,7 +77,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, Auto
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(NCallable<T> callable) {
-        return NConcurrent.of().circuitBreakerCall(callable);
+        return NConcurrentRPI.of().circuitBreakerCall(callable);
     }
 
     /**
@@ -88,7 +89,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, Auto
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrent.of().circuitBreakerCall(id, callable);
+        return NConcurrentRPI.of().circuitBreakerCall(id, callable);
     }
 
     /**

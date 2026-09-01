@@ -1,5 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
+
 /**
  * Factory interface for creating {@link NSagaCallable} instances and their builders.
  * <p>
@@ -15,7 +17,7 @@ public interface NSagaCallableFactory {
      * @return a new saga callable factory instance
      */
     static NSagaCallableFactory of() {
-        return NConcurrent.of().sagaFactory();
+        return NConcurrentRPI.of().sagaFactory();
     }
 
     /**
@@ -25,7 +27,19 @@ public interface NSagaCallableFactory {
      * @return a new saga callable factory instance
      */
     static NSagaCallableFactory of(NSagaStore store) {
-        return NConcurrent.of().sagaFactory().withStore(store);
+        return NConcurrentRPI.of().sagaFactory().withStore(store);
+    }
+
+    static NSagaCallableFactory ofDefault() {
+        return NConcurrentRPI.of().defaultSagaFactory();
+    }
+
+    static NSagaCallableFactory ofMem() {
+        return NConcurrentRPI.of().memorySagaFactory();
+    }
+
+    static void configure(NSagaStore store) {
+        NConcurrentRPI.of().sagaFactory().withStore(store);
     }
 
     /**

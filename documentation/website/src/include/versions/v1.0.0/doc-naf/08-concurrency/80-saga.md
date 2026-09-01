@@ -12,15 +12,15 @@ This is useful for workflows that require atomicity across multiple independent 
 ```java
 @Test
 public void testSaga() {
-    NSagaCallable<Object> saga = NConcurrent.of().sagaCallBuilder()
+    try(NSagaCallable<Object> saga = NSagaCallableBuilder.of()
             .start()
             .then("step 1", MyNSagaStep.asSuccessful(1))
             .then("step 2", MyNSagaStep.asSuccessful(2))
             .then("step 3", MyNSagaStep.asErroneous(3))
             .then("step 4", MyNSagaStep.asSuccessful(4))
-            .end().build();
-
-    saga.call();
+            .end().build()) {
+        saga.call();
+    }
 }
 
 private static class MyNSagaStep implements NSagaStep {
@@ -61,7 +61,7 @@ private static class MyNSagaStep implements NSagaStep {
 ### Example 2: Conditional Saga
 
 ```java
-NSagaCallable<Object> conditionalSaga = NConcurrent.of().sagaCallBuilder()
+NSagaCallable<Object> conditionalSaga = NSagaCallableBuilder.of()
         .start()
         .then("step 1", MyNSagaStep.asSuccessful(1))
         .thenIf("conditional step", ctx -> ctx.getVar("shouldRun") != null && (boolean)ctx.getVar("shouldRun"))
@@ -77,7 +77,7 @@ conditionalSaga.call();
 ### Example 3: Saga with While Loop
 
 ```java
-NSagaCallable<Object> loopSaga = NConcurrent.of().sagaCallBuilder()
+NSagaCallable<Object> loopSaga = NSagaCallableBuilder.of()
         .start()
         .then("init counter", ctx -> {
             ctx.setVar("counter", 0);

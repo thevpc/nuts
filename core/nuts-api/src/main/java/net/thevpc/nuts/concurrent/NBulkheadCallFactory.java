@@ -1,5 +1,6 @@
 package net.thevpc.nuts.concurrent;
 
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.util.NGetter;
 
 /**
@@ -28,13 +29,29 @@ import net.thevpc.nuts.util.NGetter;
  */
 public interface NBulkheadCallFactory {
     /**
-     * Creates a default {@link NBulkheadCallFactory} instance using the global
+     * returns global {@link NBulkheadCallFactory} instance
      * {@link NConcurrent} configuration.
      *
      * @return a new {@link NBulkheadCallFactory} instance
      */
     static NBulkheadCallFactory of() {
-        return NConcurrent.of().bulkheadCallFactory();
+        return NConcurrentRPI.of().bulkheadCallFactory();
+    }
+
+    /**
+     * set global {@link NBulkheadCallFactory} instance
+     * @param globalInstance global instance
+     */
+    static void configure(NBulkheadCallFactory globalInstance) {
+        NConcurrentRPI.of().bulkheadCallFactory(globalInstance);
+    }
+
+    static NBulkheadCallFactory ofDefault() {
+        return NConcurrentRPI.of().defaultBulkheadCallFactory();
+    }
+
+    static NBulkheadCallFactory ofMem() {
+        return NConcurrentRPI.of().memoryBulkheadCallFactory();
     }
 
     /**
@@ -44,14 +61,14 @@ public interface NBulkheadCallFactory {
      * @return a new {@link NBulkheadCallFactory} configured with the given store
      */
     static NBulkheadCallFactory of(NBulkheadCallStore store) {
-        return NConcurrent.of().bulkheadCallFactory().withStore(store);
+        return NConcurrentRPI.of().bulkheadCallFactory().withStore(store);
     }
 
     /**
      * Wraps a callable with bulkhead protection, automatically assigning an internal bulkhead ID.
      *
      * @param callable the callable task to execute under bulkhead control
-     * @param <T> the type of the callable result
+     * @param <T>      the type of the callable result
      * @return a new {@link NBulkheadCall} instance wrapping the given callable
      */
     <T> NBulkheadCall<T> bulkheadCall(NCallable<T> callable);
@@ -60,9 +77,9 @@ public interface NBulkheadCallFactory {
      * Wraps a callable with bulkhead protection, using a specific bulkhead identifier.
      * Calls sharing the same ID are subject to the same concurrency limits.
      *
-     * @param id the bulkhead identifier
+     * @param id       the bulkhead identifier
      * @param callable the callable task to execute under bulkhead control
-     * @param <T> the type of the callable result
+     * @param <T>      the type of the callable result
      * @return a new {@link NBulkheadCall} instance bound to the given ID
      */
     <T> NBulkheadCall<T> bulkheadCall(String id, NCallable<T> callable);

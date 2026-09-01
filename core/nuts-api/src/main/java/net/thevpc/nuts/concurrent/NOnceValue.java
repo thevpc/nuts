@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 
 import java.util.function.Supplier;
 
@@ -25,7 +26,7 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable, AutoCloseable 
      * @return a new {@code NOnceValue} wrapping the given supplier
      */
     static <T> NOnceValue<T> ofSupplier(Supplier<T> supplier) {
-        return NConcurrent.of().onceValue(supplier);
+        return NConcurrentRPI.of().onceValue(supplier);
     }
 
     /**

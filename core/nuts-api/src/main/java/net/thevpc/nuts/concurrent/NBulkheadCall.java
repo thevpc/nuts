@@ -1,6 +1,7 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NOptional;
@@ -73,7 +74,7 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable, AutoClose
      * @return a new {@code NConcurrencyLimiter} instance
      */
     static <T> NBulkheadCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrent.of().bulkheadCallFactory().bulkheadCall(id,callable);
+        return NConcurrentRPI.of().bulkheadCallFactory().bulkheadCall(id,callable);
     }
 
     /**

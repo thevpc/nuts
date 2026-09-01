@@ -55,15 +55,13 @@ Nuts can automatically integrate with Spring's application context. By default, 
 
 ```java
 // Assume jdbcStore is an instance of a persistent store
-NRetryCallFactory factory = NConcurrent.of()
-        .retryCallFactory()
-        .withStore(jdbcStore); // optional persistence
+NRetryCallFactory factory = NRetryCallFactory.of(jdbcStore); // optional persistence
 
 // Register Spring beans by reference using NBeanRef
 factory.of("something", NBeanRef.of("callSomeThingBean").as(NCallable.class))
-       .setHandler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
-       .setMaxRetries(5)
-       .setRetryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1), 1))
+       .handler(NBeanRef.of("resultSomeThingBean").as(NRetryCall.Handler.class))
+       .maxRetries(5)
+       .retryPeriod(NConcurrent.of().retryMultipliedPeriod(NDuration.ofSeconds(1), 1))
        .callAsync();
 
 // Example: Custom handler implementation
