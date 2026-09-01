@@ -137,7 +137,7 @@ nuts update
 
 **Nuts** is open-source and actively developed. Contributions welcome.
 
-[Contribute on GitHub](https://github.com/thevpc/nuts)  
+[Contribute on GitHub](CONTRIBUTING.md)  
 [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
 ---
