@@ -54,7 +54,3 @@ nuts check-updates -A -r
 
 * `update`: Checks for and applies available updates.
 * `search`: Searches for specific versions of artifacts.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/check-updates.ntf")}}
-``````

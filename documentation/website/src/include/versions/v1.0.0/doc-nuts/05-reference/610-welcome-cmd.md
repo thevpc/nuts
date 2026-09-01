@@ -21,7 +21,3 @@ nuts [<options>]... <command> <args> ...
 
 For Help, type nuts help
 ```
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/welcome.ntf")}}
-``````

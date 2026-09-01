@@ -64,3 +64,8 @@ nuts myapp
 ## Nuts Application Framework (NAF)
 
 **nuts** is built upon the [Nuts Application Framework (NAF)](/doc-naf.html), a robust foundation for building feature-rich Java applications. If you are developing applications that deeply integrate with **nuts**, refer to the NAF documentation.
+
+---
+
+[Quick Reference →](#quick-reference)
+

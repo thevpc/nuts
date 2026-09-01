@@ -1,0 +1,848 @@
+---
+id: nuts-help
+title: nuts
+---
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
+
+```sh nuts``` is a ##:_:Java™## ##:_:Package Manager## that helps discovering, downloading, assembling and executing
+local and remote artifacts (packages) in a very handy way. Unlike maven which resolves dependencies at compile time,
+```sh nuts``` solves dependencies at install time and, as a result, saves disk and bandwidth by downloading and caching
+only libraries required for the current environment. Nuts is unique in that it reuses maven and other build tool
+descriptor formats to solve dependency graph, and does not, whatsoever, have any requirement on existing
+maven created packages.
+
+Nuts stands for ##Network Updatable Things Services## tool. It's designed to support multiple package formats and even
+multiple languages (platforms like dotnet and python), even-though, the current implementation supports only java.
+```sh nuts``` artifacts are  stored  into repositories. A  ##:_:repository##  may be local for  storing local ```sh nuts```
+or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
+also be a proxy ##:_:repository## so that remote artifacts are fetched and cached locally to save network
+resources.
+
+One manages a set of repositories called a  ##:_:workspace## (analogous to pip 'virtualenv'). Managed packages
+(artifacts) have descriptors that depict dependencies between them. This dependency is seamlessly handled by  ```sh nuts```
+to resolve and download and cache on-need dependencies over the wire.
+
+```sh nuts``` is a swiss army knife tool as it acts like (and supports) maven ##:_:build tool## to have an abstract
+view of the the  artifacts ##:_:dependency## and like  zypper/apt-get/pip/npm  ##:_:package manager tools##
+to ##:_:install## and ##:_:uninstall## artifacts allowing multiple versions of the very same artifact to  be installed.
+
+Although ```sh nuts``` focuses on ##:_:Java™## artifacts, it still supports, by design, native and all non ##:_:Java™## artifacts.
+Dependencies are fetched according to the current operating system type, distribution and hardware
+architectures.
+
+```sh nuts``` works either as ##:_:standalone application## or as ##:_:Java™ library## to enable dynamic and dependency
+aware class loading and brings a rich toolset to provide a versatile portable command line tools such
+as ###nsh### (a bash like shell), ###tomcat###, ###derby### ... wrapper tools to make it easier providing
+##:_:development## , ##:_:test## and ##:_:deployment## reproducible environments.
+
+With container concepts in mind, ```sh nuts``` is the perfect ##:_:Java™## application tool for Docker, CoreOs
+and other ##:_:container engines##.
+
+##) COMMON VERBS:
+install,uninstall,update : install/uninstall/update an artifact (using its fetched/deployed installer)
+fetch,push               : download, upload to remote repositories
+search                   : search for existing/installable artifacts
+exec                     : execute an artifact (tool)
+deploy, undeploy         : manage artifacts on the local repositories
+
+##) SYNOPSIS:
+```sh
+nuts [<-options>]... <command> <args> ...
+```
+
+##) VERSIONS:
+Boot API     Version: ###${nuts.workspace-boot.version}###
+Boot Runtime Version: ###${nuts.workspace-runtime.version}###
+##:_:Java™##        Version: ###${java.version} (${java.vm.name})###
+
+##) NUTS OPTIONS:
+ There are four (4) types of options : 
+ * ##:_:create options##
+ * ##:_:create exported options##
+ * ##:_:open options##
+ * ##:_:open exported options##
+
+ ##:_:create options## are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
+                    but they will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
+
+ ##:_:create exported options## are considered both when creating a new workspace and when running it. If they are specified in creation
+                    they will be persisted. If they are specified later they will override persisted values without persisting the changes
+
+ ##:_:open options## are transient (non persistent) options that will override any configured value (if any) and will be
+                     in use in the current process (and ignored elsewhere). Such options will be considered in creating workspaces
+                     as well but still they are not persistent.
+
+ ##:_:open exported options## are open (so transient, non persistent) options that will override any configured value (if any)
+                      having the ability to be exported to any ##:_:Java™## child process (as system property ```sh -D```...)
+
+
+###) NUTS CREATE EXPORTED OPTIONS:
+ ```sh --workspace <workspace-location> ``` (default is ```kw ""``` ad is equivalent to ```kw "default-workspace"```)
+ ```sh -w <workspace-location> ```
+      workspace location to open (or create).
+      this defaults to default-workspace. Typically this refers to ~/.config/nuts/default-workspace on *NIX Platforms*
+      (when ```sh --system-conf-home``` is not specified). workspace location contains mainly config information.
+
+ ```sh --user      <username> ``` (default is ```kw ""```)
+ ```sh -u          <username> ```
+      workspace username.
+      if not specified, all access to ```sh nuts``` will be with anonymous identity. so to promote user privileges, one may
+      specify user credentials (see ```sh --password ```)
+
+ ```sh --password  <password> ``` (default is ```kw ""```)
+ ```sh -p  <password> ```
+      workspace password.
+      They must be provided when ```sh --user``` is present.
+
+ ```sh -V <boot-api-version> ``` (default is ```kw ""``` and points to the currently loaded api version)
+ ```sh --boot-version <boot-api-version> ```
+ ```sh --boot-api-version <boot-api-version> ```
+      run a new/different instance of ```sh nuts``` with the specified version
+ ```sh --sandbox=true|false ``` (default is ```kw false``` )
+      when creating the workspace, generate a random workspace, for testing purposes.
+      sandbox mode will be propagated/exported as ```kw --confined```
+  ```sh --in-memory ``` (default is ```kw false``` )
+      run the workspace entirely in memory without disk persistence.
+ ```sh --confined=true|false ``` (default is ```kw false``` )
+      use a confined workspace that does not allow user wide or system wide alteration
+ ```sh --isolation-level=system|user|confined|sandbox|memory ``` (default is ```kw system``` )
+      use the level of isolation for the workspace
+
+ ```sh --boot-runtime <runtime-id-or-version> ``` (default is ```kw ""``` and points to the latest compatible nuts-runtime artifact)
+      load runtime (nuts-runtime) version. either version may be expressed or full nuts implementation
+      (other than nuts-runtime) should be defined
+
+ ```sh --java      <java-command> ``` (default is ```kw ""``` and points to the currently loaded JVM executable)
+ ```sh --boot-java <java-command> ```
+ ```sh -j <java-command> ```
+      ##:_:Java™## command to run new instance of ```sh nuts```
+
+ ```sh --java-home      <java-home> ```   (default is ```kw ""``` and points to the currently loaded JVM)
+ ```sh --boot-java-home <java-home> ```
+ ```sh -J <java-home> ```   (default is ```kw ""```)
+      ##:_:Java™## home to run new instance of ```sh nuts```. When ##:_:Java™## command is present, this will be ignored.
+
+ ```sh --java-options      <java-options> ```  (default is ```kw ""```)
+ ```sh --boot-java-options  <java-options> ```
+ ```sh -J <java-options> ```
+      ##:_:Java™## options to run new instance of nuts
+
+###) NUTS CREATE OPTIONS:
+
+ ```sh --archetype <archetype-name>``` (default is ```kw "default"```)
+ ```sh -A <archetype-name>```
+      workspace archetype to create (if workspace not found).
+      when opening a non existing workspace, ```sh nuts``` will create it
+      using the default archetype. Supported archetypes are :
+          ```kw default``` : should handle most cases. Will create 6 repositories
+                    ```kw local```            : containing local ```sh nuts``` (java and non java ```sh nuts```).
+                    ```kw maven-local```      : referencing ```path ~/.m2/repository``` local maven repository.
+                    ```kw maven-central```    : referencing ```path https://repo.maven.apache.org/maven2/``` (with cache support).
+                    ```kw system```           : referencing global (root, system wide) repository if available.
+                    This list can be altered using ```sh --repos``` options, using ```sep =```, ```sep +``` and ```sep -``` modifiers.
+                    When you use ```sh --repos=+spring```, or simply ```sh --repos=spring``` the spring repos will be appended to this list
+                    When you use ```sh --repos=-maven-central,system```, you will disable both maven-central and system
+                    When you use ```sh --repos==maven-central```, this list is totally replaced by 'maven-central'
+          ```kw minimal``` : will create an almost empty workspace with a single ```sh nuts``` local repository and no users.
+                        You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from.
+                        This list is not altered using "--repos" options, using '=', '+' and '-' modifiers.
+                        which nuts would be downloaded as well.
+          ```kw server```  : will create an almost empty workspace with a single ```sh nuts``` local repository
+                        and a couple of users ##:_:guest## (read support) and ##:_:contributor## (write support).
+                        You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from
+                                                which nuts would be downloaded as well.
+
+ ```sh --store-strategy <store-strategy>``` (default is ```kw "exploded"``` for names and ```kw "standalone"``` for paths)
+      Define store strategy used for persisting configuration and data of the workspace.
+      Valid values of <store-strategy> are ```kw exploded```, ```kw standalone```.
+      ```kw exploded```   : use distinct folders for temp, var, lib, config ... folders (this is the default)
+      ```kw standalone``` : use a self contained folder for all types of data of the workspace. This is interesting for sharing
+                   workspaces across multiple machines.
+      If the workspace location (in  ```sh --workspace``` option) is a simple name (without '/'), the store strategy
+      defaults to ```kw exploded```. In all other cases, it defaults to ```kw standalone```
+
+ ```sh -S```
+ ```sh --standalone``` (default is true for path based workspaces)
+       will boot with standalone strategy so that all files will be stored in the workspace folder
+       overriding workspace config. same as  ```sh --store-strategy``` ```kw standalone```
+ 
+ ```sh --exploded-workspace```  (default is true for name based workspaces)
+       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
+       particularly will be stored elsewhere depending on on configuration.
+       same as  ```sh --store-strategy``` ```kw exploded```
+
+ ```sh --repo-store-strategy <store-strategy>``` (default is exploded for name based workspaces)
+      Defines store strategy used for persisting config and data of the repositories.
+      Valid values of <store-strategy> are ```kw exploded```, ```kw standalone```.
+      ```kw exploded```   : use distinct folders for temp, var, lib, config ... folders (this is the default)
+      ```kw standalone``` : use a self contained folder for all types of data of the repository (under repository's main folder).
+                   This is interesting for sharing workspaces across multiple machines.
+
+ ```sh --standalone-repositories``` (default false)
+       for newly created repos, will boot with standalone strategy so that all file will be stored in the repository's folder
+       overriding workspace config. same as  ```sh --repo-store-strategy standalone```
+ 
+ ```sh --exploded-repositories``` (default true)
+       for newly created repos, boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
+       particularly will be stored elsewhere depending on on configuration.
+       same as  ```sh --repo-store-strategy exploded``` (this is default)
+
+ ```sh --standalone``` (default false if the workspace location is a simple name, and true if not)
+    Equivalent of ```sh --standalone-workspace```
+
+ ```sh --exploded```  (default true if the workspace location is a simple name, and false if not)
+    Equivalent of ```sh --exploded-workspace```
+
+ ```sh --store-layout <store-layout>```  (default use system layout)
+      Defines store layout relatively to the running operating system. This resolves root locations of data folders.
+      That is to say that all 'config' folders for instance will be located at the location defined by the layout.
+
+      Valid values of <store-layout> are ```kw system```, ```kw windows```, ```kw linux```, ```kw macos``` and ```kw unix```
+      ```kw system```     : resolve the running operating system (windows, linux, ...) and select appropriate folder
+      ```kw windows```    : always use windows layout (even if running on iOS)
+      ```kw linux```      : always use linux layout (even if running on windows)
+      ```kw unix```       : always use linux/unix layout (even if running on windows)
+      ```kw macos```      : always use macos layout (even if running on windows)
+
+      Data folders of nuts are :
+        conf     : configuration/settings files folder. equivalent to XDG spec's XDG_CONFIG_HOME folder defined as
+                        "base directory relative to which user-specific configuration files should be written"
+        bin      : executable binaries folder. Equivalent to linux's '/bin' folder. It's defined as
+                        "base directory relative to which reusable executable applications and scripts should be written"
+        lib      : non executable binaries (libraries) folder. Equivalent to linux's '/usr/lib' folder. It's defined as
+                        "base directory relative to which reusable libraries should be written"
+        var      : data files folder. More or less related to XDG spec's XDG_DATA_HOME folder. It's defined as
+                        "the base directory relative to which user-specific non executable data files should be stored"
+        log      : log/trace files folder. Equivalent to XDG_LOG_HOME a non standard XDG variable defined as
+                        "the base directory relative to which application non-essential data for trace and monitoring
+                        should be stored"
+        cache    : cache folder. Equivalent to XDG spec's XDG_CACHE_HOME folder defined as
+                        "the base directory relative to which user-specific non-essential data files should be stored"
+        temp     : temporary files folder. Equivalent to user/system temp folder defined as
+                        "the base directory relative to which application temporary data should be stored"
+        run      : run folder. Equivalent to to XDG spec's XDG_RUNTIME_HOME bin folder defined as
+                        "the base directory relative to which user-specific non-essential runtime files and other
+                        file objects (such as sockets, named pipes, ...) should be stored"
+
+     In the Windows layout, default (home) locations resolve to ($HOME is the user's home folder)
+        conf     : ```sh "$HOME/AppData/Roaming/nuts/conf"```
+        bin      : ```sh "$HOME/AppData/Roaming/nuts/bin"```
+        lib      : ```sh "$HOME/AppData/Roaming/nuts/lib"```
+        var      : ```sh "$HOME/AppData/Roaming/nuts/var"```
+        log      : ```sh "$HOME/AppData/Roaming/nuts/log"```
+        cache    : ```sh "$HOME/AppData/Local/nuts/cache"```
+        temp     : ```sh "$HOME/AppData/Local/nuts/temp"```
+        run      : ```sh "$HOME/AppData/Local/nuts/run"```
+
+     In the Linux/Unix/MacOS layout, default locations resolve (according to XDG Base Directory Specification) 
+     to ($HOME is the user's home folder)
+        conf     : ```sh "$HOME/.config/nuts"```
+        bin      : ```sh "$HOME/.local/share/nuts/apps"```
+        lib      : ```sh "$HOME/.local/share/nuts/lib"```
+        var      : ```sh "$HOME/.local/share/nuts/var"```
+        log      : ```sh "$HOME/.local/log/nuts"```
+        cache    : ```sh "$HOME/.cache/nuts"```
+        temp     : ```sh "$java.io.tmpdir/$username/nuts"```
+        run      : ```sh "/run/user/$USER_ID/nuts"```
+     
+    These home locations are tuned individually using the following options
+            ```sh --system-conf-home <path>```
+            ```sh --system-bin-home <path>```
+            ```sh --system-lib-home <path>```
+            ```sh --system-var-home <path>```
+            ```sh --system-log-home <path>```
+            ```sh --system-cache-home <path>```
+            ```sh --system-temp-home <path>```
+            ```sh --system-run-home <path>```
+
+            ```sh --<os-family>-conf-home <path>```
+            ```sh --<os-family>-bin-home <path>```
+            ```sh --<os-family>-lib-home <path>```
+            ```sh --<os-family>-var-home <path>```
+            ```sh --<os-family>-log-home <path>```
+            ```sh --<os-family>-cache-home <path>```
+            ```sh --<os-family>-temp-home <path>```
+            ```sh --<os-family>-run-home <path>```
+
+            where <os-family> in one of ```kw windows```, ```kw linux```, ```kw unix```, ```kw macos``` or ```kw system```.
+            This helps moving workspace folder from/to distinct os families while providing a centralized configuration.
+            when using ```kw system``` OS family, the effective OS family will be detected at runtime.
+
+ ```sh --system-layout``` or --system``` (default behaviour)
+       will use current system layout to resolve folder candidates for log,config,apps ....
+       same as  ```sh --store-layout``` <store-layout> system```
+ 
+ ```sh --windows-layout``` (default is true on windows systems)
+       will use windows layout to resolve folder candidates for log,config,apps ....
+       same as  ```sh --store-layout <store-layout> windows```
+
+ ```sh --linux-layout```  (default is true on linux systems)
+       will use linux/unix layout to resolve folder candidates for log,config,apps ....
+       same as  ```sh --store-layout <store-layout> linux```
+
+ More tuning of these folders may be done by defining the folders location directly 
+ instead of the folder's home locations using the following options :
+            ```sh --bin-location <path>```
+            ```sh --lib-location <path>```
+            ```sh --config-location <path>```
+            ```sh --var-location <path>```
+            ```sh --log-location <path>```
+            ```sh --temp-location <path>```
+            ```sh --cache-location <path>```
+            ```sh --run-location <path>```
+
+ ```sh --install-companions or -k ```  (default is false)
+       install companion tools.
+ 
+ ```sh --switch ``` (default is ```kw false```)
+      When creating a new workspace, by default, only default workspace (```sh --workspace=""```) updates ```path .bashrc``` file
+      (or equivalent, according to the current installed and used shell) to point to that workspace. So that, when you
+      type ```sh nuts``` It's that workspace that is used. You can change choose to "switch" the binding to the currently
+      created workspace by arming this flag.
+
+ ```sh --init-scripts ``` (default is ```kw true``` for default archetype)
+      When creating a new workspace, you can select to enable or disable creation of os shell scripts to point to nuts
+      and other installed artifacts using ```sh --!init-scripts ``` flag.
+
+ ```sh --init-launchers ``` (default is ```kw true``` for default archetype)
+      When creating a new workspace, you can select to enable or disable creation of menus and desktop icons by using
+      ```sh --!init-launchers ``` flag. This option implies ```sh --init-scripts ```
+
+ ```sh --init-java ``` (default is ```kw true``` for default archetype)
+      When creating a new workspace, you can select to enable or disable registration of installed JDK/JRE in the system
+      by using ```sh --!init-java ``` flag. This option implies ```sh --init-scripts ```
+
+ ```sh --init-platforms ``` (default is ```kw true``` for default archetype)
+      When creating a new workspace, you can select to enable or disable registration of installed platforms (including
+      java) in the system by using ```sh --!init-platforms ``` flag. This option implies ```sh --init-java ```
+
+
+ ###) NUTS OPEN EXPORTED OPTIONS:
+ ```sh --global  or -g```  (default is false)
+      use root/system wide workspace instead of user's own workspace.
+      requires admin privileges.
+      shared/system workspace is located at :
+      Windows    : ```sh "$ProgramFiles/nuts/default-workspace" ```
+      Linux/Unix : ```sh "/usr/share/nuts/default-workspace" ```
+      More generally folder homes are defines as follows :
+      Windows Layout   :
+        bin      : ```sh "$ProgramFiles/nuts" ```
+        lib      : ```sh "$ProgramFiles/nuts" ```
+        conf     : ```sh "$ProgramFiles/nuts" ```
+        var      : ```sh "$ProgramFiles/nuts" ```
+        log      : ```sh "$ProgramFiles/nuts" ```
+        temp     : ```sh "$TMP/nuts" ```
+        cache    : ```sh "$ProgramFiles/nuts" ```
+        run      : ```sh "$ProgramFiles/nuts" ```
+      Linux Layout    :
+        bin      : ```sh "/opt/nuts/bin" ```
+        lib      : ```sh "/opt/nuts/lib" ```
+        conf     : ```sh "/etc/opt/nuts" ```
+        var      : ```sh "/var/opt/nuts" ```
+        log      : ```sh "/var/log/nuts" ```
+        temp     : ```sh "/tmp/nuts/global" ```
+        cache    : ```sh "/var/cache/nuts" ```
+        run      : ```sh "/tmp/run/nuts/global" ```
+
+ ```sh --color or -c```  (default is 'auto')
+      
+    ```sh --color=always|yes|true|y|formatted```
+      enables formatted (colorful) terminal (```kw formatted``` terminal)
+    ```sh --color=inherited|h```
+      use parent process terminal mode
+    ```sh --color=auto|system|s```
+      auto detected terminal (default)
+    ```sh --color=never|none|no|false|n```
+      equivalent to ```sh --no-color```
+    ``` warning2 Attention``` : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
+ ```sh -C```
+ ```sh --no-color```
+      disable formatted (colorful) terminal (```kw filtered``` terminal).
+
+  ```sh --trace``` (default is true)
+  ```sh -t```
+       apply trace mode which allows a more verbose output
+
+  ```sh --bot``` (default is false)
+  ```sh -B```
+       enable bot/automation mode (non-interactive, structured output)
+
+  ```sh --stacktrace``` (default is false)
+  ```sh -d```
+       show Java stacktrace on error
+
+  ```sh --reset-options```
+       reset options to default values
+
+  ```sh --transitive``` (default is true)
+      consider transitive repositories
+
+  ```sh --indexed``` (default is true)
+      search into indexes
+
+  ```sh --cached```  (default is true)
+      use cache whenever possible
+
+ ```sh --progress[=<options>]```
+ ```sh -P[=<options>]```
+      configure progress monitor. valid values include
+        ```kw true```|```kw enable```
+            progress monitor is enabled (default)
+        ```kw no```|```kw false```|```kw n```
+            progress monitor is disabled
+        ```kw newline``` || ```kw %n```
+            progress monitor writes every message in a new line
+        ```kw log```
+            progress monitor writes every message to the log as finest (aka verbose)
+        ```kw log=off|severe|warning|info|config|fine|finer|finest|verbose|all```
+        ```kw log-off|log-severe|log-warning|log-info|log-config|log-fine|log-finer|log-finest|log-verbose|log-all```
+            progress monitor writes every message to the log with the selected level
+
+
+ ```sh --solver <solverName>``` (default is ```kw default```)
+      configure dependency solver used to resolve dependencies.
+        ```kw default```     : defaults to ```kw maven```, uses maven solver regardless of artifact configured solver
+        ```kw maven```       : uses maven solver regardless of artifact configured solver
+        ```kw gradle```      : uses gradle solver regardless of artifact configured solver
+        ```kw descriptor```        : uses artifact descriptor's solver, or default if not specified.
+                               and switches solver if a dependency requires another solver
+        ```kw maven-first``` : uses maven solver for the first artifact/dependency, then switches is the
+                               dependency descriptor requires another solver
+        ```kw gradle-first```: uses gradle solver for the first artifact/dependency, then switches is the
+                               dependency descriptor requires another solver
+
+ ```sh --plain[=<format-options>]```
+      define plain text format as default output format (this is default)
+
+ ```sh -T[=<format-type>[:<format-options>]]```
+ ```sh --output-format[=<format-options>[:<format-options>]]```
+      define format as default output format. ```sh --output-format=json``` is equivalent to ```sh --json```
+      beside one  specify some extra options for the format, such as ```sh --output-format=json:lenient```
+
+ ```sh --json[=<format-options>]```
+      define json format as default output format
+
+ ```sh --table[=<format-options>]```
+      define table format as default output format
+
+ ```sh --tree[=<format-options>]```
+      define tree format as default output format
+
+ ```sh --xml[=<format-options>]```
+      define xml format as default output format
+
+ ```sh --props[=<format-options>]```
+      define props format as default output format
+
+ ```sh --output-format-option=<format-options>```
+ | ```sh -T=<format-options>```
+                  : add specific format option
+ ```sh --read-only or -R```
+      read only mode. All changes to the workspace - if ever - are not persisted.
+
+ ```sh --verbose , --log-verbose  , --log-finest  , --log-info , --log-fine ,
+ --log-finer , --log-severe , --log-warning , --log-config ,
+ --log-off , --log-off ```
+      apply logging level to both terminal and file
+
+ ```sh --log-term-verbose  , --log-term-finest  , --log-term-info , --log-term-fine ,
+ --log-term-finer , --log-term-severe , --log-term-warning , --log-term-config ,
+ --log-term-off , --log-term-off```
+      apply logging level to terminal
+
+ ```sh --log-file-verbose  , --log-file-finest  , --log-file-info , --log-file-fine ,
+ --log-file-finer , --log-file-severe , --log-file-warning , --log-file-config ,
+ --log-file-off , --log-file-off```
+      apply logging level to terminal
+
+ ```sh --log-file-size       <size>```
+      define the maximum number of mega to write to any one file. size is either expressed in mega or suffixed with unit.
+      supported units are :
+        ```kw k``` or ```kw kb``` : for kilo-bytes (example 1024k)
+        ```kw m``` or ```kw mb``` : for mega-bytes (example 10m)
+        ```kw g``` or ```kw gb``` : for giga-bytes (example 10Gb)
+      The size is always a multiple of Mb
+
+ ```sh --log-file-base     <log-folder-path>```
+      define log file folder path
+
+ ```sh --log-file-name       <log-file-name-pattern>```
+      define log file name pattern. this defaults to "nuts-%g.log"
+
+ ```sh --log-file-count      <number>```
+      define the number of files to use (in rotating log)
+
+ ```sh --log-inherited```
+      calls rootLogger.setUseParentHandlers(true) to inherit log handlers.
+
+ ```sh --exclude-extension     <extension-id-list>```
+      exclude extensions from being loaded at runtime. list is separated with characters " ,;"
+
+ ```sh --exclude-repository   <repository-list>```
+      exclude repositories from being loaded at runtime. list is separated with characters " ,;"
+
+ ```sh -r <repository-path>```
+ ```sh --repository   <repository-path>```
+ ```sh --repositories <repository-path>```
+ ```sh --repos        <repository-path>```
+      register one or multiple (comma ',' separated) temporary repositories at the given path
+      repositories follow the following pattern
+      [+-=]?(<name>=)?(<repo-type>[+]@)?<path>
+      some examples are:
+      ```sh --repos=+jcenter ```
+      ```sh --repos=-https://jcenter.bintray.com ```
+      ```sh --repos=jcenter=https://jcenter.bintray.com ```
+      ```sh --repos=jcenter=maven@https://jcenter.bintray.com ```
+      ```sh --repos==dev=maven@htmlfs+https://maven.thevpc.net ```
+
+      the prefix operator (+,-,=) when specified defines whether the repository is
+        to include (+), to exclude (-) or to replace (=) ie all existing repositories will be
+        discarded and replaced with the given list of repositories.
+      This list will be used when creating a new workspace. In that conditions, the list may affects the 'archetype' considered.
+      For example, the default repositories in "default" archetype are 'local,maven-local,maven-central,system'.
+          "--repos=+jcenter" produces a final repository list of 'local,maven-local,maven-central,system,jcenter'
+          "--repos=jcenter"  also produces a final repository list of 'local,maven-local,maven-central,system,jcenter'
+          "--repos=-system"  produces a final repository list of 'local,maven-local,maven-central'
+          "--repos==system"  produces a final repository list of 'system'
+      The repository names supported are
+                    ```kw local```          : local user nuts folder repository
+                    ```kw system```         : local user nuts folder repository
+                    ```kw .m2```
+                    ```kw m2```
+                    ```kw maven-local```    : local user maven folder repository (~/.m2)
+                    ```kw maven```
+                    ```kw central```
+                    ```kw maven-central```  : maven central repository at ```path https://repo.maven.apache.org/maven2```
+                    ```kw jcenter```        : maven repository at ```path https://jcenter.bintray.com```
+                    ```kw jboss```          : maven repository at ```path https://repository.jboss.org/nexus/content/repositories/releases```
+                    ```kw clojars```        : maven repository at ```path https://repo.clojars.org```
+                    ```kw atlassian```      : maven repository at ```path https://packages.atlassian.com/maven/public```
+                    ```kw atlassian-snapshot``` :
+                                              maven repository at ```path https://packages.atlassian.com/maven/public-snapshot```
+                    ```kw oracle```         : maven repository at ```path https://maven.oracle.com```
+                    ```kw google```         : maven repository at ```path https://maven.google.com```
+                    ```kw spring```
+                    ```kw spring-framework```
+                                            : maven repository at ```path https://repo.spring.io/release```
+                    ```kw maven-thevpc-git```
+                    ```kw vpc-public-maven```
+                                            : maven repository at ```path https://raw.githubusercontent.com/thevpc/vpc-public-maven/master```
+                    ```kw nuts-thevpc-git```
+                    ```kw vpc-public-nuts```
+                                            : maven repository at ```path https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master```
+                    ```kw dev```
+                    ```kw thevpc```         : maven repository at ```path https://maven.thevpc.net```
+      The repository types supported are:
+                    ```kw maven```          standard maven repository
+                    ```kw nuts```           standard nuts repository
+      The supported protocols are:
+                    ```kw http```  ```kw https``` for http(s) server access, most likely such repositories are not navigable. i.e, you
+                                            can download an artificat if and only you know its full coordinates
+                    ```kw htmlfs```         for http(s) server access that is navigable by 'scrapping' its html content.
+                                            At boot time, only standard 'Tomcat Http Server' standard directory servlet is supported.
+                                            later on, all nuts filesystem protocols (implemented in NPath) including ```kw http```,
+                                            ```kw https```, ```kw htmlfs``` (that supports tomcat and httpd/apache directory listing),
+                                            ```kw dotfilefs```, ```kw ssh``` and ```kw githubfs``` are supported.
+                                            Remember that boot time repos are only used for installing ```sh nuts``` itself (and its
+                                            dependencies).
+
+ ```sh --boot-repository   <repository-path>```
+ ```sh --boot-repositories <repository-path>```
+ ```sh --boot-repos        <repository-path>```
+      register one or multiple (comma ',' separated) repositories at initialization time.
+      It works just like ```sh --repos``` but this is only relevant when the workspace is created.
+      It is discarded otherwise. When no  ```sh --boot-repos```, the workspace will be created using ```sh --repos``` configuration.
+
+
+ ```sh --yes | -y | --force```
+      disables interactive mode and assumes ```kw yes``` for all questions
+
+ ```sh --no | -n```
+      disables interactive mode and assumes ```kw no``` for all questions
+
+ ```sh --ask```
+      enables interactive mode
+
+ ```sh --error```
+      exit with error whenever interactive mode is required
+
+
+```sh --desktop-launcher=never|unsupported|supported|preferred|always```  (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system
+   desktop environment. It defines the support mode for desktop icons (application shortcut on the Desktop) for the desktop
+   environment ( ##@see## NutsSupportMode class).
+   ```sh ---system-desktop-launcher=unsupported``` disables creating any desktop icon on the system
+   ```sh ---system-desktop-launcher=supported```   enables creating desktop icons whenever asked by an application
+   ```sh ---system-desktop-launcher=preferred```   enables creating desktop icons whenever asked by an application and
+                                                   that application requires this preference
+
+```sh ---menu-launcher=never|unsupported|supported|preferred|always``` (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a menu for the desktop environment.
+
+```sh ---user-launcher=never|unsupported|supported|preferred|always``` (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a custom application shortcut for the desktop environment.
+
+ ###) NUTS OPEN OPTIONS:
+
+ ```sh --recover  or -z``` (defaults to ```bool false```)
+      try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
+      Will bootstrap workspace unless ```sh -Q``` (```sh --skip-boot```) option is armed.
+
+ ```sh --reset  or -Z``` (defaults to ```bool false```)
+      reset (delete) ```sh nuts``` workspace folder before starting the workspace. All user configuration will not be deleted.
+
+  ```sh --reset-hard``` or ```sh --hard-reset``` (defaults to ```bool false```)
+       hard reset (delete) all of ```sh nuts``` workspaces and any configuration file. All user configuration will not be deleted.
+       a common usage is to hard-reset nuts and exit using ```sh -Qy --reset-hard``` which will silently hard-reset configuration and exit.
+       if ```sh -Q``` is not used, after resetting, a new workspace will be bootstrapping
+
+ ```sh --skip-boot  or -Q``` (defaults to ```bool false```)
+      do not load workspace. This is helpful when used with ```sh --reset  or -Z```, aka ```sh -QZ```,  in which case,
+      ```sh nuts``` is completely uninstalled from your system (called ```warn kill mode```).
+
+ ```sh --dry  or -D``` (defaults to ```bool false```)
+      perform a dry execution (with no side effects) rather than an effective one. prints actions or external command lines to
+      perform if the ```sh --dry``` was not armed. Useful to know more about command effects.
+
+ ```sh --skip-welcome  or -K``` (defaults to ```bool false```)
+      do not call welcome command if the command line is empty. This is helpful in conjunction with ```sh --reset``` not
+      to start a new workspace (and recreate config files) after resetting the configuration folders.
+
+ ```sh --embedded  or -b``` (defaults to ```bool false```)
+      when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
+
+ ```sh --external  or --spawn or -x``` (defaults to ```bool true```)
+      when invoking a nuts artifact, it will always be executed in a newly created process (this is the default)
+
+ ```sh --system``` (defaults to ```bool false```)
+ ```sh --user-cmd``` (deprecated, replaced by --system)
+      the command is considered as a native command (not a nuts) and will be passed to the os as is.
+
+ ```sh --current-user``` (defaults to ```bool true```)
+      the command is run as current user (default)
+
+ ```sh --as-root```   (defaults to ```bool false```)
+ ```sh --root-cmd``` (deprecated, replaced by --as-root)
+      the command need to run with elevated privileges, aka as root (a password will be asked for if not already root).
+
+ ```sh --run-as <user-login>```  (defaults to ```string ""```)
+      the command need to run with impersonation, aka as user <user-login> (a password will be asked for if not already <user-login>).
+
+ ```sh --open-mode  <mode>```  (defaults to ```kw rw```)
+      defines open mode of the workspace. three values are accepted :
+      ```kw open-or-create``` or ```kw rw``` or ```kw on``` or ```kw oc``` :
+                    this is the default, if the workspace exists, it will be opened ;
+                    if It's not it will be created then opened.
+      ```kw open-existing``` or ```kw r```   or ```kw o``` :
+                    will open existing workspace of fail
+      ```kw create-new``` or ```kw w``` or ```kw c``` or ```kw n``` :
+                    will create non existing workspace of fail
+
+ ```sh --open``` (defaults to ```bool false```)
+      will open existing workspace or fail if not already existing
+
+ ```sh --create``` (defaults to ```bool false```)
+      will create non existing workspace or fail if already existing
+
+ ```sh --open-or-create``` (defaults to ```bool true```)
+      will create non existing workspace or open if already existing
+
+ ```sh --open-or-null``` (defaults to ```bool false```)
+      will open existing workspace or exit not already existing
+
+ ```sh --theme <theme-name-or-path>``` (defaults to ```kw default```)
+       start nuts using a specific terminal coloring theme by theme name or file path/url.
+       Default built-in themes include:
+         - ##default##    use default theme for the current environment
+         - ##ansi##       use ANSI colors
+         - ##horizon##    used as default on linux and other NIX
+         - ##grass##      used as default on windows
+         - ##whiteboard## light background theme using 24-bit true colors
+         - any file path or url : define your customized theme
+
+```sh ---debug=port,(suspend|!suspend)``` this option enables running child processes with debug mode.
+   It defaults to ```string "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" ```
+   Hence it runs by default in server mode, and using socket transport. If the port is not defined, it defaults to ```number 5005```.
+   It the suspend mode is not defined it defaults to ```boolean true```.
+   If this option is encountered as the very first argument, the root jvm process is also run in debug mode.
+   ```sh nuts``` wil  use the first port available starting from the given port number.
+
+###) NUTS NON STANDARD OPTIONS:
+
+```sh nuts``` provides extra, non standards options (aka susceptible to change in later versions).
+Non standard options can be used by ```sh nuts``` or any ```sh nuts``` application. Such options start with three dashes
+(and not two dashes).
+
+```sh ---show-command``` prints child process command arguments
+```sh ---monitor-start``` prints a message when starting a new monitor
+
+
+###) SPECIAL OPTIONS:
+```sh --version  [<-options>]...```
+ or ```sh -version``` or ```sh -v```
+      show api version and exit without loading the workspace
+      for more details, type : ```sh nuts version``` version
+
+ ```sh --help  [<-options>]...```
+ or ```sh -help``` or ```sh -h```
+      show a short message describing nuts and exit without loading the workspace
+      for more details, type : ```sh nuts help```
+
+##) NUTS COMMAND:
+```sh nuts``` handles a set of command to manage nuts it sel and to run/exec other programs, mainly those its was responsible
+for installing. Commands support include internal commands, supported packages (installed or not, when not installed
+will search for it), aliases (a commodity mechanism to extend internal commands) and even any other executable.
+ Here is a lis of internal commands :
+
+ ```sh version  [<-options>]...```
+      load workspace and show api and runtime versions, then exit
+
+ ```sh info  [<-options>]...```
+      show workspace detailed information (paths and libraries) and exit.
+      for more details, type : ```sh nuts``` help info
+
+ ```sh welcome  [<-options>]...```
+      show welcome message and exit.
+      for more details, type : ```sh nuts``` help welcome
+
+ ```sh help  [<-options>]... <id>...```
+ or ```sh --help or -? or -h```
+      show this help and exit
+      for more details, type : ```sh nuts``` help help
+
+ ```sh license [<-options>]...```
+      show license info and exit
+      for more details, type : ```sh nuts``` help info
+
+ ```sh install [<-options>]... <id>... <args> ...```
+      install ```sh nuts``` package <id>
+      for more details, type : ```sh nuts``` help install
+
+ ```sh uninstall [<-options>]... <id>... <args> ...```
+      uninstall  ```sh nuts``` package <id>
+      for more details, type : ```sh nuts``` help uninstall
+
+ ```sh update [<-options>]... <id> ...  <args> ...```
+      check if a newer version of ```sh nuts``` or any of the provided <id>
+      is available in the current workspace and perform update by downloading (fetch)
+      and installing the artifact. The updated version is promoted to 'default' version.
+      for more details, type : ```sh nuts``` help update
+            
+ ```sh check-updates [<-options>]... <id> ...```
+      check if a newer version of ```sh nuts``` is available in the current workspace without performing updates
+      Takes the same arguments and options as ```sh update``` command
+      for more details, type : ```sh nuts``` help check-updates
+
+ ```sh search [<-options>]... <id> ...```
+      search for <id>
+      for more details, type : ```sh nuts``` help search
+            
+ ```sh fetch [<-options>]... <id> ...```
+      download <id>  without installing them
+      for more details, type : ```sh nuts``` help fetch
+            
+ ```sh deploy [<-options>]... <id> ...```
+      deploy <id>  without installing them
+      for more details, type : ```sh nuts``` help deploy
+            
+ ```sh undeploy [<-options>]... <id> ...```
+      undeploy <id>
+      for more details, type : ```sh nuts``` help undeploy
+            
+ ```sh exec [<-options>]... [command] <args>...```
+ ```sh --exec [<-options>]... [command] <args>...```
+ ```sh -e [<-options>]... [command] <args>...```
+      run command with the given executor options ( it will be considered an option if it
+      starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.
+      for more details, type : ```sh nuts``` help exec
+
+ ```sh which [<-options>]... [command] ...```
+      show command to be executed if run with 'exec' 
+      for more details, type : ```sh nuts``` help which
+            
+ ```sh - <command>...```
+   run a nuts shell ```sh nsh``` command with the remaining arguments.
+   This is equivalent to ```sh nsh -c <command>```
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-options-format.ntf```
+
+##) EXAMPLES:
+```sh nuts help```
+            show this help and exit
+       
+```sh nuts help exec```
+            show help for the exec command, equivalent to ```sh nuts exec --help```
+
+```sh nuts --workspace /home/me/some-folder --archetype=minimal ```
+            a minimal (####minimal#### archetype) workspace will be created
+            and saved if no workspace was resolved. The workspace handles local 
+            packages only
+       
+```sh nuts --workspace /home/me/some-folder  update ```
+            updates ```sh nuts``` to the very latest version using workspace location
+            /home/me/some-folder.
+
+```sh
+        nuts --workspace /home/me/some-folder  --yes -e -Xmx1G netbeans-launcher
+```
+            run netbeans-launcher with JVM option ```sh -Xmx1G```. If the artifact is not installed
+            it will be automatically installed ( ```sh --yes``` modifier helps disabling interactive mode)
+
+```sh
+nuts -Zy -w test -P=%n
+```
+            force progress to use newline after each message instead of updating the same line while using test workspace
+
+```sh
+nuts -ZSby ---system-desktop-launcher=preferred
+```
+            run nuts and prefer creating launcher icons when asked for by apps regardless of system defaults.
+
+```sh
+nuts -ZQ -w=test --json
+```
+            reset workspace test and show result in json format
+
+```sh
+nuts -ZySb -w=test --theme=documentation/website/src/resources/theme-examples/min.ntf-theme
+```
+            run nuts with a custom theme file.
+            Examples of theme files are available under ```sh $nuts_github/documentation/website/src/resources/theme-examples/```
+
+
+```sh
+nuts - ls
+```
+            run the ls command using nsh (aka ```sh nuts nsh -c ls```)
+
+```sh
+nuts ls
+```
+            run the ls command (either defined as a custom command or system command).
+            Note that installing nsh will also install somme custom commands, including ```sh ls```
+            which refers to ```nsh nsh -c ls```, too
+
+###) special command native-exec
+Nuts Boot can be used to run native commands by using native-exec as very first argument.
+native-exec allows running any command until it exits without error (zero status) or a maximum run count is reached
+
+```sh
+nuts native-exec <options>... <command>...
+```
+
+ ```sh --min-time=<time>``` (defaults to ```period 0ms```)
+      if the running command exits before ```min-time```, the application ends with error
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+
+ ```sh --wait-time=<time>``` (defaults to ```period 0ms```)
+      time to wait before rerunning the same command
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+
+
+ ```sh --max-count=<time>``` (defaults to ```int 1```)
+      if the running command exits before ```min-time```, the application ends with error
+      time can be suffixed with 'ms' (for milliseconds) or 's' for seconds
+

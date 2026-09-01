@@ -44,7 +44,3 @@ nuts fetch --dry net.thevpc.app:netbeans-launcher
 * `install`: Installs an artifact after fetching it.
 * `deploy`: Deploys a local artifact to a repository.
 * `search`: Searches for artifacts without downloading them.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/fetch.ntf")}}
-``````

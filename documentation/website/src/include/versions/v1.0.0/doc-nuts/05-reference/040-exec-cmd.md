@@ -89,7 +89,12 @@ nuts exec --cron="0 0 * * *" my-daily-job
 
 ## Remote Execution
 
-Execute commands on remote hosts via SSH connection strings:
+Execute commands on remote hosts via connection strings:
+
+| Option | Description |
+|---|---|
+| `--target=<connection-string>` | Runs the command on a remote machine using the given connection string. Currently supports SSH connection strings in the format `ssh://[username[:password]@]host[:port]`. If username is omitted, current user is used; if password is omitted, default SSH key is used; if port is omitted, 22 is used. |
+
 ```bash
 nuts exec --target=ssh://user:pass@remote-host:22 myapp
 ```
@@ -128,7 +133,3 @@ The command is simulated with no side effects.
 ```bash
 nuts --dry version
 ```
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/exec.ntf")}}
-``````

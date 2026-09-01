@@ -4,6 +4,8 @@ title: Nuts Commands
 sidebar_label: Nuts Commands
 ---
 
+For raw command syntax, see the [Command Line Help](doc-nuts-help.html).
+
 **nuts** provides a rich set of commands to manage artifacts, repositories, and workspace configurations. Commands are categorized into internal commands (built into the runtime) and external commands (provided by downloaded artifacts).
 
 ## Command Categories

@@ -61,7 +61,3 @@ nuts update --dry
 * `check-updates`: Only checks for updates without applying them.
 * `install`: Installs specific versions of an artifact.
 * `reinstall`: Reinstalls the current version of an artifact to repair it.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/update.ntf")}}
-``````

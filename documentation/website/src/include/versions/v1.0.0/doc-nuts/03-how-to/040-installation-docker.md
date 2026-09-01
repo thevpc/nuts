@@ -8,7 +8,7 @@ If you want to run **nuts** in a containerized Docker environment without creati
 
 On your bash terminal, run:
 ```bash
-docker run -it --rm openjdk:8 bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"
+docker run -it --rm eclipse-temurin:21-jre bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"
 ```
 
 Once inside the container, you can use **nuts** normally, such as installing and running applications with the auto-confirm flag (`-y`):

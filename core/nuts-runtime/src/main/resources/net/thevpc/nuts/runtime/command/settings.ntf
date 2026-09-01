@@ -63,7 +63,7 @@ configure ```sh nuts```
         automatically search system for installed JDK/JREs
 
     ```sh settings add java --download [--version=<version>] [--vendor=<vendor>]```
-        register JDK/JRE from specified folder
+        download and register JDK/JRE
 
     ```sh settings add java <folder>...```
         register JDK/JRE from specified folder

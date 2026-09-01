@@ -37,12 +37,14 @@
                 <ul class="navbar-nav nuts-nav">
 
                     <li class="dropdown">
-                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">Docs</a>
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ if(pageId=='doc-naf') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-naf.html">Developer Documentation</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='doc-nuts') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-nuts.html">User Documentation</a></li>
+                            <li><a class="dropdown-item {{ if(pageId=='doc-nuts-help') 'not-active' else '' }}"
+                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-nuts-help.html">Command Help</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='compatibility') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}"

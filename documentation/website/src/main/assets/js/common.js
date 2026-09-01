@@ -8,4 +8,7 @@ var stableJarLocation = "${{stableJarLocation}}";
 var stableApiVersion = "${{stableApiVersion}}";
 var stableRuntimeVersion = "${{stableRuntimeVersion}}";
 
-document.getElementById('build-time').textContent = buildTime;
+var buildTimeEl = document.getElementById('build-time');
+if (buildTimeEl) {
+    buildTimeEl.textContent = buildTime;
+}

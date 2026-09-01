@@ -1,0 +1,46 @@
+---
+id: install-help
+title: install
+---
+
+install ```sh nuts``` package <nuts-artifact>
+
+##) SYNOPSIS:
+
+    ```sh nuts install <-options> <nuts-artifact>...```
+
+##) OPTIONS:
+
+    ```sh -c | --companions```
+        include companions in the install process
+
+    ```sh -i | --installed```
+        include already installed artifacts in the install process (re-install)
+
+    ```sh --reinstall```
+        force reinstalling the package even if already installed
+
+    ```sh --deploy-only```
+        deploy package to local repository without executing install logic
+
+    ```sh --repair```
+        repair corrupted installation
+
+    ```sh -g | --args <args> ...```
+        pass the given args to the install executor
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES:
+
+    ```sh nuts install --help```
+        show this help and exit
+
+    ```sh nuts install netbeans-launcher```
+        install netbeans-launcher
+
+    ```sh nuts --debug -Zy -w test install pnote```
+        install pnote in debug mode
+
+    ```sh nuts -Zyb -w test --verbose install netbeans-launcher```
+        install netbeans-launcher in verbose mode

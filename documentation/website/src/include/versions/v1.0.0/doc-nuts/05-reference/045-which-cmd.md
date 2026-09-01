@@ -51,7 +51,3 @@ You can use `which` alongside execution type flags to see how execution strategi
 ## Execution Modes
 
 Since `which` is fundamentally a diagnostic tool, it operates safely without side effects, similar to running commands with the `--dry` flag.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/which.ntf")}}
-``````

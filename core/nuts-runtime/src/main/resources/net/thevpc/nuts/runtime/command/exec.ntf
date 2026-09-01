@@ -10,10 +10,10 @@ execute a command
 
 ##) OPTIONS:
 
-    ```sh --embedded | -b```sh
-        when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
+    ```sh --embedded | -b```
+        when invoking a nuts artifact, it will be executed in the current process (no JVM process will be spawned)
 
-    ```sh --external | --spawn or -x```sh
+    ```sh --external | --spawn or -x```
         when invoking a nuts artifact, it will always be executed in a newly created
         process (this is the default)
 

@@ -44,7 +44,3 @@ The `license` command displays the open-source license for **nuts** and exits.
  governing permissions and limitations under the License.
 
 ```
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/license.ntf")}}
-``````

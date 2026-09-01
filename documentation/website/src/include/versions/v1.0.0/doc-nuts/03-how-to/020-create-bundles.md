@@ -31,13 +31,11 @@ When multiple applications are bundled, each application gets its own dedicated 
 
 ### Adding Non-Executable Libraries
 
-### Adding Non-Executable Libraries
 Use `--lib` to include dependencies or runtime plugins without generating dedicated launcher scripts or entry points for them:
 
 ```bash
 nuts bundle myapp#1.2.3 --lib org.postgresql:postgresql#42.7.2
 ```
-
 
 ### Anatomy of a Bundle
 
@@ -62,20 +60,6 @@ my-bundle.jar (or unpacked folder)
 └── org/vpc/nuts/...                     # Embedded bootstrap runner (NutsBundleRunner)
 ```
 
-### Running a Bundle on the Target Machine
-
-Deploying a bundle requires nothing more than a standard Java installation on the target machine — no **nuts** install, no repository configuration, no internet connection.
-
-For a jar bundle, run it like any standard executable jar:
-
-```bash
-java -jar myapp-bundle.jar
-```
-
-For a `--dir`/`--exploded` bundle, run the generated launcher script for your platform instead (installed at the target root, named after the application, e.g. `myapp` / `myapp.bat`).
-
-On first run, the bundle recreates an isolated **nuts** workspace under `.nuts-bundle/` next to the launcher (`.nuts-bundle/lib` as the repository, `.nuts-bundle/ws` as the workspace), installs the embedded artifacts from the bundle, and launches the application — all without touching your normal **nuts** installation or reaching out to the network.
-
 ### Bundle Packaging Formats
 
 Choose the output layout with one of:
@@ -89,20 +73,6 @@ Choose the output layout with one of:
 nuts bundle myapp#1.2.3 --exploded --target ./myapp-bundle --clean
 ```
 
-### Multiple Applications and Extra Libraries
-
-You can bundle several executable applications together — each gets its own launcher script:
-
-```bash
-nuts bundle app-one#1.0 app-two#2.0
-```
-
-Use `--lib` to pull in an additional id purely as a dependency, without generating a launcher for it:
-
-```bash
-nuts bundle myapp#1.2.3 --lib my-group:extra-plugin#2.0
-```
-
 ### Naming and Metadata
 
 The default bundle name is derived from the resolved application name and version, but can be overridden:
@@ -114,22 +84,17 @@ The default bundle name is derived from the resolved application name and versio
 
 ### Runtime Behavior Flags
 
-A few options control how the *embedded* workspace behaves when the bundle is later executed, not how it's built:
+A few options control how the *embedded* workspace behaves when the bundle is later executed on the target host:
 
 * `--embedded` — run the embedded workspace in embedded mode
 * `-y`, `--yes` — auto-confirm prompts on execution
 * `-z`, `--reset` — reset the embedded workspace on execution
 * `-l`, `--verbose` — run the embedded workspace verbosely on execution
 
-### Example: Exploded Build with Clean Target
-
-```bash
-nuts bundle myapp#1.2.3 --exploded --target /opt/deploy/myapp --clean
-```
-
-
 ### Execution on Target Systems
+
 The target machine only requires a standard Java Virtual Machine (matching the application's bytecode requirements).
+
 #### 1. Running a JAR Bundle
 Execute the archive directly using the JVM:
 
@@ -142,18 +107,16 @@ Run the target application's launcher script:
 - Linux / macOS: `./myapp [application arguments...]`
 - Windows: `myapp.bat [application arguments...]`
 
-Workspace Initialization Lifecycle
-
+#### Workspace Initialization Lifecycle
 Upon first execution on the host:
-- The bundle detects its runtime environment and sets up an isolated workspace directory (.nuts-bundle/) adjacent to the bundle or launcher.
-- Embedded dependencies from META-INF/bundle/repo/ are registered in the local repository cache (.nuts-bundle/lib/).
-- The embedded workspace is initialized (.nuts-bundle/ws/) without altering the host's existing user configuration or requiring elevated system privileges.
+- The bundle detects its runtime environment and sets up an isolated workspace directory (`.nuts-bundle/`) adjacent to the bundle or launcher.
+- Embedded dependencies from `META-INF/bundle/repo/` are registered in the local repository cache (`.nuts-bundle/lib/`).
+- The embedded workspace is initialized (`.nuts-bundle/ws/`) without altering the host's existing user configuration or requiring elevated system privileges.
 - Subsequent executions skip unpacking and boot directly from the prepared local workspace cache.
-
 
 ### Use Cases
 
-- Air-Gapped & Offline Deployments: Deploy mission-critical services to isolated networks with zero internet connectivity.
-- Firewalled Corporate Hosts: Bypass restrictive corporate proxy configurations that interfere with dynamic dependency resolution.
-- Frictionless Distribution: Ship CLI tools or desktop utilities as single self-contained binaries to users without requiring them to install or configure package managers.
-- Predictable Demos & Testing: Distribute deterministic, reproducible snapshots of multi-service suites for testing and offline presentations.
+- **Air-Gapped & Offline Deployments**: Deploy mission-critical services to isolated networks with zero internet connectivity.
+- **Firewalled Corporate Hosts**: Bypass restrictive corporate proxy configurations that interfere with dynamic dependency resolution.
+- **Frictionless Distribution**: Ship CLI tools or desktop utilities as single self-contained binaries to users without requiring them to install or configure package managers.
+- **Predictable Demos & Testing**: Distribute deterministic, reproducible snapshots of multi-service suites for testing and offline presentations.

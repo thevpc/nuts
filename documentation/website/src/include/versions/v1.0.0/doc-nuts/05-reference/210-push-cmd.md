@@ -31,7 +31,3 @@ nuts push net.thevpc.app:my-awesome-tool#1.0.0
 
 * `deploy`: Deploys an artifact locally.
 * `fetch`: Downloads an artifact from a remote repository.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/push.ntf")}}
-``````

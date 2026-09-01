@@ -25,7 +25,3 @@ $ nuts version
 ```
 
 Here, the `version` command displays both the API version (`{{apiVersion}}`) and the implementation version.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/version.ntf")}}
-``````

@@ -32,7 +32,3 @@ nuts reinstall net.thevpc.app:netbeans-launcher
 * `install`: Installs a new artifact.
 * `uninstall`: Removes an artifact.
 * `update`: Upgrades an artifact to a newer version.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/install.ntf")}}
-``````

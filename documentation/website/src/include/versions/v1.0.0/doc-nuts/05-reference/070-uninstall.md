@@ -43,7 +43,3 @@ nuts uninstall --all-versions net.thevpc.app:netbeans-launcher
 * `install`: Installs a new artifact.
 * `reinstall`: Reinstalls an existing artifact.
 * `search`: Searches for currently installed artifacts using `nuts search --installed`.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/uninstall.ntf")}}
-``````

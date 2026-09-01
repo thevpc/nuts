@@ -90,7 +90,3 @@ Backup the workspace configuration:
 ```bash
 nuts settings backup --file=my-workspace-backup.zip
 ```
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/settings.ntf")}}
-``````

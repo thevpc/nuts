@@ -86,6 +86,8 @@ The workspace factory creates a `NWorkspaceBase` instance, which takes full cont
 ### Recovery & Resilience
 If the loaded runtime binaries are incompatible (e.g., due to a corrupted cache or a version mismatch causing `IncompatibleClassChangeError`), the bootstrap automatically detects this, expires the cache, and retries the entire resolution from Step 2 with fresh downloads — without requiring user intervention.
 
+For the full step-by-step sequence, classloader hierarchy, and recovery mechanisms, see [Appendix: Bootstrap Deep Dive](#bootstrap-deep-dive).
+
 ## Self-Hosting and Updating
 
 **nuts** uses its own package management engine to manage itself. Because `nuts-boot` dynamically resolves both the API and runtime versions, the update process is elegant:

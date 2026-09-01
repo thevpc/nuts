@@ -8,10 +8,10 @@ title: Remote Execution
 
 ### Basic Usage
 
-To run an application remotely, simply prefix your standard **nuts** command with the `--at` flag specifying the SSH destination:
+To run an application remotely, use the `exec` command with the `--target` flag specifying the SSH connection string:
 
 ```bash
-nuts --at=ssh://user@host myapp
+nuts exec --target=ssh://user@host myapp
 ```
 
 ### How It Works Under the Hood
@@ -35,7 +35,7 @@ To utilize remote execution, ensure the following conditions are met:
 You can pass arguments to the remote application exactly as you would locally. Everything following the application name is securely forwarded:
 
 ```bash
-nuts --at=ssh://user@host myapp --config prod.json --verbose
+nuts exec --target=ssh://user@host myapp --config prod.json --verbose
 ```
 
 ### Security Considerations

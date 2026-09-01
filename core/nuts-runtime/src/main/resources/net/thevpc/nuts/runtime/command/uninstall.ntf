@@ -33,5 +33,5 @@ uninstall ```sh nuts``` package <nuts-artifact>
     ```sh nuts uninstall my-group:my-thing```
         uninstalls - if able to resolve it - the latest version of "my-group:my-thing"
 
-    ```sh nuts```uninstall my-thing
+    ```sh nuts uninstall my-thing```
         uninstalls - if able to resolve it - the latest version of "my-group:my-thing" as long as "my-group" is defined as a default import group

@@ -35,7 +35,3 @@ $ nuts version --help
 ```
 
 You can use `nuts help` without arguments to view the general system manual and a list of available commands.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/help.ntf")}}
-``````

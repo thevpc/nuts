@@ -36,7 +36,3 @@ nuts deploy ./pom.xml
 
 * `push`: Synchronizes a local repository to a remote repository.
 * `undeploy`: Removes a deployed artifact from a local repository.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/deploy.ntf")}}
-``````

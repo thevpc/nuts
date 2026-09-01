@@ -66,7 +66,3 @@ The installation system handles dependencies seamlessly using multiple strategie
 | INSTALLED OBSOLETE | INSTALLED REQUIRED OBSOLETE | INSTALLED | INSTALLED | INSTALLED |
 | INSTALLED REQUIRED OBSOLETE | INSTALLED REQUIRED | INSTALLED REQUIRED | INSTALLED REQUIRED | INSTALLED REQUIRED |
 | REQUIRED OBSOLETE | REQUIRED OBSOLETE | INSTALLED REQUIRED | REQUIRED | REQUIRED |
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/install.ntf")}}
-``````

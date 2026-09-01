@@ -72,7 +72,3 @@ repositories-count       = 5
 ```
 
 This structured output is highly valuable when submitting bug reports, debugging XDG-compliant folder layouts, or verifying that your execution environment is correctly configured.
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/info.ntf")}}
-``````

@@ -1,4 +1,9 @@
-# Customizing ANSI Themes
+---
+id: ansi-themes
+title: ANSI Themes
+---
+
+# ANSI Themes
 
 ## Overview
 

@@ -83,7 +83,3 @@ $ nuts search -i -l --json
   }
 ]
 ```
-
-``````ntf
-{{include($"$root/core/nuts-runtime/src/main/resources/net/thevpc/nuts/runtime/command/search.ntf")}}
-``````
