@@ -26,7 +26,9 @@ import java.util.function.Function;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
-    private static final Map<String, Double> KNOWN_BANDWIDTH_GBPS = NMaps.of(
+    // package visible so that the linux probe publishes the same figure rather
+    // than carrying a second copy of the table
+    static final Map<String, Double> KNOWN_BANDWIDTH_GBPS = NMaps.of(
             "NVIDIA GeForce RTX 3060", 360.0,
             "NVIDIA GeForce RTX 3060 Ti", 448.0,
             "NVIDIA GeForce RTX 4060", 272.0,
@@ -191,6 +193,21 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public List<NGpu> gpus() {
+        // on linux the kernel exposes vendor, pci identity, bound module and
+        // device count as plain files, which enumerates every adapter rather
+        // than only the ones a vendor tool reports, and carries the extra
+        // capabilities declared by NGpuUtils. Falls through to the
+        // generic detection below when that reading is unavailable.
+        switch (osFamily()) {
+            case LINUX:
+            case UNIX: {
+                List<NGpu> detailed = NLinuxGpuProbe.gpus();
+                if (!detailed.isEmpty()) {
+                    return detailed;
+                }
+                break;
+            }
+        }
         List<NGpu> result = tryNvidiaSmi();
         if (!result.isEmpty()) return result;
         switch (osFamily()) {
@@ -233,15 +250,15 @@ public class NEnvLocal extends NEnvBase {
                     long freeBytes = Long.parseLong(parts[3].trim()) * 1024L * 1024L;
 
                     Map<String, String> caps = new LinkedHashMap<>();
-                    caps.put("compute.capability", parts[4].trim());
-                    caps.put("pcie.gen.current", parts[5].trim());
-                    caps.put("pcie.gen.max", parts[6].trim());
-                    caps.put("pcie.width.current", parts[7].trim());
-                    caps.put("pcie.width.max", parts[8].trim());
+                    caps.put(NGpuUtils.COMPUTE_CAPABILITY, parts[4].trim());
+                    caps.put(NGpuUtils.PCIE_GEN_CURRENT, parts[5].trim());
+                    caps.put(NGpuUtils.PCIE_GEN_MAX, parts[6].trim());
+                    caps.put(NGpuUtils.PCIE_WIDTH_CURRENT, parts[7].trim());
+                    caps.put(NGpuUtils.PCIE_WIDTH_MAX, parts[8].trim());
 
                     Double bw = KNOWN_BANDWIDTH_GBPS.get(name);
                     if (bw != null) {
-                        caps.put("memory.bandwidth.gbps", String.valueOf(bw));
+                        caps.put(NGpuUtils.MEMORY_BANDWIDTH_GBPS, String.valueOf(bw));
                     }
 
                     list.add(new NGpu(name, new NRam(name, totalBytes, usedBytes, freeBytes), caps));
@@ -328,6 +345,16 @@ public class NEnvLocal extends NEnvBase {
         return list;
     }
 
+
+    @Override
+    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
+        return NParallelProcessorFamily.detectAvailable();
+    }
+
+    @Override
+    protected boolean isParallelProcessorDetectionSupported() {
+        return NParallelProcessorFamily.canDetect();
+    }
 
     @Override
     public boolean isNativeImage() {

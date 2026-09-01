@@ -237,6 +237,16 @@ public abstract class NEnvAsCmdBase implements NEnv {
         return defEnv.gpus();
     }
 
+    @Override
+    public List<NParallelProcessorRuntime> parallelProcessorRuntimes() {
+        return defEnv.parallelProcessorRuntimes();
+    }
+
+    @Override
+    public NParallelProcessorFamily parallelProcessorFamily() {
+        return defEnv.parallelProcessorFamily();
+    }
+
     /**
      * Run system command.
      *

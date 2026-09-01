@@ -542,6 +542,14 @@ public class NEnvAsCmd extends NEnvBase {
     }
 
     @Override
+    protected List<NParallelProcessorRuntime> getParallelProcessorRuntimes0() {
+        // detecting a compute runtime on a target reachable only through
+        // commands is not implemented yet; reporting the local machine's
+        // runtimes here would describe the wrong environment
+        return Collections.emptyList();
+    }
+
+    @Override
     public List<NGpu> gpus() {
         switch (osFamily()) {
             case UNIX:

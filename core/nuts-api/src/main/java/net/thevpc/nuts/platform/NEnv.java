@@ -276,6 +276,32 @@ public interface NEnv extends NComponent {
     List<NGpu> gpus();
 
     /**
+     * Parallel processing runtimes available on this environment, each reporting
+     * separately whether code targeting it can be executed and whether it can be
+     * compiled.
+     * <p>
+     * This is the software axis, {@link #gpus()} being the hardware one. The two
+     * are not interchangeable : a machine holding an NVIDIA device may well
+     * expose cuda as runnable but not buildable, which are opposite answers when
+     * choosing between a prebuilt artifact and sources.
+     *
+     * @return available runtimes, empty when none is detected
+     * @since 1.0.0
+     */
+    List<NParallelProcessorRuntime> parallelProcessorRuntimes();
+
+    /**
+     * The parallel processing runtime family to use when a single one has to be
+     * picked, vendor native stacks winning over cross vendor layers.
+     *
+     * @return the family, {@link NParallelProcessorFamily#NONE} when probing
+     * found none, {@link NParallelProcessorFamily#UNKNOWN} when it could not
+     * conclude
+     * @since 1.0.0
+     */
+    NParallelProcessorFamily parallelProcessorFamily();
+
+    /**
      * Returns a fresh NEnv instance with current runtime values.
      *
      * <p>This performs a full re-initialization (may involve SSH commands,

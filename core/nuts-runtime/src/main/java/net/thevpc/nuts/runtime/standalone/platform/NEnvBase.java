@@ -6,6 +6,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ public abstract class NEnvBase implements NEnv {
     protected String userHome;
     protected Set<NDesktopEnvironmentFamily> osDesktopEnvironmentFamilies;
     protected Boolean gui;
+    protected volatile List<NParallelProcessorRuntime> parallelProcessorRuntimes;
 
     protected abstract NOsFamily getOsFamily0();
 
@@ -53,6 +55,48 @@ public abstract class NEnvBase implements NEnv {
     protected abstract String getUserHome0();
 
     protected abstract boolean isGraphicalDesktopEnvironment0();
+
+    /**
+     * Detects the parallel processing runtimes of this environment.
+     * Implementations unable to inspect their target return an empty list
+     * rather than describing the local machine, which would report the wrong
+     * capabilities for a remote target.
+     *
+     * @return detected runtimes, never null
+     */
+    protected abstract List<NParallelProcessorRuntime> getParallelProcessorRuntimes0();
+
+    /**
+     * Whether probing this environment for parallel processing runtimes is
+     * possible at all.
+     * <p>
+     * An empty {@link #parallelProcessorRuntimes()} is ambiguous on its own : it
+     * is reported both by a machine that has no runtime installed and by an
+     * environment that could not be inspected. This hook separates the two, so
+     * that the former answers {@link NParallelProcessorFamily#NONE} and the
+     * latter {@link NParallelProcessorFamily#UNKNOWN}. Implementations unable to
+     * inspect their target leave it false.
+     *
+     * @return true when an empty runtime list means "none is installed"
+     */
+    protected boolean isParallelProcessorDetectionSupported() {
+        return false;
+    }
+
+    @Override
+    public final List<NParallelProcessorRuntime> parallelProcessorRuntimes() {
+        if (parallelProcessorRuntimes == null) {
+            List<NParallelProcessorRuntime> r = getParallelProcessorRuntimes0();
+            parallelProcessorRuntimes = r == null ? Collections.<NParallelProcessorRuntime>emptyList() : r;
+        }
+        return parallelProcessorRuntimes;
+    }
+
+    @Override
+    public NParallelProcessorFamily parallelProcessorFamily() {
+        return NParallelProcessorFamily.resolve(
+                parallelProcessorRuntimes(), isParallelProcessorDetectionSupported());
+    }
 
     @Override
     public boolean isGraphicalDesktopEnvironment() {
