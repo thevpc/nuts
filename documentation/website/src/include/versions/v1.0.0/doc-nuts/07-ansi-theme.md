@@ -4,11 +4,11 @@
 
 Nuts provides a powerful theming system for ANSI and NTF (Nuts Text Format) formatted output. Themes map semantic text styles (such as `PRIMARY`, `KEYWORD`, `ERROR`, `WARN`, `INFO`, `PATH`, etc.) to specific terminal colors, supporting 16-color ANSI, 256-color palettes, and 24-bit RGB true-colors.
 
-The `--theme` option and the `NTextTheme` API support specifying theme parameters by **theme name** (for built-in or cached themes) or by **file path / URL** (for custom `.ntf-theme` files).
+The `--theme` option supports specifying theme parameters by **theme name** (for built-in or cached themes) or by **file path / URL** (for custom `.ntf-theme` files).
 
 ## Built-in Themes & Default Names
 
-Nuts includes several built-in themes available on the classpath (`META-INF/ntf-themes/`). You can reference them directly by name:
+Nuts includes several built-in themes available out-of-the-box. You can reference them directly by name:
 
 - **`default`** – OS-dependent default theme (`grass` on Windows, standard theme on Unix/Linux).
 - **`ansi`** – Basic 16-color ANSI palette theme.
@@ -18,53 +18,22 @@ Nuts includes several built-in themes available on the classpath (`META-INF/ntf-
 
 When no theme name or path is provided (or when set to `default`), Nuts automatically selects the appropriate default theme for the running operating system environment.
 
-## Setting Themes at Boot or Runtime
-
-### Via Command Line Option (`--theme`)
+## Setting Themes via Command Line (`--theme`)
 
 The `--theme` CLI option accepts either a built-in theme name or a file path/URL to a custom theme file.
 
-#### 1. By Theme Name
+### 1. By Theme Name
 Pass one of the default theme names (`default`, `ansi`, `grass`, `horizon`, `whiteboard`):
 
 ```sh
 nuts --theme=horizon
 ```
 
-#### 2. By File Path or URL
+### 2. By File Path or URL
 Pass a file path (relative or absolute) or URL to a `.ntf-theme` file:
 
 ```sh
 nuts --theme=/path/to/my-theme.ntf-theme
-```
-
-### Via Java API
-
-The `NTextTheme.of(String nameOrPath)` factory method resolves themes seamlessly:
-- **Simple Name**: Loads built-in theme resources from `classpath:/META-INF/ntf-themes/<name>.ntf-theme` or user themes from `~/.config/nuts/.../themes/<name>`. Themes loaded by name are cached.
-- **File Path or URL**: Loads the theme from the specified filesystem path or URL via `NPath`.
-- **Null or Blank**: Loads the default theme configured for the workspace/OS environment.
-
-#### Example Usage
-
-```java
-import net.thevpc.nuts.text.NTextTheme;
-import net.thevpc.nuts.io.NPath;
-
-// Load a theme by built-in name
-NTextTheme themeByName = NTextTheme.of("horizon").orNull();
-if (themeByName != null) {
-    NTextTheme.set(themeByName);
-}
-
-// Load a theme by file path
-NTextTheme themeByPath = NTextTheme.of("/path/to/my-theme.ntf-theme").orNull();
-if (themeByPath != null) {
-    NTextTheme.set(themeByPath);
-}
-
-// Using NPath explicitly
-NTextTheme themeFromNPath = NTextTheme.of(NPath.of("/path/to/my-theme.ntf-theme")).orNull();
 ```
 
 ## Defining Your Own Theme
@@ -143,14 +112,10 @@ Supported semantic style tokens include:
 ### Custom Theme Locations
 
 Place custom theme files in:
-1. The application classpath under `META-INF/ntf-themes/<name>.ntf-theme`.
-2. The Nuts user configuration directory under `~/.config/nuts/.../themes/<name>`.
-3. Any accessible filesystem location loaded by path or URL using `--theme=/path/to/theme.ntf-theme` or `NTextTheme.of(NPath.of(...))`.
+1. The Nuts user configuration directory under `~/.config/nuts/.../themes/<name>`.
+2. The application classpath under `META-INF/ntf-themes/<name>.ntf-theme`.
+3. Any accessible filesystem location loaded by path or URL using `--theme=/path/to/theme.ntf-theme`.
 
 ## Further Reading
-
-- `NTextTheme` interface: `net.thevpc.nuts.text.NTextTheme`
-- Default theme implementation: `net.thevpc.nuts.runtime.standalone.text.theme.NTextPropertiesTheme`
-- Built-in theme resources: `META-INF/ntf-themes/`
 
 For more details, refer to the [Styling Messages](../03-msg/02-nmsg-styling.md) section.
