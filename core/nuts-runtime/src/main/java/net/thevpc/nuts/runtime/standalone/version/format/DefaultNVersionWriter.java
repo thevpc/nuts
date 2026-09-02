@@ -8,6 +8,7 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.format.DefaultObjectWriterBase;
+import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NVersionWriter;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -89,28 +90,43 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
 
     @Override
     public void print(Object aValue, NPrintStream out) {
-        if(!(aValue instanceof NVersion)){
+        if (!(aValue instanceof NVersion)) {
             return;
         }
-        if (isNtf()) {
-            out.print(
-                    NText.ofStyled(
-                            aValue.toString(), NTextStyle.version()
-                    )
-            );
-        }else{
-            out = out.terminalMode(NTerminalMode.FILTERED);
-            out.print(aValue.toString());
+        NVersion version = (NVersion) aValue;
+        boolean simple = !all && extraProperties.isEmpty();
+        NContentType p = NSession.of().outputFormat().orElse(NContentType.PLAIN);
+        if (p == NContentType.PLAIN && !simple) {
+            p = NContentType.PROPS;
         }
+        if (!isNtf()) {
+            out = out.terminalMode(NTerminalMode.FILTERED);
+        }
+        NPrintStream finalOut = out;
+        NSession.of()
+                .copy()
+                .outputFormat(p)
+                .runWith(() -> {
+                    if (simple && NSession.of().outputFormat().get() == NContentType.PLAIN) {
+                        finalOut.print(
+                                NText.ofStyled(
+                                        version.toString(), NTextStyle.version()
+                                )
+                        );
+                    } else {
+                        finalOut.print(buildProps(version));
+                    }
+                });
     }
 
-    public Map<String, String> buildProps() {
+    public Map<String, String> buildProps(NVersion version) {
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
         NWorkspace workspace = NWorkspace.of();
+        props.put("version", version.toString());
         props.put("nuts-api-version", workspace.apiVersion().toString());
         props.put("nuts-runtime-version", workspace.runtimeId().version().toString());
         if (all) {
@@ -119,7 +135,9 @@ public class DefaultNVersionWriter extends DefaultObjectWriterBase<NVersionWrite
             props.put("os-version", environment.os().version().toString());
         }
         for (String extraKey : extraKeys) {
-            props.put(extraKey, extraProperties.get(extraKey));
+            if (!props.containsKey(extraKey)) { // do not override
+                props.put(extraKey, extraProperties.get(extraKey));
+            }
         }
         return props;
     }

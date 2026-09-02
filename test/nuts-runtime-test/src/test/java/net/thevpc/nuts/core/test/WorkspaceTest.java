@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.command.NInfo;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.concurrent.NLockBuilder;
 import net.thevpc.nuts.core.*;
@@ -311,7 +311,7 @@ public class WorkspaceTest {
             Assertions.assertNotNull(r);
         }
         {
-            NInfoCmd r = NInfoCmd.of();
+            NInfo r = NInfo.of();
             Assertions.assertNotNull(r);
         }
         {
@@ -494,7 +494,7 @@ public class WorkspaceTest {
         NWorkspace ws2=TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info").share();
         TestUtils.println("==========================");
-        NInfoCmd.of().run();
+        NInfo.of().run();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
         NWorkspace workspace = NWorkspace.of();

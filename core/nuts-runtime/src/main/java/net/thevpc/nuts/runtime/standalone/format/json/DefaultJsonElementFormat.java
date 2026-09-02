@@ -607,7 +607,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     if (Character.isAlphabetic(current)) {
                         return readJsonString();
                     }
-                    throw expected("value");
+                    throw expected("value but encountered "+(char)current);
                 }
             }
         }

@@ -42,15 +42,15 @@ import java.util.*;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NInfoCmd extends NWorkspaceCmd {
+public interface NInfo extends NWorkspaceCmd {
 
     /**
      * Creates a new instance of of.
      *
      * @return of result
      */
-    static NInfoCmd of() {
-       return NExtensions.of(NInfoCmd.class);
+    static NInfo of() {
+       return NExtensions.of(NInfo.class);
     }
 
     /**
@@ -63,7 +63,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     @Override
-    NInfoCmd configure(boolean skipUnsupported, String... args);
+    NInfo configure(boolean skipUnsupported, String... args);
 
     /**
      * Ntf.
@@ -72,7 +72,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @return ntf result
      */
     @NSetter
-    NInfoCmd ntf(boolean ntf);
+    NInfo ntf(boolean ntf);
 
     /**
      * include a custom property
@@ -81,7 +81,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @param value custom property value
      * @return {@code this} instance
      */
-    NInfoCmd addProperty(String key, String value);
+    NInfo addProperty(String key, String value);
 
     /**
      * include custom properties from the given map
@@ -89,7 +89,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @param customProperties custom properties
      * @return {@code this} instance
      */
-    NInfoCmd addProperties(Map<String, String> customProperties);
+    NInfo addProperties(Map<String, String> customProperties);
 
     /**
      * return true if displaying repositories is enabled
@@ -105,7 +105,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     @NSetter
-    NInfoCmd showRepositories(boolean enable);
+    NInfo showRepositories(boolean enable);
 
     /**
      * return true if fancy mode armed
@@ -121,7 +121,7 @@ public interface NInfoCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     @NSetter
-    NInfoCmd fancy(boolean fancy);
+    NInfo fancy(boolean fancy);
 
 //    NInfoCmd print(NPrintStream w);
 //

@@ -866,4 +866,8 @@ public interface NIORPI extends NComponent {
     NOptional<NGpuDevice> primaryGpu(List<NGpuDevice> gpus);
 
     NEnv createEnv(NConnectionString connectionString);
+
+    NPath createMavenLayout(NId id);
+
+    String createFilename(NId id, String extension);
 }

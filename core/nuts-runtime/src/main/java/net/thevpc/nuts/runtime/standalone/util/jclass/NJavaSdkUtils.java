@@ -6,6 +6,7 @@ import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.concurrent.NConcurrent;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.io.NTrace;
@@ -34,7 +35,7 @@ import java.util.stream.Stream;
 
 public class NJavaSdkUtils {
 
-    private List<JavaProvider> javaProviders = new ArrayList<>();
+    private final List<JavaProvider> javaProviders = new ArrayList<>();
     private NRuntimeDistribution hostVm;
 
     private NJavaSdkUtils() {
@@ -43,6 +44,10 @@ public class NJavaSdkUtils {
         javaProviders.add(new ZuluProvider());
         javaProviders.add(new GraalVMProvider());
         javaProviders.add(new OracleProvider());
+    }
+
+    public List<JavaProvider> javaProviders() {
+        return javaProviders;
     }
 
     public static NJavaSdkUtils of() {
@@ -87,15 +92,15 @@ public class NJavaSdkUtils {
 
     public NOptional<NRuntimeDistribution> resolveAndInstall(String product, NVersion version, NOsFamily os, NArchFamily arch, String vendor) {
         List<JavaProvider> acceptableJavaProviders = new ArrayList<>(javaProviders);
-        if(!NBlankable.isBlank(vendor)){
-            acceptableJavaProviders=acceptableJavaProviders.stream().filter(x->NNameFormat.equalsIgnoreFormat(NStringUtils.strip(vendor),x.getName())).collect(Collectors.toList());
+        if (!NBlankable.isBlank(vendor)) {
+            acceptableJavaProviders = acceptableJavaProviders.stream().filter(x -> NNameFormat.equalsIgnoreFormat(NStringUtils.strip(vendor), x.getName())).collect(Collectors.toList());
         }
         for (JavaProvider javaProvider : acceptableJavaProviders) {
             String product2 = NJavaSdkUtils.validateJavaProduct(product).orElse(NRuntimeDistribution.JAVA_PRODUCT_JDK);
             int version2 = NJavaSdkUtils.validateJavaMajorVersionOrDefault(version);
             NOsFamily os2 = os == null ? NOsFamily.current() : os;
             NArchFamily arch2 = arch == null ? NArchFamily.current() : arch;
-            NOptional<NPath> z = javaProvider.resolveAndInstall(product2, version2, os2, arch2);
+            NOptional<NPath> z = javaProvider.resolveAndInstall(product2, version2, os2, arch2, null);
             if (z.isPresent()) {
                 NRuntimeDistribution r = resolveJdkLocation(z.get(), javaProvider.getName() + "-" + product2 + "-" + version2 + "-" + arch2);
                 if (r != null) {
@@ -223,9 +228,7 @@ public class NJavaSdkUtils {
                     if (p.asInt().isPresent() && p.asInt().get() == 1) {
                         String sVersion2 = sVersion.substring(a + 1);
                         NVersion version2 = NVersion.get(sVersion2).get();
-                        if (versionFilter.acceptVersion(version2)) {
-                            return true;
-                        }
+                        return versionFilter.acceptVersion(version2);
                     }
                 }
                 return false;
@@ -339,7 +342,7 @@ public class NJavaSdkUtils {
 
         if (searchRemoteInstallations) {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
-            NRuntimeDistribution[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NRuntimeDistribution.JAVA_PRODUCT_JDK : NRuntimeDistribution.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion),remoteVendor)).filter(
+            NRuntimeDistribution[] found = Stream.of(searchRemoteLocationsAndInstall(jdk ? NRuntimeDistribution.JAVA_PRODUCT_JDK : NRuntimeDistribution.JAVA_PRODUCT_JRE, NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion), remoteVendor)).filter(
                     x ->
                             (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
                                     requestedVersionFilterExact.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
@@ -404,7 +407,7 @@ public class NJavaSdkUtils {
             // [4] look if remotely this version could be installed (1.8 after confirmation)
             NRuntimeDistribution[] found = Stream.of(searchRemoteLocationsAndInstall(
                     jdk ? NRuntimeDistribution.JAVA_PRODUCT_JDK : NRuntimeDistribution.JAVA_PRODUCT_JRE
-                    , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion),remoteVendor)).filter(
+                    , NBlankable.isBlank(javaVersion) ? NVersion.BLANK : NVersion.of(javaVersion), remoteVendor)).filter(
                     x ->
                             (!jdk || NRuntimeDistribution.JAVA_PRODUCT_JDK.equalsIgnoreCase(x.product())) &&
                                     requestedVersionFilterBigger.test(NVersion.get(x.version()).orNull())).toArray(NRuntimeDistribution[]::new);
@@ -431,7 +434,7 @@ public class NJavaSdkUtils {
     }
 
     public NRuntimeDistribution[] searchRemoteLocationsAndInstall(String product, NVersion version, String vendor) {
-        NOptional<NRuntimeDistribution> e = resolveAndInstall(product, version, null, null,vendor);
+        NOptional<NRuntimeDistribution> e = resolveAndInstall(product, version, null, null, vendor);
         if (e.isPresent()) {
             return new NRuntimeDistribution[]{e.get()};
         }
@@ -704,7 +707,7 @@ public class NJavaSdkUtils {
                 preferredName,
                 path.toString(),
                 jdkVersion,
-                product,
+                null,
                 0
         );
         r.configVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
@@ -731,8 +734,8 @@ public class NJavaSdkUtils {
                 .build();
     }
 
-    public NOptional<String> resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely,String removeVendor) {
-        NOptional<NRuntimeDistribution> nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion, jdk, ifNotFoundSearchLocally, ifNotFoundSearchRemotely,removeVendor);
+    public NOptional<String> resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely, String removeVendor) {
+        NOptional<NRuntimeDistribution> nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion, jdk, ifNotFoundSearchLocally, ifNotFoundSearchRemotely, removeVendor);
         if (nutsPlatformLocation.isPresent()) {
             return resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw);
         } else {
@@ -927,10 +930,7 @@ public class NJavaSdkUtils {
                 return c;
             }
             c = NStringUtils.strip(a.packaging()).compareTo(NStringUtils.strip(b.packaging()));
-            if (c != 0) {
-                return c;
-            }
-            return 0;
+            return c;
         }
     }
 }

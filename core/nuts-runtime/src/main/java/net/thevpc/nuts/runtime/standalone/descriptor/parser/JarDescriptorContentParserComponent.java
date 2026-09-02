@@ -120,7 +120,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                         try {
                             nutsjson.setNonNull(NDescriptorParser.of()
                                     .descriptorStyle(NDescriptorStyle.NUTS)
-                                    .parse(inputStream).get());
+                                    .parse(inputStream).orNull());
                         } finally {
                             inputStream.close();
                         }

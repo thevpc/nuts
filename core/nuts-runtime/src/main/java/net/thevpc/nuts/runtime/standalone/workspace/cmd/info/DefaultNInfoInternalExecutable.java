@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.info;
 
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionException;
-import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.command.NInfo;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -41,7 +41,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
                 return NExecutionException.SUCCESS;
 
             }
-            NInfoCmd.of().configure(false, args).run();
+            NInfo.of().configure(false, args).run();
             return NExecutionException.SUCCESS;
         });
     }

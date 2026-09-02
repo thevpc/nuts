@@ -51,11 +51,6 @@ public class NObjectRef<T> implements NRef<T> {
      */
     public void setNonNull(T value) {
         if (value != null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         }
     }
@@ -66,11 +61,6 @@ public class NObjectRef<T> implements NRef<T> {
      */
     public void setIfNull(T value) {
         if (this.value==null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         }
     }

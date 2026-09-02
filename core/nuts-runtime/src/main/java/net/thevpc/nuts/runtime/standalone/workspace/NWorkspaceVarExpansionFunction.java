@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.NConstants;
 
 
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.command.NInfo;
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.platform.NStoreType;
@@ -102,7 +102,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }
             default: {
-                Object v = NInfoCmd.of().getPropertyValue(from).orNull();
+                Object v = NInfo.of().getPropertyValue(from).orNull();
                 if (v != null) {
                     return NText.of(v).filteredText();
                 }

@@ -74,15 +74,16 @@ public class NEnvAsCmd extends NEnvBase {
         boolean ok = false;
         try {
             String cmd =
-                    "sh -c 'echo -n \"$(uname -s)|$(uname -r)|$(uname -m)|$(whoami)|${HOME}|$SHELL\"; " +
-                            "v=$($SHELL --version 2>/dev/null | head -n1 || " +
-                            "$SHELL -version 2>/dev/null | head -n1 || " +
-                            "$SHELL version 2>/dev/null | head -n1 || echo unknown); " +
-                            "echo \"$v\"'";
+                    "sh -c '\n" +
+                            "  shell_name=$(basename \"$SHELL\")\n" +
+                            "  ver_raw=$($SHELL --version 2>/dev/null | head -n1 || $SHELL -version 2>/dev/null | head -n1 || $SHELL version 2>/dev/null | head -n1 || echo unknown)\n" +
+                            "  ver=$(printf \"%s\" \"$ver_raw\" | grep -oE \"[0-9]+(\\.[0-9]+)+\" | head -n1)\n" +
+                            "  printf \"%s|%s|%s|%s|%s|%s|%s|%s\" \"$(uname -s)\" \"$(uname -r)\" \"$(uname -m)\" \"$(whoami)\" \"${HOME}\" \"$SHELL\" \"$shell_name\" \"${ver:-unknown}\"\n" +
+                            "'";
             String result = runOnceSystemGrab(cmd);
             if (!NBlankable.isBlank(result)) {
                 List<String> cols = NStringUtils.split(result, "|", false, false);
-                if (cols.size() >= 6) {
+                if (cols.size() >= 8) {
                     String luname = cols.get(0).toLowerCase();
                     os = NId.of(null, cols.get(0), cols.get(1));
                     if (luname.startsWith("linux")) {
@@ -103,7 +104,7 @@ public class NEnvAsCmd extends NEnvBase {
                     userName = cols.get(3);
                     userHome = cols.get(4);
                     shellFamily = NShellFamily.parse(cols.get(5)).orElse(NShellFamily.SH);
-                    shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(5), shellFamily.id()), cols.get(6));
+                    shell = NId.of(null, NStringUtils.firstNonBlank(cols.get(6), shellFamily.id()), cols.get(7));
                     rootUserName = "root";
                     ok = true;
                 }

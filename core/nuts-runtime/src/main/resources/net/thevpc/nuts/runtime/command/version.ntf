@@ -7,6 +7,9 @@ show version
     ```sh nuts --version```
     ```sh nuts -version```
     ```sh nuts -v```
+        Although `nuts -v` seems as a shortcut for `nuts version`, the reality is that they behave differently.
+        `nuts version` command loads workspace and shows api/runtime versions (the actual workspace version).
+        `nuts -v|-version|--version` commands shows boot version only and does not load any workspace.
 
 ##) OPTIONS:
 

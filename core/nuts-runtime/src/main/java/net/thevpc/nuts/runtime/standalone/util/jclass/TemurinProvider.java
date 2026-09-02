@@ -24,11 +24,20 @@ public class TemurinProvider implements JavaProvider {
     }
 
     @Override
-    public NOptional<NPath> resolveAndInstall(String product, int version, NOsFamily os, NArchFamily arch) {
+    public NOptional<NPath> resolveDownloadPath(String product, int version, NOsFamily os, NArchFamily arch, NPath targetBin) {
+        return resolveDownloadUrl(product, version, os, arch).map(x -> x.path);
+    }
+
+    @Override
+    public NOptional<NPath> resolveAndInstall(String product, int version, NOsFamily os, NArchFamily arch,
+                                              NPath targetBin) {
         NOptional<Info> p = resolveDownloadUrl(product, version, os, arch);
         if (p.isPresent()) {
             NPath folderCache = NPath.of(NStoreKey.ofCache(NWorkspace.of().apiId())).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
-            NPath folderBin = NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId())).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
+            NPath folderBin =
+                    targetBin == null ?
+                            NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId())).resolve("sdk/java/" + getName() + "/").resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id())
+                            : targetBin;
             if (folderCache.resolve("dist/nuts-install-info.tson").isRegularFile()) {
                 return NOptional.of(folderCache.resolve("dist"));
             }

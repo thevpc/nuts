@@ -15,7 +15,7 @@ import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.boot.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.command.NInfoCmd;
+import net.thevpc.nuts.command.NInfo;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.platform.*;
@@ -39,7 +39,7 @@ import net.thevpc.nuts.util.*;
  * @author thevpc
  */
 @NScore(fixed = NScorable.DEFAULT_SCORE)
-public class DefaultNInfoCmd implements NInfoCmd {
+public class DefaultNInfo implements NInfo {
 
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean showRepositories = false;
@@ -88,7 +88,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
         }
     };
 
-    public DefaultNInfoCmd() {
+    public DefaultNInfo() {
         mapSupplier = buildMapSupplier();
     }
 
@@ -100,7 +100,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     @Override
-    public NInfoCmd addProperty(String key, String value) {
+    public NInfo addProperty(String key, String value) {
         if (value == null) {
             extraProperties.remove(key);
         } else {
@@ -110,7 +110,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     @Override
-    public NInfoCmd addProperties(Map<String, String> customProperties) {
+    public NInfo addProperties(Map<String, String> customProperties) {
         if (customProperties != null) {
             for (Map.Entry<String, String> e : customProperties.entrySet()) {
                 addProperty(e.getKey(), e.getValue());
@@ -125,7 +125,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     @Override
-    public NInfoCmd showRepositories(boolean enable) {
+    public NInfo showRepositories(boolean enable) {
         this.showRepositories = true;
         return this;
     }
@@ -136,18 +136,18 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     @Override
-    public NInfoCmd fancy(boolean fancy) {
+    public NInfo fancy(boolean fancy) {
         this.fancy = fancy;
         return this;
     }
 
-    public NInfoCmd println(NPrintStream w) {
+    public NInfo println(NPrintStream w) {
         print(w);
         w.println();
         return this;
     }
 
-    public NInfoCmd print(NPrintStream w) {
+    public NInfo print(NPrintStream w) {
         NSession session = NSession.of();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
@@ -773,13 +773,13 @@ public class DefaultNInfoCmd implements NInfoCmd {
         return lenient;
     }
 
-    public NInfoCmd setLenient(boolean lenient) {
+    public NInfo setLenient(boolean lenient) {
         this.lenient = lenient;
         return this;
     }
 
     @Override
-    public NInfoCmd ntf(boolean ntf) {
+    public NInfo ntf(boolean ntf) {
         this.ntf = ntf;
         return this;
     }
@@ -791,7 +791,7 @@ public class DefaultNInfoCmd implements NInfoCmd {
     }
 
     @Override
-    public NInfoCmd configure(boolean skipUnsupported, String... args) {
+    public NInfo configure(boolean skipUnsupported, String... args) {
         configure(skipUnsupported, NCmdLine.of(args).commandName("info"));
         return this;
     }

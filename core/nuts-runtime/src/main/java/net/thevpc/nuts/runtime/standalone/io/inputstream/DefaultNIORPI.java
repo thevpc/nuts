@@ -22,6 +22,7 @@ import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPathInfo;
 import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
@@ -143,14 +144,15 @@ public class DefaultNIORPI implements NIORPI {
         }
         throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
     }
+
     @Override
     public NPrintStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NTerminalMode baseMode) {
         if (out == null) {
             return null;
         }
-        boolean baseAnsi=baseMode==NTerminalMode.ANSI;
+        boolean baseAnsi = baseMode == NTerminalMode.ANSI;
         if (expectedMode == null) {
-            expectedMode = baseAnsi?NTerminalMode.FORMATTED : NTerminalMode.FILTERED;
+            expectedMode = baseAnsi ? NTerminalMode.FORMATTED : NTerminalMode.FILTERED;
         }
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).basePrintStream().terminalMode(expectedMode);
@@ -166,7 +168,7 @@ public class DefaultNIORPI implements NIORPI {
             }
             case FILTERED:
             case FORMATTED: {
-                if(baseAnsi){
+                if (baseAnsi) {
                     return new NPrintStreamRaw(out, NTerminalMode.ANSI,
                             null, null,
                             new NPrintStreamBase.Bindings(), null
@@ -745,31 +747,31 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NPath> createOrigins(Class<?> clazz) {
-        return JavaClassUtils.resolveURLs(clazz).stream().map(x->NPath.of(x)).collect(Collectors.toList());
+        return JavaClassUtils.resolveURLs(clazz).stream().map(x -> NPath.of(x)).collect(Collectors.toList());
     }
 
     @Override
     public NOptional<NPath> createOrigin(Class<?> clazz) {
         List<NPath> c = createOrigins(clazz);
         return c.isEmpty() ?
-                NOptional.ofNamedEmpty("LibPath fo "+clazz)
+                NOptional.ofNamedEmpty("LibPath fo " + clazz)
                 : NOptional.of(c.get(0));
     }
 
 
     @Override
     public NOptional<NId> resolveId(Class<?> clazz) {
-        clazz= NReflectUtils.unproxyType(clazz);
+        clazz = NReflectUtils.unproxyType(clazz);
         List<NId> pomIds = resolveIds(clazz);
         NId defaultValue = null;
         if (pomIds.isEmpty()) {
-            return NOptional.ofNamedEmpty("Id fo "+clazz);
+            return NOptional.ofNamedEmpty("Id fo " + clazz);
         }
         if (pomIds.size() > 1) {
             NLog.of(NPomXmlParser.class)
                     .log(NMsg.ofC(
                                     "multiple ids found : %s for class %s and id %s",
-                                    Arrays.asList(pomIds), clazz, defaultValue
+                                    Collections.singletonList(pomIds), clazz, defaultValue
                             ).withIntent(NMsgIntent.ALERT)
                             .withLevel(Level.FINEST));
         }
@@ -781,14 +783,14 @@ public class DefaultNIORPI implements NIORPI {
         List<NId> pomIds = resolveIds(path);
         NId defaultValue = null;
         if (pomIds.isEmpty()) {
-            return NOptional.ofNamedEmpty("Id fo "+path);
+            return NOptional.ofNamedEmpty("Id fo " + path);
         }
         if (pomIds.size() > 1) {
             NLog.of(NPomXmlParser.class)
 
                     .log(NMsg.ofC(
                                     "multiple ids found : %s for path %s and id %s",
-                                    Arrays.asList(pomIds), path, defaultValue
+                                    Collections.singletonList(pomIds), path, defaultValue
                             ).withIntent(NMsgIntent.ALERT)
                             .withLevel(Level.FINEST));
         }
@@ -810,9 +812,9 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
-        clazz= NReflectUtils.unproxyType(clazz);
+        clazz = NReflectUtils.unproxyType(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NApp annotation = (NApp) clazz.getAnnotation(NApp.class);
+        NApp annotation = clazz.getAnnotation(NApp.class);
         if (annotation != null) {
             if (!NBlankable.isBlank(annotation.id())) {
                 all.add(NId.get(annotation.id()).get());
@@ -946,7 +948,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate message, long freq) {
-        return createLoggerProgressMonitor(message, (NLog)null).temporize(freq);
+        return createLoggerProgressMonitor(message, (NLog) null).temporize(freq);
     }
 
     @Override
@@ -1003,7 +1005,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NProgressMonitor createLoggerProgressMonitor(NMsgTemplate messageFormat, Logger printStream) {
-        return createLoggerProgressMonitor(messageFormat,printStream==null?null:NLog.of(printStream));
+        return createLoggerProgressMonitor(messageFormat, printStream == null ? null : NLog.of(printStream));
     }
 
     @Override
@@ -1088,13 +1090,13 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NPathInfo createPathInfoNotFound(String path) {
         int u = NStringUtils.lastIndexOf(path, new char[]{'/', '\\'});
-        String name=u<0?path:path.substring(u+1);
-        return new DefaultNPathInfo(name,path,NPathType.NOT_FOUND,null,null,-1,false,null,null, null, Collections.emptySet(),null,null);
+        String name = u < 0 ? path : path.substring(u + 1);
+        return new DefaultNPathInfo(name, path, NPathType.NOT_FOUND, null, null, -1, false, null, null, null, Collections.emptySet(), null, null);
     }
 
     @Override
     public NPathInfo createPathInfo(String name, String path, NPathType type, NPathType targetType, String targetPath, long size, boolean symbolicLink, Instant lastModified, Instant lastAccess, Instant creationTime, Set<NPathPermission> permissions, String owner, String group) {
-        return new DefaultNPathInfo(name,path,targetType, targetType,targetPath,size,symbolicLink,lastModified,lastAccess, creationTime, permissions,owner,group);
+        return new DefaultNPathInfo(name, path, targetType, targetType, targetPath, size, symbolicLink, lastModified, lastAccess, creationTime, permissions, owner, group);
     }
 
     @Override
@@ -1156,5 +1158,31 @@ public class DefaultNIORPI implements NIORPI {
         Map<NConnectionString, NEnv> cache = NWorkspace.of().getOrComputeProperty(NEnv.class + "::Cache", () -> (Map<NConnectionString, NEnv>) new ConcurrentHashMap<NConnectionString, NEnv>());
         return cache.computeIfAbsent(normalizedConnectionStringWithoutUse, x -> NExtensions.of().createSupported(NEnv.class, normalizedConnectionStringWithUse).get());
 
+    }
+
+    @Override
+    public NPath createMavenLayout(NId id) {
+        CoreNIdUtils.checkShortId(id);
+        String groupId = id.groupId();
+        String artifactId = id.artifactId();
+        String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
+        if (id.version().isBlank()) {
+            return NPath.of(plainIdPath);
+        }
+        String version = id.version().value();
+        String x = plainIdPath + "/" + version;
+        return NPath.of(x);
+    }
+
+    @Override
+    public String createFilename(NId id, String extension) {
+        String classifier = "";
+        if (!extension.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !extension.equals(".pom")) {
+            String c = id.classifier();
+            if (!NBlankable.isBlank(c)) {
+                classifier = "-" + c;
+            }
+        }
+        return id.artifactId() + "-" + id.version().value() + classifier + extension;
     }
 }

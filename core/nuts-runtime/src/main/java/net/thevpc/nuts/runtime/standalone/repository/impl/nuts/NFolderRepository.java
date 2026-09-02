@@ -123,15 +123,19 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
                             .descriptorStyle(NDescriptorStyle.NUTS)
-                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")).get();
+                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json"))
+                            //ignore if unparsable (think of result as html : 404 not found)
+                            .orNull();
                 } finally {
                     if (stream != null) {
                         stream.close();
                     }
                 }
-                checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")
-                        , "artifact descriptor");
+                if(nutsDescriptor!=null) {
+                    checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                            CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")
+                            , "artifact descriptor");
+                }
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
                 throw new NArtifactNotFoundException(id,
@@ -168,17 +172,19 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     name = NInputSource.of(stream).metaData().name().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
                             .descriptorStyle(NDescriptorStyle.NUTS)
-                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")).get();
+                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")).orNull();
 
                 } finally {
                     if (stream != null) {
                         stream.close();
                     }
                 }
-                checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
-                        , "artifact descriptor");
-                return nutsDescriptor;
+                if(nutsDescriptor!=null) {
+                    checkSHA1Hash(id.builder().face(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                            CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
+                            , "artifact descriptor");
+                    return nutsDescriptor;
+                }
             } catch (IOException | UncheckedIOException | NIOException ex) {
                 throw new NArtifactNotFoundException(id,
                         new NArtifactNotFoundException.NIdInvalidDependency[0],

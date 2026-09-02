@@ -116,6 +116,7 @@ public class DefaultNTextRPI implements NTextRPI {
         registerTextMapper(URL.class, (o) -> NText.ofStyled(o.toString(), NTextStyle.path()));
         registerTextMapper(NTreeNode.class, (o) -> NTextArt.of().treeRenderer().get().render((NTreeNode) o));
         registerTextMapper(NTableModel.class, (o) -> NTextArt.of().tableRenderer().get().render((NTableModel) o));
+        registerTextMapper(NVersion.class, (o) -> NText.ofStyled(o.toString(), NTextStyle.version()));
         registerTextMapper(Class.class, (o) -> {
             Class cc = (Class) o;
             Class dc = cc.getDeclaringClass();

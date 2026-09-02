@@ -27,9 +27,12 @@
 package net.thevpc.nuts.command;
 
 import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.core.NWorkspaceCmd;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.util.NGetter;
 import net.thevpc.nuts.util.NSetter;
 
 import java.util.List;
@@ -39,33 +42,32 @@ import java.util.List;
  * @app.category Config
  * @since 0.5.5
  */
-public interface NPrepareCmd extends NWorkspaceCmd {
+public interface NPrepare extends NWorkspaceCmd {
     /**
      * Creates a new instance of of.
      *
      * @return of result
      */
-    static NPrepareCmd of() {
-        return NExtensions.of(NPrepareCmd.class);
+    static NPrepare of() {
+        return NExtensions.of(NPrepare.class);
     }
 
-    /**
-     * Target server.
-     *
-     * @param remoteServer remote server
-     * @return target server result
-     */
+    NPrepare at(NConnectionString connectionString);
+
     @NSetter
-    NPrepareCmd targetServer(String remoteServer);
+    NPrepare connectionString(NConnectionString connectionString);
+    @NGetter
+    NConnectionString connectionString();
 
     /**
-     * User name.
-     *
-     * @param remoteUser remote user
-     * @return user name result
+     * remote workspace name or path, use same semantics as local
+     * @return remote workspace
      */
+    @NGetter
+    String workspace();
+
     @NSetter
-    NPrepareCmd userName(String remoteUser);
+    NPrepare workspace(String targetWorkspace);
 
     /**
      * Version.
@@ -74,7 +76,24 @@ public interface NPrepareCmd extends NWorkspaceCmd {
      * @return version result
      */
     @NSetter
-    NPrepareCmd version(String version);
+    NPrepare version(NVersion version);
+    @NGetter
+    NVersion version();
+
+    /**
+     * Remote java home override, it can be either a java command, or a jre/jdk installation folder or jre/jdk installation parent folder (that might contain many)
+     * @param java
+     * @return
+     */
+    @NSetter
+    NPrepare java(String java);
+
+    @NGetter
+    String java();
+
+    NPrepare clearIds(NId... ids);
+
+    NPrepare ids(NId... ids);
 
     /**
      * Ids.
@@ -83,16 +102,8 @@ public interface NPrepareCmd extends NWorkspaceCmd {
      * @return ids result
      */
     @NSetter
-    NPrepareCmd ids(List<NId> id);
+    NPrepare ids(List<NId> id);
 
-    /**
-     * Adds the specified ids.
-     *
-     * @param id id
-     * @return add ids result
-     */
-    NPrepareCmd addIds(List<NId> id);
-    
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, String...) }
@@ -103,7 +114,7 @@ public interface NPrepareCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     @Override
-    NPrepareCmd configure(boolean skipUnsupported, String... args);
+    NPrepare configure(boolean skipUnsupported, String... args);
 
     /**
      * execute the command and return this instance
@@ -111,6 +122,6 @@ public interface NPrepareCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     @Override
-    NPrepareCmd run();
+    NPrepare run();
 
 }

@@ -155,10 +155,10 @@ public class MavenUtils {
             ars = arch.id();
         }
         NEnvConditionBuilder bb = new DefaultNEnvConditionBuilder()
-                .os(oss == null ? null : Arrays.asList(oss))
-                .arch(ars == null ? null : Arrays.asList(ars))
-                .platform(platform == null ? null : Arrays.asList(platform))
-                .profile(profile == null ? null : Arrays.asList(profile));
+                .os(oss == null ? null : Collections.singletonList(oss))
+                .arch(ars == null ? null : Collections.singletonList(ars))
+                .platform(platform == null ? null : Collections.singletonList(platform))
+                .profile(profile == null ? null : Collections.singletonList(profile));
         bb.setProperties(props);
         return bb.build();
     }
@@ -219,7 +219,8 @@ public class MavenUtils {
                 .exclusions(toNutsId(Arrays.asList(d.getExclusions())))
                 .build();
     }
-    private NLog LOG(){
+
+    private NLog LOG() {
         return NLog.of(MavenUtils.class);
     }
 
@@ -230,10 +231,23 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = NIOUtils.loadByteArray(stream);
+            if (bytes.length == 0) {
+                return null;
+            }
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NMsg.ofNtf("pom.xml") : NMsg.ofNtf(urlDesc), "text/xml",
                     StandardCharsets.UTF_8.name(), urlDesc == null ? "pom.xml" : urlDesc);
-            NPom pom = new NPomXmlParser().parse(bytesStream);
+            NPom pom = null;
+            try {
+                pom = new NPomXmlParser().parse(bytesStream);
+            } catch (Exception ex) {
+                long time = System.currentTimeMillis() - startTime;
+                LOG()
+                        .log(NMsg.ofJ("not a valid pom xml file {0}/ ignored", urlDesc)
+                                .withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL).withDurationMillis(time)
+                        );
+                return null;
+            }
             LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>();
             if (NLiteral.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.EXEC);
@@ -245,10 +259,8 @@ public class MavenUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             return true;
                         }
-                        if (NStringUtils.strip(e.getTextContent()).equals("exec-war-only") &&
-                                XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal")) {
-                            return true;
-                        }
+                        return NStringUtils.strip(e.getTextContent()).equals("exec-war-only") &&
+                                XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal");
                     }
                     return false;
                 })) {
@@ -384,14 +396,14 @@ public class MavenUtils {
             }
             return new DefaultNDescriptorBuilder()
                     .id(toNutsId(pom.getPomId()))
-                    .parents(pom.getParent() == null ? null : Arrays.asList(toNutsId(pom.getParent())))
+                    .parents(pom.getParent() == null ? null : Collections.singletonList(toNutsId(pom.getParent())))
                     .packaging(pom.getPackaging())
                     .flags(flags)
                     .name(pom.getName())
                     .description(pom.getDescription())
                     .locations(new ArrayList<>(idLocations))
                     .condition(new DefaultNEnvConditionBuilder().platform(
-                            Arrays.asList(mavenCompilerTarget == null ? "java" : ("java#" + mavenCompilerTarget))
+                            Collections.singletonList(mavenCompilerTarget == null ? "java" : ("java#" + mavenCompilerTarget))
                     ))
                     .dependencies(deps)
                     .standardDependencies(depsM)
@@ -503,8 +515,8 @@ public class MavenUtils {
 //    }
 
     public String toNutsVersion(String version) {
-        /// maven : [cc] [co) (oc] (oo)
-        /// nuts  : [cc] [co[ ]oc] ]oo[
+        /// maven : [cc] [co)(oc] (oo)
+        /// nuts  : [cc] [co[]oc] ]oo[
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
@@ -514,7 +526,7 @@ public class MavenUtils {
             session.terminal().printProgress(NMsg.ofC("%-8s %s", "parse", NCoreLogUtils.forProgress(path)));
             try (InputStream is = path.inputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
-                if (nutsDescriptor.id().artifactId() == null) {
+                if (nutsDescriptor!=null && nutsDescriptor.id().artifactId() == null) {
                     //why name is null ? should check out!
                     if (LOG().isLoggable(Level.FINE)) {
                         LOG()
@@ -538,6 +550,9 @@ public class MavenUtils {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
                 nutsDescriptor = parsePomXml(stream, fetchMode, urlDesc, repository);
+                if(nutsDescriptor==null){
+                    return null;
+                }
                 HashMap<String, String> properties = new HashMap<>();
                 NId parentId = null;
                 for (NId nutsId : nutsDescriptor.parents()) {
@@ -676,7 +691,7 @@ public class MavenUtils {
         return s;
     }
 
-    public NArtifactCall parseCall(String callString,String scriptName,String scriptContent) {
+    public NArtifactCall parseCall(String callString, String scriptName, String scriptContent) {
         if (callString == null) {
             return null;
         }
@@ -699,33 +714,29 @@ public class MavenUtils {
         }
         List<String> callArgs = cl.toStringList();
         if (callId != null) {
-            return new DefaultNArtifactCall(callId, callArgs,scriptName,scriptContent);
+            return new DefaultNArtifactCall(callId, callArgs, scriptName, scriptContent);
         }
         //there is no callId, props are considered as args!
         if (!callPropsAsArgs.isEmpty()) {
-            return new DefaultNArtifactCall(null, callPropsAsArgs,scriptName,scriptContent);
+            return new DefaultNArtifactCall(null, callPropsAsArgs, scriptName, scriptContent);
         }
         return null;
     }
 
-    public static boolean isMavenSettingsRepository(NRepositorySpec options){
-        if(!"maven".equals(options.name())){
+    public static boolean isMavenSettingsRepository(NRepositorySpec options) {
+        if (!"maven".equals(options.name())) {
             return false;
         }
-        if(options.sourceModel()!=null){
+        if (options.sourceModel() != null) {
             return false;
         }
-        if(!NBlankable.isBlank(options.sourceLocation())){
-            if(!NBlankable.isBlank(options.sourceLocation())){
+        if (!NBlankable.isBlank(options.sourceLocation())) {
+            if (!NBlankable.isBlank(options.sourceLocation())) {
                 String n = options.sourceLocation().toString();
-                if(!NBlankable.isBlank(n)){
-                    if(
-                            !"maven".equals(n)
-                            && !"maven@maven".equals(n)
-                            && !n.endsWith("=maven@maven")
-                    ){
-                        return false;
-                    }
+                if (!NBlankable.isBlank(n)) {
+                    return "maven".equals(n)
+                            || "maven@maven".equals(n)
+                            || n.endsWith("=maven@maven");
                 }
             }
         }

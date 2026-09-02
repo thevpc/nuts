@@ -7,10 +7,17 @@ import net.thevpc.nuts.util.NOptional;
 
 public interface JavaProvider {
     String getName();
+    NOptional<NPath> resolveDownloadPath(String product,
+                                         int version,
+                                         NOsFamily os,
+                                         NArchFamily arch,
+                                         NPath targetBin);
+
     NOptional<NPath> resolveAndInstall(
             String product,
             int version,
             NOsFamily os,
-            NArchFamily arch
+            NArchFamily arch,
+            NPath targetBin
     );
 }

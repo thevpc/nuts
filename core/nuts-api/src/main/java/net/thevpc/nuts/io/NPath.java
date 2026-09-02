@@ -418,6 +418,39 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
         return NIORPI.of().createOrigins(clazz);
     }
 
+
+    /**
+     * 1. Directory only — what you already agreed on
+     * groupId/artifactId/version   (or groupId/artifactId if version is blank)
+     * @param id id
+     * @return maven layout
+     */
+    static NPath ofMavenLayout(NId id){
+        return NIORPI.of().createMavenLayout(id);
+    }
+
+    /**
+     * 2. Filename only — no directory, just the leaf name
+     * artifactId-version[-classifier].extension
+     * (classifier suppressed for descriptor/pom extensions, same rule you already have)
+     * @param id id
+     * @param extension extension
+     * @return maven layout
+     */
+    static String ofMavenFilename(NId id, String extension){
+        return NIORPI.of().createFilename(id,extension);
+    }
+
+    /**
+     * 3. Full path — composition of 1 + 2, nothing new to maintain
+     * groupId/artifactId/version/artifactId-version[-classifier].extension
+     * @param id id
+     * @param extension extension
+     * @return maven layout
+     */
+    static NPath ofMavenLayout(NId id, String extension) {
+        return ofMavenLayout(id).resolve(ofMavenFilename(id, extension));
+    }
     /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.

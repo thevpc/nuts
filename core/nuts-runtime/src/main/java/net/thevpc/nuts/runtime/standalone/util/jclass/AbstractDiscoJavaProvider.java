@@ -19,15 +19,25 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
     protected abstract String getDiscoDistributionName();
 
     @Override
-    public NOptional<NPath> resolveAndInstall(String product, int version, NOsFamily os, NArchFamily arch) {
+    public NOptional<NPath> resolveDownloadPath(String product, int version, NOsFamily os, NArchFamily arch, NPath targetBin) {
+        return resolveDownloadUrl(product, version, os, arch).map(x -> x.path);
+    }
+
+    @Override
+    public NOptional<NPath> resolveAndInstall(String product, int version, NOsFamily os, NArchFamily arch,
+                                              NPath targetBin) {
         NOptional<Info> p = resolveDownloadUrl(product, version, os, arch);
         if (p.isPresent()) {
             NPath folderCache = NPath.of(NStoreKey.ofCache(NWorkspace.of().apiId()))
                     .resolve("sdk/java/" + getName() + "/")
                     .resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
-            NPath folderBin = NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId()))
-                    .resolve("sdk/java/" + getName() + "/")
-                    .resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id());
+
+            NPath folderBin =
+                    targetBin == null ?
+                            NPath.of(NStoreKey.ofBin(NWorkspace.of().apiId()))
+                                    .resolve("sdk/java/" + getName() + "/")
+                                    .resolve(getName() + "-" + version + "-" + os.id() + "-" + arch.id())
+                            : targetBin;
 
             if (folderBin.resolve("dist/nuts-install-info.tson").isRegularFile()) {
                 return NOptional.of(folderBin.resolve("dist"));
@@ -102,11 +112,19 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
 
         String discoArch = arch.id();
         switch (arch) {
-            case X86_64 : discoArch ="x64";break;
-            case X86_32 : discoArch ="x86";break;
-            case ARM_64 : discoArch ="aarch64";break;
-            case ARM_32 : discoArch ="arm";break;
-        };
+            case X86_64:
+                discoArch = "x64";
+                break;
+            case X86_32:
+                discoArch = "x86";
+                break;
+            case ARM_64:
+                discoArch = "aarch64";
+                break;
+            case ARM_32:
+                discoArch = "arm";
+                break;
+        }
 
         String pkgType = "jre".equalsIgnoreCase(product) ? "jre" : "jdk";
 
