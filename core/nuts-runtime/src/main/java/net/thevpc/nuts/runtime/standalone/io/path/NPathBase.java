@@ -20,9 +20,7 @@ import net.thevpc.nuts.util.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath, NPathSPIAware {
@@ -293,87 +291,16 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
         switch (type) {
             case SMART: {
-                return getSmartFileNameParts();
+                return NPathNamePartsUtils.getSmartFileNameParts(name());
             }
             case LONG: {
-                String n = name();
-                int i = n.indexOf('.');
-                if (i < 0) {
-                    return new NPathNameParts(n, "", "", NPathExtensionType.LONG);
-                }
-                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.LONG);
+                return NPathNamePartsUtils.getLongFileNameParts(name());
             }
             case SHORT: {
-                String n = name();
-                int i = n.lastIndexOf('.');
-                if (i < 0) {
-                    return new NPathNameParts(n, "", "", NPathExtensionType.SHORT);
-                }
-                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.SHORT);
+                return NPathNamePartsUtils.getShortFileNameParts(name());
             }
         }
         throw new NUnexpectedException(NMsg.ofC("%s not supported", type));
-    }
-
-    public NPathNameParts getSmartFileNameParts() {
-        String n = name();
-        int li = n.indexOf('.');
-        if (li < 0) {
-            return new NPathNameParts(n, "", "", NPathExtensionType.SMART);
-        }
-        List<NVersionPart> vals = NVersion.get(n).get().parts();
-        int lastDot = -1;
-        for (int i = vals.size() - 1; i >= 0; i--) {
-            NVersionPart v = vals.get(i);
-            String u = v.value();
-            if (u.equals(".")) {
-                if (i == vals.size() - 1) {
-                    return rebuildSmartParts(vals, i);
-                }
-                NVersionPart v2 = vals.get(i + 1);
-                if (v2.type() == NVersionPartType.NUMBER) {
-                    //check if the part before is also a number
-                    if (i > 0 && vals.get(i - 1).type() == NVersionPartType.NUMBER) {
-                        if (i + 1 == vals.size() - 1) {
-                            return rebuildSmartParts(vals, i + 2);
-                        } else if (vals.get(i + 1).value().equals(".")) {
-                            return rebuildSmartParts(vals, i + 1);
-                        }
-                    }
-                } else {
-                    //continue
-                }
-                if (lastDot == -1) {
-                    lastDot = i;
-                } else {
-                    break;
-                }
-            }
-        }
-        if (lastDot < 0) {
-            return new NPathNameParts(n, "", ".", NPathExtensionType.SMART);
-        }
-        return rebuildSmartParts(vals, lastDot);
-    }
-
-    private NPathNameParts rebuildSmartParts(List<NVersionPart> vals, int split) {
-        String fe = concatSmartParts(vals, split, vals.size());
-        String e = fe.startsWith(".") ? fe.substring(1) : fe;
-
-        return new NPathNameParts(
-                concatSmartParts(vals, 0, split),
-                e,
-                fe,
-                NPathExtensionType.SMART
-        );
-    }
-
-    private String concatSmartParts(List<NVersionPart> vals, int from, int to) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = from; i < to; i++) {
-            sb.append(vals.get(i).value());
-        }
-        return sb.toString();
     }
 
     @Override

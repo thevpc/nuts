@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNPrepare extends AbstractNPrepare {
+    private String companionRepository;
+
     public DefaultNPrepare() {
         super();
     }
@@ -38,8 +40,8 @@ public class DefaultNPrepare extends AbstractNPrepare {
                 rc.rtVersion = NWorkspace.of().runtimeId().version();
                 rc.appVersion = NWorkspace.of().apiId().version();
             } else {
-                rc.rtVersion = NSearch.of(NWorkspace.of().runtimeId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().get().version();
-                rc.appVersion = NSearch.of(NWorkspace.of().appId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().get().version();
+                rc.rtVersion = NSearch.of(NWorkspace.of().runtimeId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().map(NId::version).orElse(rc.apiVersion);
+                rc.appVersion = NSearch.of(NWorkspace.of().appId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().map(NId::version).orElse(rc.apiVersion);
             }
             rc.remoteUserHome = rc.remoteEnv().userHome();
             rc.remoteWorkspace = workspace();
@@ -59,13 +61,15 @@ public class DefaultNPrepare extends AbstractNPrepare {
             NWorkspace workspace = NWorkspace.of();
 
             NId nutsApiId = NWorkspace.of().apiId().builder().version(rc.rtVersion).build();
-            NId nutsAppId = NWorkspace.of().appId().builder().version(rc.rtVersion).build();
+            NId nutsAppId = NId.of("net.thevpc.nuts:nuts-app#" + rc.appVersion);
+            NId nutsCoreId = NWorkspace.of().appId().builder().version(rc.appVersion).build();
             NId nutsBootId = NId.of("net.thevpc.nuts:nuts-boot#" + rc.apiVersion);
             NId nutsRuntimeId = workspace.runtimeId().builder().version(rc.rtVersion).build();
 
             Set<NId> deps = new HashSet<>();
             deps.add(nutsApiId);
             deps.add(nutsAppId);
+            deps.add(nutsCoreId);
             deps.add(nutsBootId);
             deps.add(nutsRuntimeId);
             deps.addAll(
@@ -107,8 +111,13 @@ public class DefaultNPrepare extends AbstractNPrepare {
                     "--offline",
                     "--repos=shared=nuts@" + rc.companionRepository
             );
+            this.companionRepository = rc.companionRepository;
         }
         return this;
+    }
+
+    public String companionRepository() {
+        return companionRepository;
     }
 
     private void provisionJava(DefaultNPrepareTransaction rc) {
@@ -142,7 +151,7 @@ public class DefaultNPrepare extends AbstractNPrepare {
 
     }
 
-    private NOptional<NRuntimeDistribution> resolveAndInstallForRemote(DefaultNPrepareTransaction rc, String product, @NNonNull NVersion version, @NNonNull NOsFamily os, @NNonNull NArchFamily arch, String vendor) {
+    private NOptional<NRuntimeDistribution> resolveAndInstallForRemote(DefaultNPrepareTransaction rc, @NNullable String product, @NNonNull NVersion version, @NNonNull NOsFamily os, @NNonNull NArchFamily arch, @NNullable String vendor) {
         List<JavaProvider> acceptableJavaProviders = new ArrayList<>(NJavaSdkUtils.of().javaProviders());
         NAssert.requireNamedNonBlank(version, "version");
         NAssert.requireNamedNonBlank(os, "os");
@@ -161,24 +170,45 @@ public class DefaultNPrepare extends AbstractNPrepare {
             if (z.isPresent()) {
                 NPath p = NPath.ofTempFile(z.get().name());
                 z.get().copyTo(p);
-                NPath remoteZip = NPath.of(rc.remotePrivateJdk).resolveSibling(p.name());
-                NPath remoteZipAbsolute = NPath.of(rc.connectionString.withPath(remoteZip.toString()));
-                p.copyTo(remoteZipAbsolute);
-                if (rc.remoteEnv().osFamily() == NOsFamily.WINDOWS && p.name().toLowerCase().endsWith(".zip")) {
-                } else if (p.name().toLowerCase().endsWith(".zip")) {
-                    rc.runRemoteAsString("rmdir", rc.remotePrivateJdk);
-                    rc.runRemoteAsString("unzip", remoteZip.toString(), "-d", remoteZip.parent().toString());
-                    rc.runRemoteAsString("mv", remoteZip.parent().toString(), rc.remotePrivateJdk);
-                } else if (p.name().toLowerCase().endsWith(".zip")) {
-                    rc.runRemoteAsString("rm", "-Rf", rc.remotePrivateJdk);
-                    rc.runRemoteAsString("unzip", remoteZip.toString(), "-d", remoteZip.parent().toString());
-                    rc.runRemoteAsString("mv", remoteZip.parent().toString(), rc.remotePrivateJdk);
-                } else if (p.name().toLowerCase().endsWith(".tar.gz")) {
-                    rc.runRemoteAsString("rm", "-Rf", rc.remotePrivateJdk);
-                    rc.runRemoteAsString("tar", "-xf", remoteZip.toString(), "-d", remoteZip.parent().toString());
-                    rc.runRemoteAsString("mv", remoteZip.parent().toString(), rc.remotePrivateJdk);
-                } else {
-                    throw new NIllegalArgumentException(NMsg.ofC("unsupported file type : %s", p.name()));
+                try {
+                    String remoteZipLocation = NPath.of(rc.remoteWorkspace).resolve(p.name()).toString();
+                    NPath remoteZipPath = rc.connectionString != null ? NPath.of(rc.connectionString.withPath(remoteZipLocation)) : NPath.of(remoteZipLocation);
+                    try {
+                        remoteZipPath.mkParentDirs();
+                        p.copyTo(remoteZipPath);
+                    } catch (Exception ex) {
+                        if (rc.connectionString != null && !rc.localHost) {
+                            rc.runRemoteAsString("mkdir", "-p", rc.remoteWorkspace);
+                            String userHost = (rc.connectionString.userName() != null ? rc.connectionString.userName() + "@" : "") + rc.connectionString.host();
+                            NExec.of().command("scp", "-o", "StrictHostKeyChecking=no", p.toString(), userHost + ":" + remoteZipLocation.toString())
+                                    .failFast(true).grabbedAll();
+                        } else {
+                            throw ex;
+                        }
+                    }
+                    String remoteJdkTmp = NPath.of(rc.remoteWorkspace).resolve(".jdk-tmp-" + UUID.randomUUID()).toString();
+                    if (rc.remoteEnv().osFamily() == NOsFamily.WINDOWS && p.name().toLowerCase().endsWith(".zip")) {
+                        rc.runRemoteAsString("powershell", "-Command", "if (Test-Path '" + rc.remotePrivateJdk + "') { Remove-Item -Recurse -Force '" + rc.remotePrivateJdk + "' }");
+                        rc.runRemoteAsString("powershell", "-Command", "Expand-Archive -Path '" + remoteZipLocation + "' -DestinationPath '" + remoteJdkTmp + "' -Force");
+                        rc.runRemoteAsString("powershell", "-Command", "$j = Get-ChildItem -Path '" + remoteJdkTmp + "' -Filter 'java.exe' -Recurse | Select-Object -First 1; if ($j) { $h = $j.Directory.Parent.FullName; Move-Item -Path $h -Destination '" + rc.remotePrivateJdk + "' -Force }; Remove-Item -Recurse -Force '" + remoteJdkTmp + "'");
+                        rc.runRemoteAsString("powershell", "-Command", "if (Test-Path '" + remoteZipLocation + "') { Remove-Item -Recurse -Force '" + remoteZipLocation + "' }");
+                    } else if (p.name().toLowerCase().endsWith(".tar.gz") || p.name().toLowerCase().endsWith(".tgz")) {
+                        rc.runRemoteAsString("rm", "-Rf", rc.remotePrivateJdk, remoteJdkTmp);
+                        rc.runRemoteAsString("mkdir", "-p", remoteJdkTmp);
+                        rc.runRemoteAsString("tar", "-xf", remoteZipLocation, "-C", remoteJdkTmp);
+                        rc.runRemoteAsString("sh", "-c", "J=$(find " + remoteJdkTmp + " -type f -name java 2>/dev/null | head -n 1); if [ -n \"$J\" ]; then H=$(dirname $(dirname \"$J\")); mv \"$H\" " + rc.remotePrivateJdk + "; fi; rm -Rf " + remoteJdkTmp + " " + remoteZipLocation);
+                        rc.runRemoteAsString("rm", "-Rf", remoteZipLocation);
+                    } else if (p.name().toLowerCase().endsWith(".zip")) {
+                        rc.runRemoteAsString("rm", "-Rf", rc.remotePrivateJdk, remoteJdkTmp);
+                        rc.runRemoteAsString("mkdir", "-p", remoteJdkTmp);
+                        rc.runRemoteAsString("unzip", "-o", remoteZipLocation, "-d", remoteJdkTmp);
+                        rc.runRemoteAsString("sh", "-c", "J=$(find " + remoteJdkTmp + " -type f -name java 2>/dev/null | head -n 1); if [ -n \"$J\" ]; then H=$(dirname $(dirname \"$J\")); mv \"$H\" " + rc.remotePrivateJdk + "; fi; rm -Rf " + remoteJdkTmp + " " + remoteZipLocation);
+                        rc.runRemoteAsString("rm", "-Rf", remoteZipLocation);
+                    } else {
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported file type : %s", p.name()));
+                    }
+                }finally {
+                    z.get().delete();
                 }
             }
         }

@@ -520,9 +520,9 @@ public class JCshConnection extends SshConnectionBase {
     @Override
     public OutputStream getOutputStream(String from) {
         if (useFtp) {
-            return new JCshFileOutputStreamSftp(_connectionStringBuilder().path(from).build(), false, true);
+            return new JCshFileOutputStreamSftp(_connectionStringBuilder().path(from).build(), true, true);
         }
-        return new JCshFileOutputStreamScp(_connectionStringBuilder().path(from).build(), false);
+        return new JCshFileOutputStreamScp(_connectionStringBuilder().path(from).build(), true);
     }
 
     public void copyLocalToRemote(String from, String to, boolean mkdirs) {

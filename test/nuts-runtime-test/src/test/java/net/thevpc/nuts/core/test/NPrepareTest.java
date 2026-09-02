@@ -43,7 +43,7 @@ public class NPrepareTest {
         DefaultNPrepare prepare = new DefaultNPrepare();
         String customVersion = "0.8.5.0";
         prepare.version(NVersion.of(customVersion));
-        Assertions.assertEquals(customVersion, prepare.version());
+        Assertions.assertEquals(customVersion, prepare.version() == null ? null : prepare.version().toString());
     }
 
     @Test
@@ -60,11 +60,11 @@ public class NPrepareTest {
             apiId = NId.of("net.thevpc.nuts:nuts").builder().version(ws.apiVersion().toString()).build();
         }
 
-        // 1. Run prepare to stage artifacts into targetHome
+        // 1. Run prepare to stage artifacts into companionRepository
         Assertions.assertDoesNotThrow(() -> prepare.run());
 
         // 2. Verify staged repo directory exists and contains pushed JAR files
-        NPath repoPath = NPath.of("localhost").resolve(".m2/repository");
+        NPath repoPath = NPath.of(prepare.companionRepository());
         Assertions.assertTrue(repoPath.exists(), "Staged local repo directory should exist");
 
         NPath apiJarPath = repoPath.resolve(String.join("/", apiId.groupId().split("[.]")))

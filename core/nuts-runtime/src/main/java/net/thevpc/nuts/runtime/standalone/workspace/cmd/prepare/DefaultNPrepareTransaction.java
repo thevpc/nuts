@@ -57,23 +57,46 @@ class DefaultNPrepareTransaction implements AutoCloseable{
 
 
     public NPath companionJar(NId id) {
-        return NPath.of(connectionString.withPath(NPath.ofMavenLayout(id,".jar").toAbsolute(companionRepository).toString()));
+        String pathStr = NPath.ofMavenLayout(id, ".jar").toAbsolute(companionRepository).toString();
+        if (connectionString != null) {
+            return NPath.of(connectionString.withPath(pathStr));
+        } else {
+            return NPath.of(pathStr);
+        }
     }
 
     public void pushId(NId pid) {
-        NDefinition def = null;
-        def = NSearch.of().addId(pid).latest(true).getResultDefinitions().findFirst().get();
+        NDefinition def = NSearch.of().addId(pid).latest(true).getResultDefinitions().findFirst().orElse(null);
+        if (def == null) {
+            def = NSearch.of().addId(pid.builder().version((String) null).build()).latest(true).getResultDefinitions().findFirst().orElse(null);
+        }
+        if (def == null) {
+            return;
+        }
         NPath apiJar = def.content().orNull();
         NId targetId = def.id() != null ? def.id() : pid;
         NPath to;
-        if(apiJar!=null) {
-            to = NPath.of(connectionString.withPath(NPath.ofMavenLayout(targetId,".jar").toAbsolute(companionRepository).toString()));
+        if (apiJar != null) {
+            String jarPathStr = NPath.ofMavenLayout(targetId, ".jar").toAbsolute(companionRepository).toString();
+            to = connectionString != null ? NPath.of(connectionString.withPath(jarPathStr)) : NPath.of(jarPathStr);
             if (!to.exists()) {
                 to.mkParentDirs();
-                apiJar.copyTo(to);
+                try {
+                    apiJar.copyTo(to);
+                } catch (Exception ex) {
+                    if (connectionString != null && !localHost) {
+                        runRemoteAsString("mkdir", "-p", NPath.of(jarPathStr).parent().toString());
+                        String userHost = (connectionString.userName() != null ? connectionString.userName() + "@" : "") + connectionString.host();
+                        NExec.of().command("scp", "-o", "StrictHostKeyChecking=no", apiJar.toString(), userHost + ":" + jarPathStr)
+                                .failFast(true).grabbedAll();
+                    } else {
+                        throw ex;
+                    }
+                }
             }
         }
-        to = NPath.of(connectionString.withPath(NPath.ofMavenLayout(targetId,".nuts").toAbsolute(companionRepository).toString()));
+        String nutsPathStr = NPath.ofMavenLayout(targetId, ".nuts").toAbsolute(companionRepository).toString();
+        to = connectionString != null ? NPath.of(connectionString.withPath(nutsPathStr)) : NPath.of(nutsPathStr);
         if (!to.exists()) {
             to.mkParentDirs();
             to.writeString(NDescriptorWriter.of().formatPlain(def.descriptor()));

@@ -3,6 +3,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NGetter;
+import net.thevpc.nuts.util.NSince;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
@@ -227,6 +228,16 @@ public class NPathNameParts {
             extension = "." + extension;
         }
         return baseName + extension;
+    }
+
+    @NSince("1.0.0")
+    public boolean hasDot() {
+        return !fullExtension.isEmpty();
+    }
+
+    @NSince("1.0.0")
+    public boolean hasExtension() {
+        return !extension.isEmpty();
     }
 
     @Override

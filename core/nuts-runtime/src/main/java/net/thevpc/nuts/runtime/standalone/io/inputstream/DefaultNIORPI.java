@@ -626,9 +626,23 @@ public class DefaultNIORPI implements NIORPI {
         if (name == null) {
             name = "";
         }
+        String prefix1=null;
+        String suffix1=null;
+        if(!NBlankable.isBlank(name)){
+            NPath p = NPath.of(name);
+            if (p != null) {
+                NPathNameParts nPathNameParts = p.nameParts(NPathExtensionType.SMART);
+                prefix1=nPathNameParts.baseName();
+                suffix1=nPathNameParts.fullExtension();
+            }
+        }
+        if(prefix1==null){
+            prefix1=NIOUtils.getFileExtension(name, false, true);
+            suffix1=(prefix1.length() > 0) ? name.substring(0, name.length() - prefix1.length()) : name;
+        }
         rootFolder.mkdirs();
-        NStringBuilder ext = new NStringBuilderImpl(NIOUtils.getFileExtension(name, false, true));
-        NStringBuilder prefix = new NStringBuilderImpl((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        NStringBuilder prefix = new NStringBuilderImpl(prefix1);
+        NStringBuilder ext = new NStringBuilderImpl(suffix1);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");
             if (!folder) {
