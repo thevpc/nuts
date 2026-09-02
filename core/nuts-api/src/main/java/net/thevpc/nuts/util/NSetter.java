@@ -32,10 +32,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Marks a method as a property setter (mutator), particularly in fluent or
+ * builder-style APIs where setter methods do not follow standard {@code set...()}
+ * naming conventions. Used by Nuts reflection, object mappers, and serialization.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.SOURCE)

@@ -19,9 +19,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item {{if (!docVersion || docVersion==('v'+latestApiVersion)) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-naf.html">{{('v'+latestApiVersion)}} (Latest)</a>
+                        <a class="dropdown-item {{if (!docVersion || docVersion==('v'+latestApiVersion)) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/{{if (pageId=='doc-api') 'doc-api.html' else 'doc-naf.html'}}">{{('v'+latestApiVersion)}} (Latest)</a>
                         {{:for vv:allNonLatestVersions}}
-                        <a class="dropdown-item {{if (docVersion==vv) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{vv}}/doc-naf.html">{{vv}}</a>
+                        <a class="dropdown-item {{if (docVersion==vv) 'active' else ''}}" href="{{either(assetPrefix,'')}}versions/{{vv}}/{{if (pageId=='doc-api') 'doc-api.html' else 'doc-naf.html'}}">{{vv}}</a>
                         {{:end}}
 
                     </div>
@@ -41,10 +41,8 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ if(pageId=='doc-naf') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-naf.html">Developer Documentation</a></li>
-                            <li><a class="dropdown-item {{ if(pageId=='doc-nuts') 'not-active' else '' }}"
-                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-nuts.html">User Documentation</a></li>
-                            <li><a class="dropdown-item {{ if(pageId=='doc-nuts-help') 'not-active' else '' }}"
-                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-nuts-help.html">Command Help</a></li>
+                            <li><a class="dropdown-item {{ if(pageId=='doc-api') 'not-active' else '' }}"
+                                   href="{{either(assetPrefix,'')}}versions/{{('v'+latestApiVersion)}}/doc-api.html">Core API Javadoc</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='compatibility') 'not-active' else '' }}"
                                    href="{{either(assetPrefix,'')}}compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item {{ if(pageId=='contrib') 'not-active' else '' }}"

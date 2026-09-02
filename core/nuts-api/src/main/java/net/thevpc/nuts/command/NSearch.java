@@ -273,7 +273,7 @@ public interface NSearch extends NWorkspaceCmd {
     boolean isNutsApplication();
 
     /**
-     * set nuts app filter. if true Nuts app (implementing NApplication) only
+     * set nuts app filter. if true Nuts app (@NApp or NApplicationHandler) only
      * are retrieved.
      *
      * @param enable ap filter
@@ -291,7 +291,7 @@ public interface NSearch extends NWorkspaceCmd {
     boolean isPlatformApplication();
 
     /**
-     * set nuts app filter. if true Nuts app (implementing NApplication) only
+     * set nuts app filter. if true Nuts app (@NApp or NApplicationHandler) only
      * are retrieved.
      *
      * @param enable ap filter

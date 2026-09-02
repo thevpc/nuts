@@ -113,10 +113,6 @@
                             <li><a class="dropdown-item "
                                    href="versions/v1.0.0/doc-nuts-help.html">Command Help</a></li>
                             <li><a class="dropdown-item "
-                                   href="versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
-                            <li><a class="dropdown-item "
-                                   href="compatibility.html">API Compatibility</a></li>
-                            <li><a class="dropdown-item "
                                    href="faq.html">FAQ</a></li>
                             <li><a class="dropdown-item "
                                    href="contrib.html">Contributing</a></li>
@@ -1730,7 +1726,7 @@
                                 </div>
 
                                 <div class="app-detail__body">
-                                    <H4 class="md-title-2">T0016- Google Tsunami (Security Scanner)</H4>Google Tsunami is a general purpose network security scanner with an extensible plugin system for detecting high severity vulnerabilities with high confidence.
+                                    <H4 class="md-title-2">T0016- Google Tsunami (Security Scanner)</H4><p class="md-phrase">Google Tsunami is a general purpose network security scanner with an extensible plugin system for detecting high severity vulnerabilities with high confidence.</p>
                                 </div>
 
                             </div>
@@ -1994,7 +1990,7 @@
                                     <H4 class="md-title-2">G0001- Netbeans Launcher (Netbeans IDE multi-workspace Launcher)</H4><pre><code class="language-">nuts install netbeans-launcher
 # Example of usage
 nuts netbeans-launcher
-</code></pre><ul class="md-ul"><li class="md-uli">G0002- Pangaea Note (Note Taking Application)</li></ul><code class="md-code md-code-ac3"></code>
+</code></pre><ul class="md-ul"><li class="md-uli">G0002- Pangaea Note (Note Taking Application)</li></ul><p class="md-phrase"><code class="md-code md-code-ac3"></code></p>
                                 </div>
 
                             </div>
@@ -2074,7 +2070,7 @@ nuts netbeans-launcher
                                 </div>
 
                                 <div class="app-detail__body">
-                                    <H4 class="md-title-2">T0018- Netbeans IDE</H4>install a portable version of PostgreSQL right from nuts
+                                    <H4 class="md-title-2">T0018- Netbeans IDE</H4><p class="md-phrase">install a portable version of PostgreSQL right from nuts</p>
                                 </div>
 
                             </div>
@@ -2236,7 +2232,7 @@ nuts netbeans-launcher
                                 </div>
 
                                 <div class="app-detail__body">
-                                    <div class="alert alert-info mb-4"><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b>  : Productivity / Time Series Dashboard</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b>  : Desktop Graphical User Interface</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b>  : <a href="https://binjr.eu" class="md-link">https://binjr.eu</a></p></li></ul></div>Time Series Browser<H4 class="md-title-2">Install</H4><pre><code class="language-">nuts install eu.binjr:binjr-core
+                                    <div class="alert alert-info mb-4"><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Category</b>  : Productivity / Time Series Dashboard</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Interface</b>  : Desktop Graphical User Interface</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Website</b>  : <a href="https://binjr.eu" class="md-link">https://binjr.eu</a></p></li></ul></div><p class="md-phrase">Time Series Browser</p><H4 class="md-title-2">Install</H4><pre><code class="language-">nuts install eu.binjr:binjr-core
 </code></pre><H4 class="md-title-2">Run</H4><pre><code class="language-">nuts binjr-core
 </code></pre>
                                 </div>
@@ -3346,13 +3342,13 @@ nuts ntomcat --start
                                 </div>
 
                                 <div class="app-detail__body">
-                                    <H4 class="md-title-2">T0017- PostgreSQL Server</H4>install a portable version of PostgreSQL right from nuts<H4 class="md-title-3">install</H4><pre><code class="language-bash">nuts install org.postgresql:postgresql-server
+                                    <H4 class="md-title-2">T0017- PostgreSQL Server</H4><p class="md-phrase">install a portable version of PostgreSQL right from nuts</p><H4 class="md-title-3">install</H4><pre><code class="language-bash">nuts install org.postgresql:postgresql-server
 </code></pre><H4 class="md-title-3">prepare pgdata</H4><pre><code class="language-bash">PGDATA=~/pgdata
 nuts org.postgresql:postgresql-server initdb -D $PGDATA
 echo &quot;port = 8666&quot; &gt;&gt; ~/pgdata/postgresql.conf
 echo &quot;unix_socket_directories = &#39;/tmp&#39;&quot; &gt;&gt; $PGDATA/postgresql.conf
 </code></pre><H4 class="md-title-3">run the server</H4><pre><code class="language-bash">nuts org.postgresql:postgresql-server pg_ctl -D ~/pgdata -l ~/pgdata/logfile start
-</code></pre>> psql is not included; users can connect via psql -h localhost -p 8666 if they have the PostgreSQL client installed separately.
+</code></pre><p class="md-phrase">> psql is not included; users can connect via psql -h localhost -p 8666 if they have the PostgreSQL client installed separately.</p>
                                 </div>
 
                             </div>

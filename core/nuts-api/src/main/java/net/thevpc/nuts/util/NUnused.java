@@ -32,10 +32,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Indicates that an annotated element (method parameter, field, or method)
+ * is intentionally unused in the current implementation, preserved for API
+ * signature compatibility or future extension.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.SOURCE)

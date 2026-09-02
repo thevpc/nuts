@@ -32,10 +32,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Directs Nuts reflection, object mapping, and serialization mechanisms to
+ * ignore and exclude the annotated field or method from property inspection and export.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.SOURCE)

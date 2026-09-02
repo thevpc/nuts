@@ -32,10 +32,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Documents that a method return value, parameter, field, or type use
+ * must not be {@code null}.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 1.0.0
  */
 @NSince(value = "1.0.0")

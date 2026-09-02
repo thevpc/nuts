@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="../../assets/images/favicon.ico" rel="icon"/>
+    <title>Nuts Java Package Manager</title>
+    <meta name="description" content="Nuts Java Package Manager Website">
+    <meta name="author" content="thevpc">
+
+    <!-- Stylesheet
+    ============================== -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="../../assets/vendor/bootstrap/css/bootstrap.min.css"/>
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" type="text/css" href="../../assets/vendor/font-awesome/css/all.min.css"/>
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" type="text/css" href="../../assets/vendor/magnific-popup/magnific-popup.min.css"/>
+    <!-- Highlight Syntax -->
+    <link rel="stylesheet" type="text/css" href="../../assets/vendor/highlight.js/styles/github.css"/>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/stylesheet.css"/>
+    <!-- Shared navbar (all pages) -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/stylesheet-navbar.css"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2SH2Y1383S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2SH2Y1383S');
+    </script>
+
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+    <title>Core API Reference (Javadoc) — Nuts Application Framework</title>
+    <!-- Doc-specific overrides -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/stylesheet-docs.css"/>
+</head>
+
+<body>
+
+<!-- Reading progress bar -->
+<div id="doc-progress"></div>
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
+
+<div id="main-wrapper" class="documentation-main-wrapper">
+
+    <!-- Header NAF -->
+<header id="header" class="sticky-top">
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+        <div class="container-fluid">
+
+            <button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button">
+                <span></span><span class="w-75"></span><span class="w-50"></span>
+            </button>
+
+            <!-- Brand + version dropdown -->
+            <div class="nuts-brand-wrapper d-inline-flex align-items-center">
+                <a class="nuts-brand" href="../../naf.html" title="NAF — Nuts Application Framework">
+                    <img src="../../assets/images/nuts-icon.png" alt="NAF" width="28"/>
+                    <span class="nuts-brand__name">NAF</span>
+                </a>
+                <div class="dropdown nuts-version-dropdown-header ml-2 d-inline-block">
+                    <button class="btn btn-sm dropdown-toggle nuts-version-badge" type="button" id="headerNafVersionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        v0.8.8
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
+                        <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
+                        <a class="dropdown-item " href="../../versions/v1.0.0/doc-api.html">v1.0.0 (Latest)</a>
+                        
+                        <a class="dropdown-item " href="../../versions/v0.8.9/doc-api.html">v0.8.9</a>
+                        
+                        <a class="dropdown-item active" href="../../versions/v0.8.8/doc-api.html">v0.8.8</a>
+                        
+                        <a class="dropdown-item " href="../../versions/v0.8.7/doc-api.html">v0.8.7</a>
+                        
+
+                    </div>
+                </div>
+            </div>
+
+            <button class="navbar-toggler ml-auto" type="button"
+                    data-toggle="collapse" data-target="#header-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <div id="header-nav" class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav nuts-nav">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item "
+                                   href="../../versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                            <li><a class="dropdown-item not-active"
+                                   href="../../versions/v1.0.0/doc-api.html">Core API Javadoc</a></li>
+                            <li><a class="dropdown-item "
+                                   href="../../compatibility.html">API Compatibility</a></li>
+                            <li><a class="dropdown-item "
+                                   href="../../contrib.html">Contributing</a></li>
+                            <li><a class="dropdown-item "
+                                   href="../../faq.html">FAQ</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="https://github.com/thevpc/nuts" target="_blank"
+                           class="nuts-nav__github"><i class="fab fa-github"></i></a></li>
+
+                    <!-- Back to Nuts -->
+                    <li><a href="../../index.html" class="nuts-nav__back-nuts">
+                        &larr; Nuts Package Manager
+                    </a></li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</header>
+<!-- Header NAF End -->
+
+
+    <!-- Content -->
+    <div id="content" role="main">
+
+        <!-- ===================== SIDEBAR ===================== -->
+        <div class="idocs-navigation">
+            <div class="nav-search">
+                <input type="text" id="docs-search-input" placeholder="Search API packages & classes..." autocomplete="off">
+            </div>
+            <ul class="nav flex-column">
+                
+            </ul>
+        </div>
+
+        <!-- ===================== MAIN CONTENT ===================== -->
+        <div class="idocs-content">
+            <div class="container">
+
+                <section id="doc-title-section">
+                    
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing API documentation for version <strong>v0.8.8</strong>. 
+                            <a href="../../versions/v1.0.0/doc-api.html" class="alert-link">Switch to latest version (v1.0.0) &rarr;</a>
+                        </div>
+                    </div>
+                    
+                    <h1>Core API Reference (Javadoc) <span class="badge badge-secondary font-weight-normal small ml-2">v0.8.8</span></h1>
+                    <p class="lead">Complete Javadoc reference for the Nuts Core API (<code>nuts-api</code>).</p>
+                    <div class="alert alert-info">
+                        This page provides detailed class and interface references, methods, fields, and inheritance hierarchies. For usage guides and tutorials, see <a href="doc-nuts.html">User Documentation</a> and <a href="doc-naf.html">Developer Documentation</a>.
+                    </div>
+                    <hr class="divider">
+                </section>
+
+                
+
+            </div>
+        </div>
+        <!-- Content end -->
+
+    </div>
+
+    <!-- Footer
+============================ -->
+<footer id="footer">
+    <div class="container">
+        <ul class="social-icons">
+            <li>
+                <a href="https://github.com/thevpc/nuts" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/tbensalah/" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.facebook.com/tbensalah/" target="_blank" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </li>
+        </ul>
+        <p>
+            Copyright © 2018-2026 Nuts Package Manager Team.
+            <br>
+            Generated with <a class="btn-link" target="_blank" href="apps.html#app-nsite">nsite</a> on <span id="build-time"></span>
+        </p>
+    </div>
+</footer>
+<!-- Footer end -->
+
+
+</div>
+
+<!-- Back To Top -->
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript
+============================ -->
+<script src="../../assets/vendor/jquery/jquery.min.js"></script>
+<script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Highlight JS -->
+<script src="../../assets/vendor/highlight.js/highlight.min.js"></script>
+<!-- Easing -->
+<script src="../../assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<!-- Magnific Popup -->
+<script src="../../assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Custom Script -->
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/nuts-docs.js"></script>
+<script src="../../assets/js/common.js"></script>
+</body>
+
+</html>

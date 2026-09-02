@@ -32,10 +32,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Marks a method as a property getter (accessor), particularly in fluent or
+ * record-style APIs where getter methods do not follow standard {@code get...()} or {@code is...()}
+ * naming conventions. Used by Nuts reflection, object mappers, and serialization.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.SOURCE)

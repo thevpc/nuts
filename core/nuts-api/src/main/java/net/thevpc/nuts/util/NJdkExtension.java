@@ -32,10 +32,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
+ * Indicates that a Nuts interface or class extends, complements, or backports
+ * standard Java SDK / JDK functionality to bridge version gaps.
  *
- * @app.category SPI Base
+ * @app.category Utility
  * @since 1.0.0
  */
 @NSince(value = "1.0.0")

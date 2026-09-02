@@ -21,84 +21,84 @@ public class NMainArgs {
     private String[] args;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of {@code NMainArgs} with the given arguments.
      *
-     * @param args args
-     * @return of result
+     * @param args application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs of(String[] args) {
         return new NMainArgs().args(args);
     }
 
     /**
-     * Creates a new instance of of handled.
+     * Creates a new instance of {@code NMainArgs} with the given arguments in handled mode.
      *
-     * @param args args
-     * @return of handled result
+     * @param args application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofHandled(String[] args) {
         return new NMainArgs().args(args).handleMode(NApplicationHandleMode.HANDLE);
     }
 
     /**
-     * Creates a new instance of of propagated.
+     * Creates a new instance of {@code NMainArgs} with the given arguments in propagated mode.
      *
-     * @param args args
-     * @return of propagated result
+     * @param args application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofPropagated(String[] args) {
         return new NMainArgs().args(args).handleMode(NApplicationHandleMode.PROPAGATE);
     }
 
     /**
-     * Creates a new instance of of exit.
+     * Creates a new instance of {@code NMainArgs} with the given arguments in exit mode.
      *
-     * @param args args
-     * @return of exit result
+     * @param args application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofExit(String[] args) {
         return new NMainArgs().args(args).handleMode(NApplicationHandleMode.EXIT);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance of {@code NMainArgs} with the given application handler and arguments.
      *
-     * @param application application
-     * @param args        args
-     * @return of result
+     * @param application application handler
+     * @param args        application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs of(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).nutsArgs(args);
     }
 
     /**
-     * Creates a new instance of of handled.
+     * Creates a new instance of {@code NMainArgs} with the given application handler and arguments in handled mode.
      *
-     * @param application application
-     * @param args        args
-     * @return of handled result
+     * @param application application handler
+     * @param args        application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofHandled(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.HANDLE);
     }
 
     /**
-     * Creates a new instance of of propagated.
+     * Creates a new instance of {@code NMainArgs} with the given application handler and arguments in propagated mode.
      *
-     * @param application application
-     * @param args        args
-     * @return of propagated result
+     * @param application application handler
+     * @param args        application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofPropagated(NApplicationHandler application, String[] args) {
         return new NMainArgs().applicationInstance(application).args(args).handleMode(NApplicationHandleMode.PROPAGATE);
     }
 
     /**
-     * Creates a new instance of of exit.
+     * Creates a new instance of {@code NMainArgs} with the given application handler and arguments in exit mode.
      *
-     * @param application application
-     * @param args        args
-     * @return of exit result
+     * @param application application handler
+     * @param args        application arguments
+     * @return a new {@code NMainArgs} instance
      */
     public static NMainArgs ofExit(NApplicationHandler application, String[] args) {
         return new NMainArgs().args(args).applicationInstance(application).handleMode(NApplicationHandleMode.EXIT);
@@ -106,19 +106,19 @@ public class NMainArgs {
 
 
     /**
-     * Handle mode.
+     * Gets the application handle mode.
      *
-     * @return handle mode result
+     * @return current handle mode
      */
     public NApplicationHandleMode handleMode() {
         return handleMode;
     }
 
     /**
-     * Handle mode.
+     * Sets the application handle mode.
      *
-     * @param mode mode
-     * @return handle mode result
+     * @param mode handle mode
+     * @return {@code this} instance
      */
     public NMainArgs handleMode(NApplicationHandleMode mode) {
         this.handleMode = mode;
@@ -126,19 +126,19 @@ public class NMainArgs {
     }
 
     /**
-     * Application instance.
+     * Gets the application handler instance.
      *
-     * @return application instance result
+     * @return application handler instance
      */
     public NApplicationHandler applicationInstance() {
         return applicationInstance;
     }
 
     /**
-     * Application instance.
+     * Sets the application handler instance.
      *
-     * @param applicationInstance application instance
-     * @return application instance result
+     * @param applicationInstance application handler instance
+     * @return {@code this} instance
      */
     public NMainArgs applicationInstance(NApplicationHandler applicationInstance) {
         this.applicationInstance = applicationInstance;
@@ -146,19 +146,19 @@ public class NMainArgs {
     }
 
     /**
-     * Nuts args.
+     * Gets the Nuts bootstrap arguments.
      *
-     * @return nuts args result
+     * @return Nuts bootstrap arguments
      */
     public String[] nutsArgs() {
         return nutsArgs;
     }
 
     /**
-     * Nuts args.
+     * Sets the Nuts bootstrap arguments.
      *
-     * @param nutsArgs nuts args
-     * @return nuts args result
+     * @param nutsArgs Nuts bootstrap arguments
+     * @return {@code this} instance
      */
     public NMainArgs nutsArgs(String[] nutsArgs) {
         this.nutsArgs = nutsArgs;
@@ -166,10 +166,10 @@ public class NMainArgs {
     }
 
     /**
-     * Nuts args line.
+     * Parses and sets Nuts arguments from a single command-line string.
      *
-     * @param nutsArgs nuts args
-     * @return nuts args line result
+     * @param nutsArgs command-line string
+     * @return {@code this} instance
      */
     public NMainArgs nutsArgsLine(String nutsArgs) {
         this.nutsArgs = NBootCmdLine.parseDefault(nutsArgs);
@@ -177,11 +177,11 @@ public class NMainArgs {
     }
 
     /**
-     * Nuts args line.
+     * Parses and sets Nuts arguments from a command-line string with additional arguments.
      *
-     * @param nutsArgs  nuts args
-     * @param extraArgs extra args
-     * @return nuts args line result
+     * @param nutsArgs  command-line string
+     * @param extraArgs additional arguments
+     * @return {@code this} instance
      */
     public NMainArgs nutsArgsLine(String nutsArgs, String[] extraArgs) {
         List<String> all = new ArrayList<>();
@@ -198,19 +198,19 @@ public class NMainArgs {
     }
 
     /**
-     * Args.
+     * Gets the application arguments.
      *
-     * @return args result
+     * @return application arguments
      */
     public String[] args() {
         return args;
     }
 
     /**
-     * Args.
+     * Sets the application arguments.
      *
-     * @param args args
-     * @return args result
+     * @param args application arguments
+     * @return {@code this} instance
      */
     public NMainArgs args(String[] args) {
         this.args = args;
