@@ -139,8 +139,7 @@ public abstract class SshConnectionBase implements SshConnection {
             }
         }
         if (escape) {
-            escaped.append("\"");
-            return escaped.toString();
+            return "\"" + escaped.toString() + "\"";
         } else {
             return notEscaped.toString();
         }

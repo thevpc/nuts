@@ -11,7 +11,7 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.util.NBlankable;
 
-class DefaultNPrepareTransaction implements AutoCloseable{
+class DefaultNPrepareTransaction implements AutoCloseable {
     public NEnv remoteEnv;
     public NConnectionString connectionString = null;
     public NVersion apiVersion = null;
@@ -23,6 +23,7 @@ class DefaultNPrepareTransaction implements AutoCloseable{
     public String remotePrivateJdk = null;
     public String remoteJava = null;
     public boolean localHost;
+    public String cwd = null;
 
     public DefaultNPrepareTransaction(NVersion apiVersion, NConnectionString connectionString) {
         this.apiVersion = apiVersion;
@@ -55,14 +56,13 @@ class DefaultNPrepareTransaction implements AutoCloseable{
     }
 
 
-
     public NPath companionJar(NId id) {
         String pathStr = NPath.ofMavenLayout(id, ".jar").toAbsolute(companionRepository).toString();
-        if (connectionString != null) {
-            return NPath.of(connectionString.withPath(pathStr));
-        } else {
+//        if (connectionString != null) {
+//            return NPath.of(connectionString.withPath(pathStr));
+//        } else {
             return NPath.of(pathStr);
-        }
+//        }
     }
 
     public void pushId(NId pid) {
@@ -81,18 +81,7 @@ class DefaultNPrepareTransaction implements AutoCloseable{
             to = connectionString != null ? NPath.of(connectionString.withPath(jarPathStr)) : NPath.of(jarPathStr);
             if (!to.exists()) {
                 to.mkParentDirs();
-                try {
-                    apiJar.copyTo(to);
-                } catch (Exception ex) {
-                    if (connectionString != null && !localHost) {
-                        runRemoteAsString("mkdir", "-p", NPath.of(jarPathStr).parent().toString());
-                        String userHost = (connectionString.userName() != null ? connectionString.userName() + "@" : "") + connectionString.host();
-                        NExec.of().command("scp", "-o", "StrictHostKeyChecking=no", apiJar.toString(), userHost + ":" + jarPathStr)
-                                .failFast(true).grabbedAll();
-                    } else {
-                        throw ex;
-                    }
-                }
+                apiJar.copyTo(to);
             }
         }
         String nutsPathStr = NPath.ofMavenLayout(targetId, ".nuts").toAbsolute(companionRepository).toString();
@@ -103,8 +92,13 @@ class DefaultNPrepareTransaction implements AutoCloseable{
         }
     }
 
+    public void cd(String dir) {
+        cwd=dir;
+    }
+
     public String runRemoteAsString(String... cmd) {
-        NExec e = NExec.of();
+        NExec e = NExec.ofSystem().directory(
+                NBlankable.isBlank(cmd) ? NPath.of(remoteEnv().userHome()) : NPath.of(cwd));
         if (!isLocalhost()) {
             e.at(connectionString);
         }
@@ -124,7 +118,7 @@ class DefaultNPrepareTransaction implements AutoCloseable{
 
     @Override
     public void close() {
-        if(companionRepository!=null){
+        if (companionRepository != null) {
             NPath.of(connectionString.withPath(companionRepository));
         }
     }

@@ -38,10 +38,10 @@ public class DefaultNPrepare extends AbstractNPrepare {
             if (NBlankable.isBlank(rc.apiVersion)) {
                 rc.apiVersion = NWorkspace.of().apiVersion();
                 rc.rtVersion = NWorkspace.of().runtimeId().version();
-                rc.appVersion = NWorkspace.of().apiId().version();
+                rc.appVersion = NWorkspace.of().appId().version();
             } else {
                 rc.rtVersion = NSearch.of(NWorkspace.of().runtimeId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().map(NId::version).orElse(rc.apiVersion);
-                rc.appVersion = NSearch.of(NWorkspace.of().appId().builder().version(NVersion.of(rc.apiVersion + ".0").toAtLeast()).build()).getResultIds().findFirst().map(NId::version).orElse(rc.apiVersion);
+                rc.appVersion = NSearch.of(NWorkspace.of().appId().builder().version(rc.apiVersion.toAtLeast()).build()).getResultIds().findFirst().map(NId::version).orElse(rc.apiVersion);
             }
             rc.remoteUserHome = rc.remoteEnv().userHome();
             rc.remoteWorkspace = workspace();
@@ -60,16 +60,14 @@ public class DefaultNPrepare extends AbstractNPrepare {
 
             NWorkspace workspace = NWorkspace.of();
 
-            NId nutsApiId = NWorkspace.of().apiId().builder().version(rc.rtVersion).build();
-            NId nutsAppId = NId.of("net.thevpc.nuts:nuts-app#" + rc.appVersion);
-            NId nutsCoreId = NWorkspace.of().appId().builder().version(rc.appVersion).build();
+            NId nutsApiId = NWorkspace.of().apiId().builder().version(rc.apiVersion).build();
+            NId nutsAppId = NWorkspace.of().appId().builder().version(rc.appVersion).build();
             NId nutsBootId = NId.of("net.thevpc.nuts:nuts-boot#" + rc.apiVersion);
             NId nutsRuntimeId = workspace.runtimeId().builder().version(rc.rtVersion).build();
 
             Set<NId> deps = new HashSet<>();
             deps.add(nutsApiId);
             deps.add(nutsAppId);
-            deps.add(nutsCoreId);
             deps.add(nutsBootId);
             deps.add(nutsRuntimeId);
             deps.addAll(
@@ -170,22 +168,15 @@ public class DefaultNPrepare extends AbstractNPrepare {
             if (z.isPresent()) {
                 NPath p = NPath.ofTempFile(z.get().name());
                 z.get().copyTo(p);
+                NPath remoteZip = NPath.of(rc.remoteWorkspace).resolve(p.name());
+                NPath remoteZipAbsolute = rc.connectionString != null ? NPath.of(rc.connectionString.withPath(remoteZip.toString())) : NPath.of(remoteZip.toString());
+                NPath remoteZipPath = null;
+                rc.cd(rc.remoteWorkspace);
                 try {
-                    String remoteZipLocation = NPath.of(rc.remoteWorkspace).resolve(p.name()).toString();
-                    NPath remoteZipPath = rc.connectionString != null ? NPath.of(rc.connectionString.withPath(remoteZipLocation)) : NPath.of(remoteZipLocation);
-                    try {
-                        remoteZipPath.mkParentDirs();
-                        p.copyTo(remoteZipPath);
-                    } catch (Exception ex) {
-                        if (rc.connectionString != null && !rc.localHost) {
-                            rc.runRemoteAsString("mkdir", "-p", rc.remoteWorkspace);
-                            String userHost = (rc.connectionString.userName() != null ? rc.connectionString.userName() + "@" : "") + rc.connectionString.host();
-                            NExec.of().command("scp", "-o", "StrictHostKeyChecking=no", p.toString(), userHost + ":" + remoteZipLocation.toString())
-                                    .failFast(true).grabbedAll();
-                        } else {
-                            throw ex;
-                        }
-                    }
+                    remoteZipAbsolute.mkParentDirs();
+                    p.copyTo(remoteZipAbsolute);
+                    remoteZipPath = remoteZipAbsolute;
+                    String remoteZipLocation = remoteZip.toString();
                     String remoteJdkTmp = NPath.of(rc.remoteWorkspace).resolve(".jdk-tmp-" + UUID.randomUUID()).toString();
                     if (rc.remoteEnv().osFamily() == NOsFamily.WINDOWS && p.name().toLowerCase().endsWith(".zip")) {
                         rc.runRemoteAsString("powershell", "-Command", "if (Test-Path '" + rc.remotePrivateJdk + "') { Remove-Item -Recurse -Force '" + rc.remotePrivateJdk + "' }");
@@ -197,18 +188,33 @@ public class DefaultNPrepare extends AbstractNPrepare {
                         rc.runRemoteAsString("mkdir", "-p", remoteJdkTmp);
                         rc.runRemoteAsString("tar", "-xf", remoteZipLocation, "-C", remoteJdkTmp);
                         rc.runRemoteAsString("sh", "-c", "J=$(find " + remoteJdkTmp + " -type f -name java 2>/dev/null | head -n 1); if [ -n \"$J\" ]; then H=$(dirname $(dirname \"$J\")); mv \"$H\" " + rc.remotePrivateJdk + "; fi; rm -Rf " + remoteJdkTmp + " " + remoteZipLocation);
-                        rc.runRemoteAsString("rm", "-Rf", remoteZipLocation);
                     } else if (p.name().toLowerCase().endsWith(".zip")) {
                         rc.runRemoteAsString("rm", "-Rf", rc.remotePrivateJdk, remoteJdkTmp);
                         rc.runRemoteAsString("mkdir", "-p", remoteJdkTmp);
                         rc.runRemoteAsString("unzip", "-o", remoteZipLocation, "-d", remoteJdkTmp);
                         rc.runRemoteAsString("sh", "-c", "J=$(find " + remoteJdkTmp + " -type f -name java 2>/dev/null | head -n 1); if [ -n \"$J\" ]; then H=$(dirname $(dirname \"$J\")); mv \"$H\" " + rc.remotePrivateJdk + "; fi; rm -Rf " + remoteJdkTmp + " " + remoteZipLocation);
-                        rc.runRemoteAsString("rm", "-Rf", remoteZipLocation);
                     } else {
                         throw new NIllegalArgumentException(NMsg.ofC("unsupported file type : %s", p.name()));
                     }
-                }finally {
-                    z.get().delete();
+                } catch (Exception ex) {
+                    if (rc.connectionString != null && !rc.localHost) {
+                        rc.runRemoteAsString("mkdir", "-p", rc.remoteWorkspace);
+                        String userHost = (rc.connectionString.userName() != null ? rc.connectionString.userName() + "@" : "") + rc.connectionString.host();
+                        NExec.ofSystem().command("scp", "-o", "StrictHostKeyChecking=no", p.toString(), userHost + ":" + remoteZip.toString())
+                                .failFast(true).grabbedAll();
+                        remoteZipPath = remoteZip;
+                    } else {
+                        throw ex;
+                    }
+                } finally {
+                    p.delete();
+                    if(remoteZipPath!=null){
+                        try {
+                            remoteZipPath.delete();
+                        }catch(Exception ex){
+                            //just ignore
+                        }
+                    }
                 }
             }
         }

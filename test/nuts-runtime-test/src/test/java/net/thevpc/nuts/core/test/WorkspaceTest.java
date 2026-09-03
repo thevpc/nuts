@@ -56,6 +56,10 @@ public class WorkspaceTest {
                 NPath.of(new File(wsPath, "cache")),
                 NPath.of(NStoreKey.ofCache()));
         Assertions.assertEquals(0, NWorkspace.of().repositories().size());
+        Assertions.assertEquals("1.0.0", NWorkspace.of().apiId().version().toString());
+        Assertions.assertEquals("1.0.0", NWorkspace.of().appId().version().toString());
+        Assertions.assertEquals("1.0.0.0", NWorkspace.of().runtimeId().version().toString());
+
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of().getRepositories()[0].getName() +
 //                        "/" + NRepositories.of().getRepositories()[0].getUuid()).getPath(),

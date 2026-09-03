@@ -13,7 +13,35 @@ public class RnshExecTargetSPI implements NExecTargetSPI {
 
     @Override
     public int exec(NExecTargetCommandContext context) {
-        return  RnshPool.of().get(context.connectionString()).exec(context.command(), context.isRawCommand(), context.in(), context.out(), context.err());
+        String dir = context.execCommand() != null && context.execCommand().directory() != null ? context.execCommand().directory().toString() : null;
+        boolean hasDir = !net.thevpc.nuts.util.NBlankable.isBlank(dir);
+        String[] cmd = context.command();
+        if (hasDir) {
+            if (context.isRawCommand()) {
+                cmd = new String[]{"cd " + quoteArg(dir) + " && " + cmd[0]};
+            } else {
+                cmd = new String[]{"cd " + quoteArg(dir) + " && " + cmdArrayToString(cmd)};
+            }
+        }
+        return RnshPool.of().get(context.connectionString()).exec(cmd, context.isRawCommand(), context.in(), context.out(), context.err());
+    }
+
+    private static String cmdArrayToString(String[] command) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < command.length; i++) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(quoteArg(command[i]));
+        }
+        return sb.toString();
+    }
+
+    private static String quoteArg(String arg) {
+        if (arg == null || arg.isEmpty()) {
+            return "\"\"";
+        }
+        return "'" + arg.replace("'", "'\\''") + "'";
     }
 
     @NScore

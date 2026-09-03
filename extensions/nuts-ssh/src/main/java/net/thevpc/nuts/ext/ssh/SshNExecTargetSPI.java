@@ -164,26 +164,59 @@ public class SshNExecTargetSPI implements NExecTargetSPI {
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
         }
+        String dir = context.execCommand().directory() != null ? context.execCommand().directory().toString() : null;
+        boolean hasDir = !NBlankable.isBlank(dir);
+
         boolean userWorkspace = executionType != NExecutionType.SYSTEM;
         if (userWorkspace) {
             CmdStr command = resolveNutsExecutableCommand(context);
             try (SshConnection c = SshConnectionPool.of().acquire(target)) {
                 if (command.rawCommand) {
-                    return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
+                    String cmdStr = hasDir ? ("cd " + quoteArg(dir) + " && " + command.command[0]) : command.command[0];
+                    return c.execStringCommand(cmdStr, new IOBindings(context.in(), context.out(), context.err()));
                 } else {
-                    return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
+                    if (hasDir) {
+                        String cmdStr = "cd " + quoteArg(dir) + " && " + cmdArrayToString(command.command);
+                        return c.execStringCommand(cmdStr, new IOBindings(context.in(), context.out(), context.err()));
+                    } else {
+                        return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
+                    }
                 }
             }
         } else {
             try (SshConnection c = SshConnectionPool.of().acquire(target)) {
                 CmdStr command = new CmdStr(context.command(), context.isRawCommand() && context.command().length == 1);
                 if (command.rawCommand) {
-                    return c.execStringCommand(command.command[0], new IOBindings(context.in(), context.out(), context.err()));
+                    String cmdStr = hasDir ? ("cd " + quoteArg(dir) + " && " + command.command[0]) : command.command[0];
+                    return c.execStringCommand(cmdStr, new IOBindings(context.in(), context.out(), context.err()));
                 } else {
-                    return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
+                    if (hasDir) {
+                        String cmdStr = "cd " + quoteArg(dir) + " && " + cmdArrayToString(command.command);
+                        return c.execStringCommand(cmdStr, new IOBindings(context.in(), context.out(), context.err()));
+                    } else {
+                        return c.execArrayCommand(command.command, new IOBindings(context.in(), context.out(), context.err()));
+                    }
                 }
             }
         }
+    }
+
+    private static String cmdArrayToString(String[] command) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < command.length; i++) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(quoteArg(command[i]));
+        }
+        return sb.toString();
+    }
+
+    private static String quoteArg(String arg) {
+        if (arg == null || arg.isEmpty()) {
+            return "\"\"";
+        }
+        return "'" + arg.replace("'", "'\\''") + "'";
     }
 
     private static class CmdStr {
