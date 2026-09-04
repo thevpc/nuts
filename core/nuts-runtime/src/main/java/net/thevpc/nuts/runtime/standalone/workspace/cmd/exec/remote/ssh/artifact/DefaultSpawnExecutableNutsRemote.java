@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.NRemoteExecutionUtils;
+
 /**
  * @author thevpc
  */
@@ -86,7 +89,47 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         return new AbstractSyncIProcessExecHelper() {
             @Override
             public int exec() {
-                return runOnce(ecmd);
+                String[] remoteCmdArgs = ecmd;
+                if (def != null) {
+                    try {
+                        JavaExecutorOptions jopts = new JavaExecutorOptions(
+                                def,
+                                false,
+                                Arrays.asList(cmd),
+                                executorOptions,
+                                null
+                        );
+                        NConnectionString cs = getExecCommand().connectionString();
+                        String remoteJava = NRemoteExecutionUtils.ensureRemoteJava(cs, jopts.getJavaVersion());
+                        String remoteCacheDir = "~/.cache/nuts/exec/jars";
+                        List<String> remoteCP = NRemoteExecutionUtils.transferClasspaths(cs, jopts.getResolvedCP(), remoteCacheDir);
+
+                        List<String> rcmd = new ArrayList<>();
+                        rcmd.add(remoteJava);
+                        rcmd.addAll(jopts.getJvmArgs());
+                        if (jopts.isJava9()) {
+                            for (String mod : jopts.getJ9_addModules()) {
+                                rcmd.add("--add-modules");
+                                rcmd.add(mod);
+                            }
+                        }
+                        if (!remoteCP.isEmpty()) {
+                            rcmd.add("-cp");
+                            rcmd.add(String.join(":", remoteCP));
+                        }
+                        if (jopts.getMainClass() != null) {
+                            rcmd.add(jopts.getMainClass());
+                        } else if (jopts.isJar() && !remoteCP.isEmpty()) {
+                            rcmd.add("-jar");
+                            rcmd.add(remoteCP.get(0));
+                        }
+                        rcmd.addAll(jopts.getAppArgs());
+                        remoteCmdArgs = rcmd.toArray(new String[0]);
+                    } catch (Exception ex) {
+                        remoteCmdArgs = ecmd;
+                    }
+                }
+                return runOnce(remoteCmdArgs);
             }
         };
     }
