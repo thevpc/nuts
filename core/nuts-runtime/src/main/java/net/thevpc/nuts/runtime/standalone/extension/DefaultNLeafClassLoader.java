@@ -141,10 +141,12 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
                     // Preserve the original failure and its useful class name.
                 }
             }
-            try {
-                return NIdClassLoaderRegistry.findInRegisteredLeaves(this, name);
-            } catch (ClassNotFoundException ignored) {
-                // Preserve the original failure and its useful class name.
+            if (!NClassLoaderContext.isSiblingLookup()) {
+                try {
+                    return NIdClassLoaderRegistry.findInRegisteredLeaves(this, name);
+                } catch (ClassNotFoundException ignored) {
+                    // Preserve the original failure and its useful class name.
+                }
             }
             throw e;
         }

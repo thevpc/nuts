@@ -26,10 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -477,11 +474,18 @@ public class DefaultNHttpClient implements NHttpClient {
                     seenError = err;
                 } finally {
                     if (seenError != null) {
-                        NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
-                                .withDurationNanos(System.nanoTime() - startTime)
-                                .withIntent(NMsgIntent.FAIL)
-                                .withThrowable(seenError)
-                        );
+                        if(seenError instanceof UnknownHostException){
+                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                                    .withDurationNanos(System.nanoTime() - startTime)
+                                    .withIntent(NMsgIntent.FAIL)
+                            );
+                        }else {
+                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                                    .withDurationNanos(System.nanoTime() - startTime)
+                                    .withIntent(NMsgIntent.FAIL)
+                                    .withThrowable(seenError)
+                            );
+                        }
                     } else {
                         NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
                                 .withDurationNanos(System.nanoTime() - startTime)

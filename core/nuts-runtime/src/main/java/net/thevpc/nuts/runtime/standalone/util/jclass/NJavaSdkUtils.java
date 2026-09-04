@@ -188,8 +188,8 @@ public class NJavaSdkUtils {
             k.jfx = k.moduleName != null && k.moduleName.startsWith("javafx");
 
         } else {
-            k.jfx = k.id.artifactId().startsWith("javafx") &&
-                    k.id.groupId().startsWith("org.openjfx");
+            k.jfx = k.id != null && k.id.artifactId() != null && k.id.artifactId().startsWith("javafx") &&
+                    k.id.groupId() != null && k.id.groupId().startsWith("org.openjfx");
         }
         list.add(k);
 //        for (NClassLoaderNode d : n.dependencies()) {

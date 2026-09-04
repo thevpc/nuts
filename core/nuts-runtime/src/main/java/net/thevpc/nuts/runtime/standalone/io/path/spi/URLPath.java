@@ -175,7 +175,7 @@ public class URLPath implements NPathSPI {
     public NPath resolve(NPath basePath, String path) {
         if (url == null) {
             NPathParts p = new NPathParts(toString());
-            String spath = path.toString().replace("\\", "/");
+            String spath = path.replace("\\", "/");
             String u = p.getFile();
             if (!u.endsWith("/") && !spath.startsWith("/")) {
                 u += "/";
@@ -183,7 +183,7 @@ public class URLPath implements NPathSPI {
             u += spath;
             return rebuildURLPath(rebuildURLString(p.getProtocol(), p.getAuthority(), u, p.getRef()));
         }
-        String spath = path.toString().replace("\\", "/");
+        String spath = path.replace("\\", "/");
         String u = url.getFile();
         if (!u.endsWith("/") && !spath.startsWith("/")) {
             u += "/";
@@ -635,11 +635,12 @@ public class URLPath implements NPathSPI {
     private static CacheInfo loadCacheInfo(URL url) {
         NChronometer chrono = NChronometer.of();
         boolean success = true;
+        Exception err = null;
+        CacheInfo cc = new CacheInfo();
         try {
             URLConnection c = url.openConnection();
             DefaultNHttpClient.prepareGlobalConnection(c);
             c.setDoOutput(false);
-            CacheInfo cc = new CacheInfo();
             if (c instanceof HttpURLConnection) {
                 HttpURLConnection hc = (HttpURLConnection) c;
                 hc.setRequestMethod("HEAD");
@@ -658,14 +659,31 @@ public class URLPath implements NPathSPI {
             success = cc.responseCode >= 200 && cc.responseCode < 300;
             return cc;
         } catch (Exception ex) {
+            err = ex;
             success = false;
             //
         } finally {
-            NLog.of(URLPath.class)
-                    .log(NMsg.ofC("load url info %s", url).withLevel(Level.FINEST)
-                            .withIntent(success ? NMsgIntent.SUCCESS : NMsgIntent.FAIL)
-                            .withDurationMillis(chrono.stop().durationMs())
-                    );
+            if (!success) {
+                if (err != null) {
+                    NLog.of(URLPath.class)
+                            .log(NMsg.ofC("load url info %s : %s", url, err).withLevel(Level.FINEST)
+                                    .withIntent(NMsgIntent.FAIL)
+                                    .withDurationMillis(chrono.stop().durationMs())
+                            );
+                } else {
+                    NLog.of(URLPath.class)
+                            .log(NMsg.ofC("load url info %s (code = %s)", url, cc.responseCode).withLevel(Level.FINEST)
+                                    .withIntent(NMsgIntent.FAIL)
+                                    .withDurationMillis(chrono.stop().durationMs())
+                            );
+                }
+            } else {
+                NLog.of(URLPath.class)
+                        .log(NMsg.ofC("load url info %s", url).withLevel(Level.FINEST)
+                                .withIntent(NMsgIntent.SUCCESS)
+                                .withDurationMillis(chrono.stop().durationMs())
+                        );
+            }
         }
         return null;
     }
@@ -797,7 +815,7 @@ public class URLPath implements NPathSPI {
         @NScore(fixed = NScorable.DEFAULT_SCORE)
         public static int getScore(NScorableContext context) {
             Object cri = context.criteria();
-            if(!(cri instanceof String)) {
+            if (!(cri instanceof String)) {
                 return NScorable.DEFAULT_SCORE;
             }
             String path = (String) cri;
@@ -806,7 +824,7 @@ public class URLPath implements NPathSPI {
                 if (Character.isAlphabetic(s)) {
                     try {
                         URL url = CoreIOUtils.urlOf(path);
-                        return NScorable.DEFAULT_SCORE+6;
+                        return NScorable.DEFAULT_SCORE + 6;
                     } catch (Exception e) {
                         //
                     }

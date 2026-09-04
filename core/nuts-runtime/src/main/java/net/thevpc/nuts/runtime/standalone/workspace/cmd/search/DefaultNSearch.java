@@ -221,18 +221,18 @@ public class DefaultNSearch extends AbstractNSearch {
             NIterator<NId> curr = baseIterator;
             baseIterator = NIteratorBuilder.of(curr)
                     .flatMap(
-                            NFunction.of(
-                                            (NId x) -> {
-                                                NDefinition de = toFetch().id(x)
-                                                        .getResultDefinition();
-                                                if(de==null){
-                                                    return null;
-                                                }
-                                                return NIteratorBuilder.of(
-                                                        de.dependencies().get().transitiveWithSource().iterator()
-                                                ).build();
-                                            })
-                                    .withDescription(NDescribables.ofDesc("getDependencies"))
+                            (NId x) -> {
+                                NDefinition de = toFetch().id(x)
+                                        .getResultDefinition();
+                                if (de == null) {
+                                    return null;
+                                }
+                                NOptional<NDependencies> deps = de.dependencies();
+                                if (!deps.isPresent()) {
+                                    return null;
+                                }
+                                return deps.get().transitiveWithSource().iterator();
+                            }
                     ).filter(NPredicate.ofNonNull())
                     .map(NFunction.of(NDependency::toId)
                             .withDescription(NDescribables.ofDesc("DependencyToId"))

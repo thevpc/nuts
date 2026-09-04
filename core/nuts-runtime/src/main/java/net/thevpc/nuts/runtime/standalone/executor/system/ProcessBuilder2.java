@@ -592,20 +592,29 @@ public class ProcessBuilder2 {
             throw new IOException(CoreStringUtils.exceptionToString(e));
         }
 
+        try {
+            if (proc.getInputStream() != null) proc.getInputStream().close();
+        } catch (Exception ignored) {
+        }
+        try {
+            if (proc.getErrorStream() != null) proc.getErrorStream().close();
+        } catch (Exception ignored) {
+        }
+        try {
+            if (proc.getOutputStream() != null) proc.getOutputStream().close();
+        } catch (Exception ignored) {
+        }
         if (pipes != null) {
             for (PipeRunnable pipe : pipesList) {
                 pipe.requestStop();
             }
             pipes.shutdown();
             try {
-                pipes.awaitTermination(5, TimeUnit.MINUTES);
+                pipes.awaitTermination(30, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 throw new NUnexpectedException(NMsg.ofP("unable to await termination"));
             }
         }
-        proc.getInputStream().close();
-        proc.getErrorStream().close();
-        proc.getOutputStream().close();
         switch (out.base.type()) {
             case PATH: {
                 if (out.tempStream != null) {

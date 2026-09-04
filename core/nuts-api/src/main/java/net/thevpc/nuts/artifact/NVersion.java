@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * @since 0.5.4
  */
 public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable {
-    Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
+    Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+!~<>=&|^/:%#@-]+");
     NVersion BLANK = new NVersionImpl("");
 
     /**

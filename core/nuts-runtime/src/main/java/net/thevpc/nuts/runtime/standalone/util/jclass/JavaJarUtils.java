@@ -305,6 +305,9 @@ public class JavaJarUtils {
     }
 
     public static NVersion parseJarClassVersion(NPath path) {
+        if (path == null) {
+            return null;
+        }
         try (InputStream is = path.inputStream()) {
             return parseJarClassVersion(is);
         } catch (IOException ex) {
@@ -313,6 +316,9 @@ public class JavaJarUtils {
     }
 
     public static String parseDefaultModuleName(NPath jarStream) {
+        if (jarStream == null) {
+            return null;
+        }
         try (InputStream is = jarStream.inputStream()) {
             return parseDefaultModuleName(is);
         } catch (IOException ex) {
@@ -345,6 +351,9 @@ public class JavaJarUtils {
     }
 
     public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar) {
+        if (jar == null) {
+            return null;
+        }
         try (InputStream is = jar.inputStream()) {
             return parseModuleInfo(is);
         } catch (IOException ex) {

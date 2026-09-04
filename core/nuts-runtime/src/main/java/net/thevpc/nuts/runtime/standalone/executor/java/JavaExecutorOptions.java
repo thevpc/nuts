@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public final class JavaExecutorOptions {
 
     private final boolean mainClassApp = false;
-    private Boolean acceptOptional = null;
+    private Boolean acceptOptional = false;
     private final List<String> execArgs;
     private final List<String> jvmArgs = new ArrayList<String>();
     private final List<String> extraExecutorOptions = new ArrayList<String>();
@@ -261,18 +261,23 @@ public final class JavaExecutorOptions {
                 ln.addAll(ln_others);
             }
             for (NClassLoaderNodeExt s : ln) {
-                if (java9 && s.moduleName != null && s.jfx) {
-                    if (!s.moduleName.endsWith("Empty")) {
-                        j9_addModules.add(s.moduleName);
-                    }
-                    j9_modulePath.add(s.path.toPath().get().toString());
-                    for (String requiredJfx : s.requiredJfx) {
-                        if (!requiredJfx.endsWith("Empty")) {
-                            j9_addModules.add(requiredJfx);
+                if (s.path != null) {
+                    NOptional<Path> nioPath = s.path.toPath();
+                    if (nioPath.isPresent()) {
+                        if (java9 && s.moduleName != null && s.jfx) {
+                            if (!s.moduleName.endsWith("Empty")) {
+                                j9_addModules.add(s.moduleName);
+                            }
+                            j9_modulePath.add(nioPath.get().toString());
+                            for (String requiredJfx : s.requiredJfx) {
+                                if (!requiredJfx.endsWith("Empty")) {
+                                    j9_addModules.add(requiredJfx);
+                                }
+                            }
+                        } else {
+                            classPath.add(nioPath.get().toString());
                         }
                     }
-                } else {
-                    classPath.add(s.path.toPath().get().toString());
                 }
             }
 

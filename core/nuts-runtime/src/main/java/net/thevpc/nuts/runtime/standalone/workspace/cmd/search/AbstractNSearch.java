@@ -1114,12 +1114,19 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     }
 
     private NDefinition loadedIdToDefinition(NId next) {
-        NFetch fetch = toFetch();
         NEnvCondition condition = next.condition();
         NDependency dep = next.toDependency();
         NDefinition d = null;
         try {
-            d = fetch.id(next).getResultDefinition();
+            if (next.version().isBlank() || !next.version().isSingleValue()) {
+                d = NSearch.of().addId(next)
+                        .latest(true)
+                        .targetEnv(targetEnv())
+                        .getResultDefinitions().findFirst().orElse(null);
+            } else {
+                NFetch fetch = toFetch();
+                d = fetch.id(next).getResultDefinition();
+            }
         } catch (NArtifactNotFoundException e) {
             if (dep.isOptional()) {
                 return null;

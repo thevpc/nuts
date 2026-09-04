@@ -54,6 +54,9 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
     private final String name;
     private final List<NClassLoader> children;
 
+    private final java.util.concurrent.ConcurrentHashMap<String, Class<?>> classCache = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Set<String> negativeCache = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
     DefaultNCompositeClassLoader(String name, ClassLoader parent, List<NClassLoader> children) {
         super(parent == null ? ClassLoader.getSystemClassLoader() : parent);
         this.name = NStringUtils.firstNonBlank(name, "n-composite-cl");
@@ -74,14 +77,25 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        // 1. Already defined by this loader? (unlikely because composite never defineClass; but be safe)
-        Class<?> c = findLoadedClass(name);
+        // 1. Fast cache check
+        Class<?> c = classCache.get(name);
         if (c != null) {
             if (resolve) resolveClass(c);
             return c;
         }
+        if (negativeCache.contains(name)) {
+            throw new ClassNotFoundException(name);
+        }
 
-        // 2. Parent first (standard classloader delegation).
+        // 2. Already defined by this loader? (unlikely because composite never defineClass; but be safe)
+        c = findLoadedClass(name);
+        if (c != null) {
+            classCache.put(name, c);
+            if (resolve) resolveClass(c);
+            return c;
+        }
+
+        // 3. Parent first (standard classloader delegation).
         //    The parent is workspace-scoped (workspaceExtensionsClassLoader),
         //    which lets extension classes be visible before delegating to leaves.
         try {
@@ -89,6 +103,7 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
             if (p != null) {
                 c = p.loadClass(name);
                 if (c != null) {
+                    classCache.put(name, c);
                     if (resolve) resolveClass(c);
                     return c;
                 }
@@ -97,13 +112,14 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
             // not in parent; continue to children
         }
 
-        // 3. Children in order — first successful child wins.
+        // 4. Children in order — first successful child wins.
         //    The Class object's defining loader is the child that found it.
         for (NClassLoader child : children) {
             try {
                 NClassLoaderContext.enter(this);
                 c = child.loadClass(name);
                 if (c != null) {
+                    classCache.put(name, c);
                     if (resolve) resolveClass(c);
                     return c;
                 }
@@ -114,6 +130,7 @@ class DefaultNCompositeClassLoader extends ClassLoader implements NClassLoader, 
             }
         }
 
+        negativeCache.add(name);
         throw new ClassNotFoundException(name);
     }
 

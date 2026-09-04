@@ -29,9 +29,11 @@ import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * VM-static (classloader-global) registry of leaf classloaders keyed by
@@ -71,6 +73,42 @@ public final class NIdClassLoaderRegistry {
             new ConcurrentHashMap<>();
 
     /**
+     * Index of class name -> leaf classloader that contains it in its jar/folder.
+     */
+    private static final ConcurrentHashMap<String, DefaultNLeafClassLoader> CLASS_TO_LEAF =
+            new ConcurrentHashMap<>();
+
+    /**
+     * Index of package name -> set of leaf classloaders containing classes in that package.
+     */
+    private static final ConcurrentHashMap<String, Set<DefaultNLeafClassLoader>> PACKAGE_TO_LEAVES =
+            new ConcurrentHashMap<>();
+
+    /**
+     * Leaves that could not be completely indexed (e.g. non-local or unparseable).
+     */
+    private static final Set<DefaultNLeafClassLoader> UNINDEXED_LEAVES =
+            ConcurrentHashMap.newKeySet();
+
+    /**
+     * Metadata index per leaf.
+     */
+    private static final ConcurrentHashMap<DefaultNLeafClassLoader, LeafIndex> LEAF_INDEXES =
+            new ConcurrentHashMap<>();
+
+    /**
+     * Positive cache: className -> ClassRecord(Class<?>, DefaultNLeafClassLoader).
+     */
+    private static final ConcurrentHashMap<String, ClassRecord> RESOLVED_CLASS_CACHE =
+            new ConcurrentHashMap<>();
+
+    /**
+     * Negative cache: class names confirmed not to exist in any registered leaf.
+     */
+    private static final Set<String> NEGATIVE_CLASS_CACHE =
+            ConcurrentHashMap.newKeySet();
+
+    /**
      * Universal parent for all leaves: the system classloader. Leaves must
      * NOT depend on any workspace-specific parent so they can safely be
      * shared across workspaces in the same VM. Workspace scoping is
@@ -78,8 +116,8 @@ public final class NIdClassLoaderRegistry {
      */
     private static ClassLoader LEAF_PARENT /*= ClassLoader.getSystemClassLoader()*/;
 
-    public static boolean LEAF_PARENT(ClassLoader c){
-        if(c!=null) {
+    public static boolean LEAF_PARENT(ClassLoader c) {
+        if (c != null) {
             NAssert.requireNamedNonNull(c, "LEAF_PARENT_CLASSLOADER");
             synchronized (NIdClassLoaderRegistry.class) {
                 if (LEAF_PARENT == null) {
@@ -90,35 +128,58 @@ public final class NIdClassLoaderRegistry {
         }
         return false;
     }
-    private static ClassLoader LEAF_PARENT(){
-        NAssert.requireNamedNonNull(LEAF_PARENT,"LEAF_PARENT_CLASSLOADER");
+
+    private static ClassLoader LEAF_PARENT() {
+        NAssert.requireNamedNonNull(LEAF_PARENT, "LEAF_PARENT_CLASSLOADER");
         return LEAF_PARENT;
     }
-
 
     static DefaultNLeafClassLoader getOrCreate(NId id, NPath resolvedJarPath) {
         if (id == null || resolvedJarPath == null) {
             return null;
         }
         String key = id.longName();
-        return BY_ID.computeIfAbsent(key, k ->
-                new DefaultNLeafClassLoader(id, resolvedJarPath, LEAF_PARENT()));
+        DefaultNLeafClassLoader existing = BY_ID.get(key);
+        if (existing != null) {
+            return existing;
+        }
+        boolean[] created = new boolean[1];
+        DefaultNLeafClassLoader leaf = BY_ID.computeIfAbsent(key, k -> {
+            created[0] = true;
+            return new DefaultNLeafClassLoader(id, resolvedJarPath, LEAF_PARENT());
+        });
+        if (created[0]) {
+            registerLeaf(leaf);
+        }
+        return leaf;
     }
 
     static DefaultNLeafClassLoader getOrCreate(NPath rawPath) {
         if (rawPath == null) {
             return null;
         }
-        final NPath abs;
+        NPath abs = null;
+        String key;
         try {
             abs = rawPath.toAbsolute();
+            key = abs.toString();
         } catch (Exception ex) {
-            return BY_PATH.computeIfAbsent(rawPath.toString(), k ->
-                    new DefaultNLeafClassLoader(null, rawPath, LEAF_PARENT()));
+            key = rawPath.toString();
         }
-        String key = abs.toString();
-        return BY_PATH.computeIfAbsent(key, k ->
-                new DefaultNLeafClassLoader(null, abs, LEAF_PARENT()));
+        DefaultNLeafClassLoader existing = BY_PATH.get(key);
+        if (existing != null) {
+            return existing;
+        }
+        final NPath effectivePath = abs != null ? abs : rawPath;
+        boolean[] created = new boolean[1];
+        DefaultNLeafClassLoader leaf = BY_PATH.computeIfAbsent(key, k -> {
+            created[0] = true;
+            return new DefaultNLeafClassLoader(null, effectivePath, LEAF_PARENT());
+        });
+        if (created[0]) {
+            registerLeaf(leaf);
+        }
+        return leaf;
     }
 
     static DefaultNLeafClassLoader getOrCreate(NDefinition def) {
@@ -135,31 +196,74 @@ public final class NIdClassLoaderRegistry {
     /** Find a class in another registered leaf without re-entering its parent. */
     static Class<?> findInRegisteredLeaves(DefaultNLeafClassLoader requester, String name)
             throws ClassNotFoundException {
-        List<DefaultNLeafClassLoader> leaves = new ArrayList<>(BY_ID.values());
-        leaves.addAll(BY_PATH.values());
-        for (DefaultNLeafClassLoader leaf : leaves) {
-            if (leaf != requester) {
-                try {
-                    // Keep normal URLClassLoader parent-first semantics. A
-                    // direct findClass() here could redefine an API already
-                    // owned by the leaf's parent and cause LinkageError.
-                    return leaf.loadClassFromParentAndOwn(name);
-                } catch (ClassNotFoundException ignored) {
-                    // Try the next registered artifact.
+        // 1. Check resolved class cache
+        ClassRecord rec = RESOLVED_CLASS_CACHE.get(name);
+        if (rec != null) {
+            if (rec.definingLeaf != requester) {
+                return rec.clazz;
+            }
+            throw new ClassNotFoundException(name);
+        }
+
+        // 2. Check negative cache
+        if (NEGATIVE_CLASS_CACHE.contains(name)) {
+            throw new ClassNotFoundException(name);
+        }
+
+        // 3. Check known class owner from jar index
+        DefaultNLeafClassLoader owner = CLASS_TO_LEAF.get(name);
+        if (owner != null && owner != requester) {
+            try {
+                Class<?> c = owner.loadClassFromParentAndOwn(name);
+                RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, owner));
+                return c;
+            } catch (ClassNotFoundException ignored) {
+                // In case indexing had an entry that couldn't be loaded, fall through
+            }
+        }
+
+        // 4. Check leaves sharing the same package (e.g. for dynamic proxies, split packages)
+        int lastDot = name.lastIndexOf('.');
+        String pkg = lastDot > 0 ? name.substring(0, lastDot) : "";
+        Set<DefaultNLeafClassLoader> pkgLeaves = PACKAGE_TO_LEAVES.get(pkg);
+        if (pkgLeaves != null) {
+            for (DefaultNLeafClassLoader leaf : pkgLeaves) {
+                if (leaf != requester && leaf != owner) {
+                    try {
+                        Class<?> c = leaf.loadClassFromParentAndOwn(name);
+                        RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, leaf));
+                        return c;
+                    } catch (ClassNotFoundException ignored) {
+                    }
                 }
             }
         }
+
+        // 5. Check unindexed leaves (fallback)
+        for (DefaultNLeafClassLoader leaf : UNINDEXED_LEAVES) {
+            if (leaf != requester && leaf != owner) {
+                try {
+                    Class<?> c = leaf.loadClassFromParentAndOwn(name);
+                    RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, leaf));
+                    return c;
+                } catch (ClassNotFoundException ignored) {
+                }
+            }
+        }
+
+        // 6. Not found in any registered leaf! Record in negative cache.
+        NEGATIVE_CLASS_CACHE.add(name);
         throw new ClassNotFoundException(name);
     }
 
-    static DefaultNLeafClassLoader getIfPresent(NId id) {
+    public static ClassLoader getIfPresent(NId id) {
         if (id == null) {
             return null;
         }
         return BY_ID.get(id.longName());
     }
 
-    static DefaultNLeafClassLoader getIfPresent(NPath path) {
+    public static ClassLoader getIfPresent(NPath path) {
         if (path == null) {
             return null;
         }
@@ -170,24 +274,177 @@ public final class NIdClassLoaderRegistry {
         }
     }
 
-    static void invalidate(NId id) {
+    public static void invalidate(NId id) {
         if (id != null) {
-            BY_ID.remove(id.longName());
-        }
-    }
-
-    static void invalidate(NPath path) {
-        if (path != null) {
-            try {
-                BY_PATH.remove(path.toAbsolute().toString());
-            } catch (Exception ex) {
-                BY_PATH.remove(path.toString());
+            DefaultNLeafClassLoader removed = BY_ID.remove(id.longName());
+            if (removed != null) {
+                unregisterLeaf(removed);
             }
         }
     }
 
-    static void invalidateAll() {
+    public static void invalidate(NPath path) {
+        if (path != null) {
+            DefaultNLeafClassLoader removed = null;
+            try {
+                removed = BY_PATH.remove(path.toAbsolute().toString());
+            } catch (Exception ex) {
+                removed = BY_PATH.remove(path.toString());
+            }
+            if (removed != null) {
+                unregisterLeaf(removed);
+            }
+        }
+    }
+
+    public static void invalidateAll() {
         BY_ID.clear();
         BY_PATH.clear();
+        LEAF_INDEXES.clear();
+        CLASS_TO_LEAF.clear();
+        PACKAGE_TO_LEAVES.clear();
+        UNINDEXED_LEAVES.clear();
+        RESOLVED_CLASS_CACHE.clear();
+        NEGATIVE_CLASS_CACHE.clear();
+    }
+
+    public static void invalidateCache() {
+        RESOLVED_CLASS_CACHE.clear();
+        NEGATIVE_CLASS_CACHE.clear();
+    }
+
+    public static void invalidateClass(String className) {
+        if (className != null) {
+            RESOLVED_CLASS_CACHE.remove(className);
+            NEGATIVE_CLASS_CACHE.remove(className);
+        }
+    }
+
+    private static void registerLeaf(DefaultNLeafClassLoader leaf) {
+        if (leaf == null) return;
+        LeafIndex idx = indexLeaf(leaf);
+        LEAF_INDEXES.put(leaf, idx);
+        if (idx.complete) {
+            for (String cname : idx.classes) {
+                CLASS_TO_LEAF.putIfAbsent(cname, leaf);
+            }
+            for (String pkg : idx.packages) {
+                PACKAGE_TO_LEAVES.computeIfAbsent(pkg, k -> ConcurrentHashMap.newKeySet()).add(leaf);
+            }
+        } else {
+            UNINDEXED_LEAVES.add(leaf);
+        }
+        NEGATIVE_CLASS_CACHE.clear();
+    }
+
+    private static void unregisterLeaf(DefaultNLeafClassLoader leaf) {
+        LeafIndex idx = LEAF_INDEXES.remove(leaf);
+        if (idx != null) {
+            for (String cname : idx.classes) {
+                CLASS_TO_LEAF.remove(cname, leaf);
+            }
+            for (String pkg : idx.packages) {
+                Set<DefaultNLeafClassLoader> set = PACKAGE_TO_LEAVES.get(pkg);
+                if (set != null) {
+                    set.remove(leaf);
+                    if (set.isEmpty()) {
+                        PACKAGE_TO_LEAVES.remove(pkg);
+                    }
+                }
+            }
+        }
+        UNINDEXED_LEAVES.remove(leaf);
+        RESOLVED_CLASS_CACHE.values().removeIf(rec -> rec.definingLeaf == leaf);
+        NEGATIVE_CLASS_CACHE.clear();
+    }
+
+    private static LeafIndex indexLeaf(DefaultNLeafClassLoader leaf) {
+        NPath path = leaf.path();
+        if (path == null) {
+            return LeafIndex.EMPTY;
+        }
+        File file = path.toFile().orNull();
+        if (file == null) {
+            java.nio.file.Path p = path.toPath().orNull();
+            if (p != null) {
+                try {
+                    file = p.toFile();
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        if (file == null || !file.exists()) {
+            return LeafIndex.EMPTY;
+        }
+        Set<String> classes = new HashSet<>();
+        Set<String> packages = new HashSet<>();
+        try {
+            if (file.isFile()) {
+                try (JarFile jar = new JarFile(file)) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        String ename = entry.getName();
+                        if (ename.endsWith(".class") && !entry.isDirectory()) {
+                            String cname = ename.substring(0, ename.length() - 6).replace('/', '.');
+                            classes.add(cname);
+                            int lastSlash = ename.lastIndexOf('/');
+                            if (lastSlash > 0) {
+                                packages.add(ename.substring(0, lastSlash).replace('/', '.'));
+                            } else {
+                                packages.add("");
+                            }
+                        }
+                    }
+                    return new LeafIndex(classes, packages, true);
+                }
+            } else if (file.isDirectory()) {
+                indexDirectory(file, "", classes, packages);
+                return new LeafIndex(classes, packages, true);
+            }
+        } catch (Exception ignored) {
+            // fallback
+        }
+        return LeafIndex.EMPTY;
+    }
+
+    private static void indexDirectory(File dir, String pkgPrefix, Set<String> classes, Set<String> packages) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        for (File f : files) {
+            if (f.isDirectory()) {
+                String subPkg = pkgPrefix.isEmpty() ? f.getName() : pkgPrefix + "." + f.getName();
+                packages.add(subPkg);
+                indexDirectory(f, subPkg, classes, packages);
+            } else if (f.isFile() && f.getName().endsWith(".class")) {
+                String cname = f.getName().substring(0, f.getName().length() - 6);
+                String fullClass = pkgPrefix.isEmpty() ? cname : pkgPrefix + "." + cname;
+                classes.add(fullClass);
+                packages.add(pkgPrefix);
+            }
+        }
+    }
+
+    private static class LeafIndex {
+        static final LeafIndex EMPTY = new LeafIndex(Collections.emptySet(), Collections.emptySet(), false);
+        final Set<String> classes;
+        final Set<String> packages;
+        final boolean complete;
+
+        LeafIndex(Set<String> classes, Set<String> packages, boolean complete) {
+            this.classes = classes;
+            this.packages = packages;
+            this.complete = complete;
+        }
+    }
+
+    private static class ClassRecord {
+        final Class<?> clazz;
+        final DefaultNLeafClassLoader definingLeaf;
+
+        ClassRecord(Class<?> clazz, DefaultNLeafClassLoader definingLeaf) {
+            this.clazz = clazz;
+            this.definingLeaf = definingLeaf;
+        }
     }
 }

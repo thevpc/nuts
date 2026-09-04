@@ -11,7 +11,6 @@
 **The package manager Java never had.**
 
 Website: https://thevpc.github.io/nuts  
-Docs: [Official documentation](https://thevpc.github.io/nuts/doc-nuts.html)
 
 ---
 
