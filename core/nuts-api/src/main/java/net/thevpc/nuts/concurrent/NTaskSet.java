@@ -48,7 +48,7 @@ public interface NTaskSet {
      * @return a new {@code NTaskSet} instance
      */
     static NTaskSet of() {
-        return NConcurrentRPI.of().taskSet();
+        return NConcurrentRPI.of().createTaskSet();
     }
 
 

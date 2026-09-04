@@ -28,19 +28,19 @@ public interface NOnceValueFactory {
      * @return a new once value factory instance
      */
     static NOnceValueFactory of() {
-        return NConcurrentRPI.of().onceValueFactory();
+        return NConcurrentRPI.of().getOnceValueFactory();
     }
 
     static NOnceValueFactory ofDefault() {
-        return NConcurrentRPI.of().defaultOnceValueFactory();
+        return NConcurrentRPI.of().getDefaultOnceValueFactory();
     }
 
     static NOnceValueFactory ofMem() {
-        return NConcurrentRPI.of().memoryOnceValueFactory();
+        return NConcurrentRPI.of().getMemoryOnceValueFactory();
     }
 
     static void configure(NOnceValueFactory factory) {
-        NConcurrentRPI.of().onceValueFactory(factory);
+        NConcurrentRPI.of().setOnceValueFactory(factory);
     }
 
     /**
@@ -50,7 +50,7 @@ public interface NOnceValueFactory {
      * @return a new once value factory instance using the provided store
      */
     static NOnceValueFactory of(NOnceValueStore store) {
-        return NConcurrentRPI.of().onceValueFactory().withStore(store);
+        return NConcurrentRPI.of().getOnceValueFactory().withStore(store);
     }
 
     /**

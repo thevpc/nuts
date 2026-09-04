@@ -20,6 +20,7 @@ public class NBootWorkspaceCmdLineFormatter {
     private static final String V086 = "0.8.6";
     private static final String V087 = "0.8.7";
     private static final String V089 = "0.8.9";
+    private static final String V100 = "1.0.0";
     private final NBootWorkspaceOptionsConfig config;
     private final NBootOptionsInfo options;
 

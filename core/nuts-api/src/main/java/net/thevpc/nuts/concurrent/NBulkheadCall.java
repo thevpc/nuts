@@ -74,7 +74,7 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable, AutoClose
      * @return a new {@code NConcurrencyLimiter} instance
      */
     static <T> NBulkheadCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrentRPI.of().bulkheadCallFactory().bulkheadCall(id,callable);
+        return NConcurrentRPI.of().getBulkheadCallFactory().bulkheadCall(id,callable);
     }
 
     /**

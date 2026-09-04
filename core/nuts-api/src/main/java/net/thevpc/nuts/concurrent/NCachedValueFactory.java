@@ -36,7 +36,7 @@ public interface NCachedValueFactory {
      * @return a new cached value factory instance
      */
     static NCachedValueFactory of() {
-        return NConcurrentRPI.of().cachedValueFactory();
+        return NConcurrentRPI.of().getCachedValueFactory();
     }
 
     /**
@@ -46,15 +46,15 @@ public interface NCachedValueFactory {
      * @return a new cached value factory instance using the provided store
      */
     static NCachedValueFactory of(NCachedValueStore store) {
-        return NConcurrentRPI.of().cachedValueFactory().withStore(store);
+        return NConcurrentRPI.of().getCachedValueFactory().withStore(store);
     }
 
     static NCachedValueFactory ofMem() {
-        return NConcurrentRPI.of().memoryCachedValueFactory();
+        return NConcurrentRPI.of().getMemoryCachedValueFactory();
     }
 
     static NCachedValueFactory ofDefault() {
-        return NConcurrentRPI.of().defaultCachedValueFactory();
+        return NConcurrentRPI.of().getDefaultCachedValueFactory();
     }
 
     /**
@@ -65,7 +65,7 @@ public interface NCachedValueFactory {
      */
     @NSetter
     static void configure(NCachedValueFactory factory) {
-        NConcurrentRPI.of().cachedValueFactory(factory);
+        NConcurrentRPI.of().setCachedValueFactory(factory);
     }
 
 

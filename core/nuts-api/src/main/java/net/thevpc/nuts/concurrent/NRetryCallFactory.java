@@ -17,19 +17,19 @@ public interface NRetryCallFactory {
      * @return a new retry call factory instance
      */
     static NRetryCallFactory of() {
-        return NConcurrentRPI.of().retryCallFactory();
+        return NConcurrentRPI.of().getRetryCallFactory();
     }
 
     static void configure(NRetryCallFactory global) {
-        NConcurrentRPI.of().retryCallFactory(global);
+        NConcurrentRPI.of().setRetryCallFactory(global);
     }
 
     static NRetryCallFactory ofMem() {
-        return NConcurrentRPI.of().memoryRetryCallFactory();
+        return NConcurrentRPI.of().getMemoryRetryCallFactory();
     }
 
     static NRetryCallFactory ofDefault() {
-        return NConcurrentRPI.of().defaultRetryCallFactory();
+        return NConcurrentRPI.of().getDefaultRetryCallFactory();
     }
 
     /**
@@ -39,7 +39,7 @@ public interface NRetryCallFactory {
      * @return a new retry call factory instance
      */
     static NRetryCallFactory of(NRetryCallStore store) {
-        return NConcurrentRPI.of().retryCallFactory().withStore(store);
+        return NConcurrentRPI.of().getRetryCallFactory().withStore(store);
     }
 
     /**

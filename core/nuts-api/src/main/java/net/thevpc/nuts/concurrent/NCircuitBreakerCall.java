@@ -77,7 +77,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, Auto
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(NCallable<T> callable) {
-        return NConcurrentRPI.of().circuitBreakerCall(callable);
+        return NConcurrentRPI.of().createCircuitBreakerCall(callable);
     }
 
     /**
@@ -89,7 +89,7 @@ public interface NCircuitBreakerCall<T> extends NCallable<T>, NDescribable, Auto
      * @return a new {@code NCircuitBreakerCall} instance
      */
     static <T> NCircuitBreakerCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrentRPI.of().circuitBreakerCall(id, callable);
+        return NConcurrentRPI.of().createCircuitBreakerCall(id, callable);
     }
 
     /**

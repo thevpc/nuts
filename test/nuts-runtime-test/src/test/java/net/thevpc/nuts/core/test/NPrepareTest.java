@@ -94,7 +94,7 @@ public class NPrepareTest {
     }
 
     @Test
-    @Disabled("Disabled remote VM test for linux@192.168.1.64")
+//    @Disabled("Disabled remote VM test for linux@192.168.1.64")
     public void testPrepareRemoteLinuxVM() {
         DefaultNPrepare prepare = new DefaultNPrepare();
         prepare.at(NConnectionString.of("ssh://linux:123@192.168.1.64"));

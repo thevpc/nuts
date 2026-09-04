@@ -45,18 +45,18 @@ public interface NCircuitBreakerCallFactory {
      * @return a new circuit breaker call factory instance
      */
     static NCircuitBreakerCallFactory of() {
-        return NConcurrentRPI.of().circuitBreakerCallFactory();
+        return NConcurrentRPI.of().getCircuitBreakerCallFactory();
     }
 
     static NCircuitBreakerCallFactory ofDefault() {
-        return NConcurrentRPI.of().defaultCircuitBreakerCallFactory();
+        return NConcurrentRPI.of().getDefaultCircuitBreakerCallFactory();
     }
 
     static NCircuitBreakerCallFactory ofMem() {
-        return NConcurrentRPI.of().memoryCircuitBreakerCallFactory();
+        return NConcurrentRPI.of().getMemoryCircuitBreakerCallFactory();
     }
     static void configure(NCircuitBreakerCallFactory factory) {
-        NConcurrentRPI.of().circuitBreakerCallFactory(factory);
+        NConcurrentRPI.of().setCircuitBreakerCallFactory(factory);
     }
 
     /**
@@ -66,7 +66,7 @@ public interface NCircuitBreakerCallFactory {
      * @return a new circuit breaker call factory instance
      */
     static NCircuitBreakerCallFactory of(NCircuitBreakerCallStore store) {
-        return NConcurrentRPI.of().circuitBreakerCallFactory().withStore(store);
+        return NConcurrentRPI.of().getCircuitBreakerCallFactory().withStore(store);
     }
 
     /**

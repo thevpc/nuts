@@ -35,7 +35,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(NCallable<T> callable) {
-        return NConcurrentRPI.of().retryCall(callable);
+        return NConcurrentRPI.of().createRetryCall(callable);
     }
 
     /**
@@ -47,7 +47,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
      * @return a new {@link NRetryCall} instance
      */
     static <T> NRetryCall<T> of(String id, NCallable<T> callable) {
-        return NConcurrentRPI.of().retryCall(id, callable);
+        return NConcurrentRPI.of().createRetryCall(id, callable);
     }
 
     /**

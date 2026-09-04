@@ -26,7 +26,7 @@ public interface NLockFactory {
      * @return the lock factory instance
      */
     static NLockFactory of() {
-        return NConcurrentRPI.of().lockFactory();
+        return NConcurrentRPI.of().getCurrentLockFactory();
     }
 
     /**
@@ -36,7 +36,7 @@ public interface NLockFactory {
      * @return a new lock factory instance configured with the store
      */
     static NLockFactory of(NLockStore store) {
-        return NConcurrentRPI.of().lockFactory().withStore(store);
+        return NConcurrentRPI.of().getCurrentLockFactory().withStore(store);
     }
 
     /**
@@ -45,7 +45,7 @@ public interface NLockFactory {
      * @return memory lock factory
      */
     static NLockFactory ofMem() {
-        return NConcurrentRPI.of().memoryLockFactory();
+        return NConcurrentRPI.of().getMemoryLockFactory();
     }
 
     /**
@@ -54,7 +54,7 @@ public interface NLockFactory {
      * @return default lock factory
      */
     static NLockFactory ofDefault() {
-        return NConcurrentRPI.of().defaultLockFactory();
+        return NConcurrentRPI.of().getDefaultLockFactory();
     }
 
     /**
@@ -64,7 +64,7 @@ public interface NLockFactory {
      */
     @NSetter
     static void configure(NLockFactory factory) {
-        NConcurrentRPI.of().lockFactory(factory);
+        NConcurrentRPI.of().setCurrentLockFactory(factory);
     }
 
     /**

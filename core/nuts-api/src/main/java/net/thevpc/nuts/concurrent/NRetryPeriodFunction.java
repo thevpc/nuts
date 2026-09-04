@@ -13,15 +13,15 @@ public interface NRetryPeriodFunction extends IntFunction<NDuration> {
     }
 
     static NRetryPeriodFunction ofFixedPeriods(NDuration... periods) {
-        return NConcurrentRPI.of().retryFixedPeriods(periods);
+        return NConcurrentRPI.of().createRetryFixedPeriods(periods);
     }
 
     static NRetryPeriodFunction ofExponentialPeriod(NDuration base, double multiplier) {
-        return NConcurrentRPI.of().retryExponentialPeriod(base, multiplier);
+        return NConcurrentRPI.of().createRetryExponentialPeriod(base, multiplier);
     }
 
     static NRetryPeriodFunction ofMultiplied(NDuration base, double multiplier) {
-        return NConcurrentRPI.of().retryMultipliedPeriod(base, multiplier);
+        return NConcurrentRPI.of().createRetryMultipliedPeriod(base, multiplier);
     }
 
 }

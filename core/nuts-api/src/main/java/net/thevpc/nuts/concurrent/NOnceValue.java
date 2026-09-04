@@ -26,7 +26,7 @@ public interface NOnceValue<T> extends Supplier<T>, NDescribable, AutoCloseable 
      * @return a new {@code NOnceValue} wrapping the given supplier
      */
     static <T> NOnceValue<T> ofSupplier(Supplier<T> supplier) {
-        return NConcurrentRPI.of().onceValue(supplier);
+        return NConcurrentRPI.of().createOnceValue(supplier);
     }
 
     /**

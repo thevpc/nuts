@@ -49,19 +49,19 @@ public interface NWorkBalancerFactory {
      * @return a new {@link NWorkBalancerFactory} instance
      */
     static NWorkBalancerFactory of() {
-        return NConcurrentRPI.of().workBalancerFactory();
+        return NConcurrentRPI.of().getWorkBalancerFactory();
     }
 
     static NWorkBalancerFactory ofMem() {
-        return NConcurrentRPI.of().memoryWorkBalancerFactory();
+        return NConcurrentRPI.of().getMemoryWorkBalancerFactory();
     }
 
     static NWorkBalancerFactory ofDefault() {
-        return NConcurrentRPI.of().defaultWorkBalancerFactory();
+        return NConcurrentRPI.of().getDefaultWorkBalancerFactory();
     }
 
     static void configure(NWorkBalancerFactory global) {
-        NConcurrentRPI.of().workBalancerCallFactory(global);
+        NConcurrentRPI.of().setWorkBalancerCallFactory(global);
     }
 
     /**
@@ -71,7 +71,7 @@ public interface NWorkBalancerFactory {
      * @return a new {@link NWorkBalancerFactory} instance
      */
     static NWorkBalancerFactory of(NWorkBalancerStore store) {
-        return NConcurrentRPI.of().workBalancerFactory().withStore(store);
+        return NConcurrentRPI.of().getWorkBalancerFactory().withStore(store);
     }
 
     /**

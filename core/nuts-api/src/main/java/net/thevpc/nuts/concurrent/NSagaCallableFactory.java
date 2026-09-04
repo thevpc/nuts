@@ -17,7 +17,7 @@ public interface NSagaCallableFactory {
      * @return a new saga callable factory instance
      */
     static NSagaCallableFactory of() {
-        return NConcurrentRPI.of().sagaFactory();
+        return NConcurrentRPI.of().getSagaFactory();
     }
 
     /**
@@ -27,19 +27,19 @@ public interface NSagaCallableFactory {
      * @return a new saga callable factory instance
      */
     static NSagaCallableFactory of(NSagaStore store) {
-        return NConcurrentRPI.of().sagaFactory().withStore(store);
+        return NConcurrentRPI.of().getSagaFactory().withStore(store);
     }
 
     static NSagaCallableFactory ofDefault() {
-        return NConcurrentRPI.of().defaultSagaFactory();
+        return NConcurrentRPI.of().getDefaultSagaFactory();
     }
 
     static NSagaCallableFactory ofMem() {
         return NConcurrentRPI.of().memorySagaFactory();
     }
 
-    static void configure(NSagaStore store) {
-        NConcurrentRPI.of().sagaFactory().withStore(store);
+    static void configure(NSagaCallableFactory factory) {
+        NConcurrentRPI.of().setSagaFactory(factory);
     }
 
     /**

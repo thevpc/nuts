@@ -1,17 +1,25 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
 import net.thevpc.nuts.artifact.NDefinition;
+import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.text.NDescriptorWriter;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 class DefaultNPrepareTransaction implements AutoCloseable {
+    private final NLog LOG = NLog.of(DefaultNPrepareTransaction.class);
+    private final Set<NId> pushedIds = new HashSet<>();
     public NEnv remoteEnv;
     public NConnectionString connectionString = null;
     public NVersion apiVersion = null;
@@ -66,11 +74,16 @@ class DefaultNPrepareTransaction implements AutoCloseable {
     }
 
     public void pushId(NId pid) {
+        if (pid == null || !pushedIds.add(pid)) {
+            return;
+        }
+        LOG.debug(NMsg.ofC("Pushing artifact %s to companion repository...", pid));
         NDefinition def = NSearch.of().addId(pid).latest(true).getResultDefinitions().findFirst().orElse(null);
         if (def == null) {
             def = NSearch.of().addId(pid.builder().version((String) null).build()).latest(true).getResultDefinitions().findFirst().orElse(null);
         }
         if (def == null) {
+            LOG.debug(NMsg.ofC("Definition not found for artifact: %s", pid));
             return;
         }
         NPath apiJar = def.content().orNull();
@@ -80,6 +93,7 @@ class DefaultNPrepareTransaction implements AutoCloseable {
             String jarPathStr = NPath.ofMavenLayout(targetId, ".jar").toAbsolute(companionRepository).toString();
             to = connectionString != null ? NPath.of(connectionString.withPath(jarPathStr)) : NPath.of(jarPathStr);
             if (!to.exists()) {
+                LOG.debug(NMsg.ofC("Staging JAR for %s -> %s", targetId, to));
                 to.mkParentDirs();
                 apiJar.copyTo(to);
             }
@@ -87,8 +101,27 @@ class DefaultNPrepareTransaction implements AutoCloseable {
         String nutsPathStr = NPath.ofMavenLayout(targetId, ".nuts").toAbsolute(companionRepository).toString();
         to = connectionString != null ? NPath.of(connectionString.withPath(nutsPathStr)) : NPath.of(nutsPathStr);
         if (!to.exists()) {
+            LOG.debug(NMsg.ofC("Staging descriptor for %s -> %s", targetId, to));
             to.mkParentDirs();
             to.writeString(NDescriptorWriter.of().formatPlain(def.descriptor()));
+        }
+        if (def.descriptor() != null) {
+            if (def.descriptor().parents() != null) {
+                for (NId parentId : def.descriptor().parents()) {
+                    if (parentId != null) {
+                        LOG.debug(NMsg.ofC("Pushing parent descriptor %s for %s", parentId, pid));
+                        pushId(parentId);
+                    }
+                }
+            }
+            if (def.descriptor().dependencies() != null) {
+                for (NDependency dependency : def.descriptor().dependencies()) {
+                    if (dependency != null && dependency.toId() != null) {
+                        LOG.debug(NMsg.ofC("Pushing dependency %s for %s", dependency.toId(), pid));
+                        pushId(dependency.toId());
+                    }
+                }
+            }
         }
     }
 
@@ -103,6 +136,7 @@ class DefaultNPrepareTransaction implements AutoCloseable {
             e.at(connectionString);
         }
         e.command(cmd);
+        LOG.debug(NMsg.ofC("Executing remote command: %s", String.join(" ", cmd)));
         return e.failFast(true).grabbedAll();
     }
 
@@ -123,3 +157,4 @@ class DefaultNPrepareTransaction implements AutoCloseable {
         }
     }
 }
+

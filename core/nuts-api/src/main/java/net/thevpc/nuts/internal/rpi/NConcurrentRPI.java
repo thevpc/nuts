@@ -44,7 +44,7 @@ public interface NConcurrentRPI extends NComponent {
         return NExtensions.of(NConcurrentRPI.class);
     }
 
-    NTaskSet taskSet();
+    NTaskSet createTaskSet();
 
     // --------------------
     // Locks
@@ -56,28 +56,28 @@ public interface NConcurrentRPI extends NComponent {
      * @param lockFactory the factory to set
      */
     @NSetter
-    void lockFactory(NLockFactory lockFactory);
+    void setCurrentLockFactory(NLockFactory lockFactory);
 
     /**
      * Returns a memory-only lock factory.
      *
      * @return memory lock factory
      */
-    NLockFactory memoryLockFactory();
+    NLockFactory getMemoryLockFactory();
 
     /**
      * Returns the default lock factory.
      *
      * @return default lock factory
      */
-    NLockFactory defaultLockFactory();
+    NLockFactory getDefaultLockFactory();
 
     /**
      * Returns the currently configured lock factory.
      *
      * @return lock factory
      */
-    NLockFactory lockFactory();
+    NLockFactory getCurrentLockFactory();
 
     // --------------------
     // Cached Values
@@ -109,28 +109,28 @@ public interface NConcurrentRPI extends NComponent {
      * @return this instance
      */
     @NSetter
-    void cachedValueFactory(NCachedValueFactory cachedValueFactory);
+    void setCachedValueFactory(NCachedValueFactory cachedValueFactory);
 
     /**
      * Returns a memory-only cached value factory.
      *
      * @return memory cached value factory
      */
-    NCachedValueFactory memoryCachedValueFactory();
+    NCachedValueFactory getMemoryCachedValueFactory();
 
     /**
      * Returns the default cached value factory.
      *
      * @return default cached value factory
      */
-    NCachedValueFactory defaultCachedValueFactory();
+    NCachedValueFactory getDefaultCachedValueFactory();
 
     /**
      * Returns the currently configured cached value factory.
      *
      * @return cached value factory
      */
-    NCachedValueFactory cachedValueFactory();
+    NCachedValueFactory getCachedValueFactory();
 
 
     // --------------------
@@ -144,7 +144,7 @@ public interface NConcurrentRPI extends NComponent {
      * @param supplier the supplier to produce the value
      * @return once value instance
      */
-    <T> NOnceValue<T> onceValue(Supplier<T> supplier);
+    <T> NOnceValue<T> createOnceValue(Supplier<T> supplier);
 
     /**
      * Creates a once value with the given identifier and supplier.
@@ -154,7 +154,7 @@ public interface NConcurrentRPI extends NComponent {
      * @param supplier the supplier to produce the value
      * @return once value instance
      */
-    <T> NOnceValue<T> onceValue(String id, Supplier<T> supplier);
+    <T> NOnceValue<T> createOnceValue(String id, Supplier<T> supplier);
 
     /**
      * Sets the once value factory used by this component.
@@ -163,28 +163,28 @@ public interface NConcurrentRPI extends NComponent {
      * @return this instance
      */
     @NSetter
-    void onceValueFactory(NOnceValueFactory onceValueFactory);
+    void setOnceValueFactory(NOnceValueFactory onceValueFactory);
 
     /**
      * Returns a memory-only once value factory.
      *
      * @return memory once value factory
      */
-    NOnceValueFactory memoryOnceValueFactory();
+    NOnceValueFactory getMemoryOnceValueFactory();
 
     /**
      * Returns the default once value factory.
      *
      * @return default once value factory
      */
-    NOnceValueFactory defaultOnceValueFactory();
+    NOnceValueFactory getDefaultOnceValueFactory();
 
     /**
      * Returns the currently configured once value factory.
      *
      * @return once value factory
      */
-    NOnceValueFactory onceValueFactory();
+    NOnceValueFactory getOnceValueFactory();
 
 
     // --------------------
@@ -197,7 +197,7 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return default rate limit value factory
      */
-    NRateLimitValueFactory defaultRateLimitValueFactory();
+    NRateLimitValueFactory getDefaultRateLimitValueFactory();
 
 
     /**
@@ -205,7 +205,7 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return memory rate limit value factory
      */
-    NRateLimitValueFactory memoryRateLimitValueFactory();
+    NRateLimitValueFactory getMemoryRateLimitValueFactory();
 
 
     /**
@@ -215,7 +215,7 @@ public interface NConcurrentRPI extends NComponent {
      * @return this instance
      */
     @NSetter
-    void rateLimitValueFactory(NRateLimitValueFactory factory);
+    void setRateLimitValueFactory(NRateLimitValueFactory factory);
 
 
     /**
@@ -223,21 +223,21 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return rate limit value factory
      */
-    NWorkBalancerFactory defaultWorkBalancerFactory();
+    NWorkBalancerFactory getDefaultWorkBalancerFactory();
 
     /**
      * Returns the default work balancer factory.
      *
      * @return default work balancer factory
      */
-    NWorkBalancerFactory memoryWorkBalancerFactory();
+    NWorkBalancerFactory getMemoryWorkBalancerFactory();
 
     /**
      * Returns the currently configured work balancer factory.
      *
      * @return work balancer factory
      */
-    NWorkBalancerFactory workBalancerFactory();
+    NWorkBalancerFactory getWorkBalancerFactory();
 
 
     /**
@@ -245,39 +245,39 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return rate limit value factory result
      */
-    NRateLimitValueFactory rateLimitValueFactory();
+    NRateLimitValueFactory getRateLimitValueFactory();
 
 
     /**
      * @since 0.8.7
      */
-    <T> NRetryCall<T> retryCall(NCallable<T> callable);
+    <T> NRetryCall<T> createRetryCall(NCallable<T> callable);
 
     /**
      * @since 0.8.7
      */
-    <T> NRetryCall<T> retryCall(String id, NCallable<T> callable);
+    <T> NRetryCall<T> createRetryCall(String id, NCallable<T> callable);
 
 
     /**
      * @since 0.8.7
      */
-    void retryCallFactory(NRetryCallFactory retryCallFactory);
+    void setRetryCallFactory(NRetryCallFactory retryCallFactory);
 
     /**
      * @since 0.8.7
      */
-    NRetryCallFactory memoryRetryCallFactory();
+    NRetryCallFactory getMemoryRetryCallFactory();
 
     /**
      * @since 0.8.7
      */
-    NRetryCallFactory defaultRetryCallFactory();
+    NRetryCallFactory getDefaultRetryCallFactory();
 
     /**
      * @since 0.8.7
      */
-    NRetryCallFactory retryCallFactory();
+    NRetryCallFactory getRetryCallFactory();
 
 
     // --------------------
@@ -287,34 +287,34 @@ public interface NConcurrentRPI extends NComponent {
     /**
      * @since 0.8.7
      */
-    <T> NCircuitBreakerCall<T> circuitBreakerCall(NCallable<T> callable);
+    <T> NCircuitBreakerCall<T> createCircuitBreakerCall(NCallable<T> callable);
 
     /**
      * @since 0.8.7
      */
-    <T> NCircuitBreakerCall<T> circuitBreakerCall(String id, NCallable<T> callable);
+    <T> NCircuitBreakerCall<T> createCircuitBreakerCall(String id, NCallable<T> callable);
 
 
     /**
      * @since 0.8.7
      */
     @NSetter
-    void circuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
+    void setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory);
 
     /**
      * @since 0.8.7
      */
-    NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory();
+    NCircuitBreakerCallFactory getMemoryCircuitBreakerCallFactory();
 
     /**
      * @since 0.8.7
      */
-    NCircuitBreakerCallFactory defaultCircuitBreakerCallFactory();
+    NCircuitBreakerCallFactory getDefaultCircuitBreakerCallFactory();
 
     /**
      * @since 0.8.7
      */
-    NCircuitBreakerCallFactory circuitBreakerCallFactory();
+    NCircuitBreakerCallFactory getCircuitBreakerCallFactory();
 
 
     // --------------------
@@ -324,14 +324,14 @@ public interface NConcurrentRPI extends NComponent {
     /**
      * @since 0.8.7
      */
-    NSagaCallableFactory defaultSagaFactory();
+    NSagaCallableFactory getDefaultSagaFactory();
 
     /**
      * @since 0.8.7
      */
-    NSagaCallableFactory sagaFactory();
+    NSagaCallableFactory getSagaFactory();
 
-    void sagaFactory(NSagaCallableFactory factory);
+    void setSagaFactory(NSagaCallableFactory factory);
 
     /**
      * @since 0.8.7
@@ -356,7 +356,7 @@ public interface NConcurrentRPI extends NComponent {
      * @since 0.8.7
      */
     @NSetter
-    void workBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
+    void setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory);
 
     // --------------------
     // Bulkhead Calls
@@ -367,21 +367,21 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return default bulkhead call factory result
      */
-    NBulkheadCallFactory defaultBulkheadCallFactory();
+    NBulkheadCallFactory getDefaultBulkheadCallFactory();
 
     /**
      * Memory bulkhead call factory.
      *
      * @return memory bulkhead call factory result
      */
-    NBulkheadCallFactory memoryBulkheadCallFactory();
+    NBulkheadCallFactory getMemoryBulkheadCallFactory();
 
     /**
      * Bulkhead call factory.
      *
      * @return bulkhead call factory result
      */
-    NBulkheadCallFactory bulkheadCallFactory();
+    NBulkheadCallFactory getBulkheadCallFactory();
 
     /**
      * Bulkhead call factory.
@@ -390,7 +390,7 @@ public interface NConcurrentRPI extends NComponent {
      * @return bulkhead call factory result
      */
     @NSetter
-    void bulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
+    void setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory);
 
 
     // --------------------
@@ -403,7 +403,7 @@ public interface NConcurrentRPI extends NComponent {
      * @param periods ...periods
      * @return retry fixed periods result
      */
-    NRetryPeriodFunction retryFixedPeriods(NDuration... periods);
+    NRetryPeriodFunction createRetryFixedPeriods(NDuration... periods);
 
     /**
      * Retry multiplied period.
@@ -412,9 +412,9 @@ public interface NConcurrentRPI extends NComponent {
      * @param multiplier multiplier
      * @return retry multiplied period result
      */
-    NRetryPeriodFunction retryMultipliedPeriod(NDuration base, double multiplier);
+    NRetryPeriodFunction createRetryMultipliedPeriod(NDuration base, double multiplier);
 
-    NRetryPeriodFunction retryExponentialPeriod(NDuration base, double multiplier);
+    NRetryPeriodFunction createRetryExponentialPeriod(NDuration base, double multiplier);
 
 
     // --------------------
@@ -427,7 +427,7 @@ public interface NConcurrentRPI extends NComponent {
      *
      * @return the executor service
      */
-    ExecutorService executorService();
+    ExecutorService getExecutorService();
 
 
     // --------------------

@@ -4,13 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.artifact.NIdWriter;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.concurrent.*;
-import net.thevpc.nuts.core.NBootOptions;
+import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
-import net.thevpc.nuts.core.NIsolationLevel;
-import net.thevpc.nuts.core.NSession;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.elem.NElements;
@@ -362,9 +359,9 @@ public class NWorkspaceModel {
         this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiId = NId.getApi(Nuts.version()).get();
         this.runtimeId = NId.get(
-                askedRuntimeId.groupId(),
-                askedRuntimeId.artifactId(),
-                NVersion.get(askedRuntimeId.version().toString()).get()).get();
+                NConstants.Ids.NUTS_GROUP_ID,
+                NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID,
+                NVersion.get(DefaultNWorkspace.RUNTIME_VERSION).get()).get();
         this.logModel.init(this.bootModel.getBootEffectiveOptions(), initialBootOptions);
         this.bootModel.init();
     }

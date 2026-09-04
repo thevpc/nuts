@@ -35,7 +35,7 @@ public interface NBulkheadCallFactory {
      * @return a new {@link NBulkheadCallFactory} instance
      */
     static NBulkheadCallFactory of() {
-        return NConcurrentRPI.of().bulkheadCallFactory();
+        return NConcurrentRPI.of().getBulkheadCallFactory();
     }
 
     /**
@@ -43,15 +43,15 @@ public interface NBulkheadCallFactory {
      * @param globalInstance global instance
      */
     static void configure(NBulkheadCallFactory globalInstance) {
-        NConcurrentRPI.of().bulkheadCallFactory(globalInstance);
+        NConcurrentRPI.of().setBulkheadCallFactory(globalInstance);
     }
 
     static NBulkheadCallFactory ofDefault() {
-        return NConcurrentRPI.of().defaultBulkheadCallFactory();
+        return NConcurrentRPI.of().getDefaultBulkheadCallFactory();
     }
 
     static NBulkheadCallFactory ofMem() {
-        return NConcurrentRPI.of().memoryBulkheadCallFactory();
+        return NConcurrentRPI.of().getMemoryBulkheadCallFactory();
     }
 
     /**
@@ -61,7 +61,7 @@ public interface NBulkheadCallFactory {
      * @return a new {@link NBulkheadCallFactory} configured with the given store
      */
     static NBulkheadCallFactory of(NBulkheadCallStore store) {
-        return NConcurrentRPI.of().bulkheadCallFactory().withStore(store);
+        return NConcurrentRPI.of().getBulkheadCallFactory().withStore(store);
     }
 
     /**

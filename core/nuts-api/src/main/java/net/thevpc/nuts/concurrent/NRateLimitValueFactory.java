@@ -26,20 +26,20 @@ public interface NRateLimitValueFactory {
      * @return default factory instance
      */
     static NRateLimitValueFactory of() {
-        return NConcurrentRPI.of().rateLimitValueFactory();
+        return NConcurrentRPI.of().getRateLimitValueFactory();
     }
 
 
     static NRateLimitValueFactory ofMem() {
-        return NConcurrentRPI.of().memoryRateLimitValueFactory();
+        return NConcurrentRPI.of().getMemoryRateLimitValueFactory();
     }
 
     static NRateLimitValueFactory ofDefault() {
-        return NConcurrentRPI.of().defaultRateLimitValueFactory();
+        return NConcurrentRPI.of().getDefaultRateLimitValueFactory();
     }
 
     static void configure(NRateLimitValueFactory factory) {
-        NConcurrentRPI.of().rateLimitValueFactory(factory);
+        NConcurrentRPI.of().setRateLimitValueFactory(factory);
     }
 
     /**
@@ -49,7 +49,7 @@ public interface NRateLimitValueFactory {
      * @return factory instance using the provided store
      */
     static NRateLimitValueFactory of(NRateLimitValueStore store) {
-        return NConcurrentRPI.of().rateLimitValueFactory().withStore(store);
+        return NConcurrentRPI.of().getRateLimitValueFactory().withStore(store);
     }
 
 

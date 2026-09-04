@@ -509,6 +509,10 @@ public class DefaultNWorkspaceExtensionModel {
         NAssert.requireNamedNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
+            NWorkspaceExtension existingExt = extensions.get(wired);
+            if (existingExt != null) {
+                return existingExt;
+            }
             throw new NExtensionAlreadyRegisteredException(id, wired.toString());
         }
 

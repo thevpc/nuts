@@ -31,9 +31,11 @@ public abstract class AbstractNPrepare extends NWorkspaceCmdBase<NPrepare> imple
     protected String java;
     protected String workspace;
     protected List<NId> ids = new ArrayList<>();
+    protected List<String> extraOptions = new ArrayList<>();
 
     public AbstractNPrepare() {
         super("prepare");
+        extraOptions.add("-S");
     }
 
     @Override

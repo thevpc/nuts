@@ -14,100 +14,100 @@ import java.util.function.Supplier;
 public class DefaultNConcurrentRPI implements NConcurrentRPI {
 
     @Override
-    public NTaskSet taskSet() {
+    public NTaskSet createTaskSet() {
         return new NTaskSetImpl();
     }
 
     @Override
-    public void lockFactory(NLockFactory lockFactory) {
+    public void setCurrentLockFactory(NLockFactory lockFactory) {
         NWorkspaceExt.of().getModel().lockFactory = lockFactory;
     }
 
     @Override
-    public NLockFactory memoryLockFactory() {
+    public NLockFactory getMemoryLockFactory() {
         return NWorkspaceExt.of().getModel().memoryLockFactory;
     }
 
     @Override
-    public NLockFactory defaultLockFactory() {
-        return memoryLockFactory();
+    public NLockFactory getDefaultLockFactory() {
+        return getMemoryLockFactory();
     }
 
     @Override
-    public NLockFactory lockFactory() {
-        return NWorkspaceExt.of().getModel().lockFactory == null ? defaultLockFactory() : NWorkspaceExt.of().getModel().lockFactory;
+    public NLockFactory getCurrentLockFactory() {
+        return NWorkspaceExt.of().getModel().lockFactory == null ? getDefaultLockFactory() : NWorkspaceExt.of().getModel().lockFactory;
     }
 
     @Override
-    public void cachedValueFactory(NCachedValueFactory cachedValueFactory) {
+    public void setCachedValueFactory(NCachedValueFactory cachedValueFactory) {
         NWorkspaceExt.of().getModel().cachedValueFactory = cachedValueFactory;
     }
 
     @Override
-    public NCachedValueFactory memoryCachedValueFactory() {
+    public NCachedValueFactory getMemoryCachedValueFactory() {
         return NWorkspaceExt.of().getModel().memoryCachedValueFactory;
     }
 
     @Override
-    public NCachedValueFactory defaultCachedValueFactory() {
-        return memoryCachedValueFactory();
+    public NCachedValueFactory getDefaultCachedValueFactory() {
+        return getMemoryCachedValueFactory();
     }
 
     @Override
-    public NCachedValueFactory cachedValueFactory() {
-        return NWorkspaceExt.of().getModel().cachedValueFactory == null ? defaultCachedValueFactory() : NWorkspaceExt.of().getModel().cachedValueFactory;
+    public NCachedValueFactory getCachedValueFactory() {
+        return NWorkspaceExt.of().getModel().cachedValueFactory == null ? getDefaultCachedValueFactory() : NWorkspaceExt.of().getModel().cachedValueFactory;
     }
 
 
     @Override
-    public void retryCallFactory(NRetryCallFactory retryCallFactory) {
+    public void setRetryCallFactory(NRetryCallFactory retryCallFactory) {
         NWorkspaceExt.of().getModel().retryValueFactory = retryCallFactory;
     }
 
     @Override
-    public NRetryCallFactory memoryRetryCallFactory() {
+    public NRetryCallFactory getMemoryRetryCallFactory() {
         return NWorkspaceExt.of().getModel().memoryRetryValueFactory;
     }
 
     @Override
-    public NRetryCallFactory defaultRetryCallFactory() {
-        return memoryRetryCallFactory();
+    public NRetryCallFactory getDefaultRetryCallFactory() {
+        return getMemoryRetryCallFactory();
     }
 
     @Override
-    public NRetryCallFactory retryCallFactory() {
-        return NWorkspaceExt.of().getModel().retryValueFactory == null ? defaultRetryCallFactory() : NWorkspaceExt.of().getModel().retryValueFactory;
+    public NRetryCallFactory getRetryCallFactory() {
+        return NWorkspaceExt.of().getModel().retryValueFactory == null ? getDefaultRetryCallFactory() : NWorkspaceExt.of().getModel().retryValueFactory;
     }
 
 
     @Override
-    public void onceValueFactory(NOnceValueFactory onceValueFactory) {
+    public void setOnceValueFactory(NOnceValueFactory onceValueFactory) {
         NWorkspaceExt.of().getModel().onceValueFactory = onceValueFactory;
     }
 
     @Override
-    public NOnceValueFactory memoryOnceValueFactory() {
+    public NOnceValueFactory getMemoryOnceValueFactory() {
         return NWorkspaceExt.of().getModel().memoryOnceValueFactory;
     }
 
     @Override
-    public NOnceValueFactory defaultOnceValueFactory() {
-        return memoryOnceValueFactory();
+    public NOnceValueFactory getDefaultOnceValueFactory() {
+        return getMemoryOnceValueFactory();
     }
 
     @Override
-    public NOnceValueFactory onceValueFactory() {
-        return NWorkspaceExt.of().getModel().onceValueFactory == null ? defaultOnceValueFactory() : NWorkspaceExt.of().getModel().onceValueFactory;
+    public NOnceValueFactory getOnceValueFactory() {
+        return NWorkspaceExt.of().getModel().onceValueFactory == null ? getDefaultOnceValueFactory() : NWorkspaceExt.of().getModel().onceValueFactory;
     }
 
 
     @Override
-    public NRateLimitValueFactory defaultRateLimitValueFactory() {
+    public NRateLimitValueFactory getDefaultRateLimitValueFactory() {
         return NWorkspaceExt.of().getModel().memoryRateLimitValueFactory;
     }
 
     @Override
-    public NSagaCallableFactory defaultSagaFactory() {
+    public NSagaCallableFactory getDefaultSagaFactory() {
         return NWorkspaceExt.of().getModel().memorySagaFactory;
     }
 
@@ -117,145 +117,145 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
     }
 
     @Override
-    public NRateLimitValueFactory memoryRateLimitValueFactory() {
+    public NRateLimitValueFactory getMemoryRateLimitValueFactory() {
         return NWorkspaceExt.of().getModel().memoryRateLimitValueFactory;
     }
 
     @Override
-    public void rateLimitValueFactory(NRateLimitValueFactory factory) {
+    public void setRateLimitValueFactory(NRateLimitValueFactory factory) {
         NWorkspaceExt.of().getModel().rateLimitValueFactory = factory;
     }
 
     @Override
-    public NRateLimitValueFactory rateLimitValueFactory() {
-        return NWorkspaceExt.of().getModel().rateLimitValueFactory == null ? defaultRateLimitValueFactory() : NWorkspaceExt.of().getModel().rateLimitValueFactory;
+    public NRateLimitValueFactory getRateLimitValueFactory() {
+        return NWorkspaceExt.of().getModel().rateLimitValueFactory == null ? getDefaultRateLimitValueFactory() : NWorkspaceExt.of().getModel().rateLimitValueFactory;
     }
 
 
     @Override
-    public NSagaCallableFactory sagaFactory() {
-        return NWorkspaceExt.of().getModel().sagaFactory == null ? defaultSagaFactory() : NWorkspaceExt.of().getModel().sagaFactory;
+    public NSagaCallableFactory getSagaFactory() {
+        return NWorkspaceExt.of().getModel().sagaFactory == null ? getDefaultSagaFactory() : NWorkspaceExt.of().getModel().sagaFactory;
     }
 
     @Override
-    public void sagaFactory(NSagaCallableFactory factory) {
+    public void setSagaFactory(NSagaCallableFactory factory) {
         NWorkspaceExt.of().getModel().sagaFactory = factory;
     }
 
 
     @Override
     public <T> NCachedValue<T> cachedValue(Supplier<T> supplier) {
-        return cachedValueFactory().of(supplier);
+        return getCachedValueFactory().of(supplier);
     }
 
     @Override
-    public <T> NOnceValue<T> onceValue(Supplier<T> supplier) {
-        return onceValueFactory().of(supplier);
+    public <T> NOnceValue<T> createOnceValue(Supplier<T> supplier) {
+        return getOnceValueFactory().of(supplier);
     }
 
     @Override
     public <T> NCachedValue<T> cachedValue(String id, Supplier<T> supplier) {
-        return cachedValueFactory().of(id, supplier);
+        return getCachedValueFactory().of(id, supplier);
     }
 
     @Override
-    public <T> NOnceValue<T> onceValue(String id, Supplier<T> supplier) {
-        return onceValueFactory().of(id, supplier);
+    public <T> NOnceValue<T> createOnceValue(String id, Supplier<T> supplier) {
+        return getOnceValueFactory().of(id, supplier);
     }
 
     @Override
-    public <T> NRetryCall<T> retryCall(String id, NCallable<T> callable) {
-        return retryCallFactory().of(id, callable);
+    public <T> NRetryCall<T> createRetryCall(String id, NCallable<T> callable) {
+        return getRetryCallFactory().of(id, callable);
     }
 
     @Override
-    public <T> NRetryCall<T> retryCall(NCallable<T> callable) {
-        return retryCallFactory().of(callable);
+    public <T> NRetryCall<T> createRetryCall(NCallable<T> callable) {
+        return getRetryCallFactory().of(callable);
     }
 
     @Override
-    public <T> NCircuitBreakerCall<T> circuitBreakerCall(NCallable<T> callable) {
-        return circuitBreakerCallFactory().of(callable);
+    public <T> NCircuitBreakerCall<T> createCircuitBreakerCall(NCallable<T> callable) {
+        return getCircuitBreakerCallFactory().of(callable);
     }
 
     @Override
-    public <T> NCircuitBreakerCall<T> circuitBreakerCall(String id, NCallable<T> callable) {
-        return circuitBreakerCallFactory().of(id, callable);
+    public <T> NCircuitBreakerCall<T> createCircuitBreakerCall(String id, NCallable<T> callable) {
+        return getCircuitBreakerCallFactory().of(id, callable);
     }
 
     @Override
-    public void circuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory) {
+    public void setCircuitBreakerCallFactory(NCircuitBreakerCallFactory circuitBreakerCallFactory) {
         NWorkspaceExt.of().getModel().circuitBreakerCallFactory = circuitBreakerCallFactory;
     }
 
     @Override
-    public NCircuitBreakerCallFactory memoryCircuitBreakerCallFactory() {
+    public NCircuitBreakerCallFactory getMemoryCircuitBreakerCallFactory() {
         return NWorkspaceExt.of().getModel().memoryCircuitBreakerCallFactory;
     }
 
     @Override
-    public NCircuitBreakerCallFactory defaultCircuitBreakerCallFactory() {
+    public NCircuitBreakerCallFactory getDefaultCircuitBreakerCallFactory() {
         return NWorkspaceExt.of().getModel().memoryCircuitBreakerCallFactory;
     }
 
     @Override
-    public NCircuitBreakerCallFactory circuitBreakerCallFactory() {
-        return NWorkspaceExt.of().getModel().circuitBreakerCallFactory == null ? defaultCircuitBreakerCallFactory() : NWorkspaceExt.of().getModel().circuitBreakerCallFactory;
+    public NCircuitBreakerCallFactory getCircuitBreakerCallFactory() {
+        return NWorkspaceExt.of().getModel().circuitBreakerCallFactory == null ? getDefaultCircuitBreakerCallFactory() : NWorkspaceExt.of().getModel().circuitBreakerCallFactory;
     }
 
     @Override
-    public NBulkheadCallFactory defaultBulkheadCallFactory() {
+    public NBulkheadCallFactory getDefaultBulkheadCallFactory() {
         return NWorkspaceExt.of().getModel().memoryBulkheadCallFactory;
     }
 
     @Override
-    public NBulkheadCallFactory memoryBulkheadCallFactory() {
+    public NBulkheadCallFactory getMemoryBulkheadCallFactory() {
         return NWorkspaceExt.of().getModel().memoryBulkheadCallFactory;
     }
 
     @Override
-    public NBulkheadCallFactory bulkheadCallFactory() {
-        return NWorkspaceExt.of().getModel().bulkheadCallFactory == null ? defaultBulkheadCallFactory() : NWorkspaceExt.of().getModel().bulkheadCallFactory;
+    public NBulkheadCallFactory getBulkheadCallFactory() {
+        return NWorkspaceExt.of().getModel().bulkheadCallFactory == null ? getDefaultBulkheadCallFactory() : NWorkspaceExt.of().getModel().bulkheadCallFactory;
     }
 
     @Override
-    public void bulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory) {
+    public void setBulkheadCallFactory(NBulkheadCallFactory bulkheadCallFactory) {
         NWorkspaceExt.of().getModel().bulkheadCallFactory = bulkheadCallFactory;
     }
 
     @Override
     public NSagaCallableBuilder sagaCallBuilder() {
-        return sagaFactory().ofBuilder();
+        return getSagaFactory().ofBuilder();
     }
 
     @Override
     public NSagaCallableBuilder sagaCallBuilder(String id) {
-        return sagaFactory().ofBuilder(id);
+        return getSagaFactory().ofBuilder(id);
     }
 
     @Override
-    public NWorkBalancerFactory defaultWorkBalancerFactory() {
+    public NWorkBalancerFactory getDefaultWorkBalancerFactory() {
         return NWorkspaceExt.of().getModel().memoryWorkBalancerCallFactory;
     }
 
     @Override
-    public NWorkBalancerFactory memoryWorkBalancerFactory() {
+    public NWorkBalancerFactory getMemoryWorkBalancerFactory() {
         return NWorkspaceExt.of().getModel().memoryWorkBalancerCallFactory;
     }
 
     @Override
-    public NWorkBalancerFactory workBalancerFactory() {
-        return NWorkspaceExt.of().getModel().workBalancerCallFactory == null ? defaultWorkBalancerFactory() : NWorkspaceExt.of().getModel().workBalancerCallFactory;
+    public NWorkBalancerFactory getWorkBalancerFactory() {
+        return NWorkspaceExt.of().getModel().workBalancerCallFactory == null ? getDefaultWorkBalancerFactory() : NWorkspaceExt.of().getModel().workBalancerCallFactory;
     }
 
     @Override
-    public void workBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
+    public void setWorkBalancerCallFactory(NWorkBalancerFactory workBalancerCallFactory) {
         NWorkspaceExt.of().getModel().workBalancerCallFactory = workBalancerCallFactory;
     }
 
-    public NRetryPeriodFunction retryExponentialPeriod(NDuration base, double multiplier) {
+    public NRetryPeriodFunction createRetryExponentialPeriod(NDuration base, double multiplier) {
         if (base == null || base.isZero() || multiplier <= 0) {
-            return retryFixedPeriods(NDuration.ofMillis(0));
+            return createRetryFixedPeriods(NDuration.ofMillis(0));
         }
         return new NRetryPeriodFunction() {
             @Override
@@ -266,7 +266,7 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
     }
 
     @Override
-    public NRetryPeriodFunction retryFixedPeriods(NDuration... periods) {
+    public NRetryPeriodFunction createRetryFixedPeriods(NDuration... periods) {
         List<NDuration> all = new ArrayList<>();
         if (periods == null) {
             all.add(NDuration.ofMillis(0));
@@ -291,9 +291,9 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
     }
 
     @Override
-    public NRetryPeriodFunction retryMultipliedPeriod(NDuration base, double multiplier) {
+    public NRetryPeriodFunction createRetryMultipliedPeriod(NDuration base, double multiplier) {
         if (base == null || base.isZero() || multiplier <= 0) {
-            return retryFixedPeriods(NDuration.ofMillis(0));
+            return createRetryFixedPeriods(NDuration.ofMillis(0));
         }
         return new NRetryPeriodFunction() {
             @Override
@@ -305,7 +305,7 @@ public class DefaultNConcurrentRPI implements NConcurrentRPI {
 
 
     @Override
-    public ExecutorService executorService() {
+    public ExecutorService getExecutorService() {
         return NWorkspaceExt.of().getModel().configModel.executorService();
     }
 

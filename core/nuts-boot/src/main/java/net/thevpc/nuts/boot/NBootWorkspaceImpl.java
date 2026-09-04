@@ -616,8 +616,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             runtimeLoaded = false;
             try {
                 Class<?> c = Class.forName("net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace");
-                String runtimeVersionString = (String) c.getField("RUNTIME_VERSION_STRING").get(null);
-                runtimeLoadedId = NBootDependency.of(runtimeVersionString);
+                String runtimeVersionString = (String) c.getField("RUNTIME_VERSION").get(null);
+                runtimeLoadedId = NBootDependency.of(NBootConstants.Ids.NUTS_GROUP_ID,NBootConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID,runtimeVersionString);
                 runtimeLoaded = true;
             } catch (Exception ex) {
                 //
@@ -1059,7 +1059,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 exceptionRunnable.run();
                 return loadedWorkspace;
             }
-            NWorkspaceBaseAndError firstAttempt = _doNormalBootstrap();
+            NWorkspaceBaseAndError firstAttempt = doNormalBootstrap();
             NWorkspaceBaseAndError e = firstAttempt;
             if (e.workspace == null) {
                 if (complete != null) {
@@ -1084,7 +1084,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     preparedWorkspace = false;
                     newWorkspace = false;
                     options.setExpireTime(Instant.now()); // force expire all cache
-                    NWorkspaceBaseAndError e2 = _doNormalBootstrap();
+                    NWorkspaceBaseAndError e2 = doNormalBootstrap();
                     if (e2.error != null) {
                         this.exceptionRunnable = () -> {
                             logError(e2.classworld, e2.errorList, options);
@@ -1130,7 +1130,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 //        }
     }
 
-    private NWorkspaceBaseAndError _doNormalBootstrap() {
+    private NWorkspaceBaseAndError doNormalBootstrap() {
         NWorkspaceBaseAndError result = new NWorkspaceBaseAndError();
         NBootErrorInfoList errorList = new NBootErrorInfoList();
         result.errorList = errorList;

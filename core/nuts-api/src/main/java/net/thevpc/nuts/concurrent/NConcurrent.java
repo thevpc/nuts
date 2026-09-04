@@ -1,18 +1,10 @@
 package net.thevpc.nuts.concurrent;
 
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.internal.rpi.NConcurrentRPI;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NSetter;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
 
 /**
  * Main concurrency component interface providing factories and utilities
@@ -36,7 +28,7 @@ public final class NConcurrent {
      * @return the executor service
      */
     public static ExecutorService executorService() {
-        return NConcurrentRPI.of().executorService();
+        return NConcurrentRPI.of().getExecutorService();
     }
 
 
