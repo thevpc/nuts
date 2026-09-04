@@ -4093,7 +4093,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.command.NInfoCmd",
+    "name": "net.thevpc.nuts.command.NInfo",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -4261,7 +4261,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.command.NPrepareCmd",
+    "name": "net.thevpc.nuts.command.NPrepare",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -23427,6 +23427,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.runtime.standalone.io.path.NPathNamePartsUtils",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -33269,6 +33283,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.NRemoteExecutionUtils",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifact.DefaultSpawnExecutableNutsRemote",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -33437,7 +33465,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoCmd",
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfo",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -33451,7 +33479,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoCmd$FilteredMap",
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfo$FilteredMap",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -33465,7 +33493,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoCmd$MapAndSession",
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfo$MapAndSession",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -33675,7 +33703,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.AbstractNPrepareCmd",
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.AbstractNPrepare",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -33689,7 +33717,7 @@
     "allowWrite": true
   },
   {
-    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.DefaultNPrepareCmd",
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.DefaultNPrepare",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,
@@ -33704,6 +33732,20 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.DefaultNPrepareInternalExecutable",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare.DefaultNPrepareTransaction",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

@@ -793,7 +793,7 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace",
-  "fields":[{"name":"RUNTIME_VERSION_STRING"}]
+  "fields":[{"name":"RUNTIME_VERSION"}, {"name":"RUNTIME_VERSION_STRING"}]
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.archetype.DefaultNWorkspaceArchetypeComponent",
@@ -830,6 +830,9 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch"
+},
+{
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfo"
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoCmd"
