@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
+import net.thevpc.nuts.net.NHttpClient;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NException;
 import net.thevpc.nuts.core.NSession;
@@ -12,8 +13,7 @@ import java.io.UncheckedIOException;
 import java.util.Locale;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.net.NWebCli;
-import net.thevpc.nuts.net.NWebRequest;
+import net.thevpc.nuts.net.NHttpRequest;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
     public SimpleRecommendationConnector() {
@@ -24,10 +24,10 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
     public <T> T post(String url, RequestQueryInfo ri, Class<T> resultType) {
         validateRequest(ri);
         try {
-            NWebCli cli = NWebCli.of();
+            NHttpClient cli = NHttpClient.of();
             cli.connectTimeout(NDuration.ofMillis(500));
             cli.readTimeout(NDuration.ofMillis(500));
-            NWebRequest post = cli.POST(ri.server + url)
+            NHttpRequest post = cli.POST(ri.server + url)
                     .contentType("application/json; charset=UTF-8")
                     .header("Accept", "*/*");
             String loc = NSession.of().locale().orDefault();

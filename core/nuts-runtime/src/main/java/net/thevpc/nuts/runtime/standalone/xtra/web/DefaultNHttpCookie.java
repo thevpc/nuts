@@ -2,18 +2,18 @@ package net.thevpc.nuts.runtime.standalone.xtra.web;
 
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.net.NHttpUrlEncoder;
-import net.thevpc.nuts.net.NWebCookie;
+import net.thevpc.nuts.net.NHttpCookie;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultNWebCookie implements NWebCookie {
+public class DefaultNHttpCookie implements NHttpCookie {
     private static final NStringMapFormat COOKIES_PARSER = NStringMapFormat.HTTP_HEADER_FORMAT;
     private String name;
     private String value;
     private Map<String, String> properties = new HashMap<>();
 
-    public DefaultNWebCookie(String expr) {
+    public DefaultNHttpCookie(String expr) {
         if (expr != null) {
             int index = expr.indexOf('=');
             if (index >= 0) {
@@ -63,7 +63,7 @@ public class DefaultNWebCookie implements NWebCookie {
         return null;
     }
 
-    public static String formatCookie(NWebCookie cookie) {
+    public static String formatCookie(NHttpCookie cookie) {
         if (cookie == null) {
             return "";
         }

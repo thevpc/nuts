@@ -16,7 +16,7 @@ import java.util.Map;
  * @author thevpc
  * @since 0.8.0
  */
-public interface NWebResponse {
+public interface NHttpResponse {
     /**
      * Status code.
      *
@@ -153,7 +153,7 @@ public interface NWebResponse {
      *
      * @return cookies result
      */
-    List<NWebCookie> cookies();
+    List<NHttpCookie> cookies();
 
     /**
      * Checks if is error.
@@ -174,7 +174,7 @@ public interface NWebResponse {
      *
      * @return if error throw result
      */
-    NWebResponse ifErrorThrow();
+    NHttpResponse ifErrorThrow();
 
     /**
      * Checks if is client error.
@@ -217,5 +217,5 @@ public interface NWebResponse {
      * @param msgCode msg code
      * @return user message result
      */
-    NWebResponse userMessage(NMsgCode msgCode);
+    NHttpResponse userMessage(NMsgCode msgCode);
 }

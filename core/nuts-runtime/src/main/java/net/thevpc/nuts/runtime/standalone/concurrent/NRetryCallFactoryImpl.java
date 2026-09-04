@@ -29,7 +29,7 @@ public class NRetryCallFactoryImpl implements NRetryCallFactory {
     }
 
     public <T> NRetryCall<T> of(NCallable<T> callable) {
-        return of(callable);
+        return of(null,callable);
     }
 
     public <T> NRetryCall<T> of(String id, NCallable<T> callable) {

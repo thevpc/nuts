@@ -10,7 +10,7 @@ import net.thevpc.nuts.util.NSetter;
  * @author thevpc
  * @since 0.8.0
  */
-public interface NWebRequestBody {
+public interface NHttpRequestBody {
     /**
      * Body.
      *
@@ -74,7 +74,7 @@ public interface NWebRequestBody {
      * @return string value result
      */
     @NSetter
-    NWebRequestBody stringValue(String source);
+    NHttpRequestBody stringValue(String source);
 
     /**
      * Body.
@@ -83,7 +83,7 @@ public interface NWebRequestBody {
      * @return body result
      */
     @NSetter
-    NWebRequestBody body(NInputSource source);
+    NHttpRequestBody body(NInputSource source);
 
     /**
      * Content type.
@@ -92,7 +92,7 @@ public interface NWebRequestBody {
      * @return content type result
      */
     @NSetter
-    NWebRequestBody contentType(String contentType);
+    NHttpRequestBody contentType(String contentType);
 
     /**
      * Encoding.
@@ -101,7 +101,7 @@ public interface NWebRequestBody {
      * @return encoding result
      */
     @NSetter
-    NWebRequestBody encoding(String encoding);
+    NHttpRequestBody encoding(String encoding);
 
     /**
      * Name.
@@ -110,7 +110,7 @@ public interface NWebRequestBody {
      * @return name result
      */
     @NSetter
-    NWebRequestBody name(String name);
+    NHttpRequestBody name(String name);
 
     /**
      * File name.
@@ -119,7 +119,7 @@ public interface NWebRequestBody {
      * @return file name result
      */
     @NSetter
-    NWebRequestBody fileName(String fileName);
+    NHttpRequestBody fileName(String fileName);
 
     //return parent NWebRequest
     /**
@@ -127,6 +127,6 @@ public interface NWebRequestBody {
      *
      * @return end result
      */
-    NWebRequest end();
+    NHttpRequest end();
 
 }

@@ -9,9 +9,9 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NMsgCode;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.net.NHttpCode;
-import net.thevpc.nuts.net.NWebCookie;
-import net.thevpc.nuts.net.NWebResponse;
-import net.thevpc.nuts.net.NWebResponseException;
+import net.thevpc.nuts.net.NHttpCookie;
+import net.thevpc.nuts.net.NHttpResponse;
+import net.thevpc.nuts.net.NHttpResponseException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,14 +24,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class NWebResponseImpl implements NWebResponse {
+public class NHttpResponseImpl implements NHttpResponse {
     private final NHttpCode httpCode;
     private final NMsg msg;
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
     private final NOnceValue<NInputSource> content;
     private NMsgCode msgCode;
 
-    public NWebResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
+    public NHttpResponseImpl(NHttpCode code, NMsg msg, Map<String, List<String>> headers, Supplier<NInputSource> content) {
         this.httpCode = code;
         this.msg = msg;
         this.headers.addHeadersMulti(headers, DefaultNWebHeaders.Mode.ALWAYS);
@@ -193,8 +193,8 @@ public class NWebResponseImpl implements NWebResponse {
         return content1.readBytes();
     }
 
-    public List<NWebCookie> cookies() {
-        return headers("Set-Cookie").stream().map(DefaultNWebCookie::new).collect(Collectors.toList());
+    public List<NHttpCookie> cookies() {
+        return headers("Set-Cookie").stream().map(DefaultNHttpCookie::new).collect(Collectors.toList());
     }
 
     @Override
@@ -212,9 +212,9 @@ public class NWebResponseImpl implements NWebResponse {
     }
 
     @Override
-    public NWebResponse ifErrorThrow() {
+    public NHttpResponse ifErrorThrow() {
         if (isError()) {
-            throw new NWebResponseException(msg, msgCode, httpCode);
+            throw new NHttpResponseException(msg, msgCode, httpCode);
         }
         return this;
     }
@@ -247,7 +247,7 @@ public class NWebResponseImpl implements NWebResponse {
         return msgCode;
     }
 
-    public NWebResponse userMessage(NMsgCode msgCode) {
+    public NHttpResponse userMessage(NMsgCode msgCode) {
         this.msgCode = msgCode;
         return this;
     }

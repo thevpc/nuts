@@ -7,13 +7,14 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
+import net.thevpc.nuts.net.NHttpClient;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.spi.NObjectWriterSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -23,7 +24,6 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.net.NWebCli;
 
 import java.io.File;
 import java.io.IOException;
@@ -305,7 +305,7 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        try (InputStream is = DefaultNWebCli.prepareGlobalOpenStream(url)) {
+        try (InputStream is = DefaultNHttpClient.prepareGlobalOpenStream(url)) {
             return true;
         } catch (IOException e) {
             return false;
@@ -400,11 +400,11 @@ public class URLPath implements NPathSPI {
             }
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-            NWebCli best = NExtensions.of().createSupported(NWebCli.class, url).get();
+            NHttpClient best = NExtensions.of().createSupported(NHttpClient.class, url).get();
             return best.GET().uri(url.toString()).run().content().inputStream();
         }
         try {
-            return DefaultNWebCli.prepareGlobalOpenStream(url);
+            return DefaultNHttpClient.prepareGlobalOpenStream(url);
         } catch (IOException e) {
             throw NException.ofUncheckedException(e);
         }
@@ -416,7 +416,7 @@ public class URLPath implements NPathSPI {
                 throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
             }
             URLConnection c = url.openConnection();
-            DefaultNWebCli.prepareGlobalConnection(c);
+            DefaultNHttpClient.prepareGlobalConnection(c);
             return c.getOutputStream();
         } catch (IOException e) {
             throw new NIOException(e);
@@ -637,7 +637,7 @@ public class URLPath implements NPathSPI {
         boolean success = true;
         try {
             URLConnection c = url.openConnection();
-            DefaultNWebCli.prepareGlobalConnection(c);
+            DefaultNHttpClient.prepareGlobalConnection(c);
             c.setDoOutput(false);
             CacheInfo cc = new CacheInfo();
             if (c instanceof HttpURLConnection) {

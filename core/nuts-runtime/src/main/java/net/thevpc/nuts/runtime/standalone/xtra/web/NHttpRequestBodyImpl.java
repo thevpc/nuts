@@ -4,10 +4,10 @@ import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.net.NWebRequest;
-import net.thevpc.nuts.net.NWebRequestBody;
+import net.thevpc.nuts.net.NHttpRequest;
+import net.thevpc.nuts.net.NHttpRequestBody;
 
-public class NWebRequestBodyImpl implements NWebRequestBody {
+public class NHttpRequestBodyImpl implements NHttpRequestBody {
     private NInputSource body;
 
     private String contentType;
@@ -20,9 +20,9 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
 
     private String stringValue;
 
-    private NWebRequest request;
+    private NHttpRequest request;
 
-    public NWebRequestBodyImpl(NWebRequest request) {
+    public NHttpRequestBodyImpl(NHttpRequest request) {
         this.request = request;
     }
 
@@ -32,7 +32,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody body(NInputSource body) {
+    public NHttpRequestBody body(NInputSource body) {
         this.body = body;
         return this;
     }
@@ -43,7 +43,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody contentType(String contentType) {
+    public NHttpRequestBody contentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
@@ -54,7 +54,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody encoding(String encoding) {
+    public NHttpRequestBody encoding(String encoding) {
         this.encoding = encoding;
         return this;
     }
@@ -65,7 +65,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody name(String name) {
+    public NHttpRequestBody name(String name) {
         this.name = name;
         return this;
     }
@@ -76,7 +76,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody fileName(String fileName) {
+    public NHttpRequestBody fileName(String fileName) {
         this.fileName = fileName;
         return this;
     }
@@ -87,7 +87,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
     }
 
     @Override
-    public NWebRequestBody stringValue(String stringValue) {
+    public NHttpRequestBody stringValue(String stringValue) {
         this.stringValue = stringValue;
         return this;
     }
@@ -108,7 +108,7 @@ public class NWebRequestBodyImpl implements NWebRequestBody {
 
 
     @Override
-    public NWebRequest end() {
+    public NHttpRequest end() {
         return request;
     }
 }

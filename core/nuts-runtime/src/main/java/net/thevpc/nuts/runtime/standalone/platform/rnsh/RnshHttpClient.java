@@ -34,13 +34,13 @@ public class RnshHttpClient {
     }
 
     public String version() {
-        return NWebCli.of().POST(resolveUrl("version"))
+        return NHttpClient.of().POST(resolveUrl("version"))
                 .doWith(this::prepareSecurity)
                 .run().contentAsString();
     }
 
     public NInputSource getFile(String remotePath) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("get-file"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("get-file"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
@@ -96,14 +96,14 @@ public class RnshHttpClient {
             fromPathObj.walk().filter(x -> x.isRegularFile()).forEach(x -> {
                 NPath toStr = translate(x, fromPathObj, toPathObj);
 
-                NWebCli.of().POST(resolveUrl("put-file"))
+                NHttpClient.of().POST(resolveUrl("put-file"))
                         .formData("content", x.toString())
                         .formData("path", toStr.toString())
                         .doWith(this::prepareSecurity)
                         .run().content();
             });
         } else if (fromPathObj.isRegularFile()) {
-            NWebCli.of().POST(resolveUrl("put-file"))
+            NHttpClient.of().POST(resolveUrl("put-file"))
                     .formData("content", fromPathObj.toString())
                     .formData("path", toPathObj.toString())
                     .doWith(this::prepareSecurity)
@@ -118,7 +118,7 @@ public class RnshHttpClient {
     }
 
     public void putFile(NInputContentProvider localPath, String remotePath) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("put-file"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("put-file"))
                 .formData("content", localPath)
                 .formData("path", remotePath)
                 .doWith(this::prepareSecurity)
@@ -127,7 +127,7 @@ public class RnshHttpClient {
         run.content();
     }
 
-    private void rethrowError(NWebResponse run) {
+    private void rethrowError(NHttpResponse run) {
         NHttpCode statusCode = run.statusCode();
         if (statusCode.code() >= 400) {
             String appError = run.header("X-APP-ERROR").orNull();
@@ -154,10 +154,10 @@ public class RnshHttpClient {
                 code = NMsgCode.ofMessage(appError, "error", new String[0]);
             }
             if (code != null) {
-                throw new NWebResponseException(NMsg.ofC("%s", code.message()),
+                throw new NHttpResponseException(NMsg.ofC("%s", code.message()),
                         code, statusCode);
             } else {
-                throw new NWebResponseException(
+                throw new NHttpResponseException(
                         NMsg.ofC("%s", "unexpected error"),
                         NMsgCode.ofMessage("unexpected error", "ERROR"),
                         statusCode);
@@ -274,7 +274,7 @@ public class RnshHttpClient {
         if (NBlankable.isBlank(refreshToken)) {
             throw new NIllegalArgumentException(NMsg.ofC("missing refresh token"));
         }
-        NWebResponse response = NWebCli.of().POST(resolveUrl("refresh-token"))
+        NHttpResponse response = NHttpClient.of().POST(resolveUrl("refresh-token"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("token", this.loginResult.refreshToken)
@@ -306,7 +306,7 @@ public class RnshHttpClient {
     }
 
     public void login(String login, String password) {
-        NWebResponse response = NWebCli.of().POST(resolveUrl("login"))
+        NHttpResponse response = NHttpClient.of().POST(resolveUrl("login"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("userName", login)
@@ -327,7 +327,7 @@ public class RnshHttpClient {
         throw new NIllegalArgumentException(NMsg.ofC("unable to login to %s", toSafeConnectionString(resolveConnectionString())));
     }
 
-    private void prepareSecurity(NWebRequest r) {
+    private void prepareSecurity(NHttpRequest r) {
         if (loginResult != null && !NBlankable.isBlank(loginResult.accessToken)) {
             if (!NBlankable.isBlank(loginResult.accessToken)) {
                 r.authorizationBearer(loginResult.accessToken);
@@ -457,7 +457,7 @@ public class RnshHttpClient {
         } else {
             cmdString = NCmdLine.of(command).toString();
         }
-        NWebResponse r = NWebCli.of().POST(resolveUrl("exec"))
+        NHttpResponse r = NHttpClient.of().POST(resolveUrl("exec"))
                 .formData("command", cmdString)
                 .formData(inputSource == null ? null : "in", inputSource)
                 .doWith(this::prepareSecurity)
@@ -527,7 +527,7 @@ public class RnshHttpClient {
     }
 
     public NFileInfo getFileInfo(String remotePath) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("file-info"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("file-info"))
                 .doWith(this::prepareSecurity)
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
@@ -540,7 +540,7 @@ public class RnshHttpClient {
     }
 
     public String[] listNames(String remotePath) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-names"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("directory-list-names"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
@@ -553,7 +553,7 @@ public class RnshHttpClient {
     }
 
     public String digest(String remotePath, String algo) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("file-digest"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("file-digest"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
@@ -569,7 +569,7 @@ public class RnshHttpClient {
 
 
     public List<NPathChildStringDigestInfo> directoryListDigest(String remotePath, String algo) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-digest"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("directory-list-digest"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)
@@ -591,7 +591,7 @@ public class RnshHttpClient {
     }
 
     public NFileInfo[] listFileInfos(String remotePath) {
-        NWebResponse run = NWebCli.of().POST(resolveUrl("directory-list-infos"))
+        NHttpResponse run = NHttpClient.of().POST(resolveUrl("directory-list-infos"))
                 .jsonRequestBody(
                         NMapBuilder.ofLinked()
                                 .put("path", remotePath)

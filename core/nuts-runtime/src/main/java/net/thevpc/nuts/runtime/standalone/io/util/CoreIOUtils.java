@@ -31,7 +31,7 @@ import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBase;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.base.NSystemTerminalBase;
 import net.thevpc.nuts.text.NMsg;
@@ -807,7 +807,7 @@ public class CoreIOUtils {
         }
         InputStream in = null;
         try {
-            in = DefaultNWebCli.prepareGlobalOpenStream(u);
+            in = DefaultNHttpClient.prepareGlobalOpenStream(u);
         } catch (IOException e) {
             return NOptional.ofNamedEmpty("error stream for " + u);
         }

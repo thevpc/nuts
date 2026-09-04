@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
@@ -47,7 +47,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
-        DefaultNWebCli.prepareGlobalConnection(c);
+        DefaultNHttpClient.prepareGlobalConnection(c);
         long contentLength = c.getContentLengthLong();
         try {
             return new NReservedMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);

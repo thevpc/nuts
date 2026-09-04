@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 
 import net.thevpc.nuts.log.NMsgIntent;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.text.NMsg;
 
 import java.io.IOException;
@@ -192,7 +192,7 @@ public class NPomIdResolver {
         if (url != null) {
             Properties p = new Properties();
             try {
-                p.load(DefaultNWebCli.prepareGlobalOpenStream(url));
+                p.load(DefaultNHttpClient.prepareGlobalOpenStream(url));
             } catch (IOException e) {
                 //
             }
@@ -210,7 +210,7 @@ public class NPomIdResolver {
         if (url != null) {
             Properties p = new Properties();
             try {
-                p.load(DefaultNWebCli.prepareGlobalOpenStream(url));
+                p.load(DefaultNHttpClient.prepareGlobalOpenStream(url));
             } catch (IOException e) {
                 //
             }

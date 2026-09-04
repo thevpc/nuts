@@ -11,7 +11,7 @@ import net.thevpc.nuts.text.NMsgCodeAware;
  * @author thevpc
  * @since 0.8.0
  */
-public class NWebResponseException extends NException implements NMsgCodeAware {
+public class NHttpResponseException extends NException implements NMsgCodeAware {
     public NHttpCode code;
     public NMsg responseMessage;
     public NMsgCode messageCode;
@@ -24,7 +24,7 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #message()} method.
      */
-    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
+    public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
       /**
        * Super.
        *
@@ -51,7 +51,7 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
-    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
+    public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
       /**
        * Super.
        *
@@ -77,7 +77,7 @@ public class NWebResponseException extends NException implements NMsgCodeAware {
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
      */
-    public NWebResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
       /**
        * Super.
        *

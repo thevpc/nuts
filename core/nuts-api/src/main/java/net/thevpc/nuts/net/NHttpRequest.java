@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  * @author thevpc
  * @since 0.8.0
  */
-public interface NWebRequest extends NMsgFormattable {
+public interface NHttpRequest extends NMsgFormattable {
     /**
      * Checks if is one way.
      *
@@ -36,7 +36,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @return one way result
      */
     @NSetter
-    NWebRequest oneWay(boolean oneWay);
+    NHttpRequest oneWay(boolean oneWay);
 
     /**
      * Uri.
@@ -52,7 +52,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param vars vars
      * @return uri result
      */
-    NWebRequest uri(String url, Object... vars);
+    NHttpRequest uri(String url, Object... vars);
 
     /**
      * Uri.
@@ -60,7 +60,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return uri result
      */
-    NWebRequest uri(String url);
+    NHttpRequest uri(String url);
 
     /**
      * Method.
@@ -75,56 +75,56 @@ public interface NWebRequest extends NMsgFormattable {
      * @param method method
      * @return method result
      */
-    NWebRequest method(NHttpMethod method);
+    NHttpRequest method(NHttpMethod method);
 
     /**
      * Get.
      *
      * @return get result
      */
-    NWebRequest GET();
+    NHttpRequest GET();
 
     /**
      * Post.
      *
      * @return post result
      */
-    NWebRequest POST();
+    NHttpRequest POST();
 
     /**
      * Patch.
      *
      * @return patch result
      */
-    NWebRequest PATCH();
+    NHttpRequest PATCH();
 
     /**
      * Options.
      *
      * @return options result
      */
-    NWebRequest OPTIONS();
+    NHttpRequest OPTIONS();
 
     /**
      * Head.
      *
      * @return head result
      */
-    NWebRequest HEAD();
+    NHttpRequest HEAD();
 
     /**
      * Connect.
      *
      * @return connect result
      */
-    NWebRequest CONNECT();
+    NHttpRequest CONNECT();
 
     /**
      * Trace.
      *
      * @return trace result
      */
-    NWebRequest TRACE();
+    NHttpRequest TRACE();
 
     /**
      * Trace.
@@ -132,21 +132,21 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return trace result
      */
-    NWebRequest TRACE(String url);
+    NHttpRequest TRACE(String url);
 
     /**
      * Put.
      *
      * @return put result
      */
-    NWebRequest PUT();
+    NHttpRequest PUT();
 
     /**
      * Delete.
      *
      * @return delete result
      */
-    NWebRequest DELETE();
+    NHttpRequest DELETE();
 
     /**
      * Get.
@@ -154,7 +154,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return get result
      */
-    NWebRequest GET(String url);
+    NHttpRequest GET(String url);
 
     /**
      * Post.
@@ -162,7 +162,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return post result
      */
-    NWebRequest POST(String url);
+    NHttpRequest POST(String url);
 
     /**
      * Patch.
@@ -170,7 +170,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return patch result
      */
-    NWebRequest PATCH(String url);
+    NHttpRequest PATCH(String url);
 
     /**
      * Options.
@@ -178,7 +178,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return options result
      */
-    NWebRequest OPTIONS(String url);
+    NHttpRequest OPTIONS(String url);
 
     /**
      * Head.
@@ -186,7 +186,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return head result
      */
-    NWebRequest HEAD(String url);
+    NHttpRequest HEAD(String url);
 
     /**
      * Connect.
@@ -194,7 +194,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return connect result
      */
-    NWebRequest CONNECT(String url);
+    NHttpRequest CONNECT(String url);
 
     /**
      * Put.
@@ -202,7 +202,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return put result
      */
-    NWebRequest PUT(String url);
+    NHttpRequest PUT(String url);
 
     /**
      * Delete.
@@ -210,7 +210,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param url url
      * @return delete result
      */
-    NWebRequest DELETE(String url);
+    NHttpRequest DELETE(String url);
 
     /**
      * Header.
@@ -241,7 +241,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param headers headers
      * @return headers result
      */
-    NWebRequest headers(Map<String, List<String>> headers);
+    NHttpRequest headers(Map<String, List<String>> headers);
 
     /**
      * Adds the specified headers.
@@ -249,7 +249,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param headers headers
      * @return add headers result
      */
-    NWebRequest addHeaders(Map<String, List<String>> headers);
+    NHttpRequest addHeaders(Map<String, List<String>> headers);
 
     /**
      * Adds the specified parameters.
@@ -257,7 +257,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param parameters parameters
      * @return add parameters result
      */
-    NWebRequest addParameters(Map<String, List<String>> parameters);
+    NHttpRequest addParameters(Map<String, List<String>> parameters);
 
     /**
      * Props file headers.
@@ -265,7 +265,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return props file headers result
      */
-    NWebRequest propsFileHeaders(NPath path);
+    NHttpRequest propsFileHeaders(NPath path);
 
     /**
      * Adds the specified props file headers.
@@ -273,7 +273,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return add props file headers result
      */
-    NWebRequest addPropsFileHeaders(NPath path);
+    NHttpRequest addPropsFileHeaders(NPath path);
 
     /**
      * Adds the specified json file headers.
@@ -281,7 +281,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return add json file headers result
      */
-    NWebRequest addJsonFileHeaders(NPath path);
+    NHttpRequest addJsonFileHeaders(NPath path);
 
     /**
      * Json file headers.
@@ -289,7 +289,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return json file headers result
      */
-    NWebRequest jsonFileHeaders(NPath path);
+    NHttpRequest jsonFileHeaders(NPath path);
 
     /**
      * Props file parameters.
@@ -297,7 +297,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return props file parameters result
      */
-    NWebRequest propsFileParameters(NPath path);
+    NHttpRequest propsFileParameters(NPath path);
 
     /**
      * Adds the specified props file parameters.
@@ -305,7 +305,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return add props file parameters result
      */
-    NWebRequest addPropsFileParameters(NPath path);
+    NHttpRequest addPropsFileParameters(NPath path);
 
     /**
      * Adds the specified json file parameters.
@@ -313,7 +313,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return add json file parameters result
      */
-    NWebRequest addJsonFileParameters(NPath path);
+    NHttpRequest addJsonFileParameters(NPath path);
 
     /**
      * Pson file parameters.
@@ -321,7 +321,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param path path
      * @return pson file parameters result
      */
-    NWebRequest psonFileParameters(NPath path);
+    NHttpRequest psonFileParameters(NPath path);
 
     /**
      * equivalent to set header, to match JDK's method
@@ -330,7 +330,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return this instance
      */
-    NWebRequest header(String name, String value);
+    NHttpRequest header(String name, String value);
 
     /**
      * Adds the specified header.
@@ -339,7 +339,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return add header result
      */
-    NWebRequest addHeader(String name, String value);
+    NHttpRequest addHeader(String name, String value);
 
     /**
      * Parameters.
@@ -354,7 +354,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param parameters parameters
      * @return parameters result
      */
-    NWebRequest parameters(Map<String, List<String>> parameters);
+    NHttpRequest parameters(Map<String, List<String>> parameters);
 
     /**
      * Do with.
@@ -362,7 +362,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param any any
      * @return do with result
      */
-    NWebRequest doWith(Consumer<NWebRequest> any);
+    NHttpRequest doWith(Consumer<NHttpRequest> any);
 
     /**
      * Parameter.
@@ -371,7 +371,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return parameter result
      */
-    NWebRequest parameter(String name, String value);
+    NHttpRequest parameter(String name, String value);
 
     /**
      * Adds the specified parameter.
@@ -380,7 +380,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return add parameter result
      */
-    NWebRequest addParameter(String name, String value);
+    NHttpRequest addParameter(String name, String value);
 
     /**
      * Request body.
@@ -395,7 +395,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return json request body result
      */
-    NWebRequest jsonRequestBody(Object body);
+    NHttpRequest jsonRequestBody(Object body);
 
     /**
      * Request body.
@@ -403,7 +403,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return request body result
      */
-    NWebRequest requestBody(String body);
+    NHttpRequest requestBody(String body);
 
     /**
      * Request body.
@@ -411,7 +411,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return request body result
      */
-    NWebRequest requestBody(byte[] body);
+    NHttpRequest requestBody(byte[] body);
 
     /**
      * Request body.
@@ -419,7 +419,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return request body result
      */
-    NWebRequest requestBody(NInputSource body);
+    NHttpRequest requestBody(NInputSource body);
 
     /**
      * Content language.
@@ -427,7 +427,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param contentLanguage content language
      * @return content language result
      */
-    NWebRequest contentLanguage(String contentLanguage);
+    NHttpRequest contentLanguage(String contentLanguage);
 
     /**
      * Authorization bearer.
@@ -435,7 +435,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param authorizationBearer authorization bearer
      * @return authorization bearer result
      */
-    NWebRequest authorizationBearer(String authorizationBearer);
+    NHttpRequest authorizationBearer(String authorizationBearer);
 
     /**
      * Authorization basic.
@@ -444,7 +444,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param password password
      * @return authorization basic result
      */
-    NWebRequest authorizationBasic(String username, String password);
+    NHttpRequest authorizationBasic(String username, String password);
 
     /**
      * Authorization.
@@ -452,7 +452,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param authorization authorization
      * @return authorization result
      */
-    NWebRequest authorization(String authorization);
+    NHttpRequest authorization(String authorization);
 
     /**
      * Authorization.
@@ -482,7 +482,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return add form url encoded result
      */
-    NWebRequest addFormUrlEncoded(String key, String value);
+    NHttpRequest addFormUrlEncoded(String key, String value);
 
     /**
      * Adds the specified form url encoded.
@@ -490,7 +490,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return add form url encoded result
      */
-    NWebRequest addFormUrlEncoded(Map<String, String> value);
+    NHttpRequest addFormUrlEncoded(Map<String, String> value);
 
     /**
      * Form data.
@@ -499,7 +499,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return form data result
      */
-    NWebRequest formData(String key, NInputContentProvider value);
+    NHttpRequest formData(String key, NInputContentProvider value);
 
     /**
      * Form data.
@@ -508,7 +508,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return form data result
      */
-    NWebRequest formData(String key, String value);
+    NHttpRequest formData(String key, String value);
 
     /**
      * Form url encoded.
@@ -516,7 +516,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param m m
      * @return form url encoded result
      */
-    NWebRequest formUrlEncoded(Map<String, String> m);
+    NHttpRequest formUrlEncoded(Map<String, String> m);
 
     /**
      * Content type.
@@ -530,7 +530,7 @@ public interface NWebRequest extends NMsgFormattable {
      *
      * @return content type form url encoded result
      */
-    NWebRequest contentTypeFormUrlEncoded();
+    NHttpRequest contentTypeFormUrlEncoded();
 
     /**
      * Content type.
@@ -538,7 +538,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param contentType content type
      * @return content type result
      */
-    NWebRequest contentType(String contentType);
+    NHttpRequest contentType(String contentType);
 
     /**
      * Read timeout.
@@ -553,7 +553,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param readTimeout read timeout
      * @return timeout result
      */
-    NWebRequest timeout(NDuration readTimeout);
+    NHttpRequest timeout(NDuration readTimeout);
 
     /**
      * Read timeout.
@@ -561,7 +561,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param readTimeout read timeout
      * @return read timeout result
      */
-    NWebRequest readTimeout(NDuration readTimeout);
+    NHttpRequest readTimeout(NDuration readTimeout);
 
     /**
      * Connect timeout.
@@ -576,14 +576,14 @@ public interface NWebRequest extends NMsgFormattable {
      * @param duration duration
      * @return connect timeout result
      */
-    NWebRequest connectTimeout(NDuration duration);
+    NHttpRequest connectTimeout(NDuration duration);
 
     /**
      * Parts.
      *
      * @return parts result
      */
-    List<NWebRequestBody> parts();
+    List<NHttpRequestBody> parts();
 
     /**
      * Adds the specified part.
@@ -591,7 +591,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return add part result
      */
-    NWebRequest addPart(NWebRequestBody body);
+    NHttpRequest addPart(NHttpRequestBody body);
 
     /**
      * Adds the specified part.
@@ -599,14 +599,14 @@ public interface NWebRequest extends NMsgFormattable {
      * @param name name
      * @return add part result
      */
-    NWebRequestBody addPart(String name);
+    NHttpRequestBody addPart(String name);
 
     /**
      * Adds the specified part.
      *
      * @return add part result
      */
-    NWebRequestBody addPart();
+    NHttpRequestBody addPart();
 
     /**
      * Adds the specified part.
@@ -615,7 +615,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param value value
      * @return add part result
      */
-    NWebRequest addPart(String name, String value);
+    NHttpRequest addPart(String name, String value);
 
     /**
      * Adds the specified part.
@@ -626,7 +626,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param body body
      * @return add part result
      */
-    NWebRequest addPart(String name, String fileName, String contentType, NInputSource body);
+    NHttpRequest addPart(String name, String fileName, String contentType, NInputSource body);
 
     /**
      * Adds the specified part.
@@ -635,7 +635,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(String name, File file);
+    NHttpRequest addPart(String name, File file);
 
     /**
      * Adds the specified part.
@@ -644,7 +644,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(String name, Path file);
+    NHttpRequest addPart(String name, Path file);
 
     /**
      * Adds the specified part.
@@ -653,7 +653,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(String name, NPath file);
+    NHttpRequest addPart(String name, NPath file);
 
     /**
      * Adds the specified part.
@@ -661,7 +661,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(File file);
+    NHttpRequest addPart(File file);
 
     /**
      * Adds the specified part.
@@ -669,7 +669,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(Path file);
+    NHttpRequest addPart(Path file);
 
     /**
      * Adds the specified part.
@@ -677,7 +677,7 @@ public interface NWebRequest extends NMsgFormattable {
      * @param file file
      * @return add part result
      */
-    NWebRequest addPart(NPath file);
+    NHttpRequest addPart(NPath file);
 
     /**
      * Effective uri.
@@ -691,14 +691,14 @@ public interface NWebRequest extends NMsgFormattable {
      *
      * @return run result
      */
-    NWebResponse run();
+    NHttpResponse run();
 
     /**
      * Run async.
      *
      * @return run async result
      */
-    CompletableFuture<NWebResponse> runAsync();
+    CompletableFuture<NHttpResponse> runAsync();
 
     /**
      * Run async.
@@ -706,6 +706,6 @@ public interface NWebRequest extends NMsgFormattable {
      * @param executor executor
      * @return run async result
      */
-    CompletableFuture<NWebResponse> runAsync(Executor executor);
+    CompletableFuture<NHttpResponse> runAsync(Executor executor);
 
 }

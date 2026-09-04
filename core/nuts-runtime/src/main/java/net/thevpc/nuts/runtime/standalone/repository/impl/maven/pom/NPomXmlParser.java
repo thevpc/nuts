@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NMsg;
@@ -658,7 +658,7 @@ public class NPomXmlParser {
 
     public NPom parse(URL url, PomDomVisitor visitor) {
         try {
-            try (InputStream is = DefaultNWebCli.prepareGlobalOpenStream(url)) {
+            try (InputStream is = DefaultNHttpClient.prepareGlobalOpenStream(url)) {
                 return parse(is, visitor);
             }
         } catch (IOException ex) {
@@ -672,7 +672,7 @@ public class NPomXmlParser {
 
     public NPom parse(URI uri, PomDomVisitor visitor) {
         try {
-            try (InputStream is = DefaultNWebCli.prepareGlobalOpenStream(uri.toURL())) {
+            try (InputStream is = DefaultNHttpClient.prepareGlobalOpenStream(uri.toURL())) {
                 return parse(is, visitor);
             }
         } catch (IOException ex) {

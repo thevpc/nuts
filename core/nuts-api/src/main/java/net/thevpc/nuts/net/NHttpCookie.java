@@ -8,7 +8,7 @@ import java.util.Map;
  * @author thevpc
  * @since 0.8.0
  */
-public interface NWebCookie {
+public interface NHttpCookie {
     /**
      * Name.
      *

@@ -30,7 +30,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -73,7 +73,7 @@ public final class CoreServiceUtils {
         try {
             List<URL> found2 = NCollections.list(classLoader.getResources("META-INF/services/" + service.getName()));
             for (URL url : found2) {
-                try (Reader reader = new InputStreamReader(DefaultNWebCli.prepareGlobalOpenStream(url))) {
+                try (Reader reader = new InputStreamReader(DefaultNHttpClient.prepareGlobalOpenStream(url))) {
                     found.addAll(
                             CoreIOUtils.confLines(reader).map(NStringUtils::strip).collect(Collectors.toSet())
                     );
@@ -120,7 +120,7 @@ public final class CoreServiceUtils {
                 }
             }
         } else {
-            try (final InputStream jarStream = DefaultNWebCli.prepareGlobalOpenStream(url)) {
+            try (final InputStream jarStream = DefaultNHttpClient.prepareGlobalOpenStream(url)) {
                 return loadZipServiceClassNamesFromJarStream(jarStream, service);
             } catch (IOException ex) {
                 throw new NIOException(ex);

@@ -31,10 +31,10 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetchMode;
 import net.thevpc.nuts.command.NFetchModeNotSupportedException;
 import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
-import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.net.NHttpClient;
 import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
-import net.thevpc.nuts.net.NWebRequest;
+import net.thevpc.nuts.net.NHttpRequest;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
 import net.thevpc.nuts.security.*;
@@ -108,8 +108,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorWriter.of().print(desc, new OutputStreamWriter(descStream));
-        NWebCli nWebCli = NWebCli.of();
-        nWebCli.POST()
+        NHttpClient nHttpClient = NHttpClient.of();
+        nHttpClient.POST()
                 .uri(CoreIOUtils.buildUrl(config().locationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().source(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
@@ -180,8 +180,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (filter instanceof NExprIdFilter) {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
-                NWebCli nWebCli = NWebCli.of();
-                ret = nWebCli.POST()
+                NHttpClient nHttpClient = NHttpClient.of();
+                ret = nHttpClient.POST()
                         .uri(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .doWith(r->prepareNWebRequest(r,ulp))
@@ -192,8 +192,8 @@ public class NHttpSrvRepository extends NCachedRepository {
                 return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
             }
         } else {
-            NWebCli nWebCli = NWebCli.of();
-            ret = nWebCli.POST()
+            NHttpClient nHttpClient = NHttpClient.of();
+            ret = nHttpClient.POST()
                     .uri(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
                     .doWith(r->prepareNWebRequest(r,ulp))
@@ -208,7 +208,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(NDefinitionFilterUtils.toIdPredicate(filter)).iterator();
     }
 
-    private NWebRequest prepareNWebRequest(NWebRequest r, Creds c) {
+    private NHttpRequest prepareNWebRequest(NHttpRequest r, Creds c) {
         if (c.password == null) {
             return r;
         }

@@ -15,7 +15,7 @@ import net.thevpc.nuts.internal.rpi.*;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.net.NHttpClient;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 import net.thevpc.nuts.platform.NRuntimeDistribution;
@@ -58,7 +58,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NExprRPIImpl;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.mon.NProgressMonitor;
@@ -235,7 +235,7 @@ public class NWorkspaceModel {
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.net.NWebCli": {
-                NWebCli p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNWebCli.class, NWebCli.class, NScopeType.SESSION, DefaultNWebCli::new);
+                NHttpClient p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNHttpClient.class, NHttpClient.class, NScopeType.SESSION, DefaultNHttpClient::new);
                 return NOptional.of((T) p);
             }
             case "net.thevpc.nuts.artifact.NIdBuilder": {

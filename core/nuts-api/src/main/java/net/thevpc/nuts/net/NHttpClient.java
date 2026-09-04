@@ -17,15 +17,15 @@ import java.util.function.Function;
  * @author thevpc
  * @since 0.8.0
  */
-public interface NWebCli extends NComponent {
+public interface NHttpClient extends NComponent {
 
     /**
      * Creates a new instance of of.
      *
      * @return of result
      */
-    static NWebCli of() {
-        return NExtensions.of(NWebCli.class);
+    static NHttpClient of() {
+        return NExtensions.of(NHttpClient.class);
     }
 
     /**
@@ -33,7 +33,7 @@ public interface NWebCli extends NComponent {
      *
      * @return response post processor result
      */
-    Function<NWebResponse, NWebResponse> responsePostProcessor();
+    Function<NHttpResponse, NHttpResponse> responsePostProcessor();
 
     /**
      * Response post processor.
@@ -41,7 +41,7 @@ public interface NWebCli extends NComponent {
      * @param responsePostProcessor response post processor
      * @return response post processor result
      */
-    NWebCli responsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor);
+    NHttpClient responsePostProcessor(Function<NHttpResponse, NHttpResponse> responsePostProcessor);
 
     /**
      * Base uri.
@@ -57,7 +57,7 @@ public interface NWebCli extends NComponent {
      * @param prefix prefix
      * @return base uri result
      */
-    NWebCli baseUri(String prefix);
+    NHttpClient baseUri(String prefix);
 
     /**
      * Req.
@@ -65,7 +65,7 @@ public interface NWebCli extends NComponent {
      * @param method method
      * @return req result
      */
-    NWebRequest req(NHttpMethod method);
+    NHttpRequest req(NHttpMethod method);
 
     /**
      * Cookies.
@@ -73,7 +73,7 @@ public interface NWebCli extends NComponent {
      * @return cookies result
      */
     @NGetter
-    List<NWebCookie> cookies();
+    List<NHttpCookie> cookies();
 
     /**
      * Executor.
@@ -90,7 +90,7 @@ public interface NWebCli extends NComponent {
      * @return executor result
      */
     @NSetter
-    NWebCli executor(Executor executor);
+    NHttpClient executor(Executor executor);
 
     /**
      * Header.
@@ -99,7 +99,7 @@ public interface NWebCli extends NComponent {
      * @param value value
      * @return header result
      */
-    NWebCli header(String name, String value);
+    NHttpClient header(String name, String value);
 
     /**
      * Adds the specified header.
@@ -108,7 +108,7 @@ public interface NWebCli extends NComponent {
      * @param value value
      * @return add header result
      */
-    NWebCli addHeader(String name, String value);
+    NHttpClient addHeader(String name, String value);
 
     /**
      * Removes the specified header.
@@ -117,7 +117,7 @@ public interface NWebCli extends NComponent {
      * @param value value
      * @return remove header result
      */
-    NWebCli removeHeader(String name, String value);
+    NHttpClient removeHeader(String name, String value);
 
     /**
      * Removes the specified header.
@@ -125,7 +125,7 @@ public interface NWebCli extends NComponent {
      * @param name name
      * @return remove header result
      */
-    NWebCli removeHeader(String name);
+    NHttpClient removeHeader(String name);
 
     /**
      * Contains header.
@@ -148,14 +148,14 @@ public interface NWebCli extends NComponent {
      *
      * @return clear headers result
      */
-    NWebCli clearHeaders();
+    NHttpClient clearHeaders();
 
     /**
      * Clear cookies.
      *
      * @return clear cookies result
      */
-    NWebCli clearCookies();
+    NHttpClient clearCookies();
 
     /**
      * Removes the specified cookies.
@@ -163,7 +163,7 @@ public interface NWebCli extends NComponent {
      * @param cookies cookies
      * @return remove cookies result
      */
-    NWebCli removeCookies(NWebCookie[] cookies);
+    NHttpClient removeCookies(NHttpCookie[] cookies);
 
     /**
      * Removes the specified cookie.
@@ -171,7 +171,7 @@ public interface NWebCli extends NComponent {
      * @param cookie cookie
      * @return remove cookie result
      */
-    NWebCli removeCookie(NWebCookie cookie);
+    NHttpClient removeCookie(NHttpCookie cookie);
 
     /**
      * Contains cookie.
@@ -187,7 +187,7 @@ public interface NWebCli extends NComponent {
      * @param cookieName cookie name
      * @return remove cookie result
      */
-    NWebCli removeCookie(String cookieName);
+    NHttpClient removeCookie(String cookieName);
 
     /**
      * Adds the specified cookies.
@@ -195,7 +195,7 @@ public interface NWebCli extends NComponent {
      * @param cookies cookies
      * @return add cookies result
      */
-    NWebCli addCookies(NWebCookie... cookies);
+    NHttpClient addCookies(NHttpCookie... cookies);
 
     /**
      * Adds the specified cookie.
@@ -203,14 +203,14 @@ public interface NWebCli extends NComponent {
      * @param cookie cookie
      * @return add cookie result
      */
-    NWebCli addCookie(NWebCookie cookie);
+    NHttpClient addCookie(NHttpCookie cookie);
 
     /**
      * Get.
      *
      * @return get result
      */
-    NWebRequest GET();
+    NHttpRequest GET();
 
     /**
      * Get.
@@ -218,14 +218,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return get result
      */
-    NWebRequest GET(String path);
+    NHttpRequest GET(String path);
 
     /**
      * Post.
      *
      * @return post result
      */
-    NWebRequest POST();
+    NHttpRequest POST();
 
     /**
      * Post.
@@ -233,14 +233,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return post result
      */
-    NWebRequest POST(String path);
+    NHttpRequest POST(String path);
 
     /**
      * Put.
      *
      * @return put result
      */
-    NWebRequest PUT();
+    NHttpRequest PUT();
 
     /**
      * Put.
@@ -248,14 +248,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return put result
      */
-    NWebRequest PUT(String path);
+    NHttpRequest PUT(String path);
 
     /**
      * Delete.
      *
      * @return delete result
      */
-    NWebRequest DELETE();
+    NHttpRequest DELETE();
 
     /**
      * Delete.
@@ -263,14 +263,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return delete result
      */
-    NWebRequest DELETE(String path);
+    NHttpRequest DELETE(String path);
 
     /**
      * Patch.
      *
      * @return patch result
      */
-    NWebRequest PATCH();
+    NHttpRequest PATCH();
 
     /**
      * Patch.
@@ -278,14 +278,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return patch result
      */
-    NWebRequest PATCH(String path);
+    NHttpRequest PATCH(String path);
 
     /**
      * Options.
      *
      * @return options result
      */
-    NWebRequest OPTIONS();
+    NHttpRequest OPTIONS();
 
     /**
      * Options.
@@ -293,14 +293,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return options result
      */
-    NWebRequest OPTIONS(String path);
+    NHttpRequest OPTIONS(String path);
 
     /**
      * Head.
      *
      * @return head result
      */
-    NWebRequest HEAD();
+    NHttpRequest HEAD();
 
     /**
      * Head.
@@ -308,14 +308,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return head result
      */
-    NWebRequest HEAD(String path);
+    NHttpRequest HEAD(String path);
 
     /**
      * Connect.
      *
      * @return connect result
      */
-    NWebRequest CONNECT();
+    NHttpRequest CONNECT();
 
     /**
      * Connect.
@@ -323,14 +323,14 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return connect result
      */
-    NWebRequest CONNECT(String path);
+    NHttpRequest CONNECT(String path);
 
     /**
      * Trace.
      *
      * @return trace result
      */
-    NWebRequest TRACE();
+    NHttpRequest TRACE();
 
     /**
      * Trace.
@@ -338,7 +338,7 @@ public interface NWebCli extends NComponent {
      * @param path path
      * @return trace result
      */
-    NWebRequest TRACE(String path);
+    NHttpRequest TRACE(String path);
 
     /**
      * Read timeout.
@@ -353,7 +353,7 @@ public interface NWebCli extends NComponent {
      * @param timeout timeout
      * @return timeout result
      */
-    NWebCli timeout(NDuration timeout);
+    NHttpClient timeout(NDuration timeout);
 
     /**
      * Read timeout.
@@ -361,7 +361,7 @@ public interface NWebCli extends NComponent {
      * @param readTimeout read timeout
      * @return read timeout result
      */
-    NWebCli readTimeout(NDuration readTimeout);
+    NHttpClient readTimeout(NDuration readTimeout);
 
     /**
      * Connect timeout.
@@ -376,5 +376,5 @@ public interface NWebCli extends NComponent {
      * @param connectTimeout connect timeout
      * @return connect timeout result
      */
-    NWebCli connectTimeout(NDuration connectTimeout);
+    NHttpClient connectTimeout(NDuration connectTimeout);
 }

@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 @NScore(fixed = NScorable.DEFAULT_SCORE)
-public class DefaultNWebCli implements NWebCli {
+public class DefaultNHttpClient implements NHttpClient {
     private Executor executor;
 
     public static URLConnection prepareGlobalConnection(URLConnection c) {
@@ -81,12 +81,12 @@ public class DefaultNWebCli implements NWebCli {
 
     public static NBootLog log;
     private String prefix;
-    private Function<NWebResponse, NWebResponse> responsePostProcessor;
+    private Function<NHttpResponse, NHttpResponse> responsePostProcessor;
     private NDuration readTimeout;
     private NDuration connectTimeout;
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
-    public DefaultNWebCli() {
+    public DefaultNHttpClient() {
         headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().runtimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
     }
 
@@ -101,37 +101,37 @@ public class DefaultNWebCli implements NWebCli {
         return executor;
     }
 
-    public NWebCli executor(Executor executor) {
+    public NHttpClient executor(Executor executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public List<NWebCookie> cookies() {
+    public List<NHttpCookie> cookies() {
         List<String> li = headers.getOrEmpty("Cookie");
-        return li.stream().map(x -> new DefaultNWebCookie(x)).collect(Collectors.toList());
+        return li.stream().map(x -> new DefaultNHttpCookie(x)).collect(Collectors.toList());
     }
 
     @Override
-    public NWebCli addHeader(String name, String value) {
+    public NHttpClient addHeader(String name, String value) {
         headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
         return this;
     }
 
     @Override
-    public NWebCli header(String name, String value) {
+    public NHttpClient header(String name, String value) {
         headers.addHeader(name, value, DefaultNWebHeaders.Mode.REPLACE);
         return this;
     }
 
     @Override
-    public NWebCli removeHeader(String name, String value) {
+    public NHttpClient removeHeader(String name, String value) {
         headers.removeHeader(name, value);
         return this;
     }
 
     @Override
-    public NWebCli removeHeader(String name) {
+    public NHttpClient removeHeader(String name) {
         headers.removeHeader(name);
         return this;
     }
@@ -144,7 +144,7 @@ public class DefaultNWebCli implements NWebCli {
     @Override
     public boolean containsCookie(String cookieName) {
         List<String> li = headers.getOrEmpty("Cookie");
-        return li.stream().map(x -> new DefaultNWebCookie(x)).anyMatch(x -> Objects.equals(x.name(), cookieName));
+        return li.stream().map(x -> new DefaultNHttpCookie(x)).anyMatch(x -> Objects.equals(x.name(), cookieName));
     }
 
     public Map<String, List<String>> headers() {
@@ -152,29 +152,29 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli clearHeaders() {
+    public NHttpClient clearHeaders() {
         headers.clear();
         return this;
     }
 
-    public NWebCli clearCookies() {
+    public NHttpClient clearCookies() {
         headers.removeHeader("Cookie");
         return this;
     }
 
-    public NWebCli removeCookies(NWebCookie[] cookies) {
+    public NHttpClient removeCookies(NHttpCookie[] cookies) {
         if (cookies != null) {
-            for (NWebCookie cookie : cookies) {
+            for (NHttpCookie cookie : cookies) {
                 removeCookie(cookie);
             }
         }
         return this;
     }
 
-    public NWebCli removeCookie(NWebCookie cookie) {
+    public NHttpClient removeCookie(NHttpCookie cookie) {
         if (cookie != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).name(), cookie.name())) {
+                if (Objects.equals(new DefaultNHttpCookie(s).name(), cookie.name())) {
                     headers.removeHeader("Cookie", s);
                 }
             }
@@ -182,10 +182,10 @@ public class DefaultNWebCli implements NWebCli {
         return this;
     }
 
-    public NWebCli removeCookie(String cookieName) {
+    public NHttpClient removeCookie(String cookieName) {
         if (cookieName != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).name(), cookieName)) {
+                if (Objects.equals(new DefaultNHttpCookie(s).name(), cookieName)) {
                     headers.removeHeader("Cookie", s);
                 }
             }
@@ -194,22 +194,22 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli addCookie(NWebCookie cookie) {
+    public NHttpClient addCookie(NHttpCookie cookie) {
         if (cookie != null) {
             for (String s : headers.getOrEmpty("Cookie")) {
-                if (Objects.equals(new DefaultNWebCookie(s).name(), cookie.name())) {
+                if (Objects.equals(new DefaultNHttpCookie(s).name(), cookie.name())) {
                     headers.removeHeader("Cookie", s);
                 }
             }
-            headers.addHeader("Cookie", DefaultNWebCookie.formatCookie(cookie), DefaultNWebHeaders.Mode.ALWAYS);
+            headers.addHeader("Cookie", DefaultNHttpCookie.formatCookie(cookie), DefaultNWebHeaders.Mode.ALWAYS);
         }
         return this;
     }
 
     @Override
-    public NWebCli addCookies(NWebCookie... cookies) {
+    public NHttpClient addCookies(NHttpCookie... cookies) {
         if (cookies != null) {
-            for (NWebCookie cookie : cookies) {
+            for (NHttpCookie cookie : cookies) {
                 addCookie(cookie);
             }
         }
@@ -217,12 +217,12 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public Function<NWebResponse, NWebResponse> responsePostProcessor() {
+    public Function<NHttpResponse, NHttpResponse> responsePostProcessor() {
         return responsePostProcessor;
     }
 
     @Override
-    public NWebCli responsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor) {
+    public NHttpClient responsePostProcessor(Function<NHttpResponse, NHttpResponse> responsePostProcessor) {
         this.responsePostProcessor = responsePostProcessor;
         return this;
     }
@@ -233,107 +233,107 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli baseUri(String prefix) {
+    public NHttpClient baseUri(String prefix) {
         this.prefix = prefix;
         return this;
     }
 
     @Override
-    public NWebRequest req(NHttpMethod method) {
-        return new NWebRequestImpl(this, method);
+    public NHttpRequest req(NHttpMethod method) {
+        return new NHttpRequestImpl(this, method);
     }
 
     @Override
-    public NWebRequest GET() {
+    public NHttpRequest GET() {
         return req(NHttpMethod.GET);
     }
 
     @Override
-    public NWebRequest POST() {
+    public NHttpRequest POST() {
         return req(NHttpMethod.POST);
     }
 
     @Override
-    public NWebRequest PUT() {
+    public NHttpRequest PUT() {
         return req(NHttpMethod.PUT);
     }
 
     @Override
-    public NWebRequest DELETE() {
+    public NHttpRequest DELETE() {
         return req(NHttpMethod.DELETE);
     }
 
     @Override
-    public NWebRequest PATCH() {
+    public NHttpRequest PATCH() {
         return req(NHttpMethod.PATCH);
     }
 
     @Override
-    public NWebRequest OPTIONS() {
+    public NHttpRequest OPTIONS() {
         return req(NHttpMethod.OPTIONS).OPTIONS();
     }
 
     @Override
-    public NWebRequest HEAD() {
+    public NHttpRequest HEAD() {
         return req(NHttpMethod.HEAD).HEAD();
     }
 
     @Override
-    public NWebRequest CONNECT() {
+    public NHttpRequest CONNECT() {
         return req(NHttpMethod.CONNECT).CONNECT();
     }
 
     @Override
-    public NWebRequest TRACE() {
+    public NHttpRequest TRACE() {
         return req(NHttpMethod.TRACE).TRACE();
     }
 
     @Override
-    public NWebRequest GET(String path) {
+    public NHttpRequest GET(String path) {
         return req(NHttpMethod.GET).GET(path);
     }
 
     @Override
-    public NWebRequest POST(String path) {
+    public NHttpRequest POST(String path) {
         return req(NHttpMethod.POST).POST(path);
     }
 
     @Override
-    public NWebRequest PUT(String path) {
+    public NHttpRequest PUT(String path) {
         return req(NHttpMethod.PUT).PUT(path);
     }
 
     @Override
-    public NWebRequest DELETE(String path) {
+    public NHttpRequest DELETE(String path) {
         return req(NHttpMethod.DELETE).DELETE(path);
     }
 
     @Override
-    public NWebRequest PATCH(String path) {
+    public NHttpRequest PATCH(String path) {
         return req(NHttpMethod.PATCH).PATCH(path);
     }
 
     @Override
-    public NWebRequest OPTIONS(String path) {
+    public NHttpRequest OPTIONS(String path) {
         return req(NHttpMethod.OPTIONS).OPTIONS(path);
     }
 
     @Override
-    public NWebRequest HEAD(String path) {
+    public NHttpRequest HEAD(String path) {
         return req(NHttpMethod.HEAD).HEAD(path);
     }
 
     @Override
-    public NWebRequest CONNECT(String path) {
+    public NHttpRequest CONNECT(String path) {
         return req(NHttpMethod.CONNECT).CONNECT(path);
     }
 
     @Override
-    public NWebRequest TRACE(String path) {
+    public NHttpRequest TRACE(String path) {
         return req(NHttpMethod.TRACE).TRACE(path);
     }
 
-    public String formatURL(NWebRequest r, boolean safe) {
+    public String formatURL(NHttpRequest r, boolean safe) {
         String p = r == null ? null : r.uri();
         if (p == null) {
             p = "";
@@ -394,7 +394,7 @@ public class DefaultNWebCli implements NWebCli {
         return u.toString();
     }
 
-    public CompletableFuture<NWebResponse> runAsync(NWebRequest r, Executor executor) {
+    public CompletableFuture<NHttpResponse> runAsync(NHttpRequest r, Executor executor) {
         if (executor == null) {
             executor = this.executor;
             if (executor == null) {
@@ -404,7 +404,7 @@ public class DefaultNWebCli implements NWebCli {
         return CompletableFuture.supplyAsync(() -> run(r), executor);
     }
 
-    public NWebResponse run(NWebRequest r) {
+    public NHttpResponse run(NHttpRequest r) {
         NAssert.requireNamedNonNull(r, "request");
         NAssert.requireNamedNonNull(r.method(), "method");
         NHttpMethod method = r.method();
@@ -477,13 +477,13 @@ public class DefaultNWebCli implements NWebCli {
                     seenError = err;
                 } finally {
                     if (seenError != null) {
-                        NLog.of(DefaultNWebCli.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                        NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
                                 .withDurationNanos(System.nanoTime() - startTime)
                                 .withIntent(NMsgIntent.FAIL)
                                 .withThrowable(seenError)
                         );
                     } else {
-                        NLog.of(DefaultNWebCli.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
+                        NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
                                 .withDurationNanos(System.nanoTime() - startTime)
                                 .withIntent((rCode != null && rCode.isOk()) ? NMsgIntent.READ : NMsgIntent.FAIL)
                         );
@@ -498,7 +498,7 @@ public class DefaultNWebCli implements NWebCli {
                     rm = "Error " + rCode;
                 }
                 NHttpCode finalRCode = rCode;
-                NWebResponse httpResponse = new NWebResponseImpl(
+                NHttpResponse httpResponse = new NHttpResponseImpl(
                         rCode,
                         NMsg.ofP(rm),
                         uc.getHeaderFields(),
@@ -541,12 +541,12 @@ public class DefaultNWebCli implements NWebCli {
                         }
                 );
                 if (responsePostProcessor != null) {
-                    NWebResponse newResp = responsePostProcessor.apply(httpResponse);
+                    NHttpResponse newResp = responsePostProcessor.apply(httpResponse);
                     if (newResp != null) {
                         httpResponse = newResp;
                     }
                 }
-                addCookies(httpResponse.cookies().toArray(new NWebCookie[0]));
+                addCookies(httpResponse.cookies().toArray(new NHttpCookie[0]));
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
@@ -638,7 +638,7 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli readTimeout(NDuration readTimeout) {
+    public NHttpClient readTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
@@ -649,13 +649,13 @@ public class DefaultNWebCli implements NWebCli {
     }
 
     @Override
-    public NWebCli connectTimeout(NDuration connectTimeout) {
+    public NHttpClient connectTimeout(NDuration connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
     @Override
-    public NWebCli timeout(NDuration timeout) {
+    public NHttpClient timeout(NDuration timeout) {
         this.readTimeout = timeout;
         this.connectTimeout = timeout;
         return this;

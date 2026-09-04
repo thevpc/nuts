@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.text.NTextTheme;
 import net.thevpc.nuts.text.NTextStyle;
@@ -43,7 +43,7 @@ public class NTextPropertiesTheme implements NTextTheme {
             if (u != null) {
                 try {
                     InputStream inStream = null;
-                    inStream = DefaultNWebCli.prepareGlobalOpenStream(u);
+                    inStream = DefaultNHttpClient.prepareGlobalOpenStream(u);
                     if (inStream == null) {
                         throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name));
                     }

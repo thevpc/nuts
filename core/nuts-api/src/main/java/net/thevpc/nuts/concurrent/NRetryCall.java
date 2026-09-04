@@ -22,7 +22,7 @@ public interface NRetryCall<T> extends NCallable<T>, NDescribable, AutoCloseable
     /**
      * Status of the retry call during its lifecycle.
      */
-    public static enum Status {
+    enum Status {
         CREATED, QUEUED, RUNNING, FAILED_ATTEMPT, RETRYING, SUCCEEDED, FAILED, CANCELLED, HANDLING, HANDLED, HANDLER_FAILED, HANDLER_SUCCEEDED
     }
 

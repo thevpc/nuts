@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public class NWebRequestImpl implements NWebRequest {
+public class NHttpRequestImpl implements NHttpRequest {
     private String uri;
     private NHttpMethod method;
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
@@ -28,8 +28,8 @@ public class NWebRequestImpl implements NWebRequest {
     private boolean oneWay;
     private NDuration readTimeout;
     private NDuration connectTimeout;
-    private final List<NWebRequestBody> parts = new ArrayList<>();
-    private final DefaultNWebCli cli;
+    private final List<NHttpRequestBody> parts = new ArrayList<>();
+    private final DefaultNHttpClient cli;
     private Map<String, Object> formData;
     private Map<String, String> urlEncoded;
     private Mode mode = Mode.NONE;
@@ -42,12 +42,12 @@ public class NWebRequestImpl implements NWebRequest {
         URLENCODED,
     }
 
-    public NWebRequestImpl(DefaultNWebCli cli, NHttpMethod method) {
+    public NHttpRequestImpl(DefaultNHttpClient cli, NHttpMethod method) {
         this.cli = cli;
         this.method = method == null ? NHttpMethod.GET : method;
     }
 
-    protected NWebRequestImpl setMode(Mode mode) {
+    protected NHttpRequestImpl setMode(Mode mode) {
         if (mode != null) {
             this.mode = mode;
         }
@@ -92,7 +92,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest oneWay(boolean oneWay) {
+    public NHttpRequest oneWay(boolean oneWay) {
         this.oneWay = oneWay;
         return this;
     }
@@ -103,7 +103,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl uri(String url, Object... vars) {
+    public NHttpRequestImpl uri(String url, Object... vars) {
         NAssert.requireNamedNonNull(url, "url");
         NAssert.requireNamedNonNull(vars, "vars");
         NStringBuilder sb = new NStringBuilderImpl();
@@ -207,16 +207,16 @@ public class NWebRequestImpl implements NWebRequest {
         return this;
     }
 
-    public NWebRequest addCookies(NWebCookie[] cookies) {
+    public NHttpRequest addCookies(NHttpCookie[] cookies) {
         if (cookies != null) {
-            for (NWebCookie cookie : cookies) {
+            for (NHttpCookie cookie : cookies) {
                 addCookie(cookie);
             }
         }
         return this;
     }
 
-    public NWebRequest addCookie(NWebCookie cookie) {
+    public NHttpRequest addCookie(NHttpCookie cookie) {
         if (cookie != null) {
             addHeader("Cookie", cookie.name() + "=" + cookie.value());
         }
@@ -224,7 +224,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest uri(String url) {
+    public NHttpRequest uri(String url) {
         this.uri = url;
         return this;
     }
@@ -235,98 +235,98 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl method(NHttpMethod method) {
+    public NHttpRequestImpl method(NHttpMethod method) {
         this.method = method == null ? NHttpMethod.GET : method;
         return this;
     }
 
     @Override
-    public NWebRequest GET() {
+    public NHttpRequest GET() {
         return method(NHttpMethod.GET);
     }
 
     @Override
-    public NWebRequest POST() {
+    public NHttpRequest POST() {
         return method(NHttpMethod.POST);
     }
 
     @Override
-    public NWebRequest PATCH() {
+    public NHttpRequest PATCH() {
         return method(NHttpMethod.PATCH);
     }
 
     @Override
-    public NWebRequest OPTIONS() {
+    public NHttpRequest OPTIONS() {
         return method(NHttpMethod.OPTIONS);
     }
 
     @Override
-    public NWebRequest HEAD() {
+    public NHttpRequest HEAD() {
         return method(NHttpMethod.HEAD);
     }
 
     @Override
-    public NWebRequest TRACE() {
+    public NHttpRequest TRACE() {
         return method(NHttpMethod.TRACE);
     }
 
     @Override
-    public NWebRequest TRACE(String url) {
+    public NHttpRequest TRACE(String url) {
         return TRACE().uri(url);
     }
 
     @Override
-    public NWebRequest CONNECT() {
+    public NHttpRequest CONNECT() {
         return method(NHttpMethod.CONNECT);
     }
 
     @Override
-    public NWebRequest PUT() {
+    public NHttpRequest PUT() {
         return method(NHttpMethod.PUT);
     }
 
     @Override
-    public NWebRequest DELETE() {
+    public NHttpRequest DELETE() {
         return method(NHttpMethod.DELETE);
     }
 
     @Override
-    public NWebRequest GET(String url) {
+    public NHttpRequest GET(String url) {
         return GET().uri(url);
     }
 
     @Override
-    public NWebRequest POST(String url) {
+    public NHttpRequest POST(String url) {
         return POST().uri(url);
     }
 
     @Override
-    public NWebRequest PATCH(String url) {
+    public NHttpRequest PATCH(String url) {
         return PATCH().uri(url);
     }
 
     @Override
-    public NWebRequest OPTIONS(String url) {
+    public NHttpRequest OPTIONS(String url) {
         return OPTIONS().uri(url);
     }
 
     @Override
-    public NWebRequest HEAD(String url) {
+    public NHttpRequest HEAD(String url) {
         return HEAD().uri(url);
     }
 
     @Override
-    public NWebRequest CONNECT(String url) {
+    public NHttpRequest CONNECT(String url) {
         return CONNECT().uri(url);
     }
 
     @Override
-    public NWebRequest PUT(String url) {
+    public NHttpRequest PUT(String url) {
         return PUT().uri(url);
     }
 
     @Override
-    public NWebRequest DELETE(String url) {
+    public NHttpRequest DELETE(String url) {
         return DELETE().uri(url);
     }
 
@@ -346,13 +346,13 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest headers(Map<String, List<String>> headers) {
+    public NHttpRequest headers(Map<String, List<String>> headers) {
         this.headers.clear();
         return addHeaders(headers);
     }
 
     @Override
-    public NWebRequest addHeaders(Map<String, List<String>> headers) {
+    public NHttpRequest addHeaders(Map<String, List<String>> headers) {
         if (headers != null) {
             for (Map.Entry<String, List<String>> e : headers.entrySet()) {
                 String k = e.getKey();
@@ -367,7 +367,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addParameters(Map<String, List<String>> parameters) {
+    public NHttpRequest addParameters(Map<String, List<String>> parameters) {
         if (parameters != null) {
             for (Map.Entry<String, List<String>> e : parameters.entrySet()) {
                 String k = e.getKey();
@@ -382,51 +382,51 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest propsFileHeaders(NPath path) {
+    public NHttpRequest propsFileHeaders(NPath path) {
         headers(_mapFromPropsFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest addPropsFileHeaders(NPath path) {
+    public NHttpRequest addPropsFileHeaders(NPath path) {
         addHeaders(_mapFromPropsFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest addJsonFileHeaders(NPath path) {
+    public NHttpRequest addJsonFileHeaders(NPath path) {
         Map<String, List<String>> newHeaders = _mapFromJsonFile(path);
         addHeaders(newHeaders);
         return this;
     }
 
     @Override
-    public NWebRequest jsonFileHeaders(NPath path) {
+    public NHttpRequest jsonFileHeaders(NPath path) {
         headers(_mapFromJsonFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest propsFileParameters(NPath path) {
+    public NHttpRequest propsFileParameters(NPath path) {
         parameters(_mapFromPropsFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest addPropsFileParameters(NPath path) {
+    public NHttpRequest addPropsFileParameters(NPath path) {
         addParameters(_mapFromPropsFile(path));
         return this;
     }
 
     @Override
-    public NWebRequest addJsonFileParameters(NPath path) {
+    public NHttpRequest addJsonFileParameters(NPath path) {
         Map<String, List<String>> newHeaders = _mapFromJsonFile(path);
         addParameters(newHeaders);
         return this;
     }
 
     @Override
-    public NWebRequest psonFileParameters(NPath path) {
+    public NHttpRequest psonFileParameters(NPath path) {
         parameters(_mapFromJsonFile(path));
         return this;
     }
@@ -465,7 +465,7 @@ public class NWebRequestImpl implements NWebRequest {
         return newHeaders;
     }
 
-    public NWebRequestImpl header(String name, String value) {
+    public NHttpRequestImpl header(String name, String value) {
         if (name != null) {
             if (value != null) {
                 this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
@@ -477,7 +477,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl addHeader(String name, String value) {
+    public NHttpRequestImpl addHeader(String name, String value) {
         this.headers.addHeader(name, value, DefaultNWebHeaders.Mode.ALWAYS);
         return this;
     }
@@ -489,13 +489,13 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest parameters(Map<String, List<String>> parameters) {
+    public NHttpRequest parameters(Map<String, List<String>> parameters) {
         this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
         return this;
     }
 
     @Override
-    public NWebRequest doWith(Consumer<NWebRequest> any) {
+    public NHttpRequest doWith(Consumer<NHttpRequest> any) {
         if (any != null) {
             any.accept(this);
         }
@@ -503,7 +503,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addParameter(String name, String value) {
+    public NHttpRequest addParameter(String name, String value) {
         if (value != null) {
             if (this.parameters == null) {
                 this.parameters = new LinkedHashMap<>();
@@ -514,7 +514,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest parameter(String name, String value) {
+    public NHttpRequest parameter(String name, String value) {
         if (value != null) {
             if (this.parameters == null) {
                 this.parameters = new LinkedHashMap<>();
@@ -594,7 +594,7 @@ public class NWebRequestImpl implements NWebRequest {
                         }
                     } else {
                         if (parts != null && !parts.isEmpty()) {
-                            for (NWebRequestBody part : parts) {
+                            for (NHttpRequestBody part : parts) {
                                 sw.println("--" + boundary);
                                 sw.println("Content-Disposition: " + part.contentDisposition());
                                 if (!NBlankable.isBlank(part.contentType())) {
@@ -649,7 +649,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequestImpl jsonRequestBody(Object body) {
+    public NHttpRequestImpl jsonRequestBody(Object body) {
         if (body == null) {
             this.requestBody = null;
             setMode(Mode.NONE);
@@ -662,33 +662,33 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest requestBody(byte[] body) {
+    public NHttpRequest requestBody(byte[] body) {
         this.requestBody = body == null ? null : NInputSource.of(body);
         setMode(body == null ? Mode.NONE : Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequest requestBody(String body) {
+    public NHttpRequest requestBody(String body) {
         this.requestBody = body == null ? null : NInputSource.of(new StringReader(body));
         setMode(body == null ? Mode.NONE : Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequest requestBody(NInputSource body) {
+    public NHttpRequest requestBody(NInputSource body) {
         this.requestBody = body;
         setMode(Mode.BODY);
         return this;
     }
 
     @Override
-    public NWebRequest contentLanguage(String contentLanguage) {
+    public NHttpRequest contentLanguage(String contentLanguage) {
         return header("Content-Language", contentLanguage);
     }
 
     @Override
-    public NWebRequest authorizationBearer(String authorizationBearer) {
+    public NHttpRequest authorizationBearer(String authorizationBearer) {
         authorizationBearer = NStringUtils.stripToNull(authorizationBearer);
         if (authorizationBearer != null) {
             authorizationBearer = "Bearer " + authorizationBearer;
@@ -697,7 +697,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest authorizationBasic(String username, String password) {
+    public NHttpRequest authorizationBasic(String username, String password) {
         return authorization("Basic "
                 + Base64.getEncoder()
                 .encodeToString(
@@ -710,7 +710,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest authorization(String authorization) {
+    public NHttpRequest authorization(String authorization) {
         return header("Authorization", NStringUtils.stripToNull(authorization));
     }
 
@@ -739,13 +739,13 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest contentTypeFormUrlEncoded() {
+    public NHttpRequest contentTypeFormUrlEncoded() {
         return contentType("application/x-www-form-urlencoded");
     }
 
 
     @Override
-    public NWebRequest addFormUrlEncoded(String key, String value) {
+    public NHttpRequest addFormUrlEncoded(String key, String value) {
         if (value == null) {
             return this;
         }
@@ -758,7 +758,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest addFormUrlEncoded(Map<String, String> value) {
+    public NHttpRequest addFormUrlEncoded(Map<String, String> value) {
         if (value == null) {
             return this;
         }
@@ -771,7 +771,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest formData(String key, NInputContentProvider value) {
+    public NHttpRequest formData(String key, NInputContentProvider value) {
         if (value == null) {
             return this;
         }
@@ -784,7 +784,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest formData(String key, String value) {
+    public NHttpRequest formData(String key, String value) {
         if (value == null) {
             return this;
         }
@@ -798,7 +798,7 @@ public class NWebRequestImpl implements NWebRequest {
 
 
     @Override
-    public NWebRequest formUrlEncoded(Map<String, String> m) {
+    public NHttpRequest formUrlEncoded(Map<String, String> m) {
         contentTypeFormUrlEncoded();
         StringBuilder sb = new StringBuilder();
         if (m != null) {
@@ -825,7 +825,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest contentType(String contentType) {
+    public NHttpRequest contentType(String contentType) {
         return header("Content-Type", contentType);
     }
 
@@ -835,13 +835,13 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest readTimeout(NDuration readTimeout) {
+    public NHttpRequest readTimeout(NDuration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
     @Override
-    public NWebRequest timeout(NDuration timeout) {
+    public NHttpRequest timeout(NDuration timeout) {
         this.readTimeout = timeout;
         this.connectTimeout = timeout;
         return this;
@@ -853,84 +853,84 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest connectTimeout(NDuration duration) {
+    public NHttpRequest connectTimeout(NDuration duration) {
         this.connectTimeout = duration;
         return this;
     }
 
     @Override
-    public List<NWebRequestBody> parts() {
+    public List<NHttpRequestBody> parts() {
         return parts;
     }
 
     @Override
-    public NWebRequest addPart(NWebRequestBody body) {
+    public NHttpRequest addPart(NHttpRequestBody body) {
         parts.add(body);
         setMode(Mode.MULTIPART);
         return this;
     }
 
     @Override
-    public NWebRequestBody addPart() {
-        NWebRequestBody part = new NWebRequestBodyImpl(this);
+    public NHttpRequestBody addPart() {
+        NHttpRequestBody part = new NHttpRequestBodyImpl(this);
         addPart(part);
         return part;
     }
 
     @Override
-    public NWebRequestBody addPart(String name) {
+    public NHttpRequestBody addPart(String name) {
         return addPart().name(name);
     }
 
     @Override
-    public NWebRequest addPart(String name, String value) {
+    public NHttpRequest addPart(String name, String value) {
         return addPart().name(name).stringValue(value).end();
     }
 
     @Override
-    public NWebRequest addPart(String name, String fileName, String contentType, NInputSource body) {
+    public NHttpRequest addPart(String name, String fileName, String contentType, NInputSource body) {
         return addPart().name(name).contentType(contentType).body(body).end();
     }
 
-    public NWebRequest addPart(String name, File file) {
+    public NHttpRequest addPart(String name, File file) {
         return addPart(name, file == null ? null : file.getName(), null, NInputSource.of(file));
     }
 
-    public NWebRequest addPart(String name, Path file) {
+    public NHttpRequest addPart(String name, Path file) {
         return addPart(name, file == null ? null : file.getFileName().toString(), null, NInputSource.of(file));
     }
 
-    public NWebRequest addPart(String name, NPath file) {
+    public NHttpRequest addPart(String name, NPath file) {
         return addPart(name, file == null ? null : file.name(), null, NInputSource.of(file));
     }
 
-    public NWebRequest addPart(File file) {
+    public NHttpRequest addPart(File file) {
         NAssert.requireNamedNonNull(file, "file");
         return addPart(file.getName(), file.getName(), null, NInputSource.of(file));
     }
 
-    public NWebRequest addPart(Path file) {
+    public NHttpRequest addPart(Path file) {
         NAssert.requireNamedNonNull(file, "file");
         return addPart(file.getFileName().toString(), file.getFileName().toString(), null, NInputSource.of(file));
     }
 
-    public NWebRequest addPart(NPath file) {
+    public NHttpRequest addPart(NPath file) {
         NAssert.requireNamedNonNull(file, "file");
         return addPart(file.name(), file.name(), null, NInputSource.of(file));
     }
 
     @Override
-    public NWebResponse run() {
+    public NHttpResponse run() {
         return cli.run(this);
     }
 
     @Override
-    public CompletableFuture<NWebResponse> runAsync() {
+    public CompletableFuture<NHttpResponse> runAsync() {
         return runAsync(null);
     }
 
     @Override
-    public CompletableFuture<NWebResponse> runAsync(Executor executor) {
+    public CompletableFuture<NHttpResponse> runAsync(Executor executor) {
         return cli.runAsync(this,executor);
     }
 

@@ -9,7 +9,7 @@ import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.net.NWebCli;
+import net.thevpc.nuts.net.NHttpClient;
 
 import java.util.Locale;
 import java.util.Map;
@@ -114,7 +114,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         } else {
             String s = null;
             try {
-                NWebCli cli = NWebCli.of();
+                NHttpClient cli = NHttpClient.of();
                 cli.connectTimeout(NDuration.ofMillis(500));
                 cli.readTimeout(NDuration.ofMillis(500));
                 s = NStringUtils.strip(cli.GET("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint")
