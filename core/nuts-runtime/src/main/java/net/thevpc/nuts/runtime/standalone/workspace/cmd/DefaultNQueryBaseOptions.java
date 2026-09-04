@@ -39,14 +39,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     private NFetchStrategy fetchStrategy;
     private Boolean transitive;
     private Instant expireTime;
+    protected net.thevpc.nuts.platform.NEnv targetEnv;
 
-    //    private Boolean transitive = true;
-//    private Boolean cached = true;
-//    private Boolean indexed = null;
-//    private NutsFetchStrategy fetchStrategy = null;
     public DefaultNQueryBaseOptions(String name) {
         super(name);
-//        this.session=ws.createSession();
         displayOptions = new NFetchDisplayOptions();
         NSession s = NSession.of();
         this.fetchStrategy=s.fetchStrategy().orNull();
@@ -59,17 +55,24 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         if (other != null) {
             super.copyFromWorkspaceCommandBase(other);
             this.failFast = other.isFailFast();
-//            this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
-//            this.dependencies = other.isDependencies();
-//            this.effective = other.isEffective();
             this.dependencyFilter = other.dependencyFilter();
             this.repositoryFilter = other.repositoryFilter();
             this.fetchStrategy=((DefaultNQueryBaseOptions<T>)other).fetchStrategy().orNull();
             this.transitive=((DefaultNQueryBaseOptions<T>)other).transitive().orNull();
             this.expireTime=((DefaultNQueryBaseOptions<T>)other).expireTime().orNull();
+            this.targetEnv = other.targetEnv();
 
         }
+        return (T) this;
+    }
+
+    public net.thevpc.nuts.platform.NEnv targetEnv() {
+        return targetEnv != null ? targetEnv : net.thevpc.nuts.platform.NEnv.of();
+    }
+
+    public T targetEnv(net.thevpc.nuts.platform.NEnv targetEnv) {
+        this.targetEnv = targetEnv;
         return (T) this;
     }
 

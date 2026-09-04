@@ -92,14 +92,15 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
                 String[] remoteCmdArgs = ecmd;
                 if (def != null) {
                     try {
+                        NConnectionString cs = getExecCommand().connectionString();
                         JavaExecutorOptions jopts = new JavaExecutorOptions(
                                 def,
                                 false,
                                 Arrays.asList(cmd),
                                 executorOptions,
-                                null
+                                null,
+                                cs == null ? null : net.thevpc.nuts.platform.NEnv.of(cs)
                         );
-                        NConnectionString cs = getExecCommand().connectionString();
                         String remoteJava = NRemoteExecutionUtils.ensureRemoteJava(cs, jopts.getJavaVersion());
                         String remoteCacheDir = "~/.cache/nuts/exec/jars";
                         List<String> remoteCP = NRemoteExecutionUtils.transferClasspaths(cs, jopts.getResolvedCP(), remoteCacheDir);

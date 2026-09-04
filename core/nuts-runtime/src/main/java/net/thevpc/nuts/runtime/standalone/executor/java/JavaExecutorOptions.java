@@ -62,29 +62,17 @@ public final class JavaExecutorOptions {
 
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
                                List<String> executorOptions, NPath dir) {
+        this(def, tempId, args, executorOptions, dir, null);
+    }
+
+    public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
+                               List<String> executorOptions, NPath dir, net.thevpc.nuts.platform.NEnv targetEnv) {
         showCommand = CoreNUtils.isShowCommand();
         NId id = def.id();
-//        NDescriptor descriptor = null;
-//        if (tempId) {
-//            descriptor = def.descriptor();
-////            if (!CoreNutsUtils.isEffectiveId(id)) {
-////                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
-////            }
-//            id = descriptor.id();
-//        } else {
-//            descriptor = def.effectiveDescriptor().orElseGet(() -> NWorkspace.of().resolveEffectiveDescriptor(def.descriptor(),
-//                    new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(false)));
-//            if (!CoreNUtils.isEffectiveId(id)) {
-//                id = descriptor.id();
-//            }
-//        }
         Path path = def.content().flatMap(NPath::toPath).orNull();
         this.dir = dir;
         this.execArgs = executorOptions;
 
-//        List<String> classPath0 = new ArrayList<>();
-//        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
-        //will accept all -- and - based options!
         NCmdLine cmdLine = NCmdLine.of(getExecArgs()).expandSimpleOptions(false);
         NArg a;
         NClasspathBuilder currentCP = NClasspathBuilder.of();
@@ -115,8 +103,6 @@ public final class JavaExecutorOptions {
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
                     getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
                     getJvmArgs().add("-Dapple.awt.graphics.UseQuartz=true");
-//                    getJvmArgs().add("-Dsun.java2d.noddraw=true");
-//                    getJvmArgs().add("-Dsun.java2d.dpiaware=true");
                 })
                 .whenOption().asRaw(v->{
                     NArg aa = v.peek().get();
@@ -147,6 +133,9 @@ public final class JavaExecutorOptions {
         if (resolvedCP.isEmpty()) {
             List<NDefinition> nDefinitions = new ArrayList<>();
             NSearch se = NSearch.of();
+            if (targetEnv != null) {
+                se.targetEnv(targetEnv);
+            }
             if (tempId) {
                 for (NDependency dependency : def.dependencies().get().immediate().toList()) {
                     if (dependencyFilter.acceptDependency(dependency, null)) {

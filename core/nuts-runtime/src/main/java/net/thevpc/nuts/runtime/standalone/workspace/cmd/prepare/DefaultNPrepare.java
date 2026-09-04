@@ -75,10 +75,12 @@ public class DefaultNPrepare extends AbstractNPrepare {
             deps.add(nutsBootId);
             deps.add(nutsRuntimeId);
             deps.addAll(
-                    NSearch.of().addId(nutsRuntimeId).latest(true)
+                    NSearch.of().addId(nutsAppId).latest(true)
+                            .targetApiVersion(nutsApiId.version())
                             .dependencyFilter(NDependencyFilter.ofRunnable())
                             .basePackage(true)
                             .inlineDependencies(true)
+                            .targetEnv(rc.connectionString)
                             .getResultIds().toList().stream().map(x->x.longId()).collect(Collectors.toList())
             );
             deps.addAll(
@@ -87,6 +89,7 @@ public class DefaultNPrepare extends AbstractNPrepare {
                             .dependencyFilter(NDependencyFilter.ofRunnable())
                             .basePackage(true)
                             .inlineDependencies(true)
+                            .targetEnv(rc.connectionString)
                             .getResultIds().toList().stream().map(x->x.longId()).collect(Collectors.toList())
             );
 
@@ -97,6 +100,7 @@ public class DefaultNPrepare extends AbstractNPrepare {
                             .dependencyFilter(NDependencyFilter.ofRunnable())
                             .basePackage(true)
                             .inlineDependencies(true)
+                            .targetEnv(rc.connectionString)
                             .getResultIds().toList().stream().map(x->x.longId()).collect(Collectors.toList());
                     if (resolved.isEmpty()) {
                         deps.add(id);

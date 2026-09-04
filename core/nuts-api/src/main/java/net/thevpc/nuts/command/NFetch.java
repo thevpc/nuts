@@ -425,7 +425,47 @@ public interface NFetch extends NWorkspaceCmd {
      * @param ignoreCurrentEnvironment ignore current environment
      * @return ignore current environment result
      */
-    @NGetter
+    @NSetter
     NFetch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
 
+    /**
+     * Returns target environment for condition evaluation
+     *
+     * @return target environment
+     * @since 0.8.4
+     */
+    @NGetter
+    net.thevpc.nuts.platform.NEnv targetEnv();
+
+    /**
+     * Sets target environment for condition evaluation
+     *
+     * @param targetEnv target environment
+     * @return {@code this} instance
+     * @since 0.8.4
+     */
+    @NSetter
+    NFetch targetEnv(net.thevpc.nuts.platform.NEnv targetEnv);
+
+    /**
+     * Sets target environment from connection string
+     *
+     * @param connectionString connection string
+     * @return {@code this} instance
+     * @since 0.8.4
+     */
+    default NFetch targetEnv(net.thevpc.nuts.net.NConnectionString connectionString) {
+        return targetEnv(connectionString == null ? null : net.thevpc.nuts.platform.NEnv.of(connectionString));
+    }
+
+    /**
+     * Sets target environment from connection string
+     *
+     * @param connectionString connection string
+     * @return {@code this} instance
+     * @since 0.8.4
+     */
+    default NFetch targetEnv(String connectionString) {
+        return targetEnv(connectionString == null ? null : net.thevpc.nuts.platform.NEnv.of(connectionString));
+    }
 }

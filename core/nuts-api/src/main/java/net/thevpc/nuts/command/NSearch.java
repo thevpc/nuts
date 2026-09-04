@@ -907,4 +907,48 @@ public interface NSearch extends NWorkspaceCmd {
      */
     @NSetter
     NSearch ignoreCurrentEnvironment(boolean ignoreCurrentEnvironment);
+
+    /**
+     * Returns target environment for condition evaluation
+     *
+     * @return target environment
+     * @since 1.0.0
+     */
+    @NSince("1.0.0")
+    @NGetter
+    net.thevpc.nuts.platform.NEnv targetEnv();
+
+    /**
+     * Sets target environment for condition evaluation
+     *
+     * @param targetEnv target environment
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    @NSince("1.0.0")
+    @NSetter
+    NSearch targetEnv(net.thevpc.nuts.platform.NEnv targetEnv);
+
+    /**
+     * Sets target environment from connection string
+     *
+     * @param connectionString connection string
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    default NSearch targetEnv(net.thevpc.nuts.net.NConnectionString connectionString) {
+        return targetEnv(connectionString == null ? null : net.thevpc.nuts.platform.NEnv.of(connectionString));
+    }
+
+    /**
+     * Sets target environment from connection string
+     *
+     * @param connectionString connection string
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    @NSince("1.0.0")
+    default NSearch targetEnv(String connectionString) {
+        return targetEnv(connectionString == null ? null : net.thevpc.nuts.platform.NEnv.of(connectionString));
+    }
 }
