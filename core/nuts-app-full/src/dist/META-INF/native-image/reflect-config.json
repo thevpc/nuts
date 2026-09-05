@@ -1003,6 +1003,12 @@
   "name":"net.thevpc.nuts.runtime.standalone.xtra.time.DefaultNInputStreamMonitor"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNWebCli",
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,

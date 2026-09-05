@@ -158,7 +158,7 @@ Green indicates 100% binary compatibility, while color gradations show the propo
     <td class="na">-</td>
     <td class="na">-</td>
     <td class="na">-</td>
-  <td style="background:#9f9150;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (54.80%)</a></td>
+  <td style="background:#a19050;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/0.8.9_to_1.0.0/compat_report.html" target="_blank">0.8.9→1.0.0 (53.70%)</a></td>
   </tr>
   <tr>
     <th>1.0.0</th>

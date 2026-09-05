@@ -444,7 +444,7 @@
                         
                         <li class="nav-item">
                             <a class="nav-link" href="#U42b0d9fc9a032509b1d3d4dc132f68142cd2cee7">
-                                8.7 HTTP Web Client (NWebCli)
+                                8.7 HTTP Web Client (NHttpClient)
                             </a>
                             
                             
@@ -2706,19 +2706,20 @@ remote
 
                         <h3 class="main-section2">
                             <a href="#U42b0d9fc9a032509b1d3d4dc132f68142cd2cee7">
-                                8.7 HTTP Web Client (NWebCli)
+                                8.7 HTTP Web Client (NHttpClient)
                             </a>
                         </h3>
 
                         <div class="text-card">
-                            <p class="md-phrase">For communicating with external HTTP web services, NAF provides <mark class="md-code md-code-ac1">NWebCli</mark>[cite: 7]. It offers a fluent, highly configurable, and context-aware builder API to construct synchronous or asynchronous HTTP requests, handle payloads (JSON, URL-encoded forms, multipart), manage headers/cookies, and process raw or structured JSON responses[cite: 7, 8, 9].</p><H4 class="md-title-2">Key features:</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Fluent Request Building</b> – Construct requests naturally using method shortcuts like <code class="md-code md-code-ac1">GET()</code>, <code class="md-code md-code-ac1">POST()</code>, <code class="md-code md-code-ac1">PUT()</code>, <code class="md-code md-code-ac1">DELETE()</code>, etc., passing relative or absolute target paths[cite: 7, 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible Body Serialization</b> – Send payloads easily with <code class="md-code md-code-ac1">jsonRequestBody(Object)</code>[cite: 8], raw text with <code class="md-code md-code-ac1">requestBody(String)</code>[cite: 8], or handle multipart file uploads via <code class="md-code md-code-ac1">addPart()</code>[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Integrated JSON Mapping</b> – Automatically bind response payloads directly into Java POJOs using <code class="md-code md-code-ac1">contentAsJson(Class&lt;T&gt;)</code>[cite: 9], or interact with them dynamically via <code class="md-code md-code-ac1">contentAsJsonMap()</code> or <code class="md-code md-code-ac1">contentAsJsonList()</code>[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Stateful Cookie & Header Management</b> – Attach global cookies and base URIs to the client instance (<mark class="md-code md-code-ac1">NWebCli</mark>)[cite: 7], or override them granularly on a per-request layer (<mark class="md-code md-code-ac1">NWebRequest</mark>)[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Robust Error Handling</b> – Inspect status codes quickly using semantic utilities like <code class="md-code md-code-ac1">isOk()</code>, <code class="md-code md-code-ac1">isClientError()</code>, and <code class="md-code md-code-ac1">isServerError()</code>[cite: 5, 9], or use <code class="md-code md-code-ac1">ifErrorThrow()</code> to chain defensive error state processing[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Timeout Adaptability</b> – Configure explicit connection and read deadlines via <code class="md-code md-code-ac1">connectTimeout(NDuration)</code> and <code class="md-code md-code-ac1">readTimeout(NDuration)</code> directly on the client[cite: 7] or specific requests[cite: 8].</p></li></ul><pre><code class="language-java">// Fast execution instance retrieving a payload
-String payload = NWebCli.of()
+                            <p class="md-phrase">For communicating with external HTTP web services, NAF provides <mark class="md-code md-code-ac1">NHttpClient</mark>[cite: 7]. It offers a fluent, highly configurable, and context-aware builder API to construct synchronous or asynchronous HTTP requests, handle payloads (JSON, URL-encoded forms, multipart), manage headers/cookies, and process raw or structured JSON responses[cite: 7, 8, 9].</p><H4 class="md-title-2">Key features:</H4><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Fluent Request Building</b> – Construct requests naturally using method shortcuts like <code class="md-code md-code-ac1">GET()</code>, <code class="md-code md-code-ac1">POST()</code>, <code class="md-code md-code-ac1">PUT()</code>, <code class="md-code md-code-ac1">DELETE()</code>, etc., passing relative or absolute target paths[cite: 7, 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible Body Serialization</b> – Send payloads easily with <code class="md-code md-code-ac1">jsonRequestBody(Object)</code>[cite: 8], raw text with <code class="md-code md-code-ac1">requestBody(String)</code>[cite: 8], or handle multipart file uploads via <code class="md-code md-code-ac1">addPart()</code>[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Integrated JSON Mapping</b> – Automatically bind response payloads directly into Java POJOs using <code class="md-code md-code-ac1">contentAsJson(Class&lt;T&gt;)</code>[cite: 9], or interact with them dynamically via <code class="md-code md-code-ac1">contentAsJsonMap()</code> or <code class="md-code md-code-ac1">contentAsJsonList()</code>[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Stateful Cookie & Header Management</b> – Attach global cookies and base URIs to the client instance (<mark class="md-code md-code-ac1">NHttpClient</mark>)[cite: 7], or override them granularly on a per-request layer (<mark class="md-code md-code-ac1">NHttpRequest</mark>)[cite: 8].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Robust Error Handling</b> – Inspect status codes quickly using semantic utilities like <code class="md-code md-code-ac1">isOk()</code>, <code class="md-code md-code-ac1">isClientError()</code>, and <code class="md-code md-code-ac1">isServerError()</code>[cite: 5, 9], or use <code class="md-code md-code-ac1">ifErrorThrow()</code> to chain defensive error state processing[cite: 9].</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Timeout Adaptability</b> – Configure explicit connection and read deadlines via <code class="md-code md-code-ac1">connectTimeout(NDuration)</code> and <code class="md-code md-code-ac1">readTimeout(NDuration)</code> directly on the client[cite: 7] or specific requests[cite: 8].</p></li></ul><pre><code class="language-java">// Fast execution instance retrieving a payload
+String payload = NHttpClient.of()
         .GET(&quot;https://api.example.com/status&quot;)
         .run()
         .contentAsString();
 </code></pre><H4 class="md-title-2">Example: JSON Request and Response Parsing</H4><p class="md-phrase">The client simplifies interactions with REST APIs by abstracting the explicit manual mapping boilerplate of JSON payloads back and forth:</p><pre><code class="language-java">public void login(String login, String password) {
-    NWebResponse response = NWebCli.of()
-            .POST(resolveUrl(&quot;login&quot;))
+    String url=&quot;http://my-server/do-this&quot;;
+    NHttpResponse response = NHttpClient.of()
+            .POST(url)
             .jsonRequestBody(
                     NMapBuilder.ofLinked()
                             .put(&quot;userName&quot;, login)
@@ -2735,30 +2736,32 @@ String payload = NWebCli.of()
         }
     } else {
         throw new NIllegalArgumentException(
-            NMsg.ofC(&quot;unable to login to %s&quot;, toSafeConnectionString(resolveConnectionString()))
+            NMsg.ofC(&quot;unable to login to %s&quot;, url)
         );
     }
     throw new NIllegalArgumentException(
-        NMsg.ofC(&quot;unable to login to %s&quot;, toSafeConnectionString(resolveConnectionString()))
+        NMsg.ofC(&quot;unable to login to %s&quot;, url)
     );
 }
-</code></pre><H4 class="md-title-2">Example: Seamless Multipart Form Uploads</H4><p class="md-phrase">NWebCli provides highly optimized overloads for uploading files (File, Path, or NPath). It automatically infers the form parameters and filenames behind the scenes:</p><pre><code class="language-java">// Upload a file where the form name matches the local filename
-NWebCli.of().POST(&quot;/upload&quot;)
+</code></pre><H4 class="md-title-2">Example: Seamless Multipart Form Uploads</H4><p class="md-phrase">NHttpClient provides highly optimized overloads for uploading files (File, Path, or NPath). It automatically infers the form parameters and filenames behind the scenes:</p><pre><code class="language-java">// Upload a file where the form name matches the local filename
+NHttpClient.of()
+    .baseUri(&quot;http://my-server/app&quot;)
+    .POST(&quot;/upload&quot;)
     .addPart(myFile) 
     .run();
 
 // Or specify an explicit form parameter name
-NWebCli.of().POST(&quot;/upload&quot;)
+NHttpClient.of().POST(&quot;/upload&quot;)
     .addPart(&quot;avatar&quot;, myFile)
     .run();
-</code></pre><H4 class="md-title-2">Resilience & Asynchronous Execution</H4><p class="md-phrase">To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NWebCli integrates cleanly with your workspace's concurrency engine:</p><pre><code class="language-java">// Run asynchronously using a custom Executor or your NConcurrent ExecutorService
-CompletableFuture&lt;NWebResponse&gt; asyncResponse = NWebCli.of()
+</code></pre><H4 class="md-title-2">Resilience & Asynchronous Execution</H4><p class="md-phrase">To keep your application non-blocking, you can submit tasks asynchronously. Additionally, rather than bloating the HTTP client with retry logic, NHttpClient integrates cleanly with your workspace's concurrency engine:</p><pre><code class="language-java">// Run asynchronously using a custom Executor or your NConcurrent ExecutorService
+CompletableFuture&lt;NHttpResponse&gt; asyncResponse = NHttpClient.of()
         .GET(&quot;/long-task&quot;)
         .runAsync(NConcurrent.executorService());
 
-// Combine NWebCli and NConcurrent executor service for robust network retry behaviors
-try(NRetryCall retry = NRetryCall.of(() -&gt; NWebCli.of().GET(&quot;/flaky-service&quot;).run())){
-    NWebResponse resilientResponse=retry.run();
+// Combine NHttpClient and NConcurrent executor service for robust network retry behaviors
+try(NRetryCall retry = NRetryCall.of(() -&gt; NHttpClient.of().GET(&quot;/flaky-service&quot;).run())){
+    NHttpResponse resilientResponse=retry.run();
 }
 </code></pre>
                         </div>
