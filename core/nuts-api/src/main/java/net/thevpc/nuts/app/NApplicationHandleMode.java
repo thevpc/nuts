@@ -3,9 +3,13 @@ package net.thevpc.nuts.app;
 import net.thevpc.nuts.util.*;
 
 /**
- * NApplicationHandleMode enum.
+ * Controls how the application launcher handles an exception raised while preparing
+ * or running an application.
  *
- * @author thevpc
+ * <p>{@link #HANDLE} delegates to Nuts' exception handler, {@link #PROPAGATE}
+ * rethrows through it, {@link #EXIT} terminates the process after handling the
+ * outcome, and {@link #NOP} converts a caught exception to an unchecked exception.</p>
+ *
  * @since 0.8.0
  */
 public enum NApplicationHandleMode implements NEnum {

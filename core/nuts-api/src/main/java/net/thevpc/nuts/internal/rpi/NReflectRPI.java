@@ -1,7 +1,7 @@
 package net.thevpc.nuts.internal.rpi;
 
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.core.NClassLoaderNode;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.ext.NServiceLoader;
@@ -173,4 +173,20 @@ public interface NReflectRPI extends NComponent {
      * @return create service loader result
      */
     <T, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
+
+    /**
+     * Checks if is annotated application class.
+     *
+     * @param appClass app class
+     * @return is annotated application class result
+     */
+    boolean isAnnotatedApplicationClass(Class appClass) ;
+    /**
+     * Creates a new instance of create application instance from annotated instance.
+     *
+     * @param appInstance app instance
+     * @return create application instance from annotated instance result
+     */
+    NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance);
+
 }

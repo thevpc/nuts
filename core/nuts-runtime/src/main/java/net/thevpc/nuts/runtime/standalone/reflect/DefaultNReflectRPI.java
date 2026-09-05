@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
+import net.thevpc.nuts.app.NApplicationHandler;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.ext.NServiceLoader;
+import net.thevpc.nuts.runtime.standalone.app.NReservedApplication;
 import net.thevpc.nuts.internal.rpi.NReflectRPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.*;
@@ -90,5 +92,15 @@ public class DefaultNReflectRPI implements NReflectRPI {
     public NClasspathEntry createClasspathEntry(NPath path) {
         NAssert.requireNamedNonBlank(path,"definition");
         return new DefaultNClasspathEntry(path);
+    }
+
+    @Override
+    public boolean isAnnotatedApplicationClass(Class appClass) {
+        return NReservedApplication.isAnnotatedApplicationClass(appClass);
+    }
+
+    @Override
+    public NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
+        return NReservedApplication.createApplicationInstanceFromAnnotatedInstance(appInstance);
     }
 }

@@ -192,6 +192,10 @@ public class DefaultNClasspathBuilder implements NClasspathBuilder {
     }
 
     private NDependencySolver _createSolver() {
-        return NDependencySolver.of(solver).repositoryFilter(repositoryFilter).dependencyFilter(dependencyFilter).ignoreCurrentEnvironment(ignoreCurrentEnvironment);
+        NDependencyFilter effFilter = dependencyFilter;
+        if (effFilter == null) {
+            effFilter = NDependencyFilter.ofRunnable();
+        }
+        return NDependencySolver.of(solver).repositoryFilter(repositoryFilter).dependencyFilter(effFilter).ignoreCurrentEnvironment(ignoreCurrentEnvironment);
     }
 }

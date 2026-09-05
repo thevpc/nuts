@@ -1,17 +1,10 @@
 /**
- * Provides utilities and abstractions for command-line parsing, processing, and completion.
- * <p>
- * Features included in this package:
- * <ul>
- *     <li><b>Command-line parsing:</b> Define commands, arguments, and options, and parse input into structured objects.</li>
- *     <li><b>Argument handling:</b> Support for argument types, validation, default values, and candidate suggestions.</li>
- *     <li><b>Auto-completion:</b> Tools to implement interactive shell-style completion of commands and arguments.</li>
- *     <li><b>Execution:</b> Helpers to process parsed commands, run tasks, and maintain command-line state and history.</li>
- * </ul>
- * <p>
- * This package aims to provide a flexible, extensible framework for CLI applications,
- * supporting both simple scripts and complex interactive command-line tools.
+ * Command-line parsing, matching, completion, formatting, and history contracts.
  *
- * @since 0.8.0
+ * <p>{@code NCmdLine} represents parsed command-line state. Arguments and their
+ * values are described by {@code NArg} and {@code NArgValue}; completion resolvers
+ * provide candidates and positions; and processors and matchers dispatch the result.
+ * This package is used by command implementations but is also suitable for hosted
+ * command-line applications.</p>
  */
 package net.thevpc.nuts.cmdline;

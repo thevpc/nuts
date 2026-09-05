@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     private Class sourceType;
-    private NApplicationHandler application;
+    private NApplicationHandler handler;
     private Object source;
     private final NPath[] folders = new NPath[NStoreType.values().length];
     private final NPath[] sharedFolders = new NPath[NStoreType.values().length];
@@ -87,7 +87,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
         cloned.sourceType = this.sourceType();
-        cloned.application = this.handler();
+        cloned.handler = this.handler();
         cloned.source = this.source();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
@@ -113,7 +113,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         //boolean withDefaults = false;
         this.id = other.id().orNull();
         this.sourceType = other.sourceType();
-        this.application = other.handler();
+        this.handler = other.handler();
         this.source = other.source();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
@@ -140,7 +140,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     }
 
     public NApplicationHandler handler() {
-        return application;
+        return handler;
     }
 
     public void prepare(NAppInitInfo appInitInfo) {
@@ -219,7 +219,7 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
         }
         this.args = new ArrayList<>(args);
         this.sourceType = appClassInfo.appClass;
-        this.application = appClassInfo.application;
+        this.handler = appClassInfo.handler;
         this.source = appClassInfo.source;
         for (NStoreType folder : NStoreType.values()) {
             this.setFolder(folder, NPath.of(NStoreKey.of(this.id).type(folder)));
@@ -238,19 +238,19 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
     private static class AppClassInfo {
         private Class<?> appClass;
         private Object source;
-        private NApplicationHandler application;
+        private NApplicationHandler handler;
 
-        public AppClassInfo(Class<?> appClass, Object source, NApplicationHandler application) {
+        public AppClassInfo(Class<?> appClass, Object source, NApplicationHandler handler) {
             this.appClass = appClass;
             this.source = source;
-            this.application = application;
+            this.handler = handler;
         }
     }
 
     private AppClassInfo resolveAppClassInfo(NAppInitInfo appInitInfo) {
         Class<?> appClass = appInitInfo.sourceType();
         Object source = appInitInfo.source();
-        NApplicationHandler application = appInitInfo.application();
+        NApplicationHandler application = appInitInfo.handler();
         if (appClass == null && source == null) {
             if (application != null) {
                 source = application;
@@ -258,7 +258,11 @@ public class NApplicationImpl implements NApplication, Cloneable, NCopiable {
             } else {
                 application = resolveApplicationCustomResolver();
                 if (application != null) {
-                    appClass = NReflectUtils.unproxyType(application.getClass());
+                    if(application instanceof NReservedApplication.AnnotationClassNApplicationHandler){
+                        appClass = NReflectUtils.unproxyType(((NReservedApplication.AnnotationClassNApplicationHandler) application).appInstance().getClass());
+                    }else {
+                        appClass = NReflectUtils.unproxyType(application.getClass());
+                    }
                     source = application;
                 } else {
                     appClass = resolveApplicationFromStackTrace();

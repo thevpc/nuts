@@ -25,18 +25,16 @@
  */
 package net.thevpc.nuts.artifact;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 /**
  * Supported dependency scope lists
  *
  * @author thevpc
  * @app.category Descriptor
- * @since 0.5.4
+ * @since 0.8.9
  */
+@NSince("0.8.9")
 public enum NClasspathEntryType implements NEnum {
     DEPENDENCY,
     DEFINITION,

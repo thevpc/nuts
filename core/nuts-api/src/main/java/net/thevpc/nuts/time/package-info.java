@@ -1,22 +1,8 @@
 /**
- * Provides utilities for time measurement, duration formatting, and progress tracking.
- * <p>
- * This package includes:
- * <ul>
- *     <li><b>memory and chronometers</b> for measuring elapsed time, timestamps, and scheduling.</li>
- *     <li><b>Progress tracking</b> to represent the advancement of tasks or operations, including
- *         hierarchical or aggregated progress.</li>
- * </ul>
- * <p>
- * <b>Design rationale for progress:</b>
- * <ul>
- *     <li>Progress is independent of concurrency. It represents the logical completion state of a task,
- *         whether executed in a single thread or multiple threads.</li>
- *     <li>Progress can be subdivided into sub-progresses, aggregated, and reported through events.</li>
- *     <li>Progress can integrate with concurrent execution, but it is fundamentally about monitoring
- *         task advancement and duration estimation, not about managing threads.</li>
- * </ul>
+ * Clock, duration, and elapsed-time utilities.
  *
- * @since 0.8.5
+ * <p>{@code NClock} supplies the time source, while {@code NDuration} and its
+ * formatter represent and render durations. Task progress monitoring is provided by
+ * the related {@code net.thevpc.nuts.mon} package.</p>
  */
 package net.thevpc.nuts.time;

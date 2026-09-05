@@ -7,6 +7,7 @@ import net.thevpc.nuts.boot.internal.cmdline.NBootCmdLine;
 import net.thevpc.nuts.concurrent.NConcurrent;
 
 import net.thevpc.nuts.concurrent.NScopedStack;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.ext.NExtensions;
@@ -156,7 +157,7 @@ public class NutsSpringBootConfiguration {
     }
 
     private String[] resolveNutsArgs() {
-        List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(env.getProperty("nuts.args"))));
+        List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(env.getProperty(NConstants.SysProps.NUTS_ARGS))));
         //always enable main instance in spring apps
         if (args.isEmpty()) {
             args.add("--sandbox");

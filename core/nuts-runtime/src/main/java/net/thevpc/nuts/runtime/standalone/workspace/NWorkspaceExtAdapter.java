@@ -28,6 +28,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.net.URL;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +40,28 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     private final NWorkspace base;
     private final NScopedValue<NSession> sessionScopes = new NScopedValue<>();
     private NSession bootSession;
+    private Map<String,String> jprops=new HashMap<>();
 
     public NWorkspaceExtAdapter(NWorkspaceExt baseExt) {
         this.baseExt = baseExt;
         this.base = (NWorkspace) baseExt;
+    }
+
+    public String getJavaProperty(String a){
+        if(jprops.containsKey(a)){
+            return jprops.get(a);
+        }
+        return baseExt.getJavaProperty(a);
+    }
+
+    @Override
+    public void setJavaProperty(String k, String v) {
+        jprops.put(k,v);
+    }
+
+    @Override
+    public void unsetJavaProperty(String k) {
+        jprops.remove(k);
     }
 
     @Override

@@ -41,6 +41,12 @@ public interface NWorkspaceExt {
         return ((NWorkspaceExt) ws);
     }
 
+    String getJavaProperty(String a);
+
+    void setJavaProperty(String k, String v);
+
+    void unsetJavaProperty(String k);
+
     NBootOptionsInfo getCallerBootOptionsInfo();
 
     Map<String, String> getSysEnv();
@@ -85,6 +91,7 @@ public interface NWorkspaceExt {
     NSession defaultSession();
 
     NApplication getApp();
+
     NWorkspaceModel getModel();
 
     String getInstallationDigest();

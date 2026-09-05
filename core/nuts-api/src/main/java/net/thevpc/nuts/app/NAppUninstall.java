@@ -6,22 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method as an application uninstaller entry point.
- * <p>
- * Methods annotated with {@code @NAppUninstall} are intended to perform
- * clean-up or removal operations for the application, such as deleting
- * installed files, unregistering resources, or reversing changes applied
- * during installation.
- * </p>
- * <p>
- * Typically, the framework or runtime will detect and invoke these methods
- * when an uninstallation process is triggered. The annotated method should
- * be public, and static if required by the framework, and should handle
- * the uninstallation logic safely.
- * </p>
+ * Marks a public, no-argument application method to run during uninstallation.
  *
- * @author thevpc
- * @app.category Annotation
+ * <p>The default runtime invokes the method when the application is handled in
+ * {@link NApplicationMode#UNINSTALL uninstall} mode. The method may be an instance
+ * method and should reverse application-managed installation work as appropriate.</p>
+ *
  * @since 0.8.7
  */
 @Target(ElementType.METHOD)

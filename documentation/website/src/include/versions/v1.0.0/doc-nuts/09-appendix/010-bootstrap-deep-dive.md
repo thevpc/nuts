@@ -14,7 +14,7 @@ When you execute `nuts` (or `java -jar nuts.jar`), `NBootWorkspaceImpl` executes
 
 ### Step 1: Environment and Option Parsing
 
-1. **Inherited System Properties**: Reads options from `nuts.boot.args` and `nuts.args` system properties (unless `--skip-inherited` is specified).
+1. **Inherited System Properties**: Reads options from system env (`NUTS_BOOT_ARGS`) and propertu (`nuts.args`) (unless `--skip-inherited` is specified).
 2. **Command Line Arguments**: Tokenizes CLI options using `NBootWorkspaceCmdLineParser`.
 3. **Custom Boot Options**:
    - `---m2`: Enables or disables local Maven repository (`~/.m2/repository`) integration.

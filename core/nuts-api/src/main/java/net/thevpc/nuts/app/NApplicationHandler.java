@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.app;
 
-import net.thevpc.nuts.internal.NReservedApplication;
+import net.thevpc.nuts.internal.rpi.NReflectRPI;
 
 /**
  * Nuts Application is the Top Level interface to be managed by nuts. By default, NApplication classes :
@@ -279,7 +279,7 @@ public interface NApplicationHandler {
      * @return is annotated application class result
      */
     static boolean isAnnotatedApplicationClass(Class appClass) {
-        return NReservedApplication.isAnnotatedApplicationClass(appClass);
+        return NReflectRPI.of().isAnnotatedApplicationClass(appClass);
     }
     /**
      * Creates a new instance of create application instance from annotated instance.
@@ -288,7 +288,7 @@ public interface NApplicationHandler {
      * @return create application instance from annotated instance result
      */
     static NApplicationHandler createApplicationInstanceFromAnnotatedInstance(Object appInstance) {
-        return NReservedApplication.createApplicationInstanceFromAnnotatedInstance(appInstance);
+        return NReflectRPI.of().createApplicationInstanceFromAnnotatedInstance(appInstance);
     }
 
     /**

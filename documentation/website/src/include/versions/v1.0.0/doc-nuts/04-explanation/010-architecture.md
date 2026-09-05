@@ -49,7 +49,7 @@ To achieve extreme modularity and version flexibility, **nuts** is structured in
 The bootstrap sequence, implemented in `NBootWorkspaceImpl`, is the critical path that turns a single JAR into a fully operational package manager. When you run `java -jar nuts.jar` or use a native launcher:
 
 ### Step 1 — Parse & Configure
-The boot JAR parses command-line arguments, reads inherited system properties (`nuts.boot.args`, `nuts.args`), detects the current OS, architecture, and shell environment, and resolves the workspace location (default, named, or path-based).
+The boot JAR parses command-line arguments, reads inherited system env (`NUTS_BOOT_ARGS`) and propertu (`nuts.args`), detects the current OS, architecture, and shell environment, and resolves the workspace location (default, named, or path-based).
 
 ### Step 2 — Resolve the Best API Version
 

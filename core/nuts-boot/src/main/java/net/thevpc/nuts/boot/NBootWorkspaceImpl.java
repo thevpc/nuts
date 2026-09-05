@@ -154,7 +154,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
 
                 List<String> aargs = new ArrayList<>();
                 if (!userOptionsUnparsed.isSkipInherited()) {
-                    aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.boot.args")))));
+                    aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getenv("NUTS_BOOT_ARGS")))));
                     aargs.addAll(Arrays.asList(NBootCmdLine.parseDefault(NBootUtils.trim(System.getProperty("nuts.args")))));
                 }
                 if (userOptionsUnparsed.optionArgs() != null) {

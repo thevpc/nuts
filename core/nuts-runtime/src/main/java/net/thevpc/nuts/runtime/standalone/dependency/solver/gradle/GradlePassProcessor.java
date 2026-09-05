@@ -155,8 +155,10 @@ class GradlePassProcessor {
         
         NDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
         if (effectiveDescriptor != null) {
-            if (!currentNode.isAcceptableDependency(currentNode.dependency)) {
-                return;
+            if (currentNode.depth == 0) {
+                if (currentNode.dependency != null && !currentNode.isAcceptableDependency(currentNode.dependency)) {
+                    return;
+                }
             }
             
             NId id = currentNode.getEffectiveId();

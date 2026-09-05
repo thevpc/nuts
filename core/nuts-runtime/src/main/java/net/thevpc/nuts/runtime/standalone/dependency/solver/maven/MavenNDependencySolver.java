@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import net.thevpc.nuts.text.NMsgFormattable;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTreeNode;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NNoSuchElementException;
 
 public class MavenNDependencySolver implements NDependencySolver {
@@ -22,6 +25,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     public boolean includedProvided = false;
     List<NDependencyTreeNodeBuild> defs = new ArrayList<>();
     private List<RootInfo> pending = new ArrayList<>();
+    private Map<String, NDependency> managedDependencies = new LinkedHashMap<>();
     private NDependencyFilter dependencyFilter;
     private NRepositoryFilter repositoryFilter;
     NDependencyFilter effDependencyFilter;
@@ -86,6 +90,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             addRootDefinition0(rootInfo.dependency, rootInfo.def);
         }
         pending.clear();
+        initManagedDependencies();
         // Use the new ParallelPassProcessor for optimized cold starts
         ParallelPassProcessor pp = new ParallelPassProcessor(this);
         NDependencies run = pp.run();
@@ -256,4 +261,54 @@ public class MavenNDependencySolver implements NDependencySolver {
         return "maven";
     }
 
+    public void initManagedDependencies() {
+        managedDependencies.clear();
+        for (NDependencyTreeNodeBuild def : defs) {
+            def.build0();
+            NDescriptor effectiveDescriptor = def.getEffectiveDescriptor();
+            registerManagedDependencies(effectiveDescriptor);
+        }
+    }
+
+    public void registerManagedDependencies(NDescriptor descriptor) {
+        if (descriptor != null) {
+            for (NDependency standardDependency : descriptor.standardDependencies()) {
+                managedDependencies.putIfAbsent(standardDependency.toId().shortName(), standardDependency);
+            }
+        }
+    }
+
+    public NDependency applyDependencyManagement(NDependency dependency, int depth) {
+        if (dependency == null || depth == 0) {
+            return dependency;
+        }
+        NDependency managed = managedDependencies.get(dependency.toId().shortName());
+        if (managed != null) {
+            NDependencyBuilder b = dependency.builder();
+            if (!managed.version().isBlank()) {
+                b.version(managed.version());
+            }
+            if (!NBlankable.isBlank(managed.scope()) && NBlankable.isBlank(dependency.scope())) {
+                b.scope(managed.scope());
+            }
+            if (dependency.exclusions().isEmpty() && !managed.exclusions().isEmpty()) {
+                b.exclusions(managed.exclusions());
+            }
+            return b.build();
+        }
+        return dependency;
+    }
+
+    public int compareVersions(String version1, String version2) {
+        if (version1 == null && version2 == null) {
+            return 0;
+        }
+        if (version1 == null) {
+            return -1;
+        }
+        if (version2 == null) {
+            return 1;
+        }
+        return NVersion.of(version1).compareTo(NVersion.of(version2));
+    }
 }

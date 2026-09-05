@@ -329,7 +329,7 @@ public class MavenUtils {
                 }
             }
             NVersion mavenCompilerTarget = null;
-            for (String v : new String[]{"maven.compiler.target", "project.target.level"}) {
+            for (String v : new String[]{"maven.compiler.target", "project.target.level","maven.compiler.release"}) {
                 String vv = pom.getProperties().get(v);
                 if (!NBlankable.isBlank(vv)) {
                     if (mavenCompilerTarget == null || mavenCompilerTarget.compareTo(vv) < 0) {

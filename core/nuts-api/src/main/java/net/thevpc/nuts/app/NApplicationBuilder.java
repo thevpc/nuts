@@ -15,50 +15,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Builder used to configure and execute a Nuts {@link NApplicationHandler}.
+ * Configures and launches a Nuts application in a workspace.
  *
- * <p>This class supports:
- * <ul>
- *     <li>Automatic discovery of the application class (from {@code main()} when applicable)</li>
- *     <li>Explicit instance injection via {@link #instance(Object)}</li>
- *     <li>Reflective construction via {@link #type(Class)}</li>
- *     <li>Control of error-handling mode (handle, propagate, exit, ignore)</li>
- *     <li>Providing both Nuts arguments and application arguments</li>
- * </ul>
- *
- * <h2>Basic Usage</h2>
- * <p>
- * A typical JVM application may delegate to Nuts as follows:
- *
- * <pre>{@code
- * public static void main(String[] args) {
- *     NApplication.builder(args).run();
- * }
- * }</pre>
- *
- * <h2>Advanced Custom Instance Construction</h2>
- * <p>
- * If you want the builder to instantiate your application class reflectively:
- *
- * <pre>{@code
- * NApplication.builder(args)
- *     .type(MyApplication.class)
- *     .handleErrors()
- *     .run();
- * }</pre>
- *
- * <h2>Error Handling</h2>
- * <p>
- * The handling strategy is selected via:
- * <ul>
- *   <li>{@link #handleErrors()}      – default Nuts behavior</li>
- *   <li>{@link #propagateErrors()}   – rethrow exceptions to caller</li>
- *   <li>{@link #fatalErrors()}       – exit the JVM on error</li>
- *   <li>{@link #ignoreErrors()}      – ignore exceptions</li>
- * </ul>
- * <p>
- * This builder orchestrates argument parsing, instance preparation, execution mode
- * dispatching, and high-level runtime behavior for Nuts applications.
+ * <p>The builder separates Nuts bootstrap arguments from application arguments and
+ * selects how launch failures are handled. {@link #prepare()} opens or reuses a
+ * workspace and initializes its {@link NApplication}; {@link #run()} then dispatches
+ * the application lifecycle in that workspace. Repeated calls to {@code prepare()}
+ * reuse the workspace prepared by this builder.</p>
  */
 public class NApplicationBuilder {
 

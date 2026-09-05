@@ -18,7 +18,7 @@ public class NAppInitInfo {
     private final String[] args;
     private final Class<?> sourceType;
     private final Object source;
-    private final NApplicationHandler appInstance;
+    private final NApplicationHandler handler;
     private final NClock startTime;
     private final NAppStoreLocationResolver storeLocationSupplier;
 
@@ -31,11 +31,11 @@ public class NAppInitInfo {
      * @param sourceType The application's main class.
      * @param startTime  The start time of the application, represented as an {@code NClock} instance.
      */
-    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplicationHandler appInstance, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
+    public NAppInitInfo(String[] args, Class<?> sourceType, Object source, NApplicationHandler handler, NAppStoreLocationResolver storeLocationSupplier, NClock startTime) {
         this.args = NUtils.firstNonNullLazy(args, () -> new String[0]);
         this.sourceType = sourceType;
         this.source = source;
-        this.appInstance = appInstance;
+        this.handler = handler;
         this.startTime = startTime;
         this.storeLocationSupplier = storeLocationSupplier;
     }
@@ -89,8 +89,8 @@ public class NAppInitInfo {
      * @return application result
      */
     @NGetter
-    public NApplicationHandler application() {
-        return appInstance;
+    public NApplicationHandler handler() {
+        return handler;
     }
 
     /**
@@ -107,20 +107,20 @@ public class NAppInitInfo {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NAppInitInfo that = (NAppInitInfo) o;
-        return Objects.deepEquals(args, that.args) && Objects.equals(sourceType, that.sourceType) && Objects.equals(source, that.source) && Objects.equals(appInstance, that.appInstance) && Objects.equals(startTime, that.startTime) && Objects.equals(storeLocationSupplier, that.storeLocationSupplier);
+        return Objects.deepEquals(args, that.args) && Objects.equals(sourceType, that.sourceType) && Objects.equals(source, that.source) && Objects.equals(handler, that.handler) && Objects.equals(startTime, that.startTime) && Objects.equals(storeLocationSupplier, that.storeLocationSupplier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(args), sourceType, source, appInstance, startTime, storeLocationSupplier);
+        return Objects.hash(Arrays.hashCode(args), sourceType, source, handler, startTime, storeLocationSupplier);
     }
 
     @Override
     public String toString() {
-        return NToStringBuilder.of(toString()).omitBlanks(true)
+        return NToStringBuilder.of(this).omitBlanks(true)
                 .add("args", args)
                 .add("source", source)
-                .add("appInstance", appInstance)
+                .add("handler", handler)
                 .add("startTime", startTime)
                 .add("storeLocationSupplier", storeLocationSupplier)
                 .build();

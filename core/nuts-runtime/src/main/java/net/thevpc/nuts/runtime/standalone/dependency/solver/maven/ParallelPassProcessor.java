@@ -80,8 +80,11 @@ class ParallelPassProcessor {
         }
         NDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
         if (effectiveDescriptor != null) {
-            if (!currentNode.isAcceptableDependency(currentNode.dependency)) {
-                return;
+            mavenNDependencySolver.registerManagedDependencies(effectiveDescriptor);
+            if (currentNode.depth == 0) {
+                if (currentNode.dependency != null && !currentNode.isAcceptableDependency(currentNode.dependency)) {
+                    return;
+                }
             }
             NId id = currentNode.getEffectiveId();
             if (currentNode.depth == 0) {
@@ -113,11 +116,12 @@ class ParallelPassProcessor {
             }
             for (NDependency dependency : effectiveDescriptor.dependencies()) {
                 if (currentNode.isAcceptableDependency(dependency)) {
-                    NDependencyTreeNodeBuild childNode = new NDependencyTreeNodeBuild(mavenNDependencySolver, currentNode, dependency, null, currentNode.depth + 1);
+                    NDependency childDep = mavenNDependencySolver.applyDependencyManagement(dependency, currentNode.depth + 1);
+                    NDependencyTreeNodeBuild childNode = new NDependencyTreeNodeBuild(mavenNDependencySolver, currentNode, childDep, null, currentNode.depth + 1);
                     currentNode.children.add(childNode);
-                    if (currentNode.provided && pushProvidedElsewhere) {
-                        providedQueue.add(currentNode);
-                    }else {
+                    if (childNode.provided && pushProvidedElsewhere) {
+                        providedQueue.add(childNode);
+                    } else {
                         queue.add(childNode);
                     }
                 } else {

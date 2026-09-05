@@ -32,10 +32,12 @@ import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
 /**
- * Modes Application can run with
+ * Lifecycle mode selected for an application invocation.
  *
- * @author thevpc
- * @app.category Application
+ * <p>The runtime selects {@link #RUN} for ordinary execution and the remaining
+ * values for command completion and installation lifecycle operations. The canonical
+ * external identifier is returned by {@link #id()}.</p>
+ *
  * @since 0.5.5
  */
 public enum NApplicationMode implements NEnum {

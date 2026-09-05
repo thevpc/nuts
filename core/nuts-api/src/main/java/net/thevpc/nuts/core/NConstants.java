@@ -671,4 +671,27 @@ public final class NConstants {
         private Ntf() {
         }
     }
+
+    /**
+     * Env variables
+     *
+     * @app.category Constants
+     */
+    public static final class Env {
+        public static final String NUTS_BOOT_ARGS="NUTS_BOOT_ARGS";
+        public static final String NUTS_BOOT_ID="NUTS_BOOT_ID";
+        private Env(){
+        }
+    }
+
+    /**
+     * Env variables
+     *
+     * @app.category Constants
+     */
+    public static final class SysProps {
+        public static final String NUTS_ARGS="nuts.args";
+        private SysProps(){
+        }
+    }
 }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspaceOptionsConfig;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
@@ -78,7 +79,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         String bootArgumentsString = JavaExecutorComponent.createChildOptions(executionContext)
                 .toCmdLine(new NWorkspaceOptionsConfig().compact(true))
                 .toString();
-        osEnv.put("nuts_boot_args", bootArgumentsString);
+        osEnv.put(NConstants.Env.NUTS_BOOT_ARGS, bootArgumentsString);
         String dir = null;
         boolean showCommand = CoreNUtils.isShowCommand();
         for (int i = 0; i < execArgs.size(); i++) {

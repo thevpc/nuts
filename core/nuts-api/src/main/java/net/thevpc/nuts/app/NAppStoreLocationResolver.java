@@ -29,10 +29,11 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.platform.NStoreType;
 
 /**
- * application store location
+ * Resolves an application-specific location for a workspace store type.
  *
- * @author thevpc
- * @app.category Application
+ * <p>Returning {@code null} delegates to the workspace's standard store-location
+ * resolution. Implementations may redirect individual application stores, such as
+ * configuration or binary directories.</p>
  */
 public interface NAppStoreLocationResolver {
     /**

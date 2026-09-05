@@ -26,6 +26,12 @@ public class SpringTest {
                 .failFast(true)
                 .getResultDefinition();
         System.out.println("DEF ID: " + def.id());
+        System.out.println("STANDARD DEPS COUNT: " + def.effectiveDescriptor().get().standardDependencies().size());
+        for (net.thevpc.nuts.artifact.NDependency sdep : def.effectiveDescriptor().get().standardDependencies()) {
+            if (sdep.artifactId().contains("jackson")) {
+                System.out.println("  STD DEP: " + sdep);
+            }
+        }
         if (def.dependencies().isPresent()) {
             net.thevpc.nuts.artifact.NDependencies deps = def.dependencies().get();
             System.out.println("--- RESOLVED DEPENDENCIES TRANSITIVE WITH SOURCE ---");

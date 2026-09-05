@@ -259,13 +259,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.id().equalsShortId(session.workspace().apiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(ncmdLine
-                        .add(executionContext.definition().id().longName())
-                );
+                String bootArgumentsString = NCmdLineWriter.of().shellFamily(NShellFamily.SH).formatPlain(ncmdLine.copy());
                 if (!NBlankable.isBlank(bootArgumentsString)) {
-                    osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
-                    joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
+                    osEnv.put(NConstants.Env.NUTS_BOOT_ARGS, bootArgumentsString);
                 }
+                osEnv.put(NConstants.Env.NUTS_BOOT_ID, executionContext.definition().id().longName());
                 //nuts.export properties should be propagated!!
                 Properties sysProperties = System.getProperties();
                 for (Object k : sysProperties.keySet()) {
@@ -303,11 +301,6 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 args.add(joptions.getJavaCommand());
                 args.addAll(joptions.getJvmArgs());
 
-//                if (!NutsBlankable.isBlank(bootArgumentsString)) {
-//                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
-//                    xargs.add(Dnuts_boot_args);
-//                    args.add(Dnuts_boot_args);
-//                }
                 NDebugString jdb = NDebugString.of(session.debug().orDefault());
                 if (jdb.isEnabled()) {
                     int port = jdb.getPort();

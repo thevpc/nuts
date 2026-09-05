@@ -36,12 +36,12 @@ public class NDependencyInfoSet {
         if (oldDep.provided && !newDep.provided) {
             return true;
         }
-//            if (oldDep.depth == newDep.depth) {
-//                return false;
-////                if (newDep.real.getVersion().compareTo(oldDep.real.getVersion()) > 0) {
-////                    return false;
-////                }
-//            }
+        if (oldDep.depth == newDep.depth) {
+            if (newDep.real.version().compareTo(oldDep.real.version()) > 0) {
+                return true;
+            }
+            return false;
+        }
         return oldDep.depth > newDep.depth;
     }
 

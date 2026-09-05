@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * NMainArgs class.
+ * Mutable launch-argument value object for a Nuts application.
  *
- * @author thevpc
+ * <p>It separates arguments consumed by Nuts bootstrap from arguments delivered to
+ * the application, and optionally carries an {@link NApplicationHandler} and an
+ * {@link NApplicationHandleMode error-handling mode}. Prefer
+ * {@link NApplicationBuilder} for launching an application.</p>
+ *
  * @since 0.8.0
  */
 public class NMainArgs {

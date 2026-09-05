@@ -6,32 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method as the installer for an application.
- * <p>
- * Methods annotated with {@code @NAppInstall} are responsible for
- * performing installation tasks, such as setting up required resources,
- * directories, or configuration needed before the application can run.
- * </p>
- * <p>
- * Typically, the annotated method should be public and static. It may
- * optionally take parameters that provide context about the installation
- * environment or workspace.
- * </p>
+ * Marks a public, no-argument application method to run during installation.
  *
- * <p>
- * Example usage:
- * <pre>{@code
- * public class MyApp {
- *     @NAppInstall
- *     public static void install() {
- *         System.out.println("Installing application resources...");
- *     }
- * }
- * }</pre>
- * </p>
+ * <p>The default runtime invokes the method when the application is handled in
+ * {@link NApplicationMode#INSTALL install} mode. The method may be an instance
+ * method; it need not be static.</p>
  *
- * @author thevpc
- * @app.category Annotation
  * @since 0.5.4
  */
 @Target(ElementType.METHOD)

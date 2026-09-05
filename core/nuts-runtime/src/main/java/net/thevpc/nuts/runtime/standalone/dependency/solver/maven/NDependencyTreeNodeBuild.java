@@ -37,13 +37,13 @@ class NDependencyTreeNodeBuild {
 
     public NDependencyTreeNodeBuild(MavenNDependencySolver mavenNDependencySolver, NDependencyTreeNodeBuild parent, NDependency dependency, NDefinition def, int depth) {
         this.mavenNDependencySolver = mavenNDependencySolver;
-        this.dependency = dependency;
+        this.dependency = dependency != null ? mavenNDependencySolver.applyDependencyManagement(dependency, depth) : null;
         this.parent = parent;
         this.depth = depth;
         this.def = def;
-        this.id = def != null ? def.id() : dependency.toId();
-        this.provided = (dependency.isProvided()) || (parent != null && parent.provided);
-        this.optional = (dependency.isOptional()) || (parent != null && parent.optional);
+        this.id = def != null ? def.id() : (this.dependency != null ? this.dependency.toId() : null);
+        this.provided = (this.dependency != null && this.dependency.isProvided()) || (parent != null && parent.provided);
+        this.optional = (this.dependency != null && this.dependency.isOptional()) || (parent != null && parent.optional);
     }
 
 //    public NDependencyTreeNodeBuild(MavenNDependencySolver mavenNDependencySolver, NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth) {
@@ -109,6 +109,9 @@ class NDependencyTreeNodeBuild {
         } else {
             // in maven test dependencies are not propagated;
             if (dependency.isAnyTest()) {
+                return false;
+            }
+            if (dependency.isOptional()) {
                 return false;
             }
             return mavenNDependencySolver.effDependencyFilter.acceptDependency(dependency, getEffectiveId());

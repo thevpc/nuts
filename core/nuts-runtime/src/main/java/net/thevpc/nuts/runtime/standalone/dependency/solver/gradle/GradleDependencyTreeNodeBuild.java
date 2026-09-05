@@ -107,6 +107,9 @@ class GradleDependencyTreeNodeBuild {
             if (dependency.isAnyTest()) {
                 return false;
             }
+            if (dependency.isOptional()) {
+                return false;
+            }
             return gradleSolver.effDependencyFilter.acceptDependency(dependency, getEffectiveId());
         }
     }

@@ -137,11 +137,30 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
      * using currentApp so that we can change NApp when calling embedded apps
      */
     public NApplication currentApp;
+    private Map<String,String> jprops=new HashMap<>();
 
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
         this.callerBootOptionsInfo = callerBootOptionsInfo;
         initWorkspace(info);
     }
+
+    public String getJavaProperty(String a){
+        if(jprops.containsKey(a)){
+            return jprops.get(a);
+        }
+        return System.getProperty(a);
+    }
+
+    @Override
+    public void setJavaProperty(String k, String v) {
+        jprops.put(k,v);
+    }
+
+    @Override
+    public void unsetJavaProperty(String k) {
+        jprops.remove(k);
+    }
+
 
     public Map<String, String> getSysEnv() {
         return env;
@@ -854,11 +873,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(mread.withMsgC("   nuts-isolation-level           : %s", NTextUtils.formatLogValue(userBootOptions.isolationLevel().orNull(), effectiveBootOptions.isolationLevel().orNull())));
             wsModel.LOG.log(mread.withMsgC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(userBootOptions.openMode().orNull(), effectiveBootOptions.openMode().orNull())));
             wsModel.LOG.log(mread.withMsgC("   nuts-inherited                 : %s", NTextUtils.formatLogValue(userBootOptions.inherited().orNull(), effectiveBootOptions.inherited().orNull())));
-            wsModel.LOG.log(mread.withMsgC("   nuts-inherited-nuts-boot-args  : %s", System.getProperty("nuts.boot.args") == null ? NTextUtils.desc(null)
-                    : NTextUtils.desc(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH))
+            wsModel.LOG.log(mread.withMsgC("   nuts-inherited-nuts-boot-args  : %s", NBlankable.isBlank(env.get(NConstants.Env.NUTS_BOOT_ARGS)) ? NTextUtils.desc(null)
+                    : NTextUtils.desc(NCmdLine.of(env.get(NConstants.Env.NUTS_BOOT_ARGS), NShellFamily.SH))
             ));
-            wsModel.LOG.log(mread.withMsgC("   nuts-inherited-nuts-args       : %s", System.getProperty("nuts.args") == null ? NTextUtils.desc(null)
-                    : NTextUtils.desc(NText.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)))
+            wsModel.LOG.log(mread.withMsgC("   nuts-inherited-nuts-args       : %s", getJavaProperty(NConstants.SysProps.NUTS_ARGS) == null ? NTextUtils.desc(null)
+                    : NTextUtils.desc(NText.of(NCmdLine.of(getJavaProperty(NConstants.SysProps.NUTS_ARGS), NShellFamily.SH)))
             ));
             wsModel.LOG.log(mread.withMsgC("   nuts-open-mode                 : %s", NTextUtils.formatLogValue(effectiveBootOptions.openMode().orNull(), effectiveBootOptions.openMode().orElse(NOpenMode.OPEN_OR_CREATE))));
             NEnv senvs = NEnv.of();
@@ -1055,7 +1074,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 newDeps.add(d);
             }
         }
-        effectiveDescriptor = effectiveDescriptor.builder().dependencies(newDeps).build();
+        effectiveDescriptor = effectiveDescriptor.builder()
+                .dependencies(newDeps)
+                .standardDependencies(new ArrayList<>(effStandardDeps))
+                .build();
         return effectiveDescriptor;
     }
 

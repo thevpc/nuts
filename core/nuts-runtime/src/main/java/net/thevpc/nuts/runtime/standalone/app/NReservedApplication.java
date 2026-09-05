@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.internal;
+package net.thevpc.nuts.runtime.standalone.app;
 
 
 import net.thevpc.nuts.app.*;
@@ -311,7 +311,7 @@ public final class NReservedApplication {
         throw NException.ofSafeIllegalArgumentException(NMsg.ofC(NI18n.of("missing application constructor for %s from of : \n\t static createApplicationInstance(NSession,String[])\n\t Constructor(NSession,String[])\n\t Constructor()"), appType.getName()));
     }
 
-    static class AnnotationClassNApplicationHandler implements NApplicationHandler {
+    public static class AnnotationClassNApplicationHandler implements NApplicationHandler {
         private final List<Method> runMethods;
         private final List<Method> installMethods;
         private final List<Method> updateMethods;

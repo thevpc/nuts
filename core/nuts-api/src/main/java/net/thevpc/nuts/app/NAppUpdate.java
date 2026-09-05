@@ -6,21 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method as an application updater entry point.
- * <p>
- * Methods annotated with {@code @NAppUpdate} are intended to perform
- * update operations for the application, such as downloading new versions,
- * applying patches, or refreshing internal resources.
- * </p>
- * <p>
- * Typically, the framework or runtime will detect and invoke these methods
- * when an update process is triggered. The annotated method should be
- * public, static (if required by the framework), and accept the expected
- * parameters defined by the update mechanism.
- * </p>
+ * Marks a public, no-argument application method to run during an update.
  *
- * @author thevpc
- * @app.category Annotation
+ * <p>The default runtime invokes the method when the application is handled in
+ * {@link NApplicationMode#UPDATE update} mode. The method may be an instance
+ * method and is responsible for any application-specific update work.</p>
+ *
  * @since 0.8.7
  */
 @Target(ElementType.METHOD)

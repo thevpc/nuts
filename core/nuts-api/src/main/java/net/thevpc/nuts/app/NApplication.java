@@ -15,9 +15,12 @@ import net.thevpc.nuts.util.NOptional;
 import java.util.List;
 
 /**
- * Represents application configuration bound to the current {@code NSession}
- * This interface provides methods for application lifecycle management, configuration,
- * properties, and utility functions to support application execution and interaction.
+ * Runtime view of the application bound to the current Nuts session.
+ *
+ * <p>The application exposes its source, handler, lifecycle mode, parsed command
+ * line, metadata, output formatting, and application-scoped storage locations. It
+ * is a runtime component, obtained with {@link #of()} only while a suitable Nuts
+ * workspace is active; application code does not implement this interface.</p>
  */
 public interface NApplication extends NComponent {
 

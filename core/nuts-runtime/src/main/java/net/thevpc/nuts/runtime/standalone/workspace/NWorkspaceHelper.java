@@ -176,31 +176,41 @@ public class NWorkspaceHelper {
                     try {
                         switch (nApp.mode()) {
                             case RUN: {
-                                nApp.handler().run();
+                                if(nApp.handler()!=null) {
+                                    nApp.handler().run();
+                                }
                                 return;
                             }
                             case COMPLETE: {
-                                NSession s = NSession.of();
-                                s.copy()
-                                        .bot(true)
-                                        .trace(false)
-                                        .logTermLevel(Level.OFF)
-                                        .confirm(NConfirmationMode.NO)
-                                        .runWith(() -> {
-                                            nApp.handler().onCompleteApplication();
-                                        });
+                                if(nApp.handler()!=null) {
+                                    NSession s = NSession.of();
+                                    s.copy()
+                                            .bot(true)
+                                            .trace(false)
+                                            .logTermLevel(Level.OFF)
+                                            .confirm(NConfirmationMode.NO)
+                                            .runWith(() -> {
+                                                nApp.handler().onCompleteApplication();
+                                            });
+                                }
                                 return;
                             }
                             case INSTALL: {
-                                nApp.handler().onInstallApplication();
+                                if(nApp.handler()!=null) {
+                                    nApp.handler().onInstallApplication();
+                                }
                                 return;
                             }
                             case UPDATE: {
-                                nApp.handler().onUpdateApplication();
+                                if(nApp.handler()!=null) {
+                                    nApp.handler().onUpdateApplication();
+                                }
                                 return;
                             }
                             case UNINSTALL: {
-                                nApp.handler().onUninstallApplication();
+                                if(nApp.handler()!=null) {
+                                    nApp.handler().onUninstallApplication();
+                                }
                                 return;
                             }
                         }

@@ -85,8 +85,8 @@ public class NExceptionHandler {
         } else {
             //load inherited
             String nutsArgs = NStringUtils.strip(
-                    NStringUtils.strip(System.getProperty("nuts.boot.args"))
-                            + " " + NStringUtils.strip(System.getProperty("nuts.args"))
+                    NStringUtils.strip(System.getenv(NConstants.Env.NUTS_BOOT_ARGS))
+                            + " " + NStringUtils.strip(System.getProperty(NConstants.SysProps.NUTS_ARGS))
             );
             try {
                 NBootOptionsInfo options = new NBootOptionsInfo();

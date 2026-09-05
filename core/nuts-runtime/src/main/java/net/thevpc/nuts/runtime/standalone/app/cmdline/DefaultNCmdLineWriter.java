@@ -53,7 +53,7 @@ public class DefaultNCmdLineWriter extends DefaultObjectWriterBase<NCmdLineWrite
         if (aValue != null) {
             String cmd =
                     NShellHelper.of(shellFamily())
-                            .escapeArguments(((NCmdLine)aValue).toStringArray(),
+                            .escapeArguments(((NCmdLine) aValue).toStringArray(),
                                     new NCmdLineShellOptions()
                                             .setFormatStrategy(formatStrategy())
                                             .setExpectEnv(true)
@@ -68,4 +68,16 @@ public class DefaultNCmdLineWriter extends DefaultObjectWriterBase<NCmdLineWrite
         }
     }
 
+    @Override
+    public String formatPlain(Object aValue) {
+        if (aValue != null) {
+            return NShellHelper.of(shellFamily())
+                    .escapeArguments(((NCmdLine) aValue).toStringArray(),
+                            new NCmdLineShellOptions()
+                                    .setFormatStrategy(formatStrategy())
+                                    .setExpectEnv(true)
+                    );
+        }
+        return "";
+    }
 }

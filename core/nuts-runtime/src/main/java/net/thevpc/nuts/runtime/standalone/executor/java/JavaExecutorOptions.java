@@ -179,25 +179,28 @@ public final class JavaExecutorOptions {
                 resolveMainClassFromPath(path);
                 NId finalId = id;
                 NAssert.requireNonNull(mainClass, () -> NMsg.ofC("missing Main Class for %s", finalId));
+                if (!currentCP.isEmpty()) {
+                    currentCP.dependencyFilter(dependencyFilter);
+                    resolvedCP.addAll(currentCP.resolve());
+                }
                 boolean baseDetected = false;
                 for (NDefinition nDefinition : nDefinitions) {
                     if (nDefinition.content().isPresent()) {
                         if (id.longName().equals(nDefinition.id().longName())) {
                             baseDetected = true;
                             if (!isExcludeBase()) {
-                                currentCP.add(nDefinition);
+                                resolvedCP.add(new DefaultNClasspathEntry(nDefinition));
                             }
                         } else {
-                            currentCP.add(nDefinition);
+                            resolvedCP.add(new DefaultNClasspathEntry(nDefinition));
                         }
                     }
                 }
                 if (!isExcludeBase() && !baseDetected) {
                     NAssert.requireNonNull(path, () -> NMsg.ofC("missing path %s", finalId));
                     //do append, not prepend, because use cp shall prevail
-                    currentCP.add(def);
+                    resolvedCP.add(new DefaultNClasspathEntry(def));
                 }
-                resolvedCP.addAll(currentCP.resolve());
                 if (cached && cacheFile != null) {
                     writeCache(cacheFile, resolvedCP);
                 }
@@ -365,7 +368,8 @@ public final class JavaExecutorOptions {
         dh.append(String.valueOf(jar).getBytes());
         dh.append(j9_addModules.stream().sorted().collect(Collectors.joining(":")).getBytes());
         dh.append(j9_modulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
-        dh.append(j9_upgradeModulePath.stream().sorted().collect(Collectors.joining(":")).getBytes());
+        dh.append(String.valueOf(j9_upgradeModulePath.stream().sorted().collect(Collectors.joining(":"))).getBytes());
+        dh.append(String.valueOf(acceptOptional).getBytes());
         String cacheKey = dh.getDigest();
         NPath cacheFile = NPath.of(NStoreKey.ofCache(NWorkspace.of().apiId())).resolve("classpaths").resolve(cacheKey);
         if (cacheFile != null && cacheFile.exists()) {

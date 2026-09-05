@@ -93,19 +93,8 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
     default String formatPlain(Object aValue) {
         boolean ntf = isNtf();
         try {
-            /**
-             * Format.
-             *
-             * @param aValue).filteredText( a value).filtered text(
-             * @return format result
-             */
             return format(aValue).filteredText();
         } finally {
-          /**
-           * Ntf.
-           *
-           * @param ntf ntf
-           */
             ntf(ntf);
         }
     }

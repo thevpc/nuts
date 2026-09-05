@@ -22,6 +22,7 @@ import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.io.NPath;
@@ -474,8 +475,8 @@ public class DefaultNInfo implements NInfo {
         props.put("command-line-short", () -> NWorkspace.of().bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(true)));
         props.put("inherited", () -> NWorkspace.of().bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-boot-args", () -> NCmdLineWriter.of().format(NCmdLine.of(NEnv.of().env().get(NConstants.Env.NUTS_BOOT_ARGS), NShellFamily.SH)));
+        props.put("inherited-nuts-args", () -> NCmdLineWriter.of().format(NCmdLine.of(System.getProperty(NConstants.SysProps.NUTS_ARGS), NShellFamily.SH)));
         props.put("creation-started", () -> NWorkspace.of().creationStartTime());
         props.put("creation-finished", () -> NWorkspace.of().creationFinishTime());
         props.put("creation-within", () -> NWorkspace.of().creationDuration().normalize());
@@ -690,8 +691,8 @@ public class DefaultNInfo implements NInfo {
         props.put("command-line-short", workspace.bootOptions().toCmdLine(new NWorkspaceOptionsConfig().compact(true)));
         props.put("inherited", workspace.bootOptions().inherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", NCmdLineWriter.of().format(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-boot-args", NCmdLineWriter.of().format(NCmdLine.of(NEnv.of().env().get(NConstants.Env.NUTS_BOOT_ARGS), NShellFamily.SH)));
+        props.put("inherited-nuts-args", NCmdLineWriter.of().format(NCmdLine.of(NWorkspaceExt.of().getJavaProperty(NConstants.SysProps.NUTS_ARGS), NShellFamily.SH)));
         props.put("creation-started", workspace.creationStartTime());
         props.put("creation-finished", workspace.creationFinishTime());
         props.put("creation-within", workspace.creationDuration().normalize());

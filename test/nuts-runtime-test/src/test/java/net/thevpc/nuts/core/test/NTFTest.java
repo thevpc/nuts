@@ -1360,4 +1360,11 @@ public class NTFTest {
         Assertions.assertEquals(txt, b.filteredText());
     }
 
+    @Test
+    public void test46(){
+        String a = "1#2";
+        String b = NText.of(a).filteredText();
+        Assertions.assertEquals(a, b);
+    }
+
 }

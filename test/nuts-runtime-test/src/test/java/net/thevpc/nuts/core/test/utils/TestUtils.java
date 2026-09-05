@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.artifact.NVersion;
@@ -228,8 +229,8 @@ public class TestUtils {
             argsList.add("--shared-instance");
 //        argsList.add("--embedded");
             argsList.addAll(Arrays.asList(args));
-            System.setProperty("nuts.boot.args","");
-            System.setProperty("nuts.args","");
+//            System.setProperty(NConstants.Env.NUTS_BOOT_ARGS,"");
+            System.setProperty(NConstants.SysProps.NUTS_ARGS,"");
             if (run) {
                 return Nuts.runWorkspace(argsList.toArray(new String[0]));
             } else {
