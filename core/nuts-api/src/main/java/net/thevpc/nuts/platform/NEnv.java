@@ -309,4 +309,23 @@ public interface NEnv extends NComponent {
      * @return pid result
      */
     String pid();
+
+    /**
+     * Resolves the command in the target environment's native coordinates.
+     *
+     * @param commandName command name to locate
+     * @return optional containing the target native path string if found
+     * @since 1.0.0
+     */
+    NOptional<String> which(String commandName);
+
+    /**
+     * Resolves all matching command paths in the target environment's native coordinates.
+     *
+     * @param commandName command name to locate
+     * @return list of target native path strings
+     * @since 1.0.0
+     */
+    List<String> whichAll(String commandName);
 }
+

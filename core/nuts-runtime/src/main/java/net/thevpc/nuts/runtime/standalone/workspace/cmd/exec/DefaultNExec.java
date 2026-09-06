@@ -10,6 +10,7 @@ import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NConnectionString;
+import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -80,6 +81,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -135,11 +137,10 @@ public class DefaultNExec extends AbstractNExec {
     }
 
     @Override
-    public NExecutableInformation which() {
+    public NOptional<NExecutableInformation> which() {
         NSession session = NSession.of();
         refactorCommand();
 
-        NExecutableInformationExt exec = null;
         NExecutionType executionType = this.executionType();
         NRunAs runAs = this.runAs();
         if (executionType == null) {
@@ -156,42 +157,50 @@ public class DefaultNExec extends AbstractNExec {
                     throw new NIllegalArgumentException(NMsg.ofC("cannot run %s command remotely", executionType));
                 }
                 String[] ts = command.toArray(new String[0]);
-                exec = new DefaultNOpenExecutable(ts, executorOptions(), this);
-                break;
+                DefaultNOpenExecutable openExec = new DefaultNOpenExecutable(ts, executorOptions(), this);
+                if (openExec.effectiveOpenExecutable() == null) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("open handler for: %s", ts[0]));
+                }
+                if (!ts[0].matches("^[a-zA-Z][a-zA-Z0-9+.-]*://.*")) {
+                    Path p = Paths.get(ts[0]);
+                    if (!Files.exists(p)) {
+                        return NOptional.ofNamedEmpty(NMsg.ofC("file to open: %s", ts[0]));
+                    }
+                }
+                return NOptional.of(openExec);
             }
             case SYSTEM: {
+                NExecutionType finalExecutionType = executionType;
+                NAssert.requireNull(commandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
+                NAssert.requireNamedNonBlank(command, "command");
+                String[] ts = command.toArray(new String[0]);
+                List<String> tsl = new ArrayList<>(Arrays.asList(ts));
+
+                NConnectionString cs = connectionString();
+                NEnv env = NEnv.of(cs);
+                NOptional<String> resolved = env.which(ts[0]);
+                if (resolved.isEmpty()) {
+                    return NOptional.ofNamedEmpty(NMsg.ofC("system command: %s", ts[0]));
+                }
+                tsl.set(0, resolved.get());
+
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                 if (remoteInfo0 != null) {
-                    NExecutionType finalExecutionType = executionType;
-                    NAssert.requireNull(commandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
-                    NAssert.requireNamedNonBlank(command, "command");
-                    String[] ts = command.toArray(new String[0]);
-                    return new DefaultNSystemExecutableRemote(
-                            remoteInfo0.commExec, ts,
+                    return NOptional.of(new DefaultNSystemExecutableRemote(
+                            remoteInfo0.commExec, tsl.toArray(new String[0]),
                             executorOptions(),
                             this,
                             remoteInfo0.in0,
                             remoteInfo0.out0,
                             remoteInfo0.err0
-                    );
+                    ));
                 } else {
-                    NExecutionType finalExecutionType = executionType;
-                    NAssert.requireNull(commandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType));
-                    NAssert.requireNamedNonBlank(command, "command");
-                    String[] ts = command.toArray(new String[0]);
-                    List<String> tsl = new ArrayList<>(Arrays.asList(ts));
-                    if (NStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
-                        Path p = NSysExecUtils.sysWhich(ts[0]);
-                        if (p != null) {
-                            tsl.set(0, p.toString());
-                        }
-                    }
-                    exec = new DefaultNSystemExecutable(tsl.toArray(new String[0]),
+                    return NOptional.of(new DefaultNSystemExecutable(
+                            tsl.toArray(new String[0]),
                             executorOptions(),
                             this
-                    );
+                    ));
                 }
-                break;
             }
             case SPAWN:
             case EMBEDDED: {
@@ -199,28 +208,39 @@ public class DefaultNExec extends AbstractNExec {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
                     if (remoteInfo0 != null) {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                        return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec,
+                        return NOptional.of(new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec,
                                 commandDefinition(),
                                 commandDefinition().id().toString(),
                                 NCmdLine.of(ts).toString(),
-                                ts, executorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
+                                ts, executorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0));
                     } else {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                        return ws_execDef(commandDefinition(), commandDefinition().id().longName(), ts, executorOptions(), workspaceOptions, env, directory, failFast,
+                        NExecutableInformationExt exec = ws_execDef(commandDefinition(), commandDefinition().id().longName(), ts, executorOptions(), workspaceOptions, env, directory, failFast,
                                 executionType, runAs);
+                        if (exec == null || exec.type() == NExecutableType.UNKNOWN) {
+                            return NOptional.ofNamedEmpty(NMsg.ofC("command: %s", commandDefinition().id()));
+                        }
+                        return NOptional.of(exec);
                     }
                 } else {
                     NAssert.requireNamedNonBlank(command, "command");
                     String[] ts = command.toArray(new String[0]);
-                    exec = execEmbeddedOrExternal(ts, executorOptions(), workspaceOptions(), session);
+                    NExecutableInformationExt exec = null;
+                    try {
+                        exec = execEmbeddedOrExternal(ts, executorOptions(), workspaceOptions(), session);
+                    } catch (NArtifactNotFoundException ex) {
+                        return NOptional.ofNamedEmpty(NMsg.ofC("command: %s", ts[0]));
+                    }
+                    if (exec == null || exec.type() == NExecutableType.UNKNOWN) {
+                        return NOptional.ofNamedEmpty(NMsg.ofC("command: %s", ts[0]));
+                    }
+                    return NOptional.of(exec);
                 }
-                break;
             }
             default: {
                 throw new NUnsupportedArgumentException(NMsg.ofC("invalid execution type %s", executionType));
             }
         }
-        return exec;
     }
 
     private void runLoop(NExecutableInformationExt exec) {
@@ -320,7 +340,17 @@ public class DefaultNExec extends AbstractNExec {
 
     @Override
     public NExec run() {
-        try (NExecutableInformationExt exec = (NExecutableInformationExt) which()) {
+        NOptional<NExecutableInformation> whichOpt = which();
+        if (whichOpt.isEmpty()) {
+            NExecutionException ex = new NExecutionException(whichOpt.message().get(), NExecutionException.ERROR_1);
+            resultException = ex;
+            executed = true;
+            if (failFast) {
+                throw ex;
+            }
+            return this;
+        }
+        try (NExecutableInformationExt exec = (NExecutableInformationExt) whichOpt.get()) {
             runOnceOrMultiple(exec);
         }
         return this;
@@ -548,9 +578,9 @@ public class DefaultNExec extends AbstractNExec {
                         isp = findExecId(goodId, prepareSession, forceInstalled, true);
                     }
                     if (isp == null) {
-                        Path sw = NSysExecUtils.sysWhich(cmdName);
-                        if (sw != null) {
-                            isp = new IdOrSysPath(sw.toAbsolutePath().toString());
+                        NOptional<String> sw = NEnv.of(connectionString()).which(cmdName);
+                        if (sw.isPresent()) {
+                            isp = new IdOrSysPath(sw.get());
                         }
                     }
                     if (isp != null) {
@@ -561,7 +591,19 @@ public class DefaultNExec extends AbstractNExec {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(isp.sysPath);
                             cmdArr.addAll(Arrays.asList(args));
-                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
+                            RemoteInfo0 remoteInfo01 = resolveRemoteInfo0();
+                            if (remoteInfo01 != null) {
+                                return new DefaultNSystemExecutableRemote(
+                                        remoteInfo01.commExec, cmdArr.toArray(new String[0]),
+                                        executorOptions,
+                                        this,
+                                        remoteInfo01.in0,
+                                        remoteInfo01.out0,
+                                        remoteInfo01.err0
+                                );
+                            } else {
+                                return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
+                            }
                         }
                     }
                     List<String> cmdArr = new ArrayList<>();

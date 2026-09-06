@@ -83,7 +83,7 @@ import java.util.Map;
  * Example usage:
  * <pre>{@code
  * NExec.of("ls", "-l")
- *         .setBot(true)
+ *         .bot(true)
  *         .at("ssh://remote-server")
  *         .grabOut()
  *         .run();
@@ -664,7 +664,7 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      *
      * @return executable information
      */
-    NExecutableInformation which();
+    NOptional<NExecutableInformation> which();
 
     /**
      * return executor options

@@ -442,64 +442,64 @@ public final class NBootOptionsInfo {
     private String userLauncher;
 
 
-    public String getDesktopLauncher() {
+    public String desktopLauncher() {
         return desktopLauncher;
     }
 
 
-    public String getMenuLauncher() {
+    public String menuLauncher() {
         return menuLauncher;
     }
 
 
-    public String getUserLauncher() {
+    public String userLauncher() {
         return userLauncher;
     }
 
 
-    public NBootOptionsInfo setInitLaunchers(Boolean initLaunchers) {
+    public NBootOptionsInfo initLaunchers(Boolean initLaunchers) {
         this.initLaunchers = initLaunchers;
         return this;
     }
 
 
-    public NBootOptionsInfo setInitScripts(Boolean initScripts) {
+    public NBootOptionsInfo initScripts(Boolean initScripts) {
         this.initScripts = initScripts;
         return this;
     }
 
 
-    public NBootOptionsInfo setInitPlatforms(Boolean initPlatforms) {
+    public NBootOptionsInfo initPlatforms(Boolean initPlatforms) {
         this.initPlatforms = initPlatforms;
         return this;
     }
 
 
-    public NBootOptionsInfo setInitJava(Boolean initJava) {
+    public NBootOptionsInfo initJava(Boolean initJava) {
         this.initJava = initJava;
         return this;
     }
 
 
-    public NBootOptionsInfo setIsolationLevel(String isolationLevel) {
+    public NBootOptionsInfo isolationLevel(String isolationLevel) {
         this.isolationLevel = isolationLevel;
         return this;
     }
 
 
-    public NBootOptionsInfo setDesktopLauncher(String desktopLauncher) {
+    public NBootOptionsInfo desktopLauncher(String desktopLauncher) {
         this.desktopLauncher = desktopLauncher;
         return this;
     }
 
 
-    public NBootOptionsInfo setMenuLauncher(String menuLauncher) {
+    public NBootOptionsInfo menuLauncher(String menuLauncher) {
         this.menuLauncher = menuLauncher;
         return this;
     }
 
 
-    public NBootOptionsInfo setUserLauncher(String userLauncher) {
+    public NBootOptionsInfo userLauncher(String userLauncher) {
         this.userLauncher = userLauncher;
         return this;
     }
@@ -1550,14 +1550,14 @@ public final class NBootOptionsInfo {
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
         this.setDependencySolver(other.getDependencySolver());
-        this.setIsolationLevel(other.getIsolationLevel());
-        this.setInitLaunchers(other.getInitLaunchers());
-        this.setInitJava(other.getInitJava());
-        this.setInitScripts(other.getInitScripts());
-        this.setInitPlatforms(other.getInitPlatforms());
-        this.setDesktopLauncher(other.getDesktopLauncher());
-        this.setMenuLauncher(other.getMenuLauncher());
-        this.setUserLauncher(other.getUserLauncher());
+        this.isolationLevel(other.getIsolationLevel());
+        this.initLaunchers(other.getInitLaunchers());
+        this.initJava(other.getInitJava());
+        this.initScripts(other.getInitScripts());
+        this.initPlatforms(other.getInitPlatforms());
+        this.desktopLauncher(other.desktopLauncher());
+        this.menuLauncher(other.menuLauncher());
+        this.userLauncher(other.userLauncher());
         this.setSharedInstance(other.getSharedInstance());
         this.setPreviewRepo(other.getPreviewRepo());
         this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode());
@@ -1769,28 +1769,28 @@ public final class NBootOptionsInfo {
                 this.setDependencySolver(o.getDependencySolver());
             }
             if (o.getIsolationLevel() != null) {
-                this.setIsolationLevel(o.getIsolationLevel());
+                this.isolationLevel(o.getIsolationLevel());
             }
             if (o.getInitLaunchers() != null) {
-                this.setInitLaunchers(o.getInitLaunchers());
+                this.initLaunchers(o.getInitLaunchers());
             }
             if (o.getInitJava() != null) {
-                this.setInitJava(o.getInitJava());
+                this.initJava(o.getInitJava());
             }
             if (o.getInitScripts() != null) {
-                this.setInitScripts(o.getInitScripts());
+                this.initScripts(o.getInitScripts());
             }
             if (o.getInitLaunchers() != null) {
-                this.setInitLaunchers(o.getInitLaunchers());
+                this.initLaunchers(o.getInitLaunchers());
             }
-            if (o.getDesktopLauncher() != null) {
-                this.setDesktopLauncher(o.getDesktopLauncher());
+            if (o.desktopLauncher() != null) {
+                this.desktopLauncher(o.desktopLauncher());
             }
-            if (o.getMenuLauncher() != null) {
-                this.setMenuLauncher(o.getMenuLauncher());
+            if (o.menuLauncher() != null) {
+                this.menuLauncher(o.menuLauncher());
             }
-            if (o.getUserLauncher() != null) {
-                this.setUserLauncher(o.getUserLauncher());
+            if (o.userLauncher() != null) {
+                this.userLauncher(o.userLauncher());
             }
             if (o.getPreviewRepo() != null) {
                 this.setPreviewRepo(o.getPreviewRepo());
@@ -2017,13 +2017,13 @@ public final class NBootOptionsInfo {
         setExpireTime(null);
         setTheme(null);
         setLocale(null);
-        setInitLaunchers(null);
-        setInitPlatforms(null);
-        setInitScripts(null);
-        setInitJava(null);
-        setDesktopLauncher(null);
-        setMenuLauncher(null);
-        setUserLauncher(null);
+        initLaunchers(null);
+        initPlatforms(null);
+        initScripts(null);
+        initJava(null);
+        desktopLauncher(null);
+        menuLauncher(null);
+        userLauncher(null);
         return this;
     }
 

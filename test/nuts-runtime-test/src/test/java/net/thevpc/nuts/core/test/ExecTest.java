@@ -10,8 +10,10 @@ import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.artifact.NDependencyTreeNode;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
+import net.thevpc.nuts.command.NFetchStrategy;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.core.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -68,7 +70,7 @@ public class ExecTest {
                 printlnNode(d, "");
             }
         }
-        if(false) {
+        if (false) {
             String result = NExec.of()
                     .workspaceOptions(NWorkspaceOptionsBuilder.of()
                             .bot(true)
@@ -279,4 +281,25 @@ public class ExecTest {
         }
     }
 
+    @Test
+    public void testWhichAndAvailability() {
+        String testBin = NEnv.of().osFamily() == NOsFamily.WINDOWS ? "cmd.exe" : "sh";
+
+        // NEnv.which
+        Assertions.assertTrue(NEnv.of().which(testBin).isPresent());
+        Assertions.assertTrue(NEnv.of().which("nonexistent_binary_xyz_12345").isEmpty());
+
+        // NExec.which system
+        Assertions.assertTrue(NExec.ofSystem(testBin).which().isPresent());
+        Assertions.assertTrue(NExec.ofSystem("nonexistent_binary_xyz_12345").which().isEmpty());
+
+        // NExec.which spawn
+        Assertions.assertTrue(NExec.of(testBin).which().isPresent());
+        NSession.of().fetchStrategy(NFetchStrategy.OFFLINE)
+                .runWith(() -> {
+                    Assertions.assertTrue(NExec.of("nonexistent_binary_xyz_12345").which().isEmpty());
+                });
+    }
+
 }
+

@@ -83,7 +83,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
             return ansi ? NTerminalMode.ANSI : NTerminalMode.INHERITED;
         }
         NWorkspaceTerminalOptions b = NWorkspace.of().bootTerminal();
-        if (b.getFlags().contains("ansi")) {
+        if (b.flags().contains("ansi")) {
             return NTerminalMode.ANSI;
         } else {
             return NTerminalMode.INHERITED;

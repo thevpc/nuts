@@ -313,7 +313,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     private void _preloadWorkspace(InitWorkspaceData data) {
-        wsModel.LOG.debug(NMsg.ofC(NI18n.of("detected terminal flags %s"), this.wsModel.bootModel.getBootTerminal().getFlags()));
+        wsModel.LOG.debug(NMsg.ofC(NI18n.of("detected terminal flags %s"), this.wsModel.bootModel.getBootTerminal().flags()));
         data.effectiveBootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
         this.wsModel.configModel = new DefaultNWorkspaceConfigModel(this);
         String workspaceLocation = data.effectiveBootOptions.workspace().orNull();
@@ -891,7 +891,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.LOG.log(mread.withMsgC("   os-shell                       : %s", senvs.shellFamily()));
             wsModel.LOG.log(mread.withMsgC("   os-shells                      : %s", NTextBuilder.of().appendJoined(",", senvs.shellFamilies())));
             NWorkspaceTerminalOptions b = getModel().bootModel.getBootTerminal();
-            wsModel.LOG.log(mread.withMsgC("   os-terminal-flags              : %s", String.join(", ", b.getFlags())));
+            wsModel.LOG.log(mread.withMsgC("   os-terminal-flags              : %s", String.join(", ", b.flags())));
             NTerminalMode terminalMode = wsModel.bootModel.getBootUserOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
             wsModel.LOG.log(mread.withMsgC("   os-terminal-mode               : %s", terminalMode));
             wsModel.LOG.log(mread.withMsgC("   os-desktop                     : %s", senvs.desktopEnvironment()));

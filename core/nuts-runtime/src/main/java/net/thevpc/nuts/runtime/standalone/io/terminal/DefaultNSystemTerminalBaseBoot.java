@@ -42,10 +42,10 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
                 new NonClosableInputStream(bo.stdin().orElse(System.in)),
                 new NonClosablePrintStream(bo.stdout().orElse(System.out)),
                 new NonClosablePrintStream(bo.stderr().orElse(System.err)),
-                bootModel.getBootTerminal().getFlags().toArray(new String[0])
+                bootModel.getBootTerminal().flags().toArray(new String[0])
         );
         NTerminalMode terminalMode = bootModel.getBootUserOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
-        boolean bootStdFdAnsi = bootStdFd.getFlags().contains("ansi");
+        boolean bootStdFdAnsi = bootStdFd.flags().contains("ansi");
         if (terminalMode == NTerminalMode.DEFAULT) {
             if (bootModel.getBootUserOptions().bot().orElse(false)) {
                 terminalMode = NTerminalMode.FILTERED;
@@ -59,17 +59,17 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         }else if (terminalMode == NTerminalMode.ANSI) {
             terminalMode = NTerminalMode.FORMATTED;
         }
-        if(bootStdFd.getOut()==bootStdFd.getErr()){
-            this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
+        if(bootStdFd.out()==bootStdFd.err()){
+            this.out = new NPrintStreamSystem(bootStdFd.out(), null, null, bootStdFdAnsi,
                     this).terminalMode(terminalMode);
             this.err = this.out;
         }else {
-            this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
+            this.out = new NPrintStreamSystem(bootStdFd.out(), null, null, bootStdFdAnsi,
                     this).terminalMode(terminalMode);
-            this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
+            this.err = new NPrintStreamSystem(bootStdFd.err(), null, null, bootStdFdAnsi,
                     this).terminalMode(terminalMode);
         }
-        this.in = bootStdFd.getIn();
+        this.in = bootStdFd.in();
         this.scanner = new Scanner(this.in);
     }
 

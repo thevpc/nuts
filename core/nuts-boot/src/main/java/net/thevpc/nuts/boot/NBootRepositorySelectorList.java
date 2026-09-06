@@ -111,7 +111,7 @@ public class NBootRepositorySelectorList {
                     String v = entry.getFullLocation();
                     if (NBootUtils.isBlank(v) && !NBootUtils.isBlank(k)) {
                         NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(k);
-                        String u = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
+                        String u = ro == null ? null : ro.getConfig().location().getFullLocation();
                         if (u != null) {
                             v = u;
                         } else {
@@ -177,17 +177,17 @@ public class NBootRepositorySelectorList {
                 }
                 String newName = r.getName() == null ? (fo == null ? null : fo.getName()) : r.getName();
                 NBootRepositoryLocation newLocation = r.getLocation();
-                if (fo != null && fo.getConfig() != null && fo.getConfig().getLocation() != null) {
-                    if (fo.getConfig().getLocation().getLocationType() != null) {
-                        newLocation = newLocation.setLocationType(fo.getConfig().getLocation().getLocationType());
+                if (fo != null && fo.getConfig() != null && fo.getConfig().location() != null) {
+                    if (fo.getConfig().location().getLocationType() != null) {
+                        newLocation = newLocation.setLocationType(fo.getConfig().location().getLocationType());
                     }
-                    if (fo.getConfig().getLocation().getLocationType() != null) {
+                    if (fo.getConfig().location().getLocationType() != null) {
                         //name is the same as path, so move it to the path...
                         if (NBootUtils.isBlank(newLocation.getPath())
-                                || Objects.equals(newLocation.getPath(), fo.getConfig().getLocation().getName())
-                                || Objects.equals(newLocation.getPath(), fo.getConfig().getLocation().getLocationType())
+                                || Objects.equals(newLocation.getPath(), fo.getConfig().location().getName())
+                                || Objects.equals(newLocation.getPath(), fo.getConfig().location().getLocationType())
                         ) {
-                            newLocation = newLocation.setPath(fo.getConfig().getLocation().getPath());
+                            newLocation = newLocation.setPath(fo.getConfig().location().getPath());
                         }
                     }
                 }

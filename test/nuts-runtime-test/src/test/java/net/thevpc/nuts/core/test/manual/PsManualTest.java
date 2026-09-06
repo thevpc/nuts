@@ -54,7 +54,7 @@ public class PsManualTest {
 //
 //        NElements.of(e).json().print(NPath.of("/toto"));
 //
-//        Map a=NWebCli.of().GET("/toto").run().getContentAs(Map.class, NContentType.JSON);
+//        Map a=NHttpClient.of().GET("/toto").run().getContentAs(Map.class, NContentType.JSON);
 //
 //        Double d=NOptional.of(a).then(x->x.b).then(x->x.c).then(x->x.x).orNull();
 

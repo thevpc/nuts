@@ -23,6 +23,7 @@ import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.text.NMsg;
@@ -70,7 +71,21 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
         for (String arg : commands) {
             NPrintStream out = session.out();
             try {
-                try (NExecutableInformation p = getExecCommand().copy().clearCommand().configure(false, arg).which()){
+                NOptional<NExecutableInformation> opt = getExecCommand().copy().clearCommand().configure(false, arg).which();
+                if (opt.isEmpty()) {
+                    if (NOut.isPlain()) {
+                        out.println(NMsg.ofC("%s : %s", NText.ofStyled(arg, NTextStyle.primary4()), NText.ofStyled("not found", NTextStyle.error())));
+                    } else {
+                        session.eout().add(
+                                NElement.ofObjectBuilder()
+                                        .name("not-found")
+                                        .addParam(NElement.ofString(arg))
+                                        .build()
+                        );
+                    }
+                    continue;
+                }
+                try (NExecutableInformation p = opt.get()){
                     switch (p.type()) {
                         case SYSTEM: {
                             if (NOut.isPlain()) {

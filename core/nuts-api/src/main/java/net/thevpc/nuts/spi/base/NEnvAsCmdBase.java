@@ -259,4 +259,14 @@ public abstract class NEnvAsCmdBase implements NEnv {
     public String pid() {
         return defEnv.pid();
     }
+
+    @Override
+    public NOptional<String> which(String commandName) {
+        return defEnv.which(commandName);
+    }
+
+    @Override
+    public List<String> whichAll(String commandName) {
+        return defEnv.whichAll(commandName);
+    }
 }

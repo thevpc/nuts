@@ -169,7 +169,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
                 NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(name);
-                String u = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
+                String u = ro == null ? null : ro.getConfig().location().getFullLocation();
                 if (u == null) {
                     url = name;
                 } else {

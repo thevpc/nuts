@@ -234,7 +234,7 @@ public class NWorkspaceModel {
                 NExec p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNExec.class, NExec.class, NScopeType.SESSION, DefaultNExec::new);
                 return NOptional.of((T) p);
             }
-            case "net.thevpc.nuts.net.NWebCli": {
+            case "net.thevpc.nuts.net.NHttpClient": {
                 NHttpClient p = NExtensionTypeInfo.getOrComputeCachedBean(DefaultNHttpClient.class, NHttpClient.class, NScopeType.SESSION, DefaultNHttpClient::new);
                 return NOptional.of((T) p);
             }

@@ -428,7 +428,7 @@ public class DefaultNInfo implements NInfo {
                     );
                 }
         );
-        props.put("sys-terminal-flags", () -> NWorkspace.of().bootTerminal().getFlags());
+        props.put("sys-terminal-flags", () -> NWorkspace.of().bootTerminal().flags());
         props.put("sys-terminal-mode", () -> NWorkspace.of().bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT));
         props.put("java-version", () -> NVersion.get(System.getProperty("java.version")).get());
         props.put("platform", () -> NEnv.of().java());
@@ -640,7 +640,7 @@ public class DefaultNInfo implements NInfo {
 
         );
         NWorkspaceTerminalOptions b = workspace.bootTerminal();
-        props.put("sys-terminal-flags", b.getFlags());
+        props.put("sys-terminal-flags", b.flags());
         NTerminalMode terminalMode = workspace.bootOptions().terminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.get(System.getProperty("java.version")).get());

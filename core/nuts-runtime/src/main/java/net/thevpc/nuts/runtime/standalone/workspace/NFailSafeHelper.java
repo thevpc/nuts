@@ -34,7 +34,7 @@ public class NFailSafeHelper {
         if (!bot) {
             PrintStream err=null;
             try {
-                err= NWorkspaceExt.of().getModel().bootModel.getBootTerminal().getErr();
+                err= NWorkspaceExt.of().getModel().bootModel.getBootTerminal().err();
                 if (err == null) {
                     err = System.err;
                 }

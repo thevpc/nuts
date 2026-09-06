@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 /**
- * NWebCli interface.
+ * NHttpClient interface.
  *
  * @author thevpc
  * @since 0.8.0

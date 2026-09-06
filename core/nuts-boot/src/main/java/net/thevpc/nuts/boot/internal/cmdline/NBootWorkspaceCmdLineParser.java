@@ -175,7 +175,7 @@ public final class NBootWorkspaceCmdLineParser {
                             if ("MEMORY".equalsIgnoreCase(options.getIsolationLevel())
                                     || "SANDBOX".equalsIgnoreCase(options.getIsolationLevel())
                             ) {
-                                options.setIsolationLevel(null);
+                                options.isolationLevel(null);
                             }
                         }
                         return Collections.singletonList(a);
@@ -1430,7 +1430,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setIsolationLevel(a.getBooleanValue() ? "SANDBOX" : null);
+                                options.isolationLevel(a.getBooleanValue() ? "SANDBOX" : null);
                                 if (a.getBooleanValue()) {
                                     options.setWorkspace(null);
                                 }
@@ -1456,7 +1456,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setIsolationLevel(a.getBooleanValue() ? "MEMORY" : null);
+                                options.isolationLevel(a.getBooleanValue() ? "MEMORY" : null);
                                 if (a.getBooleanValue()) {
                                     options.setWorkspace(null);
                                 }
@@ -1470,7 +1470,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setIsolationLevel(a.getBooleanValue() ? "CONFINED" : null);
+                                options.isolationLevel(a.getBooleanValue() ? "CONFINED" : null);
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1481,7 +1481,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setIsolationLevel(parseIsolationLevel(a.getStringValue()));
+                                options.isolationLevel(parseIsolationLevel(a.getStringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1492,7 +1492,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setInitLaunchers(a.getBooleanValue());
+                                options.initLaunchers(a.getBooleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1503,7 +1503,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setInitJava(a.getBooleanValue());
+                                options.initJava(a.getBooleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1514,7 +1514,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setInitPlatforms(a.getBooleanValue());
+                                options.initPlatforms(a.getBooleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1525,7 +1525,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setInitScripts(a.getBooleanValue());
+                                options.initScripts(a.getBooleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1536,7 +1536,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setDesktopLauncher(parseSupportMode(a.getStringValue()));
+                                options.desktopLauncher(parseSupportMode(a.getStringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1547,7 +1547,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setMenuLauncher(parseSupportMode(a.getStringValue()));
+                                options.menuLauncher(parseSupportMode(a.getStringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1558,7 +1558,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setUserLauncher(parseSupportMode(a.getStringValue()));
+                                options.userLauncher(parseSupportMode(a.getStringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {

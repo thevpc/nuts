@@ -1,120 +1,120 @@
-package net.thevpc.nuts.runtime.remote;
-
-import net.thevpc.nuts.boot.NBootOptionsInfo;
-import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.elem.*;
-
-import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
-import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NException;
-import net.thevpc.nuts.text.NMsg;
-import net.thevpc.nuts.util.NUnsupportedOperationException;
-
-
-public abstract class RemoteNWorkspace extends AbstractNWorkspace {
-    protected NBootOptionsInfo callerBootOptionsInfo;
-
-    public RemoteNWorkspace(NBootOptionsInfo info) {
-        this.callerBootOptionsInfo=info;
-    }
-
-    public NBootOptionsInfo getCallerBootOptionsInfo() {
-        return callerBootOptionsInfo;
-    }
-
-    public NElement createCall(String commandName, NElement body) {
-        try (NTalkClient cli = new NTalkClient()) {
-            NObjectElement q = NElement.ofObjectBuilder()
-                    .set("cmd", commandName)
-                    .set("body", body).build();
-            String json = NElementWriter.ofJson().formatPlain(q);
-            String wsURL = NWorkspace.of().bootOptions().workspace().orNull();
-            byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
-            NObjectElement resultObject = NElementReader.ofJson().read(result, NObjectElement.class);
-            boolean success = resultObject.getBooleanValue("success").get();
-            if (success) {
-                return resultObject.get("body").orNull();
-            } else {
-                //TODO mush deserialize exception
-                throw new NException(NMsg.ofC("unable to call %s",
-                        NText.ofStyled(commandName, NTextStyle.primary1())));
-            }
-        }
-    }
-
-    public NElement createCall(String commandName, String callId, NElement body) {
-        return NElement.ofObjectBuilder()
-                .set(
-                        "cmd",
-                        NElement.ofString(commandName))
-                .set("id", NElement.ofString(callId))
-                .set("body", body).build();
-    }
-
-//    @Override
-//    public NutsSearchCommand search() {
-//        return new RemoteNutsSearchCommand(this);
+//package net.thevpc.nuts.runtime.remote;
+//
+//import net.thevpc.nuts.boot.NBootOptionsInfo;
+//import net.thevpc.nuts.core.NWorkspace;
+//import net.thevpc.nuts.elem.*;
+//
+//import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
+//import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
+//import net.thevpc.nuts.text.NText;
+//import net.thevpc.nuts.text.NTextStyle;
+//import net.thevpc.nuts.util.NException;
+//import net.thevpc.nuts.text.NMsg;
+//import net.thevpc.nuts.util.NUnsupportedOperationException;
+//
+//
+//public abstract class RemoteNWorkspace extends AbstractNWorkspace {
+//    protected NBootOptionsInfo callerBootOptionsInfo;
+//
+//    public RemoteNWorkspace(NBootOptionsInfo info) {
+//        this.callerBootOptionsInfo=info;
 //    }
 //
-//    @Override
-//    public NutsFetchCommand fetch() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported fetch");
+//    public NBootOptionsInfo getCallerBootOptionsInfo() {
+//        return callerBootOptionsInfo;
 //    }
 //
-//    @Override
-//    public NutsDeployCommand deploy() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported deploy");
+//    public NElement createCall(String commandName, NElement body) {
+//        try (NTalkClient cli = new NTalkClient()) {
+//            NObjectElement q = NElement.ofObjectBuilder()
+//                    .set("cmd", commandName)
+//                    .set("body", body).build();
+//            String json = NElementWriter.ofJson().formatPlain(q);
+//            String wsURL = NWorkspace.of().bootOptions().workspace().orNull();
+//            byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
+//            NObjectElement resultObject = NElementReader.ofJson().read(result, NObjectElement.class);
+//            boolean success = resultObject.getBooleanValue("success").get();
+//            if (success) {
+//                return resultObject.get("body").orNull();
+//            } else {
+//                //TODO mush deserialize exception
+//                throw new NException(NMsg.ofC("unable to call %s",
+//                        NText.ofStyled(commandName, NTextStyle.primary1())));
+//            }
+//        }
 //    }
 //
-//    @Override
-//    public NutsUndeployCommand undeploy() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported undeploy");
+//    public NElement createCall(String commandName, String callId, NElement body) {
+//        return NElement.ofObjectBuilder()
+//                .set(
+//                        "cmd",
+//                        NElement.ofString(commandName))
+//                .set("id", NElement.ofString(callId))
+//                .set("body", body).build();
 //    }
 //
-//    @Override
-//    public NutsExecCommand exec() {
-//        return new RemoteNutsExecCommand(this);
+////    @Override
+////    public NutsSearchCommand search() {
+////        return new RemoteNutsSearchCommand(this);
+////    }
+////
+////    @Override
+////    public NutsFetchCommand fetch() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported fetch");
+////    }
+////
+////    @Override
+////    public NutsDeployCommand deploy() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported deploy");
+////    }
+////
+////    @Override
+////    public NutsUndeployCommand undeploy() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported undeploy");
+////    }
+////
+////    @Override
+////    public NutsExecCommand exec() {
+////        return new RemoteNutsExecCommand(this);
+////    }
+////
+////    @Override
+////    public NutsInstallCommand install() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported install");
+////    }
+////
+////    @Override
+////    public NutsUninstallCommand uninstall() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported uninstall");
+////    }
+////
+////    @Override
+////    public NutsUpdateCommand update() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported update");
+////    }
+////
+////    @Override
+////    public NutsPushCommand push() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported push");
+////    }
+////
+////    @Override
+////    public Set<NutsId> getCompanionIds() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported companionIds");
+////    }
+////
+////    @Override
+////    public NutsFilters filters() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported filters");
+////    }
+////
+////    @Override
+////    public NutsLogManager log() {
+////        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported log");
+////    }
+////
+//    public <T> T remoteCall(NElement call, Class<T> expectedType) {
+//        throw new NUnsupportedOperationException(NMsg.ofP("not yet supported remoteCall"));
 //    }
 //
-//    @Override
-//    public NutsInstallCommand install() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported install");
-//    }
-//
-//    @Override
-//    public NutsUninstallCommand uninstall() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported uninstall");
-//    }
-//
-//    @Override
-//    public NutsUpdateCommand update() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported update");
-//    }
-//
-//    @Override
-//    public NutsPushCommand push() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported push");
-//    }
-//
-//    @Override
-//    public Set<NutsId> getCompanionIds() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported companionIds");
-//    }
-//
-//    @Override
-//    public NutsFilters filters() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported filters");
-//    }
-//
-//    @Override
-//    public NutsLogManager log() {
-//        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported log");
-//    }
-//
-    public <T> T remoteCall(NElement call, Class<T> expectedType) {
-        throw new NUnsupportedOperationException(NMsg.ofP("not yet supported remoteCall"));
-    }
-
-}
+//}

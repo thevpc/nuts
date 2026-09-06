@@ -21,8 +21,13 @@ import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
+import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
+import net.thevpc.nuts.text.NMsg;
 
 @NComponentScope(NScopeType.WORKSPACE)
 public class NEnvLocal extends NEnvBase {
@@ -519,4 +524,44 @@ public class NEnvLocal extends NEnvBase {
             }
         }, null);
     }
+
+    @Override
+    public NOptional<String> which(String commandName) {
+        if (NStringUtils.isBlank(commandName)) {
+            return NOptional.ofNamedEmpty("command");
+        }
+        if (NStringUtils.firstIndexOf(commandName, new char[]{'/', '\\'}) >= 0) {
+            Path p = Paths.get(commandName);
+            if (Files.isRegularFile(p) && Files.isExecutable(p)) {
+                return NOptional.of(p.toAbsolutePath().normalize().toString());
+            }
+            return NOptional.ofNamedEmpty(NMsg.ofC("command not found: %s", commandName));
+        }
+        Path p = NSysExecUtils.sysWhich(commandName);
+        if (p != null) {
+            return NOptional.of(p.toString());
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("command not found: %s", commandName));
+    }
+
+    @Override
+    public List<String> whichAll(String commandName) {
+        if (NStringUtils.isBlank(commandName)) {
+            return Collections.emptyList();
+        }
+        if (NStringUtils.firstIndexOf(commandName, new char[]{'/', '\\'}) >= 0) {
+            Path p = Paths.get(commandName);
+            if (Files.isRegularFile(p) && Files.isExecutable(p)) {
+                return Collections.singletonList(p.toAbsolutePath().normalize().toString());
+            }
+            return Collections.emptyList();
+        }
+        Path[] ps = NSysExecUtils.sysWhichAll(commandName);
+        List<String> list = new ArrayList<>(ps.length);
+        for (Path p : ps) {
+            list.add(p.toString());
+        }
+        return list;
+    }
 }
+

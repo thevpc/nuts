@@ -1857,9 +1857,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.initJava(other.getInitJava());
         this.initScripts(other.getInitScripts());
         this.initPlatforms(other.getInitPlatforms());
-        this.desktopLauncher(NSupportMode.parse(other.getDesktopLauncher()).orNull());
-        this.menuLauncher(NSupportMode.parse(other.getMenuLauncher()).orNull());
-        this.userLauncher(NSupportMode.parse(other.getUserLauncher()).orNull());
+        this.desktopLauncher(NSupportMode.parse(other.desktopLauncher()).orNull());
+        this.menuLauncher(NSupportMode.parse(other.menuLauncher()).orNull());
+        this.userLauncher(NSupportMode.parse(other.userLauncher()).orNull());
         this.sharedInstance(other.getSharedInstance());
         this.previewRepo(other.getPreviewRepo());
         return this;

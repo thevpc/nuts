@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.platform;
 
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.platform.*;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NSupportMode;
 
@@ -303,5 +304,14 @@ public abstract class NEnvBase implements NEnv {
         return NEnvUtils.getDesktopIntegrationSupport(this, item);
     }
 
+    @Override
+    public NOptional<String> which(String commandName) {
+        return NOptional.ofEmpty();
+    }
 
+    @Override
+    public List<String> whichAll(String commandName) {
+        return Collections.emptyList();
+    }
 }
+

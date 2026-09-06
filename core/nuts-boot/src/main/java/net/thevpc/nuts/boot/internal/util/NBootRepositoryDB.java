@@ -47,7 +47,7 @@ public class NBootRepositoryDB {
     public Set<String> findByAnyTag(String... tags) {
         Set<String> ok = new LinkedHashSet<>();
         for (Map.Entry<String, NBootAddRepositoryOptions> e : defaultRepositoriesByName.entrySet()) {
-            String[] u = e.getValue().getConfig().getTags();
+            String[] u = e.getValue().getConfig().tags();
             boolean found = tags.length==0;
             if (!found && u != null) {
                 for (String u0 : u) {
@@ -121,10 +121,10 @@ public class NBootRepositoryDB {
                 .setOrder(order)
                 .setConfig(
                         new NBootRepositoryConfig()
-                                .setLocation(
+                                .location(
                                         location
                                 )
-                                .setTags(tags == null ? new String[0] : tags)
+                                .tags(tags == null ? new String[0] : tags)
                 );
         defaultRepositoriesByName.put(name, options);
         defaultRepositoriesByLocation.put(url, options);

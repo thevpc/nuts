@@ -112,9 +112,9 @@ public class NBootArguments {
 
     public NBootArguments term(NWorkspaceTerminalOptions term) {
         if (term != null) {
-            this.in = term.getIn();
-            this.out = term.getOut();
-            this.err = term.getErr();
+            this.in = term.in();
+            this.out = term.out();
+            this.err = term.err();
         }
         return this;
     }

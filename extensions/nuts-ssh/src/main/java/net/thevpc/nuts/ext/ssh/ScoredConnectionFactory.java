@@ -64,12 +64,12 @@ public class ScoredConnectionFactory {
         if (useBin) {
             boolean sftpChecked = false;
             boolean scpChecked = false;
-            ssh = NExec.ofSystem("ssh").which();
+            ssh = NExec.ofSystem("ssh").which().orNull();
             if (ssh == null) {
                 return NScoredCallable.of(score, () -> new JCshConnection(connectionString.builder().setQueryParam("use", "jcsh").build()));
             }
             if (useScp) {
-                scp = NExec.ofSystem("scp").which();
+                scp = NExec.ofSystem("scp").which().orNull();
                 scpChecked = true;
                 if (scp != null) {
                     score += 25;
@@ -77,7 +77,7 @@ public class ScoredConnectionFactory {
                 }
             }
             if (useSftp) {
-                sftp = NExec.ofSystem("sftp").which();
+                sftp = NExec.ofSystem("sftp").which().orNull();
                 sftpChecked = true;
                 if (sftp != null) {
                     score += 25;
@@ -85,14 +85,14 @@ public class ScoredConnectionFactory {
                 }
             }
             if (!scpChecked) {
-                scp = NExec.ofSystem("scp").which();
+                scp = NExec.ofSystem("scp").which().orNull();
                 if (scp != null) {
                     score += 25;
                     return NScoredCallable.of(score, () -> new BinSshConnection(connectionString.builder().setQueryParam("use", "scp").build(), false));
                 }
             }
             if (sftpChecked) {
-                sftp = NExec.ofSystem("sftp").which();
+                sftp = NExec.ofSystem("sftp").which().orNull();
                 if (sftp != null) {
                     score += 25;
                     return NScoredCallable.of(score, () -> new BinSshConnection(connectionString.builder().setQueryParam("use", "sftp").build(), true));

@@ -77,74 +77,74 @@ public class NBootRepositoryConfig implements Serializable, Cloneable {
         }
     }
 
-    public String[] getTags() {
+    public String[] tags() {
         return tags;
     }
 
-    public NBootRepositoryConfig setTags(String[] tags) {
+    public NBootRepositoryConfig tags(String[] tags) {
         this.tags = tags;
         return this;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public NBootRepositoryConfig setName(String name) {
+    public NBootRepositoryConfig name(String name) {
         this.name = name;
         return this;
     }
 
-    public NBootRepositoryLocation getLocation() {
+    public NBootRepositoryLocation location() {
         return location;
     }
 
-    public NBootRepositoryConfig setLocation(NBootRepositoryLocation location) {
+    public NBootRepositoryConfig location(NBootRepositoryLocation location) {
         this.location = location;
         return this;
     }
 
-    public String getStoreStrategy() {
+    public String storeStrategy() {
         return storeStrategy;
     }
 
-    public NBootRepositoryConfig setStoreStrategy(String storeStrategy) {
+    public NBootRepositoryConfig storeStrategy(String storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public String getGroups() {
+    public String groups() {
         return groups;
     }
 
-    public NBootRepositoryConfig setGroups(String groups) {
+    public NBootRepositoryConfig groups(String groups) {
         this.groups = groups;
         return this;
     }
 
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
-    public NBootRepositoryConfig setEnv(Map<String, String> env) {
+    public NBootRepositoryConfig env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
-    public String getAuthenticationAgent() {
+    public String authenticationAgent() {
         return authenticationAgent;
     }
 
-    public NBootRepositoryConfig setAuthenticationAgent(String authenticationAgent) {
+    public NBootRepositoryConfig authenticationAgent(String authenticationAgent) {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<String, String> storeLocations() {
         return storeLocations;
     }
 
-    public NBootRepositoryConfig setStoreLocations(Map<String, String> storeLocations) {
+    public NBootRepositoryConfig storeLocations(Map<String, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }

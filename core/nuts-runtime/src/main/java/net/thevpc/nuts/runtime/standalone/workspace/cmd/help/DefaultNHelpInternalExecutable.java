@@ -16,6 +16,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,7 +87,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             out.flush();
         }
         for (String arg : helpFor) {
-            NExecutableInformation w = null;
+            NOptional<NExecutableInformation> w = NOptional.ofEmpty();
             if (arg.equals("help")) {
                 out.println(NMsg.ofC("%s :", arg));
                 showDefaultHelp();
@@ -99,16 +100,16 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                         LOG().log(NMsg.ofC("failed to execute : %s", arg).asFine(ex));
                         //ignore
                     }
-                    if (w != null) {
+                    if (w.isPresent()) {
                         out.println(NMsg.ofC("%s :", arg));
-                        out.println(w.helpText());
+                        out.println(w.get().helpText());
                         out.flush();
                     } else {
                         session.terminal().err().println(NMsg.ofC("%s : not found", arg));
                     }
                 } finally {
-                    if (w != null) {
-                        w.close();
+                    if (w.isPresent()) {
+                        w.get().close();
                     }
                 }
             }

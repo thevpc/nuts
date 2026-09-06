@@ -1123,14 +1123,14 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setLocale(this.locale().orNull());
         r.setTheme(this.theme().orNull());
         r.setDependencySolver(this.dependencySolver().orNull());
-        r.setIsolationLevel(this.isolationLevel().map(NIsolationLevel::id).orNull());
-        r.setInitLaunchers(this.initLaunchers().orNull());
-        r.setInitJava(this.initJava().orNull());
-        r.setInitScripts(this.initScripts().orNull());
-        r.setInitPlatforms(this.initPlatforms().orNull());
-        r.setDesktopLauncher(this.desktopLauncher().map(NSupportMode::id).orNull());
-        r.setMenuLauncher(this.menuLauncher().map(NSupportMode::id).orNull());
-        r.setUserLauncher(this.userLauncher().map(NSupportMode::id).orNull());
+        r.isolationLevel(this.isolationLevel().map(NIsolationLevel::id).orNull());
+        r.initLaunchers(this.initLaunchers().orNull());
+        r.initJava(this.initJava().orNull());
+        r.initScripts(this.initScripts().orNull());
+        r.initPlatforms(this.initPlatforms().orNull());
+        r.desktopLauncher(this.desktopLauncher().map(NSupportMode::id).orNull());
+        r.menuLauncher(this.menuLauncher().map(NSupportMode::id).orNull());
+        r.userLauncher(this.userLauncher().map(NSupportMode::id).orNull());
         r.setSharedInstance(this.sharedInstance().orNull());
         r.setPreviewRepo(this.previewRepo().orNull());
 

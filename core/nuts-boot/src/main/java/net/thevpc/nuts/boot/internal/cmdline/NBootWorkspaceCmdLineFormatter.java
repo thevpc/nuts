@@ -474,18 +474,18 @@ public class NBootWorkspaceCmdLineFormatter {
             fillOption("--init-platforms", null, options.getInitLaunchers(), true, arguments, false);
             fillOption("--init-java", null, options.getInitLaunchers(), true, arguments, false);
             fillOption("--init-scripts", null, options.getInitLaunchers(), true, arguments, false);
-            fillOptionEnum("--desktop-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
-            fillOptionEnum("--menu-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
-            fillOptionEnum("--user-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("--desktop-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("--menu-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("--user-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
             fillOptionEnum("--isolation-level", null, options.getIsolationLevel(), "NIsolationLevel", arguments, false);
         } else if (isApiVersionOrAfter(V081)) {
             fillOption("---init-launchers", null, options.getInitLaunchers(), true, arguments, false);
             fillOption("---init-platforms", null, options.getInitLaunchers(), true, arguments, false);
             fillOption("---init-java", null, options.getInitLaunchers(), true, arguments, false);
             fillOption("---init-scripts", null, options.getInitLaunchers(), true, arguments, false);
-            fillOptionEnum("---system-desktop-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
-            fillOptionEnum("---system-menu-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
-            fillOptionEnum("---system-custom-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("---system-desktop-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("---system-menu-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
+            fillOptionEnum("---system-custom-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
         }
 
         fillOption("--name", null, NBootUtils.trim(options.getName()), arguments, false);

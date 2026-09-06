@@ -84,7 +84,7 @@ public class DefaultNHttpClient implements NHttpClient {
     private final DefaultNWebHeaders headers = new DefaultNWebHeaders();
 
     public DefaultNHttpClient() {
-        headers.addHeader("User-Agent", "nwebcli/" + NWorkspace.of().runtimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
+        headers.addHeader("User-Agent", "nhttpclient/" + NWorkspace.of().runtimeId().version(), DefaultNWebHeaders.Mode.ALWAYS);
     }
 
     public static InputStream prepareGlobalOpenStream(URL url) throws IOException {

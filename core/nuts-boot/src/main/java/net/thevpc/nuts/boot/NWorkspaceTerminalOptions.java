@@ -46,19 +46,19 @@ public final class NWorkspaceTerminalOptions {
         this.flags = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(flags)));
     }
 
-    public Set<String> getFlags() {
+    public Set<String> flags() {
         return flags;
     }
 
-    public InputStream getIn() {
+    public InputStream in() {
         return in;
     }
 
-    public PrintStream getOut() {
+    public PrintStream out() {
         return out;
     }
 
-    public PrintStream getErr() {
+    public PrintStream err() {
         return err;
     }
 

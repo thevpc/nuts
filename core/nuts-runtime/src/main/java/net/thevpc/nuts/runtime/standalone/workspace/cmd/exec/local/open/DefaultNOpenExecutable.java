@@ -82,6 +82,10 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     }
 
+    public String[] effectiveOpenExecutable() {
+        return effectiveOpenExecutable;
+    }
+
     @Override
     public NId id() {
         return null;

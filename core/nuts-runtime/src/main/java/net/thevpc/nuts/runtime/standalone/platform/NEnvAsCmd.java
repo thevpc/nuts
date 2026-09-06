@@ -12,6 +12,7 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NEnvCmdSPI;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -708,4 +709,61 @@ public class NEnvAsCmd extends NEnvBase {
             return 0;
         }
     }
+
+    @Override
+    public NOptional<String> which(String commandName) {
+        if (NStringUtils.isBlank(commandName)) {
+            return NOptional.ofNamedEmpty("command");
+        }
+        tryUpdate();
+        List<String> all = whichAll(commandName);
+        if (!all.isEmpty()) {
+            return NOptional.of(all.get(0));
+        }
+        return NOptional.ofNamedEmpty(NMsg.ofC("command not found on %s: %s", connectionString(), commandName));
+    }
+
+    @Override
+    public List<String> whichAll(String commandName) {
+        if (NStringUtils.isBlank(commandName)) {
+            return Collections.emptyList();
+        }
+        tryUpdate();
+        NOsFamily fam = osFamily();
+        List<String> list = new ArrayList<>();
+        switch (fam == null ? NOsFamily.LINUX : fam) {
+            case WINDOWS: {
+                try {
+                    String out = runOnceSystemGrab("where.exe " + commandName);
+                    if (!NBlankable.isBlank(out)) {
+                        for (String line : NStringUtils.split(out, "\r\n", true, true)) {
+                            if (!NStringUtils.isBlank(line) && !line.startsWith("INFO:")) {
+                                list.add(line.trim());
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    // ignore
+                }
+                break;
+            }
+            default: {
+                try {
+                    String out = runOnceSystemGrab("sh -c 'command -v \"$1\" 2>/dev/null || which \"$1\" 2>/dev/null' _ " + commandName);
+                    if (!NBlankable.isBlank(out)) {
+                        for (String line : NStringUtils.split(out, "\n", true, true)) {
+                            if (!NStringUtils.isBlank(line)) {
+                                list.add(line.trim());
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    // ignore
+                }
+                break;
+            }
+        }
+        return list;
+    }
 }
+

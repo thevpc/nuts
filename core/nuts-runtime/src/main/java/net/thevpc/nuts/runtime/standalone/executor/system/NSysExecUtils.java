@@ -39,13 +39,34 @@ public class NSysExecUtils {
         List<Path> all = new ArrayList<>();
         String p = NEnv.of().getEnv("PATH").orNull();
         if (p != null) {
+            boolean isWindows = NEnv.of().osFamily() == NOsFamily.WINDOWS;
+            List<String> names = new ArrayList<>();
+            names.add(commandName);
+            if (isWindows) {
+                int lastDot = commandName.lastIndexOf('.');
+                boolean hasExt = lastDot > commandName.lastIndexOf('/') && lastDot > commandName.lastIndexOf('\\');
+                String pathExt = NEnv.of().getEnv("PATHEXT").orNull();
+                if (NStringUtils.isBlank(pathExt)) {
+                    pathExt = ".COM;.EXE;.BAT;.CMD";
+                }
+                String[] exts = pathExt.split(";");
+                if (!hasExt) {
+                    for (String ext : exts) {
+                        if (!NStringUtils.isBlank(ext)) {
+                            names.add(commandName + (ext.startsWith(".") ? ext.trim() : ("." + ext.trim())));
+                        }
+                    }
+                }
+            }
             for (String s : p.split(File.pathSeparator)) {
                 try {
                     if (!NStringUtils.isBlank(s)) {
-                        Path c = Paths.get(s, commandName);
-                        if (Files.isRegularFile(c)) {
-                            if (Files.isExecutable(c)) {
-                                all.add(c);
+                        for (String candidateName : names) {
+                            Path c = Paths.get(s, candidateName);
+                            if (Files.isRegularFile(c)) {
+                                if (Files.isExecutable(c)) {
+                                    all.add(c);
+                                }
                             }
                         }
                     }
