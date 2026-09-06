@@ -52,61 +52,61 @@ public class NBootDescriptor {
         copyFrom(other);
     }
 
-    public NBootDependency getId() {
+    public NBootDependency id() {
         return id;
     }
 
 
-    public NBootDescriptor setId(NBootDependency id) {
+    public NBootDescriptor id(NBootDependency id) {
         this.id = id;
         return this;
     }
 
 
-    public NBootDescriptor setId(String id) {
+    public NBootDescriptor id(String id) {
         this.id = NBootDependency.of(id);
         return this;
     }
 
 
-    public List<NBootDependency> getParents() {
+    public List<NBootDependency> parents() {
         return parents;
     }
 
-    public NBootDescriptor setParents(List<NBootDependency> parents) {
+    public NBootDescriptor parents(List<NBootDependency> parents) {
         this.parents = NBootUtils.uniqueNonBlankList(parents, x->x.isBlank());
         return this;
     }
 
 
-    public String getPackaging() {
+    public String packaging() {
         return packaging;
     }
 
 
-    public NBootDescriptor setPackaging(String packaging) {
+    public NBootDescriptor packaging(String packaging) {
         this.packaging = NBootUtils.trim(packaging);
         return this;
     }
 
 
-    public List<NBootDependency> getDependencies() {
+    public List<NBootDependency> dependencies() {
         return dependencies;
     }
 
 
-    public NBootDescriptor setDependencies(List<NBootDependency> dependencies) {
+    public NBootDescriptor dependencies(List<NBootDependency> dependencies) {
         this.dependencies = NBootUtils.uniqueNonBlankList(dependencies, x->x.isBlank());
         return this;
     }
 
 
-    public List<NBootDescriptorProperty> getProperties() {
+    public List<NBootDescriptorProperty> properties() {
         return properties;
     }
 
 
-    public NBootDescriptor setProperties(List<NBootDescriptorProperty> properties) {
+    public NBootDescriptor properties(List<NBootDescriptorProperty> properties) {
         _rebuildPropertiesBuilder();
         _propertiesBuilder.clear();
         if (properties == null || properties.size() == 0) {
@@ -121,8 +121,8 @@ public class NBootDescriptor {
 
     public NBootDescriptor setProperty(String name, String value) {
         NBootDescriptorProperty pp = new NBootDescriptorProperty()
-                .setName(name)
-                .setValue(value);
+                .name(name)
+                .value(value);
         _rebuildPropertiesBuilder();
         if (value == null) {
             _propertiesBuilder.remove(pp);
@@ -135,11 +135,11 @@ public class NBootDescriptor {
 
     public NBootDescriptor copyFrom(NBootDescriptor other) {
         if (other != null) {
-            setId(other.getId());
-            setPackaging(other.getPackaging());
-            setParents(other.getParents());
-            setDependencies(other.getDependencies());
-            setProperties(other.getProperties());
+            id(other.id());
+            packaging(other.packaging());
+            parents(other.parents());
+            dependencies(other.dependencies());
+            properties(other.properties());
         } else {
             clear();
         }
@@ -148,11 +148,11 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor clear() {
-        setId((NBootDependency) null);
-        setPackaging(null);
-        setParents(null);
-        setDependencies(null);
-        setProperties(null);
+        id((NBootDependency) null);
+        packaging(null);
+        parents(null);
+        dependencies(null);
+        properties(null);
         return this;
     }
 
@@ -218,7 +218,7 @@ public class NBootDescriptor {
 
         NBootProperties p = new NBootProperties();
         boolean someUpdate = false;
-        for (NBootDescriptorProperty entry : getProperties()) {
+        for (NBootDescriptorProperty entry : properties()) {
             if (filter == null || filter.test(entry)) {
                 NBootDescriptorProperty v = converter.apply(entry);
                 if (v != null) {
@@ -232,7 +232,7 @@ public class NBootDescriptor {
             }
         }
         if (someUpdate) {
-            setProperties(p.toList());
+            properties(p.toList());
         }
         return this;
     }
@@ -243,7 +243,7 @@ public class NBootDescriptor {
             return this;
         }
         ArrayList<NBootDependency> dependenciesList = new ArrayList<>();
-        for (NBootDependency d : getDependencies()) {
+        for (NBootDependency d : dependencies()) {
             if (filter == null || filter.test(d)) {
                 d = converter.apply(d);
                 if (d != null) {
@@ -274,7 +274,7 @@ public class NBootDescriptor {
 
 
     public NBootDescriptorProperty getProperty(String name) {
-        return Arrays.stream(_propertiesBuilder.toArray()).filter(x -> x.getName().equals(name)).findFirst()
+        return Arrays.stream(_propertiesBuilder.toArray()).filter(x -> x.name().equals(name)).findFirst()
                 .orElse(null);
     }
 

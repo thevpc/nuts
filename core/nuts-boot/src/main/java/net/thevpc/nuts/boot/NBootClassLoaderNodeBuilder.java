@@ -47,13 +47,13 @@ public class NBootClassLoaderNodeBuilder {
 
     public NBootClassLoaderNodeBuilder copyFrom(NBootClassLoaderNode o) {
         if (o != null) {
-            id = o.getId();
+            id = o.id();
             enabled = o.isEnabled();
             includedInClasspath = o.isIncludedInClasspath();
-            url = o.getURL();
+            url = o.url();
             dependencies.clear();
-            if (o.getDependencies() != null) {
-                for (NBootClassLoaderNode dependency : o.getDependencies()) {
+            if (o.dependencies() != null) {
+                for (NBootClassLoaderNode dependency : o.dependencies()) {
                     addDependency(dependency);
                 }
             }
@@ -63,13 +63,13 @@ public class NBootClassLoaderNodeBuilder {
 
     public NBootClassLoaderNodeBuilder copyFrom(NBootClassLoaderNodeBuilder o) {
         if (o != null) {
-            id = o.getId();
+            id = o.id();
             enabled = o.isEnabled();
             includedInClasspath = o.isIncludedInClasspath();
-            url = o.getURL();
+            url = o.url();
             dependencies.clear();
-            if (o.getDependencies() != null) {
-                for (NBootClassLoaderNode dependency : o.getDependencies()) {
+            if (o.dependencies() != null) {
+                for (NBootClassLoaderNode dependency : o.dependencies()) {
                     addDependency(dependency);
                 }
             }
@@ -81,7 +81,7 @@ public class NBootClassLoaderNodeBuilder {
         return includedInClasspath;
     }
 
-    public NBootClassLoaderNodeBuilder setIncludedInClasspath(boolean includedInClasspath) {
+    public NBootClassLoaderNodeBuilder includedInClasspath(boolean includedInClasspath) {
         this.includedInClasspath = includedInClasspath;
         return this;
     }
@@ -90,34 +90,34 @@ public class NBootClassLoaderNodeBuilder {
         return enabled;
     }
 
-    public NBootClassLoaderNodeBuilder setEnabled(boolean enabled) {
+    public NBootClassLoaderNodeBuilder enabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
-    public NBootClassLoaderNodeBuilder setId(String id) {
+    public NBootClassLoaderNodeBuilder id(String id) {
         this.id = id;
         return this;
     }
 
-    public URL getURL() {
+    public URL url() {
         return url;
     }
 
-    public NBootClassLoaderNodeBuilder setUrl(URL url) {
+    public NBootClassLoaderNodeBuilder url(URL url) {
         this.url = url;
         return this;
     }
 
-    public List<NBootClassLoaderNode> getDependencies() {
+    public List<NBootClassLoaderNode> dependencies() {
         return dependencies;
     }
 
-    public NBootClassLoaderNodeBuilder setDependencies(List<NBootClassLoaderNode> dependencies) {
+    public NBootClassLoaderNodeBuilder dependencies(List<NBootClassLoaderNode> dependencies) {
         this.dependencies = dependencies;
         return this;
     }

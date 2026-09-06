@@ -510,7 +510,7 @@ public final class NBootOptionsInfo {
     }
 
 
-    public String getApiVersion() {
+    public String apiVersion() {
         return apiVersion;
     }
 
@@ -521,13 +521,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setApiVersion(String apiVersion) {
+    public NBootOptionsInfo apiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
 
-    public List<String> getApplicationArguments() {
+    public List<String> applicationArguments() {
         return applicationArguments;
     }
 
@@ -538,13 +538,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setApplicationArguments(List<String> applicationArguments) {
+    public NBootOptionsInfo applicationArguments(List<String> applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
     }
 
 
-    public String getArchetype() {
+    public String archetype() {
         return archetype;
     }
 
@@ -555,13 +555,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setArchetype(String archetype) {
+    public NBootOptionsInfo archetype(String archetype) {
         this.archetype = archetype;
         return this;
     }
 
 
-    public Supplier<ClassLoader> getClassLoaderSupplier() {
+    public Supplier<ClassLoader> classLoaderSupplier() {
         return classLoaderSupplier;
     }
 
@@ -572,13 +572,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setClassLoaderSupplier(Supplier<ClassLoader> provider) {
+    public NBootOptionsInfo classLoaderSupplier(Supplier<ClassLoader> provider) {
         this.classLoaderSupplier = provider;
         return this;
     }
 
 
-    public String getConfirm() {
+    public String confirm() {
         return confirm;
     }
 
@@ -589,18 +589,18 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setConfirm(String confirm) {
+    public NBootOptionsInfo confirm(String confirm) {
         this.confirm = confirm;
         return this;
     }
 
 
-    public Boolean getDry() {
+    public Boolean dry() {
         return dry;
     }
 
 
-    public Boolean getShowStacktrace() {
+    public Boolean showStacktrace() {
         return showStacktrace;
     }
 
@@ -611,7 +611,7 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setDry(Boolean dry) {
+    public NBootOptionsInfo dry(Boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -624,13 +624,13 @@ public final class NBootOptionsInfo {
      * @since 0.8.4
      */
 
-    public NBootOptionsInfo setShowStacktrace(Boolean showStacktrace) {
+    public NBootOptionsInfo showStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
     }
 
 
-    public Instant getCreationTime() {
+    public Instant creationTime() {
         return creationTime;
     }
 
@@ -641,13 +641,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setCreationTime(Instant creationTime) {
+    public NBootOptionsInfo creationTime(Instant creationTime) {
         this.creationTime = creationTime;
         return this;
     }
 
 
-    public List<String> getExcludedExtensions() {
+    public List<String> excludedExtensions() {
         return excludedExtensions;
     }
 
@@ -658,13 +658,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setExcludedExtensions(List<String> excludedExtensions) {
+    public NBootOptionsInfo excludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
 
 
-    public String getExecutionType() {
+    public String executionType() {
         return executionType;
     }
 
@@ -675,13 +675,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setExecutionType(String executionType) {
+    public NBootOptionsInfo executionType(String executionType) {
         this.executionType = executionType;
         return this;
     }
 
 
-    public String getRunAs() {
+    public String runAs() {
         return runAs;
     }
 
@@ -691,13 +691,13 @@ public final class NBootOptionsInfo {
      * @param runAs new value
      * @return {@code this} instance
      */
-    public NBootOptionsInfo setRunAs(String runAs) {
+    public NBootOptionsInfo runAs(String runAs) {
         this.runAs = runAs;
         return this;
     }
 
 
-    public List<String> getExecutorOptions() {
+    public List<String> executorOptions() {
         return executorOptions;
     }
 
@@ -708,23 +708,23 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setExecutorOptions(List<String> executorOptions) {
+    public NBootOptionsInfo executorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
 
 
-    public String getHomeLocation(NBootHomeLocation location) {
+    public String homeLocation(NBootHomeLocation location) {
         return homeLocations == null ? null : homeLocations.get(location);
     }
 
 
-    public Map<NBootHomeLocation, String> getHomeLocations() {
+    public Map<NBootHomeLocation, String> homeLocations() {
         return homeLocations;
     }
 
 
-    public NBootOptionsInfo setHomeLocations(Map<NBootHomeLocation, String> homeLocations) {
+    public NBootOptionsInfo homeLocations(Map<NBootHomeLocation, String> homeLocations) {
         if (homeLocations != null) {
             if (this.homeLocations == null) {
                 this.homeLocations = new HashMap<>();
@@ -737,18 +737,18 @@ public final class NBootOptionsInfo {
     }
 
 
-    public String getJavaCommand() {
+    public String javaCommand() {
         return javaCommand;
     }
 
 
-    public NBootOptionsInfo setJavaCommand(String javaCommand) {
+    public NBootOptionsInfo javaCommand(String javaCommand) {
         this.javaCommand = javaCommand;
         return this;
     }
 
 
-    public String getJavaOptions() {
+    public String javaOptions() {
         return javaOptions;
     }
 
@@ -759,13 +759,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setJavaOptions(String javaOptions) {
+    public NBootOptionsInfo javaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
     }
 
 
-    public NBootLogConfig getLogConfig() {
+    public NBootLogConfig logConfig() {
         return logConfig;
     }
 
@@ -776,13 +776,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setLogConfig(NBootLogConfig logConfig) {
+    public NBootOptionsInfo logConfig(NBootLogConfig logConfig) {
         this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
 
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -793,13 +793,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setName(String workspaceName) {
+    public NBootOptionsInfo name(String workspaceName) {
         this.name = workspaceName;
         return this;
     }
 
 
-    public String getOpenMode() {
+    public String openMode() {
         return openMode;
     }
 
@@ -810,13 +810,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setOpenMode(String openMode) {
+    public NBootOptionsInfo openMode(String openMode) {
         this.openMode = openMode;
         return this;
     }
 
 
-    public String getOutputFormat() {
+    public String outputFormat() {
         return outputFormat;
     }
 
@@ -827,13 +827,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setOutputFormat(String outputFormat) {
+    public NBootOptionsInfo outputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
 
 
-    public List<String> getOutputFormatOptions() {
+    public List<String> outputFormatOptions() {
         return outputFormatOptions;
     }
 
@@ -844,7 +844,7 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setOutputFormatOptions(List<String> options) {
+    public NBootOptionsInfo outputFormatOptions(List<String> options) {
         if (options != null) {
             if (outputFormatOptions == null) {
                 outputFormatOptions = new ArrayList<>();
@@ -857,7 +857,7 @@ public final class NBootOptionsInfo {
         return this;
     }
 
-    public NBootOptionsInfo setOutputFormatOptions(String... options) {
+    public NBootOptionsInfo outputFormatOptions(String[] options) {
         if (outputFormatOptions == null) {
             outputFormatOptions = new ArrayList<>();
         }
@@ -866,7 +866,7 @@ public final class NBootOptionsInfo {
     }
 
 
-    public char[] getCredential() {
+    public char[] credential() {
         return credential;
     }
 
@@ -877,13 +877,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setCredential(char[] credential) {
+    public NBootOptionsInfo credential(char[] credential) {
         this.credential = credential;
         return this;
     }
 
 
-    public String getRepositoryStoreStrategy() {
+    public String repositoryStoreStrategy() {
         return repositoryStoreStrategy;
     }
 
@@ -894,13 +894,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setRepositoryStoreStrategy(String repositoryStoreStrategy) {
+    public NBootOptionsInfo repositoryStoreStrategy(String repositoryStoreStrategy) {
         this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
 
-    public String getRuntimeId() {
+    public String runtimeId() {
         return runtimeId;
     }
 
@@ -911,18 +911,18 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setRuntimeId(String runtimeId) {
+    public NBootOptionsInfo runtimeId(String runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
 
-    public String getStoreType(String folder) {
+    public String storeType(String folder) {
         return storeLocations == null ? null : storeLocations.get(NBootUtils.enumId(folder));
     }
 
 
-    public String getStoreLayout() {
+    public String storeLayout() {
         return storeLayout;
     }
 
@@ -933,13 +933,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setStoreLayout(String storeLayout) {
+    public NBootOptionsInfo storeLayout(String storeLayout) {
         this.storeLayout = storeLayout;
         return this;
     }
 
 
-    public String getStoreStrategy() {
+    public String storeStrategy() {
         return storeStrategy;
     }
 
@@ -950,18 +950,18 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setStoreStrategy(String storeStrategy) {
+    public NBootOptionsInfo storeStrategy(String storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
 
-    public Map<String, String> getStoreLocations() {
+    public Map<String, String> storeLocations() {
         return storeLocations;
     }
 
 
-    public NBootOptionsInfo setStoreLocations(Map<String, String> storeLocations) {
+    public NBootOptionsInfo storeLocations(Map<String, String> storeLocations) {
         if (storeLocations != null) {
             if (this.storeLocations == null) {
                 this.storeLocations = new HashMap<>();
@@ -975,7 +975,7 @@ public final class NBootOptionsInfo {
     }
 
 
-    public String getTerminalMode() {
+    public String terminalMode() {
         return terminalMode;
     }
 
@@ -986,17 +986,17 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setTerminalMode(String terminalMode) {
+    public NBootOptionsInfo terminalMode(String terminalMode) {
         this.terminalMode = terminalMode;
         return this;
     }
 
 
-    public List<String> getRepositories() {
+    public List<String> repositories() {
         return repositories;
     }
 
-    public List<String> getBootRepositories() {
+    public List<String> bootRepositories() {
         return bootRepositories;
     }
 
@@ -1007,7 +1007,7 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setRepositories(List<String> repositories) {
+    public NBootOptionsInfo repositories(List<String> repositories) {
         this.repositories = repositories;
         return this;
     }
@@ -1019,18 +1019,18 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setBootRepositories(List<String> bootRepositories) {
+    public NBootOptionsInfo bootRepositories(List<String> bootRepositories) {
         this.bootRepositories = bootRepositories;
         return this;
     }
 
 
-    public String getUserName() {
+    public String userName() {
         return userName;
     }
 
 
-    public String getWorkspace() {
+    public String workspace() {
         return workspace;
     }
 
@@ -1041,13 +1041,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setWorkspace(String workspace) {
+    public NBootOptionsInfo workspace(String workspace) {
         this.workspace = workspace;
         return this;
     }
 
 
-    public String getDebug() {
+    public String debug() {
         return debug;
     }
 
@@ -1058,13 +1058,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setDebug(String debug) {
+    public NBootOptionsInfo debug(String debug) {
         this.debug = debug;
         return this;
     }
 
 
-    public Boolean getSystem() {
+    public Boolean system() {
         return system;
     }
 
@@ -1075,13 +1075,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setSystem(Boolean system) {
+    public NBootOptionsInfo system(Boolean system) {
         this.system = system;
         return this;
     }
 
 
-    public Boolean getGui() {
+    public Boolean gui() {
         return gui;
     }
 
@@ -1092,13 +1092,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setGui(Boolean gui) {
+    public NBootOptionsInfo gui(Boolean gui) {
         this.gui = gui;
         return this;
     }
 
 
-    public Boolean getInherited() {
+    public Boolean inherited() {
         return inherited;
     }
 
@@ -1109,13 +1109,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setInherited(Boolean inherited) {
+    public NBootOptionsInfo inherited(Boolean inherited) {
         this.inherited = inherited;
         return this;
     }
 
 
-    public Boolean getReadOnly() {
+    public Boolean readOnly() {
         return readOnly;
     }
 
@@ -1126,13 +1126,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setReadOnly(Boolean readOnly) {
+    public NBootOptionsInfo readOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
 
 
-    public Boolean getRecover() {
+    public Boolean recover() {
         return recover;
     }
 
@@ -1143,20 +1143,20 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setRecover(Boolean recover) {
+    public NBootOptionsInfo recover(Boolean recover) {
         this.recover = recover;
         return this;
     }
 
-    public Boolean getResetHard() {
+    public Boolean resetHard() {
         return resetHard;
     }
 
-    public void setResetHard(Boolean resetHard) {
+    public void resetHard(Boolean resetHard) {
         this.resetHard = resetHard;
     }
 
-    public Boolean getReset() {
+    public Boolean reset() {
         return reset;
     }
 
@@ -1167,35 +1167,35 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setReset(Boolean reset) {
+    public NBootOptionsInfo reset(Boolean reset) {
         this.reset = reset;
         return this;
     }
 
 
-    public Boolean getCommandVersion() {
+    public Boolean commandVersion() {
         return commandVersion;
     }
 
 
-    public NBootOptionsInfo setCommandVersion(Boolean version) {
+    public NBootOptionsInfo commandVersion(Boolean version) {
         this.commandVersion = version;
         return this;
     }
 
 
-    public Boolean getCommandHelp() {
+    public Boolean commandHelp() {
         return commandHelp;
     }
 
 
-    public NBootOptionsInfo setCommandHelp(Boolean help) {
+    public NBootOptionsInfo commandHelp(Boolean help) {
         this.commandHelp = help;
         return this;
     }
 
 
-    public Boolean getInstallCompanions() {
+    public Boolean installCompanions() {
         return installCompanions;
     }
 
@@ -1206,13 +1206,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setInstallCompanions(Boolean skipInstallCompanions) {
+    public NBootOptionsInfo installCompanions(Boolean skipInstallCompanions) {
         this.installCompanions = skipInstallCompanions;
         return this;
     }
 
 
-    public Boolean getSkipWelcome() {
+    public Boolean skipWelcome() {
         return skipWelcome;
     }
 
@@ -1223,35 +1223,35 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setSkipWelcome(Boolean skipWelcome) {
+    public NBootOptionsInfo skipWelcome(Boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
     }
 
 
-    public String getOutLinePrefix() {
+    public String outLinePrefix() {
         return outLinePrefix;
     }
 
 
-    public NBootOptionsInfo setOutLinePrefix(String outLinePrefix) {
+    public NBootOptionsInfo outLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
 
 
-    public String getErrLinePrefix() {
+    public String errLinePrefix() {
         return errLinePrefix;
     }
 
 
-    public NBootOptionsInfo setErrLinePrefix(String errLinePrefix) {
+    public NBootOptionsInfo errLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
 
 
-    public Boolean getSkipBoot() {
+    public Boolean skipBoot() {
         return skipBoot;
     }
 
@@ -1262,13 +1262,13 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setSkipBoot(Boolean skipBoot) {
+    public NBootOptionsInfo skipBoot(Boolean skipBoot) {
         this.skipBoot = skipBoot;
         return this;
     }
 
 
-    public Boolean getTrace() {
+    public Boolean trace() {
         return trace;
     }
 
@@ -1279,203 +1279,203 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setTrace(Boolean trace) {
+    public NBootOptionsInfo trace(Boolean trace) {
         this.trace = trace;
         return this;
     }
 
-    public String getProgressOptions() {
+    public String progressOptions() {
         return progressOptions;
     }
 
 
-    public NBootOptionsInfo setProgressOptions(String progressOptions) {
+    public NBootOptionsInfo progressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
     }
 
 
-    public Boolean getCached() {
+    public Boolean cached() {
         return cached;
     }
 
 
-    public NBootOptionsInfo setCached(Boolean cached) {
+    public NBootOptionsInfo cached(Boolean cached) {
         this.cached = cached;
         return this;
     }
 
 
-    public Boolean getIndexed() {
+    public Boolean indexed() {
         return indexed;
     }
 
 
-    public NBootOptionsInfo setIndexed(Boolean indexed) {
+    public NBootOptionsInfo indexed(Boolean indexed) {
         this.indexed = indexed;
         return this;
     }
 
 
-    public Boolean getTransitive() {
+    public Boolean transitive() {
         return transitive;
     }
 
 
-    public NBootOptionsInfo setTransitive(Boolean transitive) {
+    public NBootOptionsInfo transitive(Boolean transitive) {
         this.transitive = transitive;
         return this;
     }
 
 
-    public Boolean getBot() {
+    public Boolean bot() {
         return bot;
     }
 
 
-    public NBootOptionsInfo setBot(Boolean bot) {
+    public NBootOptionsInfo bot(Boolean bot) {
         this.bot = bot;
         return this;
     }
 
 
-    public Boolean getPreviewRepo() {
+    public Boolean previewRepo() {
         return previewRepo;
     }
 
 
-    public NBootOptionsInfo setPreviewRepo(Boolean bot) {
+    public NBootOptionsInfo previewRepo(Boolean bot) {
         this.previewRepo = bot;
         return this;
     }
 
 
-    public String getFetchStrategy() {
+    public String fetchStrategy() {
         return fetchStrategy;
     }
 
 
-    public NBootOptionsInfo setFetchStrategy(String fetchStrategy) {
+    public NBootOptionsInfo setchStrategy(String fetchStrategy) {
         this.fetchStrategy = fetchStrategy;
         return this;
     }
 
 
-    public InputStream getStdin() {
+    public InputStream stdin() {
         return stdin;
     }
 
 
-    public NBootOptionsInfo setStdin(InputStream stdin) {
+    public NBootOptionsInfo stdin(InputStream stdin) {
         this.stdin = stdin;
         return this;
     }
 
 
-    public PrintStream getStdout() {
+    public PrintStream stdout() {
         return stdout;
     }
 
 
-    public NBootOptionsInfo setStdout(PrintStream stdout) {
+    public NBootOptionsInfo stdout(PrintStream stdout) {
         this.stdout = stdout;
         return this;
     }
 
 
-    public PrintStream getStderr() {
+    public PrintStream stderr() {
         return stderr;
     }
 
 
-    public NBootOptionsInfo setStderr(PrintStream stderr) {
+    public NBootOptionsInfo stderr(PrintStream stderr) {
         this.stderr = stderr;
         return this;
     }
 
 
-    public ExecutorService getExecutorService() {
+    public ExecutorService executorService() {
         return executorService;
     }
 
 
-    public NBootOptionsInfo setExecutorService(ExecutorService executorService) {
+    public NBootOptionsInfo executorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
 
 
-    public Instant getExpireTime() {
+    public Instant expireTime() {
         return expireTime;
     }
 
 
-    public NBootOptionsInfo setExpireTime(Instant expireTime) {
+    public NBootOptionsInfo expireTime(Instant expireTime) {
         this.expireTime = expireTime;
         return this;
     }
 
 
-    public Boolean getSkipErrors() {
+    public Boolean skipErrors() {
         return skipErrors;
     }
 
 
-    public NBootOptionsInfo setSkipErrors(Boolean value) {
+    public NBootOptionsInfo skipErrors(Boolean value) {
         this.skipErrors = value;
         return this;
     }
 
 
-    public Boolean getSwitchWorkspace() {
+    public Boolean switchWorkspace() {
         return switchWorkspace;
     }
 
-    public NBootOptionsInfo setSwitchWorkspace(Boolean switchWorkspace) {
+    public NBootOptionsInfo switchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
         return this;
     }
 
 
-    public List<String> getErrors() {
+    public List<String> errors() {
         return errors;
     }
 
 
-    public NBootOptionsInfo setErrors(List<String> errors) {
+    public NBootOptionsInfo errors(List<String> errors) {
         this.errors = errors;
         return this;
     }
 
 
-    public List<String> getCustomOptions() {
+    public List<String> customOptions() {
         return customOptions;
     }
 
 
-    public NBootOptionsInfo setCustomOptions(List<String> properties) {
+    public NBootOptionsInfo customOptions(List<String> properties) {
         this.customOptions = properties;
         return this;
     }
 
 
-    public String getLocale() {
+    public String locale() {
         return locale;
     }
 
 
-    public NBootOptionsInfo setLocale(String locale) {
+    public NBootOptionsInfo locale(String locale) {
         this.locale = locale;
         return this;
     }
 
 
-    public String getTheme() {
+    public String theme() {
         return theme;
     }
 
 
-    public NBootOptionsInfo setTheme(String theme) {
+    public NBootOptionsInfo theme(String theme) {
         this.theme = theme;
         return this;
     }
@@ -1485,303 +1485,303 @@ public final class NBootOptionsInfo {
         if (other == null) {
             return this;
         }
-        this.setApiVersion(other.getApiVersion());
-        this.setRuntimeId(other.getRuntimeId());
-        this.setJavaCommand(other.getJavaCommand());
-        this.setJavaOptions(other.getJavaOptions());
-        this.setWorkspace(other.getWorkspace());
-        this.setName(other.getName());
-        this.setInstallCompanions(other.getInstallCompanions());
-        this.setSkipWelcome(other.getSkipWelcome());
-        this.setSkipBoot(other.getSkipBoot());
-        this.setSystem(other.getSystem());
-        this.setGui(other.getGui());
-        this.setUserName(other.getUserName());
-        this.setCredential(other.getCredential());
-        this.setTerminalMode(other.getTerminalMode());
-        this.setReadOnly(other.getReadOnly());
-        this.setTrace(other.getTrace());
-        this.setProgressOptions(other.getProgressOptions());
-        this.setLogConfig(other.getLogConfig());
-        this.setConfirm(other.getConfirm());
-        this.setConfirm(other.getConfirm());
-        this.setOutputFormat(other.getOutputFormat());
-        this.setOutputFormatOptions(other.getOutputFormatOptions());
-        this.setOpenMode(other.getOpenMode());
-        this.setCreationTime(other.getCreationTime());
-        this.setDry(other.getDry());
-        this.setShowStacktrace(other.getShowStacktrace());
-        this.setClassLoaderSupplier(other.getClassLoaderSupplier());
-        this.setExecutorOptions(other.getExecutorOptions());
-        this.setRecover(other.getRecover());
-        this.setReset(other.getReset());
-        this.setResetHard(other.getResetHard());
-        this.setCommandVersion(other.getCommandVersion());
-        this.setCommandHelp(other.getCommandHelp());
-        this.setDebug(other.getDebug());
-        this.setInherited(other.getInherited());
-        this.setExecutionType(other.getExecutionType());
-        this.setRunAs(other.getRunAs());
-        this.setArchetype(other.getArchetype());
-        this.setStoreStrategy(other.getStoreStrategy());
-        this.setHomeLocations(other.getHomeLocations());
-        this.setStoreLocations(other.getStoreLocations());
-        this.setStoreLayout(other.getStoreLayout());
-        this.setStoreStrategy(other.getStoreStrategy());
-        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy());
-        this.setFetchStrategy(other.getFetchStrategy());
-        this.setCached(other.getCached());
-        this.setIndexed(other.getIndexed());
-        this.setTransitive(other.getTransitive());
-        this.setBot(other.getBot());
-        this.setStdin(other.getStdin());
-        this.setStdout(other.getStdout());
-        this.setStderr(other.getStderr());
-        this.setExecutorService(other.getExecutorService());
-        this.setExcludedExtensions(other.getExcludedExtensions());
-        this.setRepositories(other.getRepositories());
-        this.setBootRepositories(other.getBootRepositories());
-        this.setApplicationArguments(other.getApplicationArguments());
-        this.setCustomOptions(other.getCustomOptions());
-        this.setExpireTime(other.getExpireTime());
-        this.setErrors(other.getErrors());
-        this.setSkipErrors(other.getSkipErrors());
-        this.setSwitchWorkspace(other.getSwitchWorkspace());
-        this.setLocale(other.getLocale());
-        this.setTheme(other.getTheme());
-        this.setDependencySolver(other.getDependencySolver());
-        this.isolationLevel(other.getIsolationLevel());
-        this.initLaunchers(other.getInitLaunchers());
-        this.initJava(other.getInitJava());
-        this.initScripts(other.getInitScripts());
-        this.initPlatforms(other.getInitPlatforms());
+        this.apiVersion(other.apiVersion());
+        this.runtimeId(other.runtimeId());
+        this.javaCommand(other.javaCommand());
+        this.javaOptions(other.javaOptions());
+        this.workspace(other.workspace());
+        this.name(other.name());
+        this.installCompanions(other.installCompanions());
+        this.skipWelcome(other.skipWelcome());
+        this.skipBoot(other.skipBoot());
+        this.system(other.system());
+        this.gui(other.gui());
+        this.userName(other.userName());
+        this.credential(other.credential());
+        this.terminalMode(other.terminalMode());
+        this.readOnly(other.readOnly());
+        this.trace(other.trace());
+        this.progressOptions(other.progressOptions());
+        this.logConfig(other.logConfig());
+        this.confirm(other.confirm());
+        this.confirm(other.confirm());
+        this.outputFormat(other.outputFormat());
+        this.outputFormatOptions(other.outputFormatOptions());
+        this.openMode(other.openMode());
+        this.creationTime(other.creationTime());
+        this.dry(other.dry());
+        this.showStacktrace(other.showStacktrace());
+        this.classLoaderSupplier(other.classLoaderSupplier());
+        this.executorOptions(other.executorOptions());
+        this.recover(other.recover());
+        this.reset(other.reset());
+        this.resetHard(other.resetHard());
+        this.commandVersion(other.commandVersion());
+        this.commandHelp(other.commandHelp());
+        this.debug(other.debug());
+        this.inherited(other.inherited());
+        this.executionType(other.executionType());
+        this.runAs(other.runAs());
+        this.archetype(other.archetype());
+        this.storeStrategy(other.storeStrategy());
+        this.homeLocations(other.homeLocations());
+        this.storeLocations(other.storeLocations());
+        this.storeLayout(other.storeLayout());
+        this.storeStrategy(other.storeStrategy());
+        this.repositoryStoreStrategy(other.repositoryStoreStrategy());
+        this.setchStrategy(other.fetchStrategy());
+        this.cached(other.cached());
+        this.indexed(other.indexed());
+        this.transitive(other.transitive());
+        this.bot(other.bot());
+        this.stdin(other.stdin());
+        this.stdout(other.stdout());
+        this.stderr(other.stderr());
+        this.executorService(other.executorService());
+        this.excludedExtensions(other.excludedExtensions());
+        this.repositories(other.repositories());
+        this.bootRepositories(other.bootRepositories());
+        this.applicationArguments(other.applicationArguments());
+        this.customOptions(other.customOptions());
+        this.expireTime(other.expireTime());
+        this.errors(other.errors());
+        this.skipErrors(other.skipErrors());
+        this.switchWorkspace(other.switchWorkspace());
+        this.locale(other.locale());
+        this.theme(other.theme());
+        this.dependencySolver(other.dependencySolver());
+        this.isolationLevel(other.isolationLevel());
+        this.initLaunchers(other.initLaunchers());
+        this.initJava(other.initJava());
+        this.initScripts(other.initScripts());
+        this.initPlatforms(other.initPlatforms());
         this.desktopLauncher(other.desktopLauncher());
         this.menuLauncher(other.menuLauncher());
         this.userLauncher(other.userLauncher());
-        this.setSharedInstance(other.getSharedInstance());
-        this.setPreviewRepo(other.getPreviewRepo());
-        this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode());
-        this.setBootWorkspaceFactory(other.getBootWorkspaceFactory());
-        this.setClassWorldURLs(other.getClassWorldURLs());
-        this.setClassWorldLoader(other.getClassWorldLoader());
-        this.setUuid(other.getUuid());
-        this.setRuntimeBootDescriptor(other.getRuntimeBootDescriptor());
+        this.sharedInstance(other.sharedInstance());
+        this.previewRepo(other.previewRepo());
+        this.runtimeBootDependencyNode(other.runtimeBootDependencyNode());
+        this.bootWorkspaceFactory(other.bootWorkspaceFactory());
+        this.classWorldURLs(other.classWorldURLs());
+        this.classWorldLoader(other.classWorldLoader());
+        this.uuid(other.uuid());
+        this.runtimeBootDescriptor(other.runtimeBootDescriptor());
         return this;
     }
 
 
-    public NBootOptionsInfo setAllPresent(NBootOptionsInfo o) {
+    public NBootOptionsInfo copyFromPresent(NBootOptionsInfo o) {
         if (o != null) {
-            if (o.getApiVersion() != null) {
-                this.setApiVersion(o.getApiVersion());
+            if (o.apiVersion() != null) {
+                this.apiVersion(o.apiVersion());
             }
-            if (o.getRuntimeId() != null) {
-                this.setRuntimeId(o.getRuntimeId());
+            if (o.runtimeId() != null) {
+                this.runtimeId(o.runtimeId());
             }
-            if (o.getJavaCommand() != null) {
-                this.setJavaCommand(o.getJavaCommand());
+            if (o.javaCommand() != null) {
+                this.javaCommand(o.javaCommand());
             }
-            if (o.getJavaOptions() != null) {
-                this.setJavaOptions(o.getJavaOptions());
+            if (o.javaOptions() != null) {
+                this.javaOptions(o.javaOptions());
             }
-            if (o.getWorkspace() != null) {
-                this.setWorkspace(o.getWorkspace());
+            if (o.workspace() != null) {
+                this.workspace(o.workspace());
             }
-            if (o.getName() != null) {
-                this.setName(o.getName());
+            if (o.name() != null) {
+                this.name(o.name());
             }
-            if (o.getInstallCompanions() != null) {
-                this.setInstallCompanions(o.getInstallCompanions());
+            if (o.installCompanions() != null) {
+                this.installCompanions(o.installCompanions());
             }
-            if (o.getSkipWelcome() != null) {
-                this.setSkipWelcome(o.getSkipWelcome());
+            if (o.skipWelcome() != null) {
+                this.skipWelcome(o.skipWelcome());
             }
-            if (o.getSkipBoot() != null) {
-                this.setSkipBoot(o.getSkipBoot());
+            if (o.skipBoot() != null) {
+                this.skipBoot(o.skipBoot());
             }
-            if (o.getSystem() != null) {
-                this.setSystem(o.getSystem());
+            if (o.system() != null) {
+                this.system(o.system());
             }
-            if (o.getGui() != null) {
-                this.setGui(o.getGui());
+            if (o.gui() != null) {
+                this.gui(o.gui());
             }
-            if (o.getUserName() != null) {
-                this.setUserName(o.getUserName());
+            if (o.userName() != null) {
+                this.userName(o.userName());
             }
-            if (o.getCredential() != null) {
-                this.setCredential(o.getCredential());
+            if (o.credential() != null) {
+                this.credential(o.credential());
             }
-            if (o.getTerminalMode() != null) {
-                this.setTerminalMode(o.getTerminalMode());
+            if (o.terminalMode() != null) {
+                this.terminalMode(o.terminalMode());
             }
-            if (o.getReadOnly() != null) {
-                this.setReadOnly(o.getReadOnly());
+            if (o.readOnly() != null) {
+                this.readOnly(o.readOnly());
             }
-            if (o.getTrace() != null) {
-                this.setTrace(o.getTrace());
+            if (o.trace() != null) {
+                this.trace(o.trace());
             }
-            if (o.getProgressOptions() != null) {
-                this.setProgressOptions(o.getProgressOptions());
+            if (o.progressOptions() != null) {
+                this.progressOptions(o.progressOptions());
             }
-            if (o.getLogConfig() != null) {
-                this.setLogConfig(o.getLogConfig());
+            if (o.logConfig() != null) {
+                this.logConfig(o.logConfig());
             }
-            if (o.getConfirm() != null) {
-                this.setConfirm(o.getConfirm());
+            if (o.confirm() != null) {
+                this.confirm(o.confirm());
             }
-            if (o.getConfirm() != null) {
-                this.setConfirm(o.getConfirm());
+            if (o.confirm() != null) {
+                this.confirm(o.confirm());
             }
-            if (o.getOutputFormat() != null) {
-                this.setOutputFormat(o.getOutputFormat());
+            if (o.outputFormat() != null) {
+                this.outputFormat(o.outputFormat());
             }
-            if (o.getOutputFormatOptions() != null) {
-                this.setOutputFormatOptions(o.getOutputFormatOptions());
+            if (o.outputFormatOptions() != null) {
+                this.outputFormatOptions(o.outputFormatOptions());
             }
-            if (o.getOpenMode() != null) {
-                this.setOpenMode(o.getOpenMode());
+            if (o.openMode() != null) {
+                this.openMode(o.openMode());
             }
-            if (o.getCreationTime() != null) {
-                this.setCreationTime(o.getCreationTime());
+            if (o.creationTime() != null) {
+                this.creationTime(o.creationTime());
             }
-            if (o.getDry() != null) {
-                this.setDry(o.getDry());
+            if (o.dry() != null) {
+                this.dry(o.dry());
             }
-            if (o.getShowStacktrace() != null) {
-                this.setShowStacktrace(o.getShowStacktrace());
+            if (o.showStacktrace() != null) {
+                this.showStacktrace(o.showStacktrace());
             }
-            if (o.getClassLoaderSupplier() != null) {
-                this.setClassLoaderSupplier(o.getClassLoaderSupplier());
+            if (o.classLoaderSupplier() != null) {
+                this.classLoaderSupplier(o.classLoaderSupplier());
             }
-            if (o.getExecutorOptions() != null) {
-                this.setExecutorOptions(o.getExecutorOptions());
+            if (o.executorOptions() != null) {
+                this.executorOptions(o.executorOptions());
             }
-            if (o.getRecover() != null) {
-                this.setRecover(o.getRecover());
+            if (o.recover() != null) {
+                this.recover(o.recover());
             }
-            if (o.getReset() != null) {
-                this.setReset(o.getReset());
+            if (o.reset() != null) {
+                this.reset(o.reset());
             }
-            if (o.getResetHard() != null) {
-                this.setResetHard(o.getResetHard());
+            if (o.resetHard() != null) {
+                this.resetHard(o.resetHard());
             }
-            if (o.getCommandVersion() != null) {
-                this.setCommandVersion(o.getCommandVersion());
+            if (o.commandVersion() != null) {
+                this.commandVersion(o.commandVersion());
             }
-            if (o.getCommandHelp() != null) {
-                this.setCommandHelp(o.getCommandHelp());
+            if (o.commandHelp() != null) {
+                this.commandHelp(o.commandHelp());
             }
-            if (o.getDebug() != null) {
-                this.setDebug(o.getDebug());
+            if (o.debug() != null) {
+                this.debug(o.debug());
             }
-            if (o.getInherited() != null) {
-                this.setInherited(o.getInherited());
+            if (o.inherited() != null) {
+                this.inherited(o.inherited());
             }
-            if (o.getExecutionType() != null) {
-                this.setExecutionType(o.getExecutionType());
+            if (o.executionType() != null) {
+                this.executionType(o.executionType());
             }
-            if (o.getRunAs() != null) {
-                this.setRunAs(o.getRunAs());
+            if (o.runAs() != null) {
+                this.runAs(o.runAs());
             }
-            if (o.getArchetype() != null) {
-                this.setArchetype(o.getArchetype());
+            if (o.archetype() != null) {
+                this.archetype(o.archetype());
             }
-            if (o.getStoreStrategy() != null) {
-                this.setStoreStrategy(o.getStoreStrategy());
+            if (o.storeStrategy() != null) {
+                this.storeStrategy(o.storeStrategy());
             }
-            if (o.getHomeLocations() != null) {
-                this.setHomeLocations(o.getHomeLocations());
+            if (o.homeLocations() != null) {
+                this.homeLocations(o.homeLocations());
             }
 
-            if (o.getStoreLocations() != null) {
-                this.setStoreLocations(o.getStoreLocations());
+            if (o.storeLocations() != null) {
+                this.storeLocations(o.storeLocations());
             }
-            if (o.getStoreLayout() != null) {
-                this.setStoreLayout(o.getStoreLayout());
+            if (o.storeLayout() != null) {
+                this.storeLayout(o.storeLayout());
             }
-            if (o.getStoreStrategy() != null) {
-                this.setStoreStrategy(o.getStoreStrategy());
+            if (o.storeStrategy() != null) {
+                this.storeStrategy(o.storeStrategy());
             }
-            if (o.getRepositoryStoreStrategy() != null) {
-                this.setRepositoryStoreStrategy(o.getRepositoryStoreStrategy());
+            if (o.repositoryStoreStrategy() != null) {
+                this.repositoryStoreStrategy(o.repositoryStoreStrategy());
             }
-            if (o.getFetchStrategy() != null) {
-                this.setFetchStrategy(o.getFetchStrategy());
+            if (o.fetchStrategy() != null) {
+                this.setchStrategy(o.fetchStrategy());
             }
-            if (o.getCached() != null) {
-                this.setCached(o.getCached());
+            if (o.cached() != null) {
+                this.cached(o.cached());
             }
-            if (o.getIndexed() != null) {
-                this.setIndexed(o.getIndexed());
+            if (o.indexed() != null) {
+                this.indexed(o.indexed());
             }
-            if (o.getTransitive() != null) {
-                this.setTransitive(o.getTransitive());
+            if (o.transitive() != null) {
+                this.transitive(o.transitive());
             }
-            if (o.getBot() != null) {
-                this.setBot(o.getBot());
+            if (o.bot() != null) {
+                this.bot(o.bot());
             }
-            if (o.getStdin() != null) {
-                this.setStdin(o.getStdin());
+            if (o.stdin() != null) {
+                this.stdin(o.stdin());
             }
-            if (o.getStdout() != null) {
-                this.setStdout(o.getStdout());
+            if (o.stdout() != null) {
+                this.stdout(o.stdout());
             }
-            if (o.getStderr() != null) {
-                this.setStderr(o.getStderr());
+            if (o.stderr() != null) {
+                this.stderr(o.stderr());
             }
-            if (o.getExecutorService() != null) {
-                this.setExecutorService(o.getExecutorService());
+            if (o.executorService() != null) {
+                this.executorService(o.executorService());
             }
-            if (o.getExcludedExtensions() != null) {
-                this.setExcludedExtensions(o.getExcludedExtensions());
+            if (o.excludedExtensions() != null) {
+                this.excludedExtensions(o.excludedExtensions());
             }
-            if (o.getRepositories() != null) {
-                this.setRepositories(o.getRepositories());
+            if (o.repositories() != null) {
+                this.repositories(o.repositories());
             }
-            if (o.getBootRepositories() != null) {
-                this.setBootRepositories(o.getBootRepositories());
+            if (o.bootRepositories() != null) {
+                this.bootRepositories(o.bootRepositories());
             }
-            if (o.getApplicationArguments() != null) {
-                this.setApplicationArguments(o.getApplicationArguments());
+            if (o.applicationArguments() != null) {
+                this.applicationArguments(o.applicationArguments());
             }
-            if (o.getCustomOptions() != null) {
-                this.setCustomOptions(o.getCustomOptions());
+            if (o.customOptions() != null) {
+                this.customOptions(o.customOptions());
             }
-            if (o.getExpireTime() != null) {
-                this.setExpireTime(o.getExpireTime());
+            if (o.expireTime() != null) {
+                this.expireTime(o.expireTime());
             }
-            if (o.getErrors() != null) {
-                this.setErrors(o.getErrors());
+            if (o.errors() != null) {
+                this.errors(o.errors());
             }
-            if (o.getSkipErrors() != null) {
-                this.setSkipErrors(o.getSkipErrors());
+            if (o.skipErrors() != null) {
+                this.skipErrors(o.skipErrors());
             }
-            if (o.getSwitchWorkspace() != null) {
-                this.setSwitchWorkspace(o.getSwitchWorkspace());
+            if (o.switchWorkspace() != null) {
+                this.switchWorkspace(o.switchWorkspace());
             }
-            if (o.getLocale() != null) {
-                this.setLocale(o.getLocale());
+            if (o.locale() != null) {
+                this.locale(o.locale());
             }
-            if (o.getTheme() != null) {
-                this.setTheme(o.getTheme());
+            if (o.theme() != null) {
+                this.theme(o.theme());
             }
-            if (o.getDependencySolver() != null) {
-                this.setDependencySolver(o.getDependencySolver());
+            if (o.dependencySolver() != null) {
+                this.dependencySolver(o.dependencySolver());
             }
-            if (o.getIsolationLevel() != null) {
-                this.isolationLevel(o.getIsolationLevel());
+            if (o.isolationLevel() != null) {
+                this.isolationLevel(o.isolationLevel());
             }
-            if (o.getInitLaunchers() != null) {
-                this.initLaunchers(o.getInitLaunchers());
+            if (o.initLaunchers() != null) {
+                this.initLaunchers(o.initLaunchers());
             }
-            if (o.getInitJava() != null) {
-                this.initJava(o.getInitJava());
+            if (o.initJava() != null) {
+                this.initJava(o.initJava());
             }
-            if (o.getInitScripts() != null) {
-                this.initScripts(o.getInitScripts());
+            if (o.initScripts() != null) {
+                this.initScripts(o.initScripts());
             }
-            if (o.getInitLaunchers() != null) {
-                this.initLaunchers(o.getInitLaunchers());
+            if (o.initLaunchers() != null) {
+                this.initLaunchers(o.initLaunchers());
             }
             if (o.desktopLauncher() != null) {
                 this.desktopLauncher(o.desktopLauncher());
@@ -1792,40 +1792,40 @@ public final class NBootOptionsInfo {
             if (o.userLauncher() != null) {
                 this.userLauncher(o.userLauncher());
             }
-            if (o.getPreviewRepo() != null) {
-                this.setPreviewRepo(o.getPreviewRepo());
+            if (o.previewRepo() != null) {
+                this.previewRepo(o.previewRepo());
             }
-            if (o.getSharedInstance() != null) {
-                this.setSharedInstance(o.getSharedInstance());
+            if (o.sharedInstance() != null) {
+                this.sharedInstance(o.sharedInstance());
             }
-            if (o.getRuntimeBootDependencyNode() != null) {
-                setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode());
+            if (o.runtimeBootDependencyNode() != null) {
+                runtimeBootDependencyNode(o.runtimeBootDependencyNode());
             }
-            if (o.getBootWorkspaceFactory() != null) {
-                setBootWorkspaceFactory(o.getBootWorkspaceFactory());
+            if (o.bootWorkspaceFactory() != null) {
+                bootWorkspaceFactory(o.bootWorkspaceFactory());
             }
-            if (o.getClassWorldURLs() != null) {
-                setClassWorldURLs(o.getClassWorldURLs());
+            if (o.classWorldURLs() != null) {
+                classWorldURLs(o.classWorldURLs());
             }
-            if (o.getClassWorldLoader() != null) {
-                setClassWorldLoader(o.getClassWorldLoader());
+            if (o.classWorldLoader() != null) {
+                classWorldLoader(o.classWorldLoader());
             }
-            if (o.getUuid() != null) {
-                setUuid(o.getUuid());
+            if (o.uuid() != null) {
+                uuid(o.uuid());
             }
-            if (o.getRuntimeBootDescriptor() != null) {
-                setRuntimeBootDescriptor(o.getRuntimeBootDescriptor());
+            if (o.runtimeBootDescriptor() != null) {
+                runtimeBootDescriptor(o.runtimeBootDescriptor());
             }
         }
         return this;
     }
 
-    public Boolean getSharedInstance() {
+    public Boolean sharedInstance() {
         return sharedInstance;
     }
 
 
-    public NBootOptionsInfo setSharedInstance(Boolean sharedInstance) {
+    public NBootOptionsInfo sharedInstance(Boolean sharedInstance) {
         this.sharedInstance = sharedInstance;
         return this;
     }
@@ -1837,7 +1837,7 @@ public final class NBootOptionsInfo {
      * @return {@code this} instance
      */
 
-    public NBootOptionsInfo setUserName(String username) {
+    public NBootOptionsInfo userName(String username) {
         this.userName = username;
         return this;
     }
@@ -1911,112 +1911,106 @@ public final class NBootOptionsInfo {
     }
 
 
-    public String getDependencySolver() {
+    public String dependencySolver() {
         return dependencySolver;
     }
 
 
-    public NBootOptionsInfo setDependencySolver(String dependencySolver) {
+    public NBootOptionsInfo dependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
     }
 
-
-//    public String toString() {
-//        return toCmdLine().toString();
-//    }
-
-
-    public String getIsolationLevel() {
+    public String isolationLevel() {
         return isolationLevel;
     }
 
 
-    public Boolean getInitLaunchers() {
+    public Boolean initLaunchers() {
         return initLaunchers;
     }
 
 
-    public Boolean getInitScripts() {
+    public Boolean initScripts() {
         return initScripts;
     }
 
 
-    public Boolean getInitPlatforms() {
+    public Boolean initPlatforms() {
         return initPlatforms;
     }
 
 
-    public Boolean getInitJava() {
+    public Boolean initJava() {
         return initJava;
     }
 
 
     public NBootOptionsInfo unsetRuntimeOptions() {
-        setCommandHelp(null);
-        setCommandVersion(null);
-        setOpenMode(null);
-        setExecutionType(null);
-        setRunAs(null);
-        setReset(null);
-        setResetHard(null);
-        setRecover(null);
-        setDry(null);
-        setShowStacktrace(null);
-        setExecutorOptions(null);
-        setApplicationArguments(null);
+        commandHelp(null);
+        commandVersion(null);
+        openMode(null);
+        executionType(null);
+        runAs(null);
+        reset(null);
+        resetHard(null);
+        recover(null);
+        dry(null);
+        showStacktrace(null);
+        executorOptions(null);
+        applicationArguments(null);
         return this;
     }
 
 
     public NBootOptionsInfo unsetCreationOptions() {
-        setName(null);
-        setArchetype(null);
-        setStoreLayout(null);
-        setStoreStrategy(null);
-        setRepositoryStoreStrategy(null);
-        setStoreLocations(null);
-        setHomeLocations(null);
-        setSwitchWorkspace(null);
+        name(null);
+        archetype(null);
+        storeLayout(null);
+        storeStrategy(null);
+        repositoryStoreStrategy(null);
+        storeLocations(null);
+        homeLocations(null);
+        switchWorkspace(null);
         return this;
     }
 
 
     public NBootOptionsInfo unsetExportedOptions() {
-        setJavaCommand(null);
-        setJavaOptions(null);
-        setWorkspace(null);
-        setUserName(null);
-        setCredential(null);
-        setApiVersion(null);
-        setRuntimeId(null);
-        setTerminalMode(null);
-        setLogConfig(null);
-        setExcludedExtensions(null);
-        setRepositories(null);
-        setSystem(null);
-        setGui(null);
-        setReadOnly(null);
-        setTrace(null);
-        setProgressOptions(null);
-        setDependencySolver(null);
-        setDebug(null);
-        setInstallCompanions(null);
-        setSkipWelcome(null);
-        setSkipBoot(null);
-        setOutLinePrefix(null);
-        setErrLinePrefix(null);
-        setCached(null);
-        setIndexed(null);
-        setTransitive(null);
-        setBot(null);
-        setFetchStrategy(null);
-        setConfirm(null);
-        setOutputFormat(null);
-        setOutputFormatOptions((List<String>) null);
-        setExpireTime(null);
-        setTheme(null);
-        setLocale(null);
+        javaCommand(null);
+        javaOptions(null);
+        workspace(null);
+        userName(null);
+        credential(null);
+        apiVersion(null);
+        runtimeId(null);
+        terminalMode(null);
+        logConfig(null);
+        excludedExtensions(null);
+        repositories(null);
+        system(null);
+        gui(null);
+        readOnly(null);
+        trace(null);
+        progressOptions(null);
+        dependencySolver(null);
+        debug(null);
+        installCompanions(null);
+        skipWelcome(null);
+        skipBoot(null);
+        outLinePrefix(null);
+        errLinePrefix(null);
+        cached(null);
+        indexed(null);
+        transitive(null);
+        bot(null);
+        setchStrategy(null);
+        confirm(null);
+        outputFormat(null);
+        outputFormatOptions((List<String>) null);
+        expireTime(null);
+        theme(null);
+        locale(null);
         initLaunchers(null);
         initPlatforms(null);
         initScripts(null);
@@ -2029,71 +2023,62 @@ public final class NBootOptionsInfo {
 
     /// /////////////////////////////////
 
-//    public String getBootRepositories() {
-//        return bootRepositories;
-//    }
-//
-//
-//    public NBootOptionsInfo setBootRepositories(String bootRepositories) {
-//        this.bootRepositories = NBootUtils.trimToNull(bootRepositories);
-//        return this;
-//    }
-    public NBootClassLoaderNode getRuntimeBootDependencyNode() {
+    public NBootClassLoaderNode runtimeBootDependencyNode() {
         return runtimeBootDependencyNode;
     }
 
 
-    public NBootOptionsInfo setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
+    public NBootOptionsInfo runtimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
 
-    public NBootWorkspaceFactory getBootWorkspaceFactory() {
+    public NBootWorkspaceFactory bootWorkspaceFactory() {
         return bootWorkspaceFactory;
     }
 
 
-    public NBootOptionsInfo setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
+    public NBootOptionsInfo bootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
         this.bootWorkspaceFactory = bootWorkspaceFactory;
         return this;
     }
 
-    public List<URL> getClassWorldURLs() {
+    public List<URL> classWorldURLs() {
         return classWorldURLs;
     }
 
 
-    public NBootOptionsInfo setClassWorldURLs(List<URL> classWorldURLs) {
+    public NBootOptionsInfo classWorldURLs(List<URL> classWorldURLs) {
         this.classWorldURLs = NBootUtils.nonNullList(classWorldURLs);
         return this;
     }
 
-    public ClassLoader getClassWorldLoader() {
+    public ClassLoader classWorldLoader() {
         return classWorldLoader;
     }
 
 
-    public NBootOptionsInfo setClassWorldLoader(ClassLoader classWorldLoader) {
+    public NBootOptionsInfo classWorldLoader(ClassLoader classWorldLoader) {
         this.classWorldLoader = classWorldLoader;
         return this;
     }
 
-    public String getUuid() {
+    public String uuid() {
         return uuid;
     }
 
 
-    public NBootOptionsInfo setUuid(String uuid) {
+    public NBootOptionsInfo uuid(String uuid) {
         this.uuid = NBootUtils.trimToNull(uuid);
         return this;
     }
 
-    public NBootDescriptor getRuntimeBootDescriptor() {
+    public NBootDescriptor runtimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
 
-    public NBootOptionsInfo setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
+    public NBootOptionsInfo runtimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }

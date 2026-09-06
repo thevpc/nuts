@@ -132,7 +132,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
     public static NBootRepositoryLocation of(String name, String fullLocation) {
         NBootRepositoryLocation q = of(fullLocation);
         if (name != null) {
-            q = q.setName(name);
+            q = q.name(name);
         }
         return q;
     }
@@ -169,7 +169,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
                 NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(name);
-                String u = ro == null ? null : ro.getConfig().location().getFullLocation();
+                String u = ro == null ? null : ro.config().location().getFullLocation();
                 if (u == null) {
                     url = name;
                 } else {
@@ -178,7 +178,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             } else {
                 url = locationString;
                 NBootAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(name);
-                String n = ro == null ? null : ro.getName();
+                String n = ro == null ? null : ro.name();
                 if (n == null) {
                     name = null;
                 } else {
@@ -212,7 +212,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      *
      * @return location name
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -222,7 +222,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @param name name
      * @return a new instance with the updated name
      */
-    public NBootRepositoryLocation setName(String name) {
+    public NBootRepositoryLocation name(String name) {
         return new NBootRepositoryLocation(NBootUtils.trimToNull(name), locationType, path, new LinkedHashMap<>(properties));
     }
 
@@ -231,7 +231,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      *
      * @return location name
      */
-    public String getPath() {
+    public String path() {
         return path;
     }
 
@@ -241,7 +241,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @param path location
      * @return a new instance with the updated location
      */
-    public NBootRepositoryLocation setPath(String path) {
+    public NBootRepositoryLocation path(String path) {
         PathAndProps p = createPathAndProps(path);
         p.props.putAll(properties);
         return new NBootRepositoryLocation(name, locationType, p.path, p.props);
@@ -268,7 +268,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
         return new PathAndProps(validPath, properties);
     }
 
-    public String getTypeAndPath() {
+    public String typeAndPath() {
         StringBuilder sb = new StringBuilder();
         if (!NBootUtils.isBlank(locationType)) {
             sb.append(locationType);
@@ -295,7 +295,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      *
      * @return location type
      */
-    public String getLocationType() {
+    public String locationType() {
         return locationType;
     }
 
@@ -305,7 +305,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @param locationType locationType
      * @return a new instance with the updated location type
      */
-    public NBootRepositoryLocation setLocationType(String locationType) {
+    public NBootRepositoryLocation locationType(String locationType) {
         return new NBootRepositoryLocation(name, NBootUtils.trimToNull(locationType), path, new LinkedHashMap<>(properties));
     }
 

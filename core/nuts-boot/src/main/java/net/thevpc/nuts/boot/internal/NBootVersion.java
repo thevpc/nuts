@@ -218,7 +218,7 @@ public class NBootVersion {
     }
 
     
-    public String getValue() {
+    public String value() {
         return expression;
     }
 
@@ -229,7 +229,7 @@ public class NBootVersion {
 
     
     public int compareTo(NBootVersion other) {
-        return compareTo(other == null ? null : other.getValue());
+        return compareTo(other == null ? null : other.value());
     }
 
     
@@ -382,26 +382,26 @@ public class NBootVersion {
 
     
     public NBootVersion inc(int index, long amount) {
-        return new NBootVersion(incVersion(getValue(), index, amount));
+        return new NBootVersion(incVersion(value(), index, amount));
     }
 
     
     public NBootVersion inc(int index, BigInteger amount) {
-        return new NBootVersion(incVersion(getValue(), index, amount));
+        return new NBootVersion(incVersion(value(), index, amount));
     }
 
     public int size() {
-        VersionParts parts = getParts();
+        VersionParts parts = parts();
         return parts.size();
     }
 
     
     public int numberSize() {
-        return getParts().getDigitCount();
+        return parts().getDigitCount();
     }
 
     public String[] split() {
-        VersionParts parts = getParts();
+        VersionParts parts = parts();
         int size = parts.size();
         String[] all = new String[size];
         for (int i = 0; i < size; i++) {
@@ -411,7 +411,7 @@ public class NBootVersion {
     }
 
     public String get(int index) {
-        VersionParts parts = getParts();
+        VersionParts parts = parts();
         int size = parts.size();
         if (index >= 0) {
             if (index < parts.size()) {
@@ -427,7 +427,7 @@ public class NBootVersion {
     }
 
     public String getNumber(int level) {
-        VersionParts parts = getParts();
+        VersionParts parts = parts();
         int size = parts.getDigitCount();
         if (level >= 0) {
             VersionPart digit = parts.getDigit(level);
@@ -450,9 +450,9 @@ public class NBootVersion {
         return null;
     }
 
-    private VersionParts getParts() {
+    private VersionParts parts() {
         if (parts == null) {
-            parts = splitVersionParts2(getValue());
+            parts = splitVersionParts2(value());
         }
         return parts;
     }
@@ -823,7 +823,7 @@ public class NBootVersion {
                 if (min.equals("")) {
                     dd.add(new NVersionIntervalBoot(false, false, min, null));
                 } else {
-                    String max = NBootVersion.of(min).inc(-1).getValue();
+                    String max = NBootVersion.of(min).inc(-1).value();
                     dd.add(new NVersionIntervalBoot(true, false, min, max));
                 }
             } else {

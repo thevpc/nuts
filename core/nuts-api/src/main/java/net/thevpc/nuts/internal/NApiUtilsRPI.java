@@ -145,20 +145,20 @@ public class NApiUtilsRPI {
      * @return resolve show stack trace result
      */
     public static boolean resolveShowStackTrace(NBootOptionsInfo bo) {
-        if (bo.getShowStacktrace()!=null) {
-            return bo.getShowStacktrace();
-        } else if (bo.getBot()!=null && bo.getBot()) {
+        if (bo.showStacktrace()!=null) {
+            return bo.showStacktrace();
+        } else if (bo.bot()!=null && bo.bot()) {
             return false;
         } else {
             if (NApiUtilsRPI.getSysBoolNutsProperty("stacktrace", false)) {
                 return true;
             }
-            if (bo.getDebug()!=null && !NBlankable.isBlank(bo.getDebug())) {
+            if (bo.debug()!=null && !NBlankable.isBlank(bo.debug())) {
                 return true;
             }
-            NBootLogConfig nLogConfig = bo.getLogConfig();
-            if (nLogConfig!=null && nLogConfig.getLogTermLevel() != null
-                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue()) {
+            NBootLogConfig nLogConfig = bo.logConfig();
+            if (nLogConfig!=null && nLogConfig.logTermLevel() != null
+                    && nLogConfig.logTermLevel().intValue() < Level.INFO.intValue()) {
                 return true;
             }
             return false;
@@ -192,10 +192,10 @@ public class NApiUtilsRPI {
      * @return resolve gui result
      */
     public static boolean resolveGui(NBootOptionsInfo bo) {
-        if (bo.getBot()!=null && bo.getBot()) {
+        if (bo.bot()!=null && bo.bot()) {
             return false;
         }
-        if (bo.getGui()!=null && bo.getGui()) {
+        if (bo.gui()!=null && bo.gui()) {
             if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
                 return false;
             }

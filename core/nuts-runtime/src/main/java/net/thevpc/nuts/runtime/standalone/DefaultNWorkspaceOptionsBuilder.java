@@ -1744,78 +1744,78 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     public NWorkspaceOptionsBuilder copyFrom(NBootOptionsInfo other) {
-        this.apiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
-        this.runtimeId(other.getRuntimeId() == null ? null :
-                other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
-                        NId.getRuntime(other.getRuntimeId()).orNull()
+        this.apiVersion(other.apiVersion() == null ? null : NVersion.get(other.apiVersion()).orNull());
+        this.runtimeId(other.runtimeId() == null ? null :
+                other.runtimeId().contains("#") ? NId.get(other.runtimeId()).orNull() :
+                        NId.getRuntime(other.runtimeId()).orNull()
         );
-        this.javaCommand(other.getJavaCommand());
-        this.javaOptions(other.getJavaOptions());
-        this.workspace(other.getWorkspace());
-        this.name(other.getName());
-        this.installCompanions(other.getInstallCompanions());
-        this.skipWelcome(other.getSkipWelcome());
-        this.skipBoot(other.getSkipBoot());
-        this.system(other.getSystem());
-        this.gui(other.getGui());
-        this.setUserName(other.getUserName());
-        this.credential(other.getCredential());
-        this.terminalMode(NTerminalMode.parse(other.getTerminalMode()).orNull());
-        this.readOnly(other.getReadOnly());
-        this.trace(other.getTrace());
-        this.progressOptions(other.getProgressOptions());
+        this.javaCommand(other.javaCommand());
+        this.javaOptions(other.javaOptions());
+        this.workspace(other.workspace());
+        this.name(other.name());
+        this.installCompanions(other.installCompanions());
+        this.skipWelcome(other.skipWelcome());
+        this.skipBoot(other.skipBoot());
+        this.system(other.system());
+        this.gui(other.gui());
+        this.setUserName(other.userName());
+        this.credential(other.credential());
+        this.terminalMode(NTerminalMode.parse(other.terminalMode()).orNull());
+        this.readOnly(other.readOnly());
+        this.trace(other.trace());
+        this.progressOptions(other.progressOptions());
         {
-            NBootLogConfig c = other.getLogConfig();
+            NBootLogConfig c = other.logConfig();
             NLogConfig v = null;
             if (c != null) {
                 v = new NLogConfig();
-                v.logFileBase(c.getLogFileBase());
-                v.logFileLevel(c.getLogFileLevel());
-                v.logTermLevel(c.getLogTermLevel());
-                v.logFileSize(c.getLogFileSize());
-                v.logFileCount(c.getLogFileCount());
-                v.logFileName(c.getLogFileName());
-                v.logFileBase(c.getLogFileBase());
+                v.logFileBase(c.logFileBase());
+                v.logFileLevel(c.logFileLevel());
+                v.logTermLevel(c.logTermLevel());
+                v.logFileSize(c.logFileSize());
+                v.logFileCount(c.logFileCount());
+                v.logFileName(c.logFileName());
+                v.logFileBase(c.logFileBase());
             }
             this.logConfig(v);
         }
-        this.confirm(NConfirmationMode.parse(other.getConfirm()).orNull());
-        this.confirm(NConfirmationMode.parse(other.getConfirm()).orNull());
-        this.outputFormat(NContentType.parse(other.getOutputFormat()).orNull());
-        this.outputFormatOptions(other.getOutputFormatOptions());
-        this.openMode(NOpenMode.parse(other.getOpenMode()).orNull());
-        this.creationTime(other.getCreationTime());
-        this.dry(other.getDry());
-        this.showStacktrace(other.getShowStacktrace());
-        this.classLoaderSupplier(other.getClassLoaderSupplier());
-        this.executorOptions(other.getExecutorOptions());
-        this.recover(other.getRecover());
-        this.reset(other.getReset());
-        this.resetHard(other.getResetHard());
-        this.commandVersion(other.getCommandVersion());
-        this.commandHelp(other.getCommandHelp());
-        this.debug(other.getDebug());
-        this.inherited(other.getInherited());
-        this.executionType(NExecutionType.parse(other.getExecutionType()).orNull());
-        this.runAs(NRunAs.parse(other.getRunAs()).orNull());
-        this.archetype(other.getArchetype());
-        this.storeStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
+        this.confirm(NConfirmationMode.parse(other.confirm()).orNull());
+        this.confirm(NConfirmationMode.parse(other.confirm()).orNull());
+        this.outputFormat(NContentType.parse(other.outputFormat()).orNull());
+        this.outputFormatOptions(other.outputFormatOptions());
+        this.openMode(NOpenMode.parse(other.openMode()).orNull());
+        this.creationTime(other.creationTime());
+        this.dry(other.dry());
+        this.showStacktrace(other.showStacktrace());
+        this.classLoaderSupplier(other.classLoaderSupplier());
+        this.executorOptions(other.executorOptions());
+        this.recover(other.recover());
+        this.reset(other.reset());
+        this.resetHard(other.resetHard());
+        this.commandVersion(other.commandVersion());
+        this.commandHelp(other.commandHelp());
+        this.debug(other.debug());
+        this.inherited(other.inherited());
+        this.executionType(NExecutionType.parse(other.executionType()).orNull());
+        this.runAs(NRunAs.parse(other.runAs()).orNull());
+        this.archetype(other.archetype());
+        this.storeStrategy(NStoreStrategy.parse(other.storeStrategy()).orNull());
         {
-            Map<NBootHomeLocation, String> c = other.getHomeLocations();
+            Map<NBootHomeLocation, String> c = other.homeLocations();
             Map<NHomeLocation, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
                 for (Map.Entry<NBootHomeLocation, String> e : c.entrySet()) {
                     v.put(NHomeLocation.of(
-                            NOsFamily.parse(e.getKey().getOsFamily()).get(),
-                            NStoreType.parse(e.getKey().getStoreLocation()).get()
+                            NOsFamily.parse(e.getKey().osFamily()).get(),
+                            NStoreType.parse(e.getKey().storeLocation()).get()
                     ), e.getValue());
                 }
             }
             this.homeLocations(v);
         }
         {
-            Map<String, String> c = other.getStoreLocations();
+            Map<String, String> c = other.storeLocations();
             Map<NStoreType, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
@@ -1825,43 +1825,43 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             }
             this.storeLocations(v);
         }
-        this.storeLayout(NOsFamily.parse(other.getStoreLayout()).orNull());
-        this.storeStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
-        this.repositoryStoreStrategy(NStoreStrategy.parse(other.getRepositoryStoreStrategy()).orNull());
-        this.fetchStrategy(NFetchStrategy.parse(other.getFetchStrategy()).orNull());
-        this.cached(other.getCached());
-        this.indexed(other.getIndexed());
-        this.transitive(other.getTransitive());
-        this.bot(other.getBot());
-        this.stdin(other.getStdin());
-        this.stdout(other.getStdout());
-        this.stderr(other.getStderr());
-        this.executorService(other.getExecutorService());
+        this.storeLayout(NOsFamily.parse(other.storeLayout()).orNull());
+        this.storeStrategy(NStoreStrategy.parse(other.storeStrategy()).orNull());
+        this.repositoryStoreStrategy(NStoreStrategy.parse(other.repositoryStoreStrategy()).orNull());
+        this.fetchStrategy(NFetchStrategy.parse(other.fetchStrategy()).orNull());
+        this.cached(other.cached());
+        this.indexed(other.indexed());
+        this.transitive(other.transitive());
+        this.bot(other.bot());
+        this.stdin(other.stdin());
+        this.stdout(other.stdout());
+        this.stderr(other.stderr());
+        this.executorService(other.executorService());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.excludedExtensions(other.getExcludedExtensions());
+        this.excludedExtensions(other.excludedExtensions());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.repositories(other.getRepositories());
-        this.bootRepositories(other.getBootRepositories());
-        this.applicationArguments(other.getApplicationArguments());
-        this.customOptions(other.getCustomOptions());
-        this.expireTime(other.getExpireTime());
-        this.errors(other.getErrors() == null ? new ArrayList<>() : other.getErrors().stream().map(x -> NMsg.ofP(x)).collect(Collectors.toList()));
-        this.skipErrors(other.getSkipErrors());
-        this.switchWorkspace(other.getSwitchWorkspace());
-        this.locale(other.getLocale());
-        this.theme(other.getTheme());
-        this.dependencySolver(other.getDependencySolver());
-        this.isolationLevel(NIsolationLevel.parse(other.getIsolationLevel()).orNull());
-        this.initLaunchers(other.getInitLaunchers());
-        this.initJava(other.getInitJava());
-        this.initScripts(other.getInitScripts());
-        this.initPlatforms(other.getInitPlatforms());
+        this.repositories(other.repositories());
+        this.bootRepositories(other.bootRepositories());
+        this.applicationArguments(other.applicationArguments());
+        this.customOptions(other.customOptions());
+        this.expireTime(other.expireTime());
+        this.errors(other.errors() == null ? new ArrayList<>() : other.errors().stream().map(x -> NMsg.ofP(x)).collect(Collectors.toList()));
+        this.skipErrors(other.skipErrors());
+        this.switchWorkspace(other.switchWorkspace());
+        this.locale(other.locale());
+        this.theme(other.theme());
+        this.dependencySolver(other.dependencySolver());
+        this.isolationLevel(NIsolationLevel.parse(other.isolationLevel()).orNull());
+        this.initLaunchers(other.initLaunchers());
+        this.initJava(other.initJava());
+        this.initScripts(other.initScripts());
+        this.initPlatforms(other.initPlatforms());
         this.desktopLauncher(NSupportMode.parse(other.desktopLauncher()).orNull());
         this.menuLauncher(NSupportMode.parse(other.menuLauncher()).orNull());
         this.userLauncher(NSupportMode.parse(other.userLauncher()).orNull());
-        this.sharedInstance(other.getSharedInstance());
-        this.previewRepo(other.getPreviewRepo());
+        this.sharedInstance(other.sharedInstance());
+        this.previewRepo(other.previewRepo());
         return this;
     }
 

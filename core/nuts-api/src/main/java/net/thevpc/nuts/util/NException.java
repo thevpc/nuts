@@ -403,7 +403,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public int processThrowable(NBootOptionsInfo options) {
         if (this.session != null) {
-            return this.session.callWith(() -> NExceptionWorkspaceHandler.of().processThrowable(options.getApplicationArguments().toArray(new String[0]), this));
+            return this.session.callWith(() -> NExceptionWorkspaceHandler.of().processThrowable(options.applicationArguments().toArray(new String[0]), this));
         } else {
             return NBootUtils.processThrowable(this, true, NBootUtils.resolveShowStackTrace(options), NBootUtils.resolveGui(options));
         }

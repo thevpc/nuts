@@ -344,9 +344,9 @@ public class NBootWorkspaceCmdLineFormatter {
 //        NVersionBoot apiVersionObj = config.getApiVersion();
         List<String> arguments = new ArrayList<>();
 
-        fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
-        fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
-        String wsString = options.getWorkspace();
+        fillOption("--java", "-j", options.javaCommand(), arguments, false);
+        fillOption("--java-options", "-O", options.javaOptions(), arguments, false);
+        String wsString = options.workspace();
         if (NBootUtils.isBlank(wsString)) {
             //default workspace name
             wsString = "";
@@ -357,15 +357,15 @@ public class NBootWorkspaceCmdLineFormatter {
             //workspace name
         }
         fillOption("--workspace", "-w", wsString, arguments, false);
-        fillOption("--user", "-u", options.getUserName(), arguments, false);
-        fillOption("--password", "-p", options.getCredential(), arguments, false);
-        fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
-        fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
+        fillOption("--user", "-u", options.userName(), arguments, false);
+        fillOption("--password", "-p", options.credential(), arguments, false);
+        fillOption("--boot-version", "-V", options.apiVersion(), arguments, false);
+        fillOption("--boot-runtime", null, options.runtimeId(), arguments, false);
 
         {
-            String nTerminalMode = options.getTerminalMode();
+            String nTerminalMode = options.terminalMode();
             if (!isApiVersionOrAfter(V084)) {
-                if (NBootUtils.firstNonNull(options.getBot(), false)) {
+                if (NBootUtils.firstNonNull(options.bot(), false)) {
                     //force filtered for older nuts
                     nTerminalMode = "FILTERED";
                 }
@@ -374,126 +374,126 @@ public class NBootWorkspaceCmdLineFormatter {
                 fillOptionEnum("--color", "-c", nTerminalMode, "NTerminalMode", arguments, true);
             }
         }
-        NBootLogConfig logConfig = options.getLogConfig();
+        NBootLogConfig logConfig = options.logConfig();
         if (logConfig != null) {
-            if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel() == logConfig.getLogFileLevel()) {
-                if (logConfig.getLogTermLevel() == Level.FINEST) {
+            if (logConfig.logTermLevel() != null && logConfig.logTermLevel() == logConfig.logFileLevel()) {
+                if (logConfig.logTermLevel() == Level.FINEST) {
                     if (isApiVersionOrAfter(V089)) {
                         fillOption("--verbose", "-l", true, true, arguments, false);
                     }else{
                         fillOption("--verbose", null, true, true, arguments, false);
                     }
                 } else {
-                    fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                    fillOption("--log-" + logConfig.logFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
                 }
             } else {
-                if (logConfig.getLogTermLevel() != null) {
-                    fillOption("--log-term-" + logConfig.getLogTermLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                if (logConfig.logTermLevel() != null) {
+                    fillOption("--log-term-" + logConfig.logTermLevel().toString().toLowerCase(), null, true, false, arguments, false);
                 }
-                if (logConfig.getLogFileLevel() != null) {
-                    fillOption("--log-file-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                if (logConfig.logFileLevel() != null) {
+                    fillOption("--log-file-" + logConfig.logFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
                 }
             }
-            if (logConfig.getLogFileCount() > 0) {
-                fillOption("--log-file-count", null, String.valueOf(logConfig.getLogFileCount()), arguments, false);
+            if (logConfig.logFileCount() > 0) {
+                fillOption("--log-file-count", null, String.valueOf(logConfig.logFileCount()), arguments, false);
             }
-            fillOption("--log-file-size", null, logConfig.getLogFileSize(), arguments, false);
-            fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
-            fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
+            fillOption("--log-file-size", null, logConfig.logFileSize(), arguments, false);
+            fillOption("--log-file-base", null, logConfig.logFileBase(), arguments, false);
+            fillOption("--log-file-name", null, logConfig.logFileName(), arguments, false);
         }
-        fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
+        fillOption("--exclude-extension", "-X", options.excludedExtensions(), ";", arguments, false);
         if (isApiVersionOrAfter(V081)) {
-            fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+            fillOption("--repositories", "-r", options.repositories(), ";", arguments, false);
         } else {
-            fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+            fillOption("--repository", "-r", options.repositories(), ";", arguments, false);
         }
         if (isApiVersionOrAfter(V085)) {
-            fillOption("--boot-repositories", null, options.getBootRepositories(), ";", arguments, false);
+            fillOption("--boot-repositories", null, options.bootRepositories(), ";", arguments, false);
         }
 
-        fillOption("--global", "-g", options.getSystem(), false, arguments, false);
-        fillOption("--gui", null, options.getGui(), false, arguments, false);
-        fillOption("--read-only", "-R", options.getReadOnly(), false, arguments, false);
-        fillOption("--trace", "-t", options.getTrace(), true, arguments, false);
-        fillOption("--progress", "-P", options.getProgressOptions(), arguments, true);
-        fillOption("--solver", null, options.getDependencySolver(), arguments, false);
+        fillOption("--global", "-g", options.system(), false, arguments, false);
+        fillOption("--gui", null, options.gui(), false, arguments, false);
+        fillOption("--read-only", "-R", options.readOnly(), false, arguments, false);
+        fillOption("--trace", "-t", options.trace(), true, arguments, false);
+        fillOption("--progress", "-P", options.progressOptions(), arguments, true);
+        fillOption("--solver", null, options.dependencySolver(), arguments, false);
         if (isApiVersionOrAfter(V083)) {
-            fillOption("--debug", null, options.getDebug(), arguments, true);
+            fillOption("--debug", null, options.debug(), arguments, true);
         } else {
-            fillOption("--debug", null, options.getDebug() != null, false, arguments, true);
+            fillOption("--debug", null, options.debug() != null, false, arguments, true);
         }
-        fillOption("--install-companions", "-k", options.getInstallCompanions(), false, arguments, false);
-        fillOption("--skip-welcome", "-K", NBootUtils.firstNonNull(options.getSkipWelcome(), false), false, arguments, false);
-        fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
-        fillOption("--skip-boot", "-Q", options.getSkipBoot(), false, arguments, false);
-        fillOption("--cached", null, options.getCached(), true, arguments, false);
-        fillOption("--indexed", null, options.getIndexed(), true, arguments, false);
-        fillOption("--transitive", null, options.getTransitive(), true, arguments, false);
+        fillOption("--install-companions", "-k", options.installCompanions(), false, arguments, false);
+        fillOption("--skip-welcome", "-K", NBootUtils.firstNonNull(options.skipWelcome(), false), false, arguments, false);
+        fillOption("--out-line-prefix", null, options.outLinePrefix(), arguments, false);
+        fillOption("--skip-boot", "-Q", options.skipBoot(), false, arguments, false);
+        fillOption("--cached", null, options.cached(), true, arguments, false);
+        fillOption("--indexed", null, options.indexed(), true, arguments, false);
+        fillOption("--transitive", null, options.transitive(), true, arguments, false);
         if (isApiVersionOrAfter(V081)) {
-            fillOption("--bot", "-B", options.getBot(), false, arguments, false);
+            fillOption("--bot", "-B", options.bot(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V085)) {
-            fillOption("--preview-repo", "-U", options.getPreviewRepo(), false, arguments, false);
-            fillOption("--shared-instance", null, options.getSharedInstance(), false, arguments, false);
+            fillOption("--preview-repo", "-U", options.previewRepo(), false, arguments, false);
+            fillOption("--shared-instance", null, options.sharedInstance(), false, arguments, false);
         }
-        if (options.getFetchStrategy() != null && NBootUtils.sameEnum(options.getFetchStrategy(), "ONLINE")) {
-            fillOptionEnum("--fetch", "-f", options.getFetchStrategy(), "NFetchStrategy", arguments, false);
+        if (options.fetchStrategy() != null && NBootUtils.sameEnum(options.fetchStrategy(), "ONLINE")) {
+            fillOptionEnum("--fetch", "-f", options.fetchStrategy(), "NFetchStrategy", arguments, false);
         }
-        fillOptionEnum(options.getConfirm(), "NConfirmationMode", arguments, false);
-        fillOptionEnum(options.getOutputFormat(), "NContentType", arguments, false);
-        if (options.getOutputFormatOptions() != null) {
-            for (String outputFormatOption : options.getOutputFormatOptions()) {
+        fillOptionEnum(options.confirm(), "NConfirmationMode", arguments, false);
+        fillOptionEnum(options.outputFormat(), "NContentType", arguments, false);
+        if (options.outputFormatOptions() != null) {
+            for (String outputFormatOption : options.outputFormatOptions()) {
                 fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
             }
         }
         if (isApiVersionOrAfter(V080)) {
             fillOption("--expire", "-N",
-                    options.getExpireTime() == null ? null : options.getExpireTime().toString(),
+                    options.expireTime() == null ? null : options.expireTime().toString(),
                     arguments, false);
-            if (options.getOutLinePrefix() != null
-                    && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())
-                    && options.getOutLinePrefix().length() > 0) {
-                fillOption("--line-prefix", null, options.getOutLinePrefix(), arguments, false);
+            if (options.outLinePrefix() != null
+                    && Objects.equals(options.outLinePrefix(), options.errLinePrefix())
+                    && options.outLinePrefix().length() > 0) {
+                fillOption("--line-prefix", null, options.outLinePrefix(), arguments, false);
             } else {
-                if (options.getOutLinePrefix() != null && options.getOutLinePrefix().length() > 0) {
-                    fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                if (options.outLinePrefix() != null && options.outLinePrefix().length() > 0) {
+                    fillOption("--out-line-prefix", null, options.outLinePrefix(), arguments, false);
                 }
-                if (options.getErrLinePrefix() != null && options.getErrLinePrefix().length() > 0) {
-                    fillOption("--err-line-prefix", null, options.getErrLinePrefix(), arguments, false);
+                if (options.errLinePrefix() != null && options.errLinePrefix().length() > 0) {
+                    fillOption("--err-line-prefix", null, options.errLinePrefix(), arguments, false);
                 }
             }
         }
         if (isApiVersionOrAfter(V081)) {
-            fillOption("--theme", null, options.getTheme(), arguments, false);
+            fillOption("--theme", null, options.theme(), arguments, false);
         }
         if (isApiVersionOrAfter(V081)) {
-            fillOption("--locale", "-L", options.getLocale(), arguments, false);
+            fillOption("--locale", "-L", options.locale(), arguments, false);
         }
         if (isApiVersionOrAfter(V084)) {
-            fillOption("--init-launchers", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("--init-platforms", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("--init-java", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("--init-scripts", null, options.getInitLaunchers(), true, arguments, false);
+            fillOption("--init-launchers", null, options.initLaunchers(), true, arguments, false);
+            fillOption("--init-platforms", null, options.initLaunchers(), true, arguments, false);
+            fillOption("--init-java", null, options.initLaunchers(), true, arguments, false);
+            fillOption("--init-scripts", null, options.initLaunchers(), true, arguments, false);
             fillOptionEnum("--desktop-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
             fillOptionEnum("--menu-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
             fillOptionEnum("--user-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
-            fillOptionEnum("--isolation-level", null, options.getIsolationLevel(), "NIsolationLevel", arguments, false);
+            fillOptionEnum("--isolation-level", null, options.isolationLevel(), "NIsolationLevel", arguments, false);
         } else if (isApiVersionOrAfter(V081)) {
-            fillOption("---init-launchers", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("---init-platforms", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("---init-java", null, options.getInitLaunchers(), true, arguments, false);
-            fillOption("---init-scripts", null, options.getInitLaunchers(), true, arguments, false);
+            fillOption("---init-launchers", null, options.initLaunchers(), true, arguments, false);
+            fillOption("---init-platforms", null, options.initLaunchers(), true, arguments, false);
+            fillOption("---init-java", null, options.initLaunchers(), true, arguments, false);
+            fillOption("---init-scripts", null, options.initLaunchers(), true, arguments, false);
             fillOptionEnum("---system-desktop-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
             fillOptionEnum("---system-menu-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
             fillOptionEnum("---system-custom-launcher", null, options.desktopLauncher(), "NSupportMode", arguments, false);
         }
 
-        fillOption("--name", null, NBootUtils.trim(options.getName()), arguments, false);
-        fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
-        fillOptionEnum("--store-layout", null, options.getStoreLayout(), "NOsFamily", arguments, false);
-        fillOptionEnum("--store-strategy", null, options.getStoreStrategy(), "NStoreStrategy", arguments, false);
-        fillOptionEnum("--repo-store-strategy", null, options.getRepositoryStoreStrategy(), "NStoreStrategy", arguments, false);
-        Map<String, String> storeLocations = options.getStoreLocations();
+        fillOption("--name", null, NBootUtils.trim(options.name()), arguments, false);
+        fillOption("--archetype", "-A", options.archetype(), arguments, false);
+        fillOptionEnum("--store-layout", null, options.storeLayout(), "NOsFamily", arguments, false);
+        fillOptionEnum("--store-strategy", null, options.storeStrategy(), "NStoreStrategy", arguments, false);
+        fillOptionEnum("--repo-store-strategy", null, options.repositoryStoreStrategy(), "NStoreStrategy", arguments, false);
+        Map<String, String> storeLocations = options.storeLocations();
         if (storeLocations == null) {
             storeLocations = new HashMap<>();
         }
@@ -504,7 +504,7 @@ public class NBootWorkspaceCmdLineFormatter {
             }
         }
 
-        Map<NBootHomeLocation, String> homeLocations = options.getHomeLocations();
+        Map<NBootHomeLocation, String> homeLocations = options.homeLocations();
         if (homeLocations != null) {
             for (String location : NBootPlatformHome.storeTypes()) {
                 String s = homeLocations.get(NBootHomeLocation.of(null, location));
@@ -522,41 +522,41 @@ public class NBootWorkspaceCmdLineFormatter {
             }
         }
         if (isApiVersionOrAfter(V080)) {
-            if (options.getSwitchWorkspace() != null) {
-                fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
+            if (options.switchWorkspace() != null) {
+                fillOption("--switch", null, options.switchWorkspace(), false, arguments, false);
             }
         }
 
-        fillOption("--help", "-h", NBootUtils.firstNonNull(options.getCommandHelp(), false), false, arguments, false);
-        fillOption("--version", "-v", NBootUtils.firstNonNull(options.getCommandVersion(), false), false, arguments, false);
+        fillOption("--help", "-h", NBootUtils.firstNonNull(options.commandHelp(), false), false, arguments, false);
+        fillOption("--version", "-v", NBootUtils.firstNonNull(options.commandVersion(), false), false, arguments, false);
 
-        if (!(config.isOmitDefaults() && (options.getOpenMode() == null) || NBootUtils.sameEnum(options.getOpenMode(), "OPEN_OR_CREATE"))) {
-            fillOptionEnum(options.getOpenMode(), "NOpenMode", arguments, false);
+        if (!(config.isOmitDefaults() && (options.openMode() == null) || NBootUtils.sameEnum(options.openMode(), "OPEN_OR_CREATE"))) {
+            fillOptionEnum(options.openMode(), "NOpenMode", arguments, false);
         }
-        fillOptionEnum(options.getExecutionType(), "NExecutionType", arguments, false);
-        fillOptionEnumRunAs(options.getRunAs(), arguments);
-        fillOption("--reset", "-Z", options.getReset(), false, arguments, false);
-        fillOption("--recover", "-z", options.getRecover(), false, arguments, false);
-        fillOption("--dry", "-D", options.getDry(), false, arguments, false);
+        fillOptionEnum(options.executionType(), "NExecutionType", arguments, false);
+        fillOptionEnumRunAs(options.runAs(), arguments);
+        fillOption("--reset", "-Z", options.reset(), false, arguments, false);
+        fillOption("--recover", "-z", options.recover(), false, arguments, false);
+        fillOption("--dry", "-D", options.dry(), false, arguments, false);
         if (isApiVersionOrAfter(V085)) {
-            fillOption("--reset-hard", null, options.getResetHard(), false, arguments, false);
+            fillOption("--reset-hard", null, options.resetHard(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V084)) {
-            fillOption("--stacktrace", "-d", options.getShowStacktrace(), false, arguments, false);
+            fillOption("--stacktrace", "-d", options.showStacktrace(), false, arguments, false);
         }
         if (isApiVersionOrAfter(V081)) {
-            if (options.getCustomOptions() != null) {
-                arguments.addAll(NBootUtils.nonNullStrList(options.getCustomOptions()));
+            if (options.customOptions() != null) {
+                arguments.addAll(NBootUtils.nonNullStrList(options.customOptions()));
             }
         }
         //final options for execution
         if ((!config.isOmitDefaults() &&
-                !NBootUtils.isEmptyList(options.getApplicationArguments())
-                || !NBootUtils.nonNullStrList(options.getExecutorOptions()).isEmpty())) {
+                !NBootUtils.isEmptyList(options.applicationArguments())
+                || !NBootUtils.nonNullStrList(options.executorOptions()).isEmpty())) {
             arguments.add(selectOptionName("--exec", "-e"));
         }
-        arguments.addAll(NBootUtils.nonNullStrList(options.getExecutorOptions()));
-        arguments.addAll(NBootUtils.nonNullStrList(options.getApplicationArguments()));
+        arguments.addAll(NBootUtils.nonNullStrList(options.executorOptions()));
+        arguments.addAll(NBootUtils.nonNullStrList(options.applicationArguments()));
         return new NBootCmdLine(arguments);
     }
 

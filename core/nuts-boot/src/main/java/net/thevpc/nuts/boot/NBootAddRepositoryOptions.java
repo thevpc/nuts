@@ -142,7 +142,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      *
      * @return order
      */
-    public int getOrder() {
+    public int order() {
         return order;
     }
 
@@ -152,7 +152,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param order order
      * @return {@code this instance}
      */
-    public NBootAddRepositoryOptions setOrder(int order) {
+    public NBootAddRepositoryOptions order(int order) {
         this.order = order;
         return this;
     }
@@ -172,7 +172,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setTemporary(boolean value) {
+    public NBootAddRepositoryOptions temporary(boolean value) {
         this.temporary = value;
         return this;
     }
@@ -182,7 +182,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      *
      * @return repository name (should no include special space or characters)
      */
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -192,7 +192,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setName(String value) {
+    public NBootAddRepositoryOptions name(String value) {
         this.name = value;
         return this;
     }
@@ -202,7 +202,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      *
      * @return repository location
      */
-    public String getLocation() {
+    public String location() {
         return location;
     }
 
@@ -212,7 +212,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setLocation(String value) {
+    public NBootAddRepositoryOptions location(String value) {
         this.location = value;
         return this;
     }
@@ -232,7 +232,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setEnabled(boolean value) {
+    public NBootAddRepositoryOptions enabled(boolean value) {
         this.enabled = value;
         return this;
     }
@@ -254,7 +254,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setFailSafe(boolean value) {
+    public NBootAddRepositoryOptions failSafe(boolean value) {
         this.failSafe = value;
         return this;
     }
@@ -274,7 +274,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setCreate(boolean value) {
+    public NBootAddRepositoryOptions create(boolean value) {
         this.create = value;
         return this;
     }
@@ -284,7 +284,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      *
      * @return repository config information
      */
-    public NBootRepositoryConfig getConfig() {
+    public NBootRepositoryConfig config() {
         return config;
     }
 
@@ -294,7 +294,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setConfig(NBootRepositoryConfig value) {
+    public NBootAddRepositoryOptions config(NBootRepositoryConfig value) {
         this.config = value;
         return this;
     }
@@ -304,7 +304,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      *
      * @return repository deploy order
      */
-    public int getDeployWeight() {
+    public int deployWeight() {
         return deployWeight;
     }
 
@@ -314,7 +314,7 @@ public class NBootAddRepositoryOptions implements Serializable, Cloneable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NBootAddRepositoryOptions setDeployWeight(int value) {
+    public NBootAddRepositoryOptions deployWeight(int value) {
         this.deployWeight = value;
         return this;
     }

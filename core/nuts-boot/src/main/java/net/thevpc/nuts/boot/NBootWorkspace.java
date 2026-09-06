@@ -40,11 +40,11 @@ public interface NBootWorkspace {
         return 0;
     }
 
-    NBootArguments getBootArguments();
+    NBootArguments bootArguments();
 
-    NBootOptionsInfo getOptions();
+    NBootOptionsInfo options();
 
-    NWorkspaceBase getWorkspace();
+    NWorkspaceBase workspace();
 
     NBootWorkspace runWorkspace();
 

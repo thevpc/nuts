@@ -170,10 +170,10 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--workspace": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String file = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setWorkspace(file);
-                            if ("MEMORY".equalsIgnoreCase(options.getIsolationLevel())
-                                    || "SANDBOX".equalsIgnoreCase(options.getIsolationLevel())
+                            String file = NBootUtils.firstNonNull(a.stringValue(), "");
+                            options.workspace(file);
+                            if ("MEMORY".equalsIgnoreCase(options.isolationLevel())
+                                    || "SANDBOX".equalsIgnoreCase(options.isolationLevel())
                             ) {
                                 options.isolationLevel(null);
                             }
@@ -184,8 +184,8 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-u": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setUserName(v);
+                            String v = NBootUtils.firstNonNull(a.stringValue(), "");
+                            options.userName(v);
                         }
                         return (Collections.singletonList(a));
                     }
@@ -193,8 +193,8 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-p": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setCredential(v.toCharArray());
+                            String v = NBootUtils.firstNonNull(a.stringValue(), "");
+                            options.credential(v.toCharArray());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -203,21 +203,21 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--boot-api-version": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = a.getStringValue();
-                            options.setApiVersion(v);
+                            String v = a.stringValue();
+                            options.apiVersion(v);
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--boot-runtime": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String br = NBootUtils.firstNonNull(a.getStringValue(), "");
+                            String br = NBootUtils.firstNonNull(a.stringValue(), "");
                             if (br.indexOf('#') >= 0) {
                                 //this is a full id
-                                options.setRuntimeId(br);
+                                options.runtimeId(br);
                             } else {
                                 NBootDependency r = NBootDependency.ofRuntime(br);
-                                options.setRuntimeId(r == null ? null : r.toString());
+                                options.runtimeId(r == null ? null : r.toString());
                             }
                         }
                         return (Collections.singletonList(a));
@@ -227,8 +227,8 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-j": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setJavaCommand(v);
+                            String v = NBootUtils.firstNonNull(a.stringValue(), "");
+                            options.javaCommand(v);
                         }
                         return (Collections.singletonList(a));
                     }
@@ -236,8 +236,8 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--boot-java-home": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = a.getStringValue();
-                            options.setJavaCommand(NBootUtils.resolveJavaCommand(v));
+                            String v = a.stringValue();
+                            options.javaCommand(NBootUtils.resolveJavaCommand(v));
                         }
                         return (Collections.singletonList(a));
                     }
@@ -245,9 +245,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--boot-java-options":
                     case "-J": {
                         a = cmdLine.nextEntry();
-                        String v = NBootUtils.firstNonNull(a.getStringValue(), "");
+                        String v = NBootUtils.firstNonNull(a.stringValue(), "");
                         if (active && options != null) {
-                            options.setJavaOptions(v);
+                            options.javaOptions(v);
                         }
                         return (Collections.singletonList(a));
                     }
@@ -263,26 +263,26 @@ public final class NBootWorkspaceCmdLineParser {
                     // exists : configured parameters will be in use.
                     case "--name": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
-                            options.setName(v);
+                            options.name(v);
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--archetype":
                     case "-A": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
-                            options.setArchetype(v);
+                            options.archetype(v);
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--store-strategy": {
                         a = cmdLine.nextEntry();
-                        String v = NBootUtils.firstNonNull(a.getStringValue(), "");
+                        String v = NBootUtils.firstNonNull(a.stringValue(), "");
                         if (active && options != null) {
-                            options.setStoreStrategy(parseStoreStrategy(v));
+                            options.storeStrategy(parseStoreStrategy(v));
                         }
                         return (Collections.singletonList(a));
                     }
@@ -290,8 +290,8 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--standalone":
                     case "--standalone-workspace": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreStrategy("STANDALONE");
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeStrategy("STANDALONE");
                         }
                         return (Collections.singletonList(a));
                     }
@@ -299,74 +299,74 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--exploded":
                     case "--exploded-workspace": {
                         a = cmdLine.nextFlag();
-                        if (active && options != null && a.getBooleanValue()) {
-                            options.setStoreStrategy("EXPLODED");
+                        if (active && options != null && a.booleanValue()) {
+                            options.storeStrategy("EXPLODED");
                         }
                         return (Collections.singletonList(a));
                     }
 
                     case "--repo-store-strategy": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
-                            options.setRepositoryStoreStrategy(parseStoreStrategy(v));
+                            options.repositoryStoreStrategy(parseStoreStrategy(v));
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--exploded-repositories": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setRepositoryStoreStrategy("EXPLODED");
+                        if (active && a.booleanValue() && options != null) {
+                            options.repositoryStoreStrategy("EXPLODED");
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--standalone-repositories": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setRepositoryStoreStrategy("STANDALONE");
+                        if (active && a.booleanValue() && options != null) {
+                            options.repositoryStoreStrategy("STANDALONE");
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--store-layout": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
-                            options.setStoreLayout(parseOsFamily(v));
+                            options.storeLayout(parseOsFamily(v));
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--system-layout": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreLayout(null);
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeLayout(null);
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreLayout("WINDOWS");
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeLayout("WINDOWS");
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreLayout("MACOS");
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeLayout("MACOS");
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreLayout("LINUX");
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeLayout("LINUX");
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--unix-layout": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue() && options != null) {
-                            options.setStoreLayout("UNIX");
+                        if (active && a.booleanValue() && options != null) {
+                            options.storeLayout("UNIX");
                         }
                         return (Collections.singletonList(a));
                     }
@@ -378,7 +378,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--cache-location":
                     case "--lib-location": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
                             String m = parseStoreType(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                             options.setStoreLocation(m, v);
@@ -394,7 +394,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--system-lib-home":
                     case "--system-run-home": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         String folder = parseStoreType(
                                 k.substring(3 + "system".length(), k.indexOf('-', 3 + "system".length())).toUpperCase());
                         if (active && options != null) {
@@ -435,7 +435,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--unix-lib-home":
                     case "--unix-run-home": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         String layout = parseOsFamily(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         String folder = parseStoreType(k.substring(3 + layout.length(), k.indexOf('-', 3 + layout.length())).toUpperCase());
                         if (active && options != null) {
@@ -448,7 +448,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-k": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setInstallCompanions(a.getBooleanValue());
+                            options.installCompanions(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -456,7 +456,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-K": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setSkipWelcome(a.getBooleanValue());
+                            options.skipWelcome(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
 
@@ -465,14 +465,14 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-Q": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setSkipBoot(a.getBooleanValue());
+                            options.skipBoot(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--switch": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setSwitchWorkspace(NBootUtils.firstNonNull(a.getBooleanValue(), true));
+                            options.switchWorkspace(NBootUtils.firstNonNull(a.booleanValue(), true));
                         }
                         return (Collections.singletonList(a));
                     }
@@ -491,14 +491,14 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--global": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setSystem(a.getBooleanValue());
+                            options.system(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
                     case "--shared-instance": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setSharedInstance(a.getBooleanValue());
+                            options.sharedInstance(a.booleanValue());
                             return (Collections.singletonList(a));
                         }
                         return (Collections.singletonList(a));
@@ -507,7 +507,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--gui": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setGui(a.getBooleanValue());
+                            options.gui(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -520,16 +520,16 @@ public final class NBootWorkspaceCmdLineParser {
                             if (options != null) {
                                 if (a.isFlagOption()) {
                                     if (a.isNegated()) {
-                                        options.setTerminalMode("INHERITED");
+                                        options.terminalMode("INHERITED");
                                     } else {
-                                        options.setTerminalMode("FORMATTED");
+                                        options.terminalMode("FORMATTED");
                                     }
                                 } else {
-                                    String v = NBootUtils.firstNonNull(parseTerminalMode(a.getStringValue()), "FORMATTED");
+                                    String v = NBootUtils.firstNonNull(parseTerminalMode(a.stringValue()), "FORMATTED");
                                     if (NBootUtils.sameEnum(v, "DEFAULT")) {
                                         v = "INHERITED";
                                     }
-                                    options.setTerminalMode(v);
+                                    options.terminalMode(v);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -542,7 +542,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setBot(a.getBooleanValue());
+                                options.bot(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -554,7 +554,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setPreviewRepo(a.getBooleanValue());
+                                options.previewRepo(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -564,9 +564,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setReadOnly(a.getBooleanValue());
+                                options.readOnly(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -578,7 +578,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setTrace(a.getBooleanValue());
+                                options.trace(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -590,16 +590,16 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                String s = a.getStringValue();
+                                String s = a.stringValue();
                                 if (a.isNegated()) {
                                     if (NBootUtils.isBlank(s)) {
                                         s = "false";
                                     } else {
                                         s = "false," + s;
                                     }
-                                    options.setProgressOptions(s);
+                                    options.progressOptions(s);
                                 } else {
-                                    options.setProgressOptions(s);
+                                    options.progressOptions(s);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -611,8 +611,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                String s = a.getStringValue();
-                                options.setDependencySolver(s);
+                                String s = a.stringValue();
+                                options.dependencySolver(s);
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -623,7 +623,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-D": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setDry(a.getBooleanValue());
+                            options.dry(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -633,7 +633,7 @@ public final class NBootWorkspaceCmdLineParser {
                     {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setShowStacktrace(a.getBooleanValue());
+                            options.showStacktrace(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -642,13 +642,13 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                if (NBootUtils.isBlank(a.getStringValue())) {
-                                    options.setDebug(String.valueOf(a.isEnabled()));
+                                if (NBootUtils.isBlank(a.stringValue())) {
+                                    options.debug(String.valueOf(a.isEnabled()));
                                 } else {
                                     if (a.isNegated()) {
-                                        options.setDebug(String.valueOf(!NBootUtils.parseBoolean(a.getStringValue(), true, false)));
+                                        options.debug(String.valueOf(!NBootUtils.parseBoolean(a.stringValue(), true, false)));
                                     } else {
-                                        options.setDebug(a.getStringValue());
+                                        options.debug(a.stringValue());
                                     }
                                 }
                             }
@@ -699,12 +699,12 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--log-file-base":
                     case "--log-file-count": {
                         if (active) {
-                            NBootLogConfig logConfig = options.getLogConfig();
+                            NBootLogConfig logConfig = options.logConfig();
                             if (logConfig == null) {
                                 logConfig = new NBootLogConfig();
                             }
                             NBootArg r = parseLogLevel(logConfig, cmdLine, active);
-                            options.setLogConfig(logConfig);
+                            options.logConfig(logConfig);
                             return r == null
                                     ? null
                                     : Collections.singletonList(r);
@@ -715,15 +715,15 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-X":
                     case "--exclude-extension": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active && options != null) {
-                            List<String> old = options.getExcludedExtensions();
+                            List<String> old = options.excludedExtensions();
                             if (old == null) {
                                 old = new ArrayList<>();
                             }
                             old.add(v);
-                            options.setExcludedExtensions(old);
-                            options.setExcludedExtensions(new ArrayList<>(
+                            options.excludedExtensions(old);
+                            options.excludedExtensions(new ArrayList<>(
                                     new LinkedHashSet<>(old)
                             ));
                         }
@@ -736,15 +736,15 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--repos":
                     case "-r": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active) {
                             if (options != null) {
-                                List<String> old = options.getRepositories();
+                                List<String> old = options.repositories();
                                 if (old == null) {
                                     old = new ArrayList<>();
                                 }
                                 old.add(v);
-                                options.setRepositories(old);
+                                options.repositories(old);
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -757,15 +757,15 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--boot-repo":
                     case "--boot-repos": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active) {
                             if (options != null) {
-                                List<String> old = options.getBootRepositories();
+                                List<String> old = options.bootRepositories();
                                 if (old == null) {
                                     old = new ArrayList<>();
                                 }
                                 old.add(v);
-                                options.setBootRepositories(old);
+                                options.bootRepositories(old);
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -777,7 +777,7 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-T": {
                         if (active) {
                             if (options != null) {
-                                options.addOutputFormatOptions(cmdLine.nextEntry().getStringValue());
+                                options.addOutputFormatOptions(cmdLine.nextEntry().stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -790,13 +790,13 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                String t = NBootUtils.firstNonNull(a.getStringValue(), "");
+                                String t = NBootUtils.firstNonNull(a.stringValue(), "");
                                 int i = NBootUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                                 if (i > 0) {
-                                    options.setOutputFormat((t.substring(0, i).toUpperCase()));
+                                    options.outputFormat((t.substring(0, i).toUpperCase()));
                                     options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
                                 } else {
-                                    options.setOutputFormat((t.toUpperCase()));
+                                    options.outputFormat((t.toUpperCase()));
                                     options.addOutputFormatOptions("");
                                 }
                             }
@@ -808,8 +808,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TSON");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TSON");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -819,8 +819,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("YAML");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("YAML");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -830,8 +830,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("JSON");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("JSON");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -841,8 +841,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("PLAIN");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("PLAIN");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -852,8 +852,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("XML");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("XML");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -863,8 +863,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TABLE");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TABLE");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -874,8 +874,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TREE");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TREE");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -885,8 +885,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("PROPS");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("PROPS");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                         } else {
                             return (Collections.singletonList(a));
@@ -894,10 +894,10 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("YES");
+                                options.confirm("YES");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -907,10 +907,10 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--no":
                     case "-n": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("NO");
+                                options.confirm("NO");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -919,10 +919,10 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--error": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("ERROR");
+                                options.confirm("ERROR");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -931,10 +931,10 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--ask": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("ASK");
+                                options.confirm("ASK");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -943,9 +943,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--cached": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setCached(a.getBooleanValue());
+                                options.cached(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -954,9 +954,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--indexed": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setIndexed(a.getBooleanValue());
+                                options.indexed(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -967,7 +967,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setTransitive(a.getBooleanValue());
+                                options.transitive(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -979,7 +979,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setFetchStrategy(parseFetchStrategy(a.getStringValue()));
+                                options.setchStrategy(parseFetchStrategy(a.stringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -989,9 +989,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-a":
                     case "--anywhere": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setFetchStrategy("ANYWHERE");
+                                options.setchStrategy("ANYWHERE");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1001,9 +1001,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-F":
                     case "--offline": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setFetchStrategy("OFFLINE");
+                                options.setchStrategy("OFFLINE");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1012,9 +1012,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--online": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setFetchStrategy("ONLINE");
+                                options.setchStrategy("ONLINE");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1023,9 +1023,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--remote": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setFetchStrategy("REMOTE");
+                                options.setchStrategy("REMOTE");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1047,9 +1047,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--embedded":
                     case "-b": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("EMBEDDED");
+                                options.executionType("EMBEDDED");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1058,9 +1058,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--open-file": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("OPEN");
+                                options.executionType("OPEN");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1071,9 +1071,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--spawn":
                     case "-x": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("SPAWN");
+                                options.executionType("SPAWN");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1083,9 +1083,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--user-cmd"://deprecated since 0.8.1
                     case "--system": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("SYSTEM");
+                                options.executionType("SYSTEM");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1095,9 +1095,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--root-cmd": //deprecated since 0.8.1
                     case "--as-root": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setRunAs("ROOT");
+                                options.runAs("ROOT");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1106,9 +1106,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--current-user": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setRunAs("CURRENT_USER");
+                                options.runAs("CURRENT_USER");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1119,7 +1119,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setRunAs("USER:" + a.getStringValue());
+                                options.runAs("USER:" + a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1130,7 +1130,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setRunAs("SUDO");
+                                options.runAs("SUDO");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1140,10 +1140,10 @@ public final class NBootWorkspaceCmdLineParser {
                     case "-o":
                     case "--open-mode": {
                         a = cmdLine.nextEntry();
-                        String v = a.getStringValue();
+                        String v = a.stringValue();
                         if (active) {
                             if (options != null) {
-                                options.setOpenMode(parseNutsOpenMode(v));
+                                options.openMode(parseNutsOpenMode(v));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1153,9 +1153,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--open-or-error":
                     case "--open": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setOpenMode("OPEN_OR_ERROR");
+                                options.openMode("OPEN_OR_ERROR");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1165,9 +1165,9 @@ public final class NBootWorkspaceCmdLineParser {
                     case "--create-or-error":
                     case "--create": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setOpenMode("CREATE_OR_ERROR");
+                                options.openMode("CREATE_OR_ERROR");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1176,9 +1176,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--open-or-create": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setOpenMode("OPEN_OR_CREATE");
+                                options.openMode("OPEN_OR_CREATE");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1187,9 +1187,9 @@ public final class NBootWorkspaceCmdLineParser {
                     }
                     case "--open-or-null": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setOpenMode("OPEN_OR_NULL");
+                                options.openMode("OPEN_OR_NULL");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1208,12 +1208,12 @@ public final class NBootWorkspaceCmdLineParser {
                             newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                             cmdLine.skipAll();
                             if (options != null) {
-                                if (a.getValue() != null) {
-                                    addError(NBootMsg.ofC("invalid argument for workspace: %s", a.getImage()), options);
+                                if (a.value() != null) {
+                                    addError(NBootMsg.ofC("invalid argument for workspace: %s", a.image()), options);
                                 }
-                                List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                                List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                                 applicationArguments.addAll(newArgs);
-                                options.setApplicationArguments(applicationArguments);
+                                options.applicationArguments(applicationArguments);
                             }
                             return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
                         } else {
@@ -1229,7 +1229,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setCommandVersion(a.isActive());
+                                options.commandVersion(a.isActive());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1241,9 +1241,9 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                if (a.getBooleanValue()) {
-                                    options.setReset(true);
-                                    options.setRecover(false);
+                                if (a.booleanValue()) {
+                                    options.reset(true);
+                                    options.recover(false);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1258,9 +1258,9 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                if (a.getBooleanValue()) {
-                                    options.setResetHard(true);
-                                    options.setRecover(false);
+                                if (a.booleanValue()) {
+                                    options.resetHard(true);
+                                    options.recover(false);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1277,9 +1277,9 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                if (a.getBooleanValue()) {
-                                    options.setReset(false);
-                                    options.setRecover(true);
+                                if (a.booleanValue()) {
+                                    options.reset(false);
+                                    options.recover(true);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1292,10 +1292,10 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                if (!NBootUtils.isBlank(a.getStringValue())) {
-                                    options.setExpireTime(NBootUtils.parseInstant(a.getValue()));
+                                if (!NBootUtils.isBlank(a.stringValue())) {
+                                    options.expireTime(NBootUtils.parseInstant(a.value()));
                                 } else {
-                                    options.setExpireTime(Instant.now());
+                                    options.expireTime(Instant.now());
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1307,7 +1307,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setOutLinePrefix(a.getStringValue());
+                                options.outLinePrefix(a.stringValue());
                             }
                         }
                     }
@@ -1315,7 +1315,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setErrLinePrefix(a.getStringValue());
+                                options.errLinePrefix(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1326,8 +1326,8 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setOutLinePrefix(a.getStringValue());
-                                options.setErrLinePrefix(a.getStringValue());
+                                options.outLinePrefix(a.stringValue());
+                                options.errLinePrefix(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1340,29 +1340,29 @@ public final class NBootWorkspaceCmdLineParser {
                         if (active) {
                             List<String> newArgs = new ArrayList<>();
                             newArgs.add(a.toString());
-                            if (a.getBooleanValue()) {
+                            if (a.booleanValue()) {
                                 while ((a = cmdLine.next()) != null) {
                                     if (a.isOption()) {
                                         if (options != null) {
-                                            List<String> executorOptions = options.getExecutorOptions();
+                                            List<String> executorOptions = options.executorOptions();
                                             if (executorOptions == null) {
                                                 executorOptions = new ArrayList<>();
                                             }
-                                            executorOptions.add(NBootUtils.firstNonNull(a.getImage(), ""));
-                                            newArgs.add(NBootUtils.firstNonNull(a.getImage(), ""));
-                                            options.setExecutorOptions(executorOptions);
+                                            executorOptions.add(NBootUtils.firstNonNull(a.image(), ""));
+                                            newArgs.add(NBootUtils.firstNonNull(a.image(), ""));
+                                            options.executorOptions(executorOptions);
                                         } else {
-                                            newArgs.add(NBootUtils.firstNonNull(a.getImage(), ""));
+                                            newArgs.add(NBootUtils.firstNonNull(a.image(), ""));
                                         }
                                     } else {
                                         if (options != null) {
-                                            List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                                            List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                                             applicationArguments.add(NBootUtils.firstNonNull(a.toString(), ""));
                                             List<String> list = Arrays.asList(cmdLine.toStringArray());
                                             applicationArguments.addAll(list);
                                             newArgs.addAll(list);
                                             cmdLine.skipAll();
-                                            options.setApplicationArguments(applicationArguments);
+                                            options.applicationArguments(applicationArguments);
                                         } else {
                                             newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                                             cmdLine.skipAll();
@@ -1385,7 +1385,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setCommandHelp(a.getBooleanValue());
+                                options.commandHelp(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1396,7 +1396,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setSkipErrors(a.getBooleanValue());
+                                options.skipErrors(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1408,7 +1408,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setLocale(a.getStringValue());
+                                options.locale(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1419,7 +1419,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setTheme(a.getStringValue());
+                                options.theme(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1430,9 +1430,9 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.isolationLevel(a.getBooleanValue() ? "SANDBOX" : null);
-                                if (a.getBooleanValue()) {
-                                    options.setWorkspace(null);
+                                options.isolationLevel(a.booleanValue() ? "SANDBOX" : null);
+                                if (a.booleanValue()) {
+                                    options.workspace(null);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1456,9 +1456,9 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.isolationLevel(a.getBooleanValue() ? "MEMORY" : null);
-                                if (a.getBooleanValue()) {
-                                    options.setWorkspace(null);
+                                options.isolationLevel(a.booleanValue() ? "MEMORY" : null);
+                                if (a.booleanValue()) {
+                                    options.workspace(null);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -1470,7 +1470,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.isolationLevel(a.getBooleanValue() ? "CONFINED" : null);
+                                options.isolationLevel(a.booleanValue() ? "CONFINED" : null);
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1481,7 +1481,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.isolationLevel(parseIsolationLevel(a.getStringValue()));
+                                options.isolationLevel(parseIsolationLevel(a.stringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1492,7 +1492,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.initLaunchers(a.getBooleanValue());
+                                options.initLaunchers(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1503,7 +1503,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.initJava(a.getBooleanValue());
+                                options.initJava(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1514,7 +1514,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.initPlatforms(a.getBooleanValue());
+                                options.initPlatforms(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1525,7 +1525,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.initScripts(a.getBooleanValue());
+                                options.initScripts(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1536,7 +1536,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.desktopLauncher(parseSupportMode(a.getStringValue()));
+                                options.desktopLauncher(parseSupportMode(a.stringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1547,7 +1547,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.menuLauncher(parseSupportMode(a.getStringValue()));
+                                options.menuLauncher(parseSupportMode(a.stringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1558,7 +1558,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.userLauncher(parseSupportMode(a.getStringValue()));
+                                options.userLauncher(parseSupportMode(a.stringValue()));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -1580,22 +1580,22 @@ public final class NBootWorkspaceCmdLineParser {
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             a = cmdLine.next();
                             if (options != null) {
-                                List<String> customOptions = options.getCustomOptions();
+                                List<String> customOptions = options.customOptions();
                                 if (customOptions == null) {
                                     customOptions = new ArrayList<>();
                                 }
                                 customOptions.add(a.toString());
-                                options.setCustomOptions(customOptions);
+                                options.customOptions(customOptions);
                             }
                             return (Collections.singletonList(a));
                         } else {
                             a = cmdLine.next();
-                            String r = NBootUtils.damerauLevenshteinClosest(0.5, a.getImage(), SUPPORTED_OPTIONS);
+                            String r = NBootUtils.damerauLevenshteinClosest(0.5, a.image(), SUPPORTED_OPTIONS);
                             NBootMsg errorMsg = null;
                             if (r != null) {
-                                errorMsg = (NBootMsg.ofC("nuts: invalid option %s. do you mean %s?", a.getImage(), r));
+                                errorMsg = (NBootMsg.ofC("nuts: invalid option %s. do you mean %s?", a.image(), r));
                             } else {
-                                errorMsg = (NBootMsg.ofC("nuts: invalid option %s", a.getImage()));
+                                errorMsg = (NBootMsg.ofC("nuts: invalid option %s", a.image()));
                             }
                             if (options != null) {
                                 addError(errorMsg, options);
@@ -1611,9 +1611,9 @@ public final class NBootWorkspaceCmdLineParser {
                 newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
                 if (options != null) {
-                    List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                    List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                     applicationArguments.addAll(newArgs);
-                    options.setApplicationArguments(applicationArguments);
+                    options.applicationArguments(applicationArguments);
                 }
                 return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
             }
@@ -1626,23 +1626,23 @@ public final class NBootWorkspaceCmdLineParser {
 
 
     public static void denullProperties(NBootOptionsInfo options) {
-        if (options.getErrors() == null) {
-            options.setErrors(new ArrayList<>());
+        if (options.errors() == null) {
+            options.errors(new ArrayList<>());
         }
-        if (options.getApplicationArguments() == null) {
-            options.setApplicationArguments(new ArrayList<>());
+        if (options.applicationArguments() == null) {
+            options.applicationArguments(new ArrayList<>());
         }
-        if (options.getExcludedExtensions() == null) {
-            options.setExcludedExtensions(new ArrayList<>());
+        if (options.excludedExtensions() == null) {
+            options.excludedExtensions(new ArrayList<>());
         }
-        if (options.getRepositories() == null) {
-            options.setRepositories(new ArrayList<>());
+        if (options.repositories() == null) {
+            options.repositories(new ArrayList<>());
         }
-        if (options.getExecutorOptions() == null) {
-            options.setExecutorOptions(new ArrayList<>());
+        if (options.executorOptions() == null) {
+            options.executorOptions(new ArrayList<>());
         }
-        if (options.getCustomOptions() == null) {
-            options.setCustomOptions(new ArrayList<>());
+        if (options.customOptions() == null) {
+            options.customOptions(new ArrayList<>());
         }
     }
     public static void parseNutsArguments(String[] bootArguments, NBootOptionsInfo options) {
@@ -1658,18 +1658,18 @@ public final class NBootWorkspaceCmdLineParser {
         }
         denullProperties(options);
         //error only if not asking for help
-        if (!(!options.getApplicationArguments().isEmpty()
-                && (options.getApplicationArguments().get(0).equals("help")
-                || NBootUtils.firstNonNull(options.getCommandHelp(), false)
-                || options.getApplicationArguments().get(0).equals("version")
-                || NBootUtils.firstNonNull(options.getCommandVersion(), false)))) {
-            if (!options.getErrors().isEmpty()) {
+        if (!(!options.applicationArguments().isEmpty()
+                && (options.applicationArguments().get(0).equals("help")
+                || NBootUtils.firstNonNull(options.commandHelp(), false)
+                || options.applicationArguments().get(0).equals("version")
+                || NBootUtils.firstNonNull(options.commandVersion(), false)))) {
+            if (!options.errors().isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
-                for (String s : options.getErrors()) {
+                for (String s : options.errors()) {
                     errorMessage.append(s).append("\n");
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
-                if (!NBootUtils.firstNonNull(options.getSkipErrors(), false)) {
+                if (!NBootUtils.firstNonNull(options.skipErrors(), false)) {
                     throw new NBootException(NBootMsg.ofPlain(errorMessage.toString()));
                 }
             }
@@ -1681,7 +1681,7 @@ public final class NBootWorkspaceCmdLineParser {
         switch (a.key()) {
             case "--log-file-size": {
                 a = cmdLine.nextEntry();
-                String v = a.getStringValue();
+                String v = a.stringValue();
                 if (enabled) {
                     Integer fileSize = NBootUtils.parseFileSizeInBytes(v, 1024 * 1024);
                     if (fileSize == null) {
@@ -1696,7 +1696,7 @@ public final class NBootWorkspaceCmdLineParser {
                         }
                     }
                     if (fileSize != null) {
-                        logConfig.setLogFileSize(fileSize);
+                        logConfig.logFileSize(fileSize);
                     }
                     return (a);
                 } else {
@@ -1707,7 +1707,7 @@ public final class NBootWorkspaceCmdLineParser {
             case "--log-file-count": {
                 a = cmdLine.nextEntry();
                 if (enabled) {
-                    logConfig.setLogFileCount(NBootUtils.firstNonNull(NBootUtils.parseInt(a.getValue()), 0));
+                    logConfig.logFileCount(NBootUtils.firstNonNull(NBootUtils.parseInt(a.value()), 0));
                     return (a);
                 } else {
                     return (a);
@@ -1716,9 +1716,9 @@ public final class NBootWorkspaceCmdLineParser {
 
             case "--log-file-name": {
                 a = cmdLine.nextEntry();
-                String v = a.getStringValue();
+                String v = a.stringValue();
                 if (enabled) {
-                    logConfig.setLogFileName(v);
+                    logConfig.logFileName(v);
                     return (a);
                 } else {
                     return (a);
@@ -1727,9 +1727,9 @@ public final class NBootWorkspaceCmdLineParser {
 
             case "--log-file-base": {
                 a = cmdLine.nextEntry();
-                String v = a.getStringValue();
+                String v = a.stringValue();
                 if (enabled) {
-                    logConfig.setLogFileBase(v);
+                    logConfig.logFileBase(v);
                     return (a);
                 } else {
                     return (a);
@@ -1748,7 +1748,7 @@ public final class NBootWorkspaceCmdLineParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.key();
-                    logConfig.setLogFileLevel(
+                    logConfig.logFileLevel(
                             parseLogLevel(id.substring("--log-file-".length()))
                     );
                 }
@@ -1768,7 +1768,7 @@ public final class NBootWorkspaceCmdLineParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.key();
-                    logConfig.setLogTermLevel(
+                    logConfig.logTermLevel(
                             parseLogLevel(id.substring("--log-term-".length()))
                     );
                 }
@@ -1779,9 +1779,9 @@ public final class NBootWorkspaceCmdLineParser {
             case "--verbose":
             {
                 cmdLine.skip();
-                if (enabled && NBootUtils.firstNonNull(a.getBooleanValue(), true)) {
-                    logConfig.setLogTermLevel(Level.FINEST);
-                    logConfig.setLogFileLevel(Level.FINEST);
+                if (enabled && NBootUtils.firstNonNull(a.booleanValue(), true)) {
+                    logConfig.logTermLevel(Level.FINEST);
+                    logConfig.logFileLevel(Level.FINEST);
                 }
                 return (a);
             }
@@ -1799,8 +1799,8 @@ public final class NBootWorkspaceCmdLineParser {
                 if (enabled) {
                     String id = a.key();
                     Level lvl = parseLogLevel(id.substring("--log-".length()));
-                    logConfig.setLogTermLevel(lvl);
-                    logConfig.setLogFileLevel(lvl);
+                    logConfig.logTermLevel(lvl);
+                    logConfig.logFileLevel(lvl);
                 }
                 return (a);
             }
@@ -2110,12 +2110,12 @@ public final class NBootWorkspaceCmdLineParser {
 
     private static void addError(NBootMsg errorMessage, NBootOptionsInfo options) {
         if (errorMessage != null && options != null) {
-            List<String> showError = options.getErrors();
+            List<String> showError = options.errors();
             if (showError == null) {
                 showError = new ArrayList<>();
             }
             showError.add(errorMessage.toString());
-            options.setErrors(showError);
+            options.errors(showError);
         }
     }
 

@@ -383,12 +383,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     //    @Override
     public NDescriptorBuilder copyFrom(NBootDescriptor other) {
         if (other != null) {
-            id(other.getId() == null ? null : NId.get(other.getId().toString()).get());
-            packaging(other.getPackaging());
-            parents(other.getParents() == null ? null : other.getParents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
-            condition(other.getId()==null?null:new DefaultNEnvConditionBuilder().copyConditionsFromDependency(other.getId()).build());
-            dependencies(other.getDependencies() == null ? null : other.getDependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
-            setProperties(other.getProperties() == null ? null : other.getProperties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            id(other.id() == null ? null : NId.get(other.id().toString()).get());
+            packaging(other.packaging());
+            parents(other.parents() == null ? null : other.parents().stream().map(x -> NId.get(x.toString()).get()).collect(Collectors.toList()));
+            condition(other.id()==null?null:new DefaultNEnvConditionBuilder().copyConditionsFromDependency(other.id()).build());
+            dependencies(other.dependencies() == null ? null : other.dependencies().stream().map(x -> new DefaultNDependencyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
+            setProperties(other.properties() == null ? null : other.properties().stream().map(x -> new DefaultNDescriptorPropertyBuilder().copyFrom(x).build()).collect(Collectors.toList()));
             idType(null);
             executor(null);
             installer(null);

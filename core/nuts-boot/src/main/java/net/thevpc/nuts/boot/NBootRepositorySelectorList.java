@@ -85,7 +85,7 @@ public class NBootRepositorySelectorList {
 //                    return NOptional.ofError(() -> NMsgBoot.ofC("invalid selector list : %s", expression));
                 }
                 NBootRepositorySelector e = oe;
-                op = e.getOp();
+                op = e.op();
                 all.add(e);
             }
         }
@@ -107,11 +107,11 @@ public class NBootRepositorySelectorList {
         if (available != null) {
             for (NBootRepositoryLocation entry : available) {
                 if (entry != null) {
-                    String k = entry.getName();
+                    String k = entry.name();
                     String v = entry.getFullLocation();
                     if (NBootUtils.isBlank(v) && !NBootUtils.isBlank(k)) {
                         NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(k);
-                        String u = ro == null ? null : ro.getConfig().location().getFullLocation();
+                        String u = ro == null ? null : ro.config().location().getFullLocation();
                         if (u != null) {
                             v = u;
                         } else {
@@ -119,7 +119,7 @@ public class NBootRepositorySelectorList {
                         }
                     } else if (!NBootUtils.isBlank(v) && NBootUtils.isBlank(k)) {
                         NBootAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(k);
-                        String n = ro == null ? null : ro.getName();
+                        String n = ro == null ? null : ro.name();
                         if (n != null) {
                             k = n;
                         }
@@ -135,7 +135,7 @@ public class NBootRepositorySelectorList {
         List<NBootRepositorySelector> selectorsInclude = new ArrayList<>();
         boolean exact = false;
         for (NBootRepositorySelector selector : selectors) {
-            switch (selector.getOp()) {
+            switch (selector.op()) {
                 case "EXACT": {
                     exact = true;
                     selectorsInclude.add(selector);
@@ -175,19 +175,19 @@ public class NBootRepositorySelectorList {
                     fo = db.getRepositoryOptionsByName(n);
                     break;
                 }
-                String newName = r.getName() == null ? (fo == null ? null : fo.getName()) : r.getName();
-                NBootRepositoryLocation newLocation = r.getLocation();
-                if (fo != null && fo.getConfig() != null && fo.getConfig().location() != null) {
-                    if (fo.getConfig().location().getLocationType() != null) {
-                        newLocation = newLocation.setLocationType(fo.getConfig().location().getLocationType());
+                String newName = r.name() == null ? (fo == null ? null : fo.name()) : r.name();
+                NBootRepositoryLocation newLocation = r.location();
+                if (fo != null && fo.config() != null && fo.config().location() != null) {
+                    if (fo.config().location().locationType() != null) {
+                        newLocation = newLocation.locationType(fo.config().location().locationType());
                     }
-                    if (fo.getConfig().location().getLocationType() != null) {
+                    if (fo.config().location().locationType() != null) {
                         //name is the same as path, so move it to the path...
-                        if (NBootUtils.isBlank(newLocation.getPath())
-                                || Objects.equals(newLocation.getPath(), fo.getConfig().location().getName())
-                                || Objects.equals(newLocation.getPath(), fo.getConfig().location().getLocationType())
+                        if (NBootUtils.isBlank(newLocation.path())
+                                || Objects.equals(newLocation.path(), fo.config().location().name())
+                                || Objects.equals(newLocation.path(), fo.config().location().locationType())
                         ) {
-                            newLocation = newLocation.setPath(fo.getConfig().location().getPath());
+                            newLocation = newLocation.path(fo.config().location().path());
                         }
                     }
                 }
@@ -196,7 +196,7 @@ public class NBootRepositorySelectorList {
         }
         for (NBootRepositoryLocation e : current.toArray()) {
             if (acceptExisting(e)) {
-                Set<String> allNames = db.findAllNamesByName(e.getName());
+                Set<String> allNames = db.findAllNamesByName(e.name());
                 if (!isVisitedFlag(allNames, visited)) {
                     visited.addAll(allNames);
                     result.add(e);
@@ -207,24 +207,24 @@ public class NBootRepositorySelectorList {
     }
 
     private Set<String> getAllNames(NBootRepositorySelector r, NBootRepositoryDB db) {
-        if (!NBootUtils.isBlank(r.getName())) {
-            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByName(r.getName());
-            if (lo == null && !NBootUtils.isBlank(r.getLocation().getTypeAndPath())) {
-                lo = db.getRepositoryOptionsByName(r.getLocation().getTypeAndPath());
+        if (!NBootUtils.isBlank(r.name())) {
+            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByName(r.name());
+            if (lo == null && !NBootUtils.isBlank(r.location().typeAndPath())) {
+                lo = db.getRepositoryOptionsByName(r.location().typeAndPath());
             }
             if (lo != null) {
-                return db.findAllNamesByName(lo.getName());
+                return db.findAllNamesByName(lo.name());
             }
-            return Collections.singleton(r.getName());
-        } else if (!NBootUtils.isBlank(r.getLocation().getTypeAndPath())) {
-            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByLocation(r.getLocation().getTypeAndPath());
-            if (lo == null && !NBootUtils.isBlank(r.getName())) {
-                lo = db.getRepositoryOptionsByLocation(r.getName());
+            return Collections.singleton(r.name());
+        } else if (!NBootUtils.isBlank(r.location().typeAndPath())) {
+            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByLocation(r.location().typeAndPath());
+            if (lo == null && !NBootUtils.isBlank(r.name())) {
+                lo = db.getRepositoryOptionsByLocation(r.name());
             }
             if (lo == null) {
-                lo = db.getRepositoryOptionsByName(r.getLocation().getTypeAndPath());
+                lo = db.getRepositoryOptionsByName(r.location().typeAndPath());
             }
-            String name = lo == null ? null : lo.getName();
+            String name = lo == null ? null : lo.name();
             return db.findAllNamesByName(name);
         }
 
@@ -246,7 +246,7 @@ public class NBootRepositorySelectorList {
         boolean includeOthers = true;
         for (NBootRepositorySelector s : selectors) {
             if (s.matches(location)) {
-                switch (s.getOp()) {
+                switch (s.op()) {
                     case "EXACT":
                     case "INCLUDE":
                         return true;
@@ -254,7 +254,7 @@ public class NBootRepositorySelectorList {
                         return false;
                 }
             }
-            if (s.getOp().equals("EXACT")) {
+            if (s.op().equals("EXACT")) {
                 includeOthers = false;
             }
         }

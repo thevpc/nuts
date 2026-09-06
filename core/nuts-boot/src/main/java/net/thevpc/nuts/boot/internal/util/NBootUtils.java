@@ -303,13 +303,13 @@ public final class NBootUtils {
     }
 
     public static String getHome(String storeFolder, NBootOptionsInfo bOptions) {
-        return (firstNonNull(bOptions.getSystem(), false) ?
-                NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
-                NBootPlatformHome.of(bOptions.getStoreLayout()))
+        return (firstNonNull(bOptions.system(), false) ?
+                NBootPlatformHome.ofSystem(bOptions.storeLayout()) :
+                NBootPlatformHome.of(bOptions.storeLayout()))
                 .getWorkspaceLocation(
                         storeFolder,
-                        bOptions.getHomeLocations(),
-                        bOptions.getName()
+                        bOptions.homeLocations(),
+                        bOptions.name()
                 );
     }
 
@@ -340,15 +340,15 @@ public final class NBootUtils {
     }
 
     public static boolean isAcceptCondition(NBootDependency cond) {
-        List<String> oss = uniqueNonBlankStringList(cond.getConditionOs());
-        List<String> archs = uniqueNonBlankStringList(cond.getConditionArch());
+        List<String> oss = uniqueNonBlankStringList(cond.conditionOs());
+        List<String> archs = uniqueNonBlankStringList(cond.conditionArch());
         if (!oss.isEmpty()) {
             String eos = NBootPlatformHome.currentOsFamily();
             boolean osOk = false;
             for (String e : oss) {
                 NBootDependency ee = NBootDependency.of(e);
-                if (ee.getShortName().equalsIgnoreCase(eos)) {
-                    if (acceptVersion(ee.getVersion(), System.getProperty("os.version"))) {
+                if (ee.shortName().equalsIgnoreCase(eos)) {
+                    if (acceptVersion(ee.version(), System.getProperty("os.version"))) {
                         osOk = true;
                     }
                     break;
@@ -393,14 +393,14 @@ public final class NBootUtils {
             NBootDependency idBuilder = new NBootDependency();
             String group = m.group("group");
             String artifact = m.group("artifact");
-            idBuilder.setArtifactId(artifact);
-            idBuilder.setVersion(m.group("version"));
+            idBuilder.artifactId(artifact);
+            idBuilder.version(m.group("version"));
             if (artifact == null) {
                 artifact = group;
                 group = null;
             }
-            idBuilder.setArtifactId(artifact);
-            idBuilder.setGroupId(group);
+            idBuilder.artifactId(artifact);
+            idBuilder.groupId(group);
 
             Map<String, String> queryMap = NBootStringMapFormat.DEFAULT.parse(m.group("query"));
 
@@ -412,7 +412,7 @@ public final class NBootUtils {
                 setIdProperty(key, value, idBuilder, idProperties);
             }
 
-            return idBuilder.setProperties(idProperties);
+            return idBuilder.properties(idProperties);
         }
         throw new NBootException(NBootMsg.ofC("invalid id format : %s", nutsId));
     }
@@ -656,10 +656,10 @@ public final class NBootUtils {
     }
 
     public static boolean isBootOptional(String name, NBootOptionsInfo bOptions) {
-        if (bOptions.getCustomOptions() != null) {
-            for (String property : bOptions.getCustomOptions()) {
+        if (bOptions.customOptions() != null) {
+            for (String property : bOptions.customOptions()) {
                 NBootArg a = new NBootArg(property);
-                if (("boot-" + name).equals(a.getKey())) {
+                if (("boot-" + name).equals(a.key())) {
                     return true;
                 }
             }
@@ -668,11 +668,11 @@ public final class NBootUtils {
     }
 
     public static boolean isBootOptional(NBootOptionsInfo bOptions) {
-        if (bOptions.getCustomOptions() != null) {
-            for (String property : bOptions.getCustomOptions()) {
+        if (bOptions.customOptions() != null) {
+            for (String property : bOptions.customOptions()) {
                 NBootArg a = new NBootArg(property);
-                if ("boot-optional".equals(a.getKey())) {
-                    return parseBooleanOr(a.getValue(), true);
+                if ("boot-optional".equals(a.key())) {
+                    return parseBooleanOr(a.value(), true);
                 }
             }
         }
@@ -754,9 +754,9 @@ public final class NBootUtils {
     public static boolean isAcceptDependency(NBootDependency s, NBootOptionsInfo bOptions) {
         boolean bootOptionals = isBootOptional(bOptions);
         //by default ignore optionals
-        String o = s.getOptional();
+        String o = s.optional();
         if (isBlank(o) || Boolean.parseBoolean(o)) {
-            if (!bootOptionals && !isBootOptional(s.getArtifactId(), bOptions)) {
+            if (!bootOptionals && !isBootOptional(s.artifactId(), bOptions)) {
                 return false;
             }
         }
@@ -841,7 +841,7 @@ public final class NBootUtils {
     public static String toDependencyExclusionListString(List<NBootDependency> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NBootDependency exclusion : exclusions) {
-            ex.add(exclusion.getShortName());
+            ex.add(exclusion.shortName());
         }
         return String.join(",", ex);
     }
@@ -852,32 +852,32 @@ public final class NBootUtils {
         }
         switch (key) {
             case NBootConstants.IdProperties.PROFILE: {
-                builder.setConditionProfile(splitDefault(value));
+                builder.conditionProfile(splitDefault(value));
                 break;
             }
             case NBootConstants.IdProperties.PLATFORM: {
-                builder.setConditionPlatform(parsePropertyIdList(value));
+                builder.conditionPlatform(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.OS_DIST: {
-                builder.setConditionOsDist(parsePropertyIdList(value));
+                builder.conditionOsDist(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.ARCH: {
-                builder.setConditionArch(parsePropertyIdList(value));
+                builder.conditionArch(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.OS: {
-                builder.setConditionOs(parsePropertyIdList(value));
+                builder.conditionOs(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.DESKTOP: {
-                builder.setConditionDesktopEnvironment(parsePropertyIdList(value));
+                builder.conditionDesktopEnvironment(parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.CONDITIONAL_PROPERTIES: {
                 Map<String, String> mm = NBootStringMapFormat.COMMA_FORMAT.parse(value);
-                builder.setConditionProperties(mm);
+                builder.conditionProperties(mm);
                 break;
             }
             default: {
@@ -1202,15 +1202,15 @@ public final class NBootUtils {
     }
 
     private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds) {
-        String shortName = NBootDependency.of(node.getId()).getShortName();
+        String shortName = NBootDependency.of(node.id()).shortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
-                urls.add(node.getURL());
+                urls.add(node.url());
             } else {
-                NBootContext.log().with().level(Level.WARNING).verbCache().log(NBootMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                NBootContext.log().with().level(Level.WARNING).verbCache().log(NBootMsg.ofC("url will not be loaded (already in classloader) : %s", node.url()));
             }
-            for (NBootClassLoaderNode dependency : node.getDependencies()) {
+            for (NBootClassLoaderNode dependency : node.dependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds);
             }
         }
@@ -1231,9 +1231,9 @@ public final class NBootUtils {
         for (URL url : urls) {
             NBootDependency[] nutsBootIds = NReservedMavenUtilsBoot.resolveJarIds(url);
             for (NBootDependency i : nutsBootIds) {
-                if (isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
-                    if (isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
-                        if (isBlank(id.getVersion()) || i.getVersion().equals(id.getVersion())) {
+                if (isBlank(id.groupId()) || i.groupId().equals(id.groupId())) {
+                    if (isBlank(id.artifactId()) || i.artifactId().equals(id.artifactId())) {
+                        if (isBlank(id.version()) || i.version().equals(id.version())) {
                             return url;
                         }
                     }
@@ -1353,13 +1353,13 @@ public final class NBootUtils {
 
     public static String resolveIdPath(NBootDependency id) {
         StringBuilder sb = new StringBuilder();
-        sb.append(resolveGroupIdPath(id.getGroupId()));
-        if (!isBlank(id.getArtifactId())) {
+        sb.append(resolveGroupIdPath(id.groupId()));
+        if (!isBlank(id.artifactId())) {
             sb.append("/");
-            sb.append(id.getArtifactId());
-            if (!isBlank(id.getVersion())) {
+            sb.append(id.artifactId());
+            if (!isBlank(id.version())) {
                 sb.append("/");
-                sb.append(id.getVersion());
+                sb.append(id.version());
             }
         }
         return sb.toString();
@@ -1379,9 +1379,9 @@ public final class NBootUtils {
 
     public static String resolveFileName(NBootDependency id, String extension) {
         StringBuilder sb = new StringBuilder();
-        sb.append(id.getArtifactId());
-        if (!isBlank(id.getVersion())) {
-            sb.append("-").append(id.getVersion());
+        sb.append(id.artifactId());
+        if (!isBlank(id.version())) {
+            sb.append("-").append(id.version());
         }
         if (!isBlank(extension)) {
             sb.append(".").append(extension);
@@ -1953,7 +1953,7 @@ public final class NBootUtils {
                         headerWritten = true;
                         if (!force && !refForceAll.isForce(true)) {
                             if (header != null) {
-                                if (!firstNonNull(bOptions.getBot(), false)) {
+                                if (!firstNonNull(bOptions.bot(), false)) {
                                     NBootContext.log().with().level(Level.WARNING).verbAlert().log(NBootMsg.ofC("%s", header));
                                 }
                             }
@@ -1969,8 +1969,8 @@ public final class NBootUtils {
     private static long deleteAndConfirm(Path directory, boolean force, NBootDeleteFilesContextBoot refForceAll,
                                          NBootOptionsInfo bOptions, Supplier<String> readline) {
         String confirm = _confirm(bOptions);
-        boolean bot = firstNonNull(bOptions.getBot(), false);
-        boolean gui = firstNonNull(bOptions.getGui(), false);
+        boolean bot = firstNonNull(bOptions.bot(), false);
+        boolean gui = firstNonNull(bOptions.gui(), false);
         if (Files.exists(directory)) {
             NBootLog log = NBootContext.log();
             if (!force && !refForceAll.isForce(true) && refForceAll.accept(directory)) {
@@ -2101,7 +2101,7 @@ public final class NBootUtils {
     }
 
     public static String getStoreLocationPath(NBootOptionsInfo bOptions, String storeType) {
-        Map<String, String> storeLocations = bOptions.getStoreLocations();
+        Map<String, String> storeLocations = bOptions.storeLocations();
         if (storeLocations != null) {
             return storeLocations.get(enumId(storeType));
         }
@@ -2120,7 +2120,7 @@ public final class NBootUtils {
         }
         String confirm = _confirm(o);
         if (sameEnum(confirm, "ASK")
-                && !sameEnum(enumId(firstNonNull(o.getOutputFormat(), "PLAIN")), "PLAIN")) {
+                && !sameEnum(enumId(firstNonNull(o.outputFormat(), "PLAIN")), "PLAIN")) {
             throw new NBootException(
                     NBootMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
@@ -2128,7 +2128,7 @@ public final class NBootUtils {
         }
         NBootLog log = NBootContext.log();
         log.with().level(Level.FINEST).verbAlert().log(NBootMsg.ofC("delete workspace location(s) at : %s",
-                lastBootOptions.getWorkspace()
+                lastBootOptions.workspace()
         ));
         boolean force = false;
         switch (confirm) {
@@ -2147,11 +2147,11 @@ public final class NBootUtils {
         }
         List<Path> folders = new ArrayList<>();
         if (includeRoot) {
-            folders.add(Paths.get(lastBootOptions.getWorkspace()));
+            folders.add(Paths.get(lastBootOptions.workspace()));
         }
-        NBootPlatformHome hh = (firstNonNull(o.getSystem(), false) ?
-                NBootPlatformHome.ofSystem(o.getStoreLayout()) :
-                NBootPlatformHome.of(o.getStoreLayout()));
+        NBootPlatformHome hh = (firstNonNull(o.system(), false) ?
+                NBootPlatformHome.ofSystem(o.storeLayout()) :
+                NBootPlatformHome.of(o.storeLayout()));
 
         for (Object ovalue : storeTypesOrPaths) {
             if (ovalue != null) {
@@ -2174,8 +2174,8 @@ public final class NBootUtils {
             }
         }
         NBootOptionsInfo optionsCopy = o.copy();
-        if (firstNonNull(optionsCopy.getBot(), false) || !isGraphicalDesktopEnvironment()) {
-            optionsCopy.setGui(false);
+        if (firstNonNull(optionsCopy.bot(), false) || !isGraphicalDesktopEnvironment()) {
+            optionsCopy.gui(false);
         }
         return deleteAndConfirmAll(folders.toArray(new Path[0]), force,
                 "ATTENTION ! You are about to delete nuts workspace files."
@@ -2183,7 +2183,7 @@ public final class NBootUtils {
     }
 
     private static String _confirm(NBootOptionsInfo o) {
-        return enumName(firstNonNull(o.getConfirm(), "ASK"));
+        return enumName(firstNonNull(o.confirm(), "ASK"));
     }
 
     /**
@@ -2193,7 +2193,7 @@ public final class NBootUtils {
                                                 Supplier<String> readline) {
         String confirm = _confirm(bOptions);
         if (sameEnum(confirm, "ASK")
-                && !sameEnum(enumName(firstNonNull(bOptions.getOutputFormat(), "PLAIN")), "PLAIN")) {
+                && !sameEnum(enumName(firstNonNull(bOptions.outputFormat(), "PLAIN")), "PLAIN")) {
             throw new NBootException(
                     NBootMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
@@ -2218,9 +2218,9 @@ public final class NBootUtils {
         }
         LinkedHashSet<Path> folders = new LinkedHashSet<>();
 
-        NBootPlatformHome hh = (firstNonNull(bOptions.getSystem(), false) ?
-                NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
-                NBootPlatformHome.of(bOptions.getStoreLayout()));
+        NBootPlatformHome hh = (firstNonNull(bOptions.system(), false) ?
+                NBootPlatformHome.ofSystem(bOptions.storeLayout()) :
+                NBootPlatformHome.of(bOptions.storeLayout()));
         folders.add(Paths.get(hh.getHome()).resolve("ws"));
 
 
@@ -2233,7 +2233,7 @@ public final class NBootUtils {
         ///  current WS
 
         if (lastBootOptions != null) {
-            folders.add(Paths.get(lastBootOptions.getWorkspace()));
+            folders.add(Paths.get(lastBootOptions.workspace()));
             for (Object ovalue : NBootPlatformHome.storeTypes()) {
                 if (ovalue != null) {
                     if (ovalue instanceof String) {
@@ -2252,9 +2252,9 @@ public final class NBootUtils {
             }
         }
 
-        String _ws = bOptions.getWorkspace();
+        String _ws = bOptions.workspace();
         if (!isRemoteWorkspaceLocation(_ws)) {
-            Boolean systemWorkspace = NBootUtils.firstNonNull(bOptions.getSystem(), false);
+            Boolean systemWorkspace = NBootUtils.firstNonNull(bOptions.system(), false);
             String lastNutsWorkspaceJsonConfigPath = NBootUtils.isValidWorkspaceName(_ws) ? NBootPlatformHome.of(null, systemWorkspace)
                     .getWorkspaceLocation(NBootUtils.resolveValidWorkspaceName(_ws)) : NBootUtils.getAbsolutePath(_ws);
             folders.add(Paths.get(lastNutsWorkspaceJsonConfigPath));
@@ -2277,8 +2277,8 @@ public final class NBootUtils {
         }
 
         NBootOptionsInfo optionsCopy = bOptions.copy();
-        if (firstNonNull(optionsCopy.getBot(), false) || !isGraphicalDesktopEnvironment()) {
-            optionsCopy.setGui(false);
+        if (firstNonNull(optionsCopy.bot(), false) || !isGraphicalDesktopEnvironment()) {
+            optionsCopy.gui(false);
         }
         return deleteAndConfirmAll(folders.stream().sorted().toArray(Path[]::new), force,
                 "ATTENTION ! You are about to delete workspaces and all nuts configuration files."
@@ -2970,9 +2970,9 @@ public final class NBootUtils {
         if (bo == null) {
             return false;
         }
-        if (bo.getBot() != null && bo.getBot()) {
+        if (bo.bot() != null && bo.bot()) {
             return false;
-        } else if (bo.getGui() != null && bo.getGui()) {
+        } else if (bo.gui() != null && bo.gui()) {
             return isGraphicalDesktopEnvironment();
         } else {
             return false;
@@ -3048,20 +3048,20 @@ public final class NBootUtils {
         if (bo == null) {
             return true;
         }
-        if (bo.getShowStacktrace() != null) {
-            return bo.getShowStacktrace();
-        } else if (bo.getBot() != null && bo.getBot()) {
+        if (bo.showStacktrace() != null) {
+            return bo.showStacktrace();
+        } else if (bo.bot() != null && bo.bot()) {
             return false;
         } else {
             if (getSysBoolNutsProperty("stacktrace", false)) {
                 return true;
             }
-            if (bo.getDebug() != null && !isBlank(bo.getDebug())) {
+            if (bo.debug() != null && !isBlank(bo.debug())) {
                 return true;
             }
-            NBootLogConfig nLogConfig = bo.getLogConfig();
-            if (nLogConfig != null && nLogConfig.getLogTermLevel() != null
-                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue()) {
+            NBootLogConfig nLogConfig = bo.logConfig();
+            if (nLogConfig != null && nLogConfig.logTermLevel() != null
+                    && nLogConfig.logTermLevel().intValue() < Level.INFO.intValue()) {
                 return true;
             }
             return false;

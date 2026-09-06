@@ -519,7 +519,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             wsModel.configModel.setBootApiVersion(cfg.getApiVersion());
             wsModel.configModel.setBootRuntimeId(cfg.getRuntimeId(),
                     effectiveBootOptions.runtimeBootDescriptor().isEmpty() ? "" :
-                            NBootHelper.toDependencyList(effectiveBootOptions.runtimeBootDescriptor().get().getDependencies()).stream()
+                            NBootHelper.toDependencyList(effectiveBootOptions.runtimeBootDescriptor().get().dependencies()).stream()
                             .map(NDependency::toString)
                             .collect(Collectors.joining(";"))
             );
@@ -600,7 +600,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NWorkspaceConfigRuntime rconfig = new NWorkspaceConfigRuntime();
         rconfig.setDependencies(
                 effectiveBootOptions.runtimeBootDescriptor().isEmpty() ? "" :
-                        NBootHelper.toDependencyList(effectiveBootOptions.runtimeBootDescriptor().get().getDependencies()).stream()
+                        NBootHelper.toDependencyList(effectiveBootOptions.runtimeBootDescriptor().get().dependencies()).stream()
                         .map(NDependency::toString)
                         .collect(Collectors.joining(";"))
         );
@@ -818,7 +818,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (effectiveBootOptions.runtimeBootDescriptor().isPresent()) {
                 wsModel.LOG.log(mread.withMsgC("   nuts-runtime-dependencies      : %s",
                         NTextBuilder.of().appendJoined(NText.ofStyled(";", NTextStyle.separator()),
-                                effectiveBootOptions.runtimeBootDescriptor().get().getDependencies().stream()
+                                effectiveBootOptions.runtimeBootDescriptor().get().dependencies().stream()
                                         .map(x -> NId.get(x.toString()).get())
                                         .collect(Collectors.toList())
                         )

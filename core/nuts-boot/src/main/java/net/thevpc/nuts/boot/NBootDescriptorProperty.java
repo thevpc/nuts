@@ -61,22 +61,22 @@ public class NBootDescriptorProperty {
         copyFrom(other);
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 
 
-    public NBootDescriptorProperty setName(String name) {
+    public NBootDescriptorProperty name(String name) {
         this.name = name;
         return this;
     }
 
 
-    public NBootDescriptorProperty setValue(String value) {
+    public NBootDescriptorProperty value(String value) {
         this.value = value;
         return this;
     }
@@ -84,26 +84,26 @@ public class NBootDescriptorProperty {
 
     public NBootDescriptorProperty copyFrom(NBootDescriptorProperty value) {
         if (value == null) {
-            this.setName(null);
-            this.setValue(null);
-            this.setConditionOs(null)
-                    .setConditionOsDist(null)
-                    .setConditionArch(null)
-                    .setConditionPlatform(null)
-                    .setConditionDesktopEnvironment(null)
-                    .setConditionProfile(null)
-                    .setConditionProperties(null);
+            this.name(null);
+            this.value(null);
+            this.conditionOs(null)
+                    .conditionOsDist(null)
+                    .conditionArch(null)
+                    .conditionPlatform(null)
+                    .conditionDesktopEnvironment(null)
+                    .conditionProfile(null)
+                    .conditionProperties(null);
 
         } else {
-            this.setName(value.getName());
-            this.setValue(value.getValue());
-            this.setConditionOs(value.getConditionOs())
-                    .setConditionOsDist(value.getConditionOsDist())
-                    .setConditionArch(value.getConditionArch())
-                    .setConditionPlatform(value.getConditionPlatform())
-                    .setConditionDesktopEnvironment(value.getConditionDesktopEnvironment())
-                    .setConditionProfile(value.getConditionProfiles())
-                    .setConditionProperties(value.getConditionProperties());
+            this.name(value.name());
+            this.value(value.value());
+            this.conditionOs(value.conditionOs())
+                    .conditionOsDist(value.conditionOsDist())
+                    .conditionArch(value.conditionArch())
+                    .conditionPlatform(value.conditionPlatform())
+                    .conditionDesktopEnvironment(value.conditionDesktopEnvironment())
+                    .conditionProfile(value.conditionProfiles())
+                    .conditionProperties(value.conditionProperties());
         }
         return this;
     }
@@ -129,65 +129,65 @@ public class NBootDescriptorProperty {
         return new NBootDescriptorProperty(this);
     }
 
-    public List<String> getConditionArch() {
+    public List<String> conditionArch() {
         return conditionArch;
     }
 
-    public List<String> getConditionOs() {
+    public List<String> conditionOs() {
         return conditionOs;
     }
 
-    public List<String> getConditionOsDist() {
+    public List<String> conditionOsDist() {
         return conditionOsDist;
     }
 
-    public List<String> getConditionPlatform() {
+    public List<String> conditionPlatform() {
         return conditionPlatform;
     }
 
-    public List<String> getConditionDesktopEnvironment() {
+    public List<String> conditionDesktopEnvironment() {
         return conditionDesktopEnvironment;
     }
 
-    public List<String> getConditionProfiles() {
+    public List<String> conditionProfiles() {
         return conditionProfiles;
     }
 
-    public Map<String, String> getConditionProperties() {
+    public Map<String, String> conditionProperties() {
         return conditionProperties;
     }
 
-    public NBootDescriptorProperty setConditionProperties(Map<String, String> conditionProperties) {
+    public NBootDescriptorProperty conditionProperties(Map<String, String> conditionProperties) {
         this.conditionProperties = conditionProperties == null ? null : new HashMap<>(conditionProperties);
         return this;
     }
 
-    public NBootDescriptorProperty setConditionDesktopEnvironment(List<String> conditionDesktopEnvironment) {
+    public NBootDescriptorProperty conditionDesktopEnvironment(List<String> conditionDesktopEnvironment) {
         this.conditionDesktopEnvironment = NBootUtils.uniqueNonBlankStringList(conditionDesktopEnvironment);
         return this;
     }
 
-    public NBootDescriptorProperty setConditionProfile(List<String> profiles) {
+    public NBootDescriptorProperty conditionProfile(List<String> profiles) {
         this.conditionProfiles = profiles;
         return this;
     }
 
-    public NBootDescriptorProperty setConditionPlatform(List<String> conditionPlatform) {
+    public NBootDescriptorProperty conditionPlatform(List<String> conditionPlatform) {
         this.conditionPlatform = NBootUtils.uniqueNonBlankStringList(conditionPlatform);
         return this;
     }
 
-    public NBootDescriptorProperty setConditionOsDist(List<String> conditionOsDist) {
+    public NBootDescriptorProperty conditionOsDist(List<String> conditionOsDist) {
         this.conditionOsDist = NBootUtils.uniqueNonBlankStringList(conditionOsDist);
         return this;
     }
 
-    public NBootDescriptorProperty setConditionOs(List<String> conditionOs) {
+    public NBootDescriptorProperty conditionOs(List<String> conditionOs) {
         this.conditionOs = NBootUtils.uniqueNonBlankStringList(conditionOs);
         return this;
     }
 
-    public NBootDescriptorProperty setConditionArch(List<String> conditionArch) {
+    public NBootDescriptorProperty conditionArch(List<String> conditionArch) {
         this.conditionArch = NBootUtils.uniqueNonBlankStringList(conditionArch);
         return this;
     }

@@ -119,7 +119,7 @@ public class NReservedMavenUtilsBoot {
     }
 
     public static String getFileName(NBootDependency id, String ext) {
-        return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
+        return id.artifactId() + "-" + id.version() + "." + ext;
     }
 
     public static String toMavenPath(NBootDependency nutsId) {
@@ -128,7 +128,7 @@ public class NReservedMavenUtilsBoot {
 
     public static String resolveMavenFullPath(NBootRepositoryLocation repo, NBootDependency nutsId, String ext) {
         String jarPath = toMavenPath(nutsId) + "/" + getFileName(nutsId, ext);
-        String mvnUrl = repo.getPath();
+        String mvnUrl = repo.path();
         String sep = "/";
         if (!NBootUtils.isURL(mvnUrl)) {
             sep = File.separator;
@@ -185,7 +185,7 @@ public class NReservedMavenUtilsBoot {
         String nutsPath = NBootUtils.resolveFilePath(rid, "nuts");
         Set<NBootDependency> deps = null;
         for (NBootRepositoryLocation baseUrl : repos) {
-            String loc = baseUrl.getPath();
+            String loc = baseUrl.path();
             Set<String> urls = expandRepoUrls(baseUrl);
             for (String url : urls) {
                 if (url != null) {
@@ -318,8 +318,8 @@ public class NReservedMavenUtilsBoot {
                                                             version)
                                                     .setProperty(NBootConstants.IdProperties.OPTIONAL,
                                                             optionalBool ? Boolean.TRUE.toString() : null)
-                                                    .setConditionOs(Collections.singletonList(osMap.get(groupId + ":" + artifactId)))
-                                                    .setConditionArch(Collections.singletonList(archMap.get(groupId + ":" + artifactId)))
+                                                    .conditionOs(Collections.singletonList(osMap.get(groupId + ":" + artifactId)))
+                                                    .conditionArch(Collections.singletonList(archMap.get(groupId + ":" + artifactId)))
                                     )
                                     ;
                                 } else if (version.contains("$")) {
@@ -364,21 +364,21 @@ public class NReservedMavenUtilsBoot {
                 for (NBootDependency idep : depsSet) {
                     NBootDependency dep = idep.toDependency();
 
-                    String arch = archMap.get(idep.getShortName());
-                    String os = osMap.get(idep.getShortName());
+                    String arch = archMap.get(idep.shortName());
+                    String os = osMap.get(idep.shortName());
                     boolean replace = false;
                     if (arch != null || os != null) {
-                        if ((dep.getConditionOs().isEmpty() && os != null)
-                                || (dep.getConditionArch().isEmpty() && arch != null)) {
+                        if ((dep.conditionOs().isEmpty() && os != null)
+                                || (dep.conditionArch().isEmpty() && arch != null)) {
                             replace = true;
                         }
                     }
                     if (replace) {
                         ok.add(
-                                dep.setConditionArch(
-                                                arch != null ? Collections.singletonList(arch) : dep.getConditionArch())
-                                        .setConditionOs(
-                                                arch != null ? Collections.singletonList(arch) : dep.getConditionArch())
+                                dep.conditionArch(
+                                                arch != null ? Collections.singletonList(arch) : dep.conditionArch())
+                                        .conditionOs(
+                                                arch != null ? Collections.singletonList(arch) : dep.conditionArch())
                         );
                     } else {
                         ok.add(idep);
@@ -458,7 +458,7 @@ public class NReservedMavenUtilsBoot {
     static VersionAndPath resolveLatestMavenId(NBootDependency zId, String path, Predicate<NBootVersion> filter,
                                                NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options, boolean local, boolean remote) {
         String descType = "MAVEN";
-        if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
+        if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.locationType())) {
             descType = "NUTS";
         }
 
@@ -487,7 +487,7 @@ public class NReservedMavenUtilsBoot {
                                             if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                                 //we will ignore artifact classifier to simplify search
                                                 Path jarPath = file.toPath().resolve(
-                                                        getFileName(NBootDependency.of(zId.getGroupId(), zId.getArtifactId(), p.getValue()), "jar")
+                                                        getFileName(NBootDependency.of(zId.groupId(), zId.artifactId(), p.value()), "jar")
                                                 );
                                                 if (Files.isRegularFile(jarPath)) {
                                                     bestVersion = p;
@@ -590,11 +590,11 @@ public class NReservedMavenUtilsBoot {
                 }
             }
         }
-        String path = NBootUtils.resolveIdPath(zId.getShortId());
+        String path = NBootUtils.resolveIdPath(zId.shortId());
         NBootVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
-        String fetchStrategy = NBootUtils.firstNonNull(options.getFetchStrategy(), "ONLINE");
+        String fetchStrategy = NBootUtils.firstNonNull(options.fetchStrategy(), "ONLINE");
         boolean offline = true;
         boolean online = true;
         boolean stopFast = true;
@@ -655,7 +655,7 @@ public class NReservedMavenUtilsBoot {
         if (bestVersion == null) {
             return null;
         }
-        NBootDependency iid = NBootDependency.of(zId.getGroupId(), zId.getArtifactId(), bestVersion.getValue());
+        NBootDependency iid = NBootDependency.of(zId.groupId(), zId.artifactId(), bestVersion.value());
         log.with().level(Level.FINEST).verbSuccess().log(NBootMsg.ofC("resolve %s from %s", iid, bestPath));
         return iid;
     }
@@ -690,7 +690,7 @@ public class NReservedMavenUtilsBoot {
                                        Function<String, String> pathExpansionConverter) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter);
         if (f == null) {
-            throw new NBootInvalidWorkspaceException(bOptions.getWorkspace(),
+            throw new NBootInvalidWorkspaceException(bOptions.workspace(),
                     NBootMsg.ofC("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
         }
         return f;
@@ -703,7 +703,7 @@ public class NReservedMavenUtilsBoot {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
-            File f = new File(cacheFolder.getPath(), path.replace('/', File.separatorChar));
+            File f = new File(cacheFolder.path(), path.replace('/', File.separatorChar));
             if (NBootUtils.isFileAccessible(f.toPath(), expire)) {
                 return f;
             }
@@ -722,7 +722,7 @@ public class NReservedMavenUtilsBoot {
         if (e != null && e.jar != null) {
             return new File(e.jar);
         }
-        e = cache.fallbackIdMap.get(vid.getShortId());
+        e = cache.fallbackIdMap.get(vid.shortId());
         if (e != null && e.jar != null) {
             return new File(e.jar);
         }
@@ -740,7 +740,7 @@ public class NReservedMavenUtilsBoot {
             if (repository.startsWith("htmlfs+")) {
                 repository = repository.substring("htmlfs+".length());
             }
-            repository = NBootUtils.expandPath(repository, bOptions.getWorkspace(), pathExpansionConverter);
+            repository = NBootUtils.expandPath(repository, bOptions.workspace(), pathExpansionConverter);
             File repositoryFolder = null;
             if (NBootUtils.isURL(repository)) {
                 try {
@@ -757,7 +757,7 @@ public class NReservedMavenUtilsBoot {
                     return null;
                 }
                 File ok = null;
-                File to = new File(cacheFolder.getPath(), path);
+                File to = new File(cacheFolder.path(), path);
                 String urlPath = repository;
                 if (!urlPath.endsWith("/")) {
                     urlPath += "/";
@@ -792,7 +792,7 @@ public class NReservedMavenUtilsBoot {
 
             if (ff != null) {
                 if (cacheFolder != null && cacheLocalFiles) {
-                    File to = new File(cacheFolder.getPath(), path);
+                    File to = new File(cacheFolder.path(), path);
                     String toc = NBootUtils.getAbsolutePath(to.getPath());
                     String ffc = NBootUtils.getAbsolutePath(ff.getPath());
                     if (ffc.equals(toc)) {
@@ -830,10 +830,10 @@ public class NReservedMavenUtilsBoot {
 
     public static boolean isMavenSettingsRepo(NBootRepositoryLocation loc) {
         if (
-                "maven".equals(loc.getName())
-                        || "maven".equals(loc.getLocationType())
+                "maven".equals(loc.name())
+                        || "maven".equals(loc.locationType())
         ) {
-            return NBootUtils.isBlank(loc.getPath()) || "maven".equals(loc.getPath());
+            return NBootUtils.isBlank(loc.path()) || "maven".equals(loc.path());
         }
         return false;
     }
@@ -917,7 +917,7 @@ public class NReservedMavenUtilsBoot {
                     }
                     urls.addAll(loadMavenSettingsUrls(local, central, other));
                 } else {
-                    urls.add(repoUrl2.getPath());
+                    urls.add(repoUrl2.path());
                 }
                 return urls;
             }
@@ -930,14 +930,14 @@ public class NReservedMavenUtilsBoot {
         NMavenSettingsBoot mavenSettings = (NMavenSettingsBoot) NBootContext.cache().get(NMavenSettingsBoot.class.getName(), x -> new NMavenSettingsLoaderBoot().loadSettingsRepos());
         Set<String> urls = new LinkedHashSet<>();
         if (local) {
-            urls.add(mavenSettings.getLocalRepository());
+            urls.add(mavenSettings.localRepository());
         }
         if (central) {
-            urls.add(mavenSettings.getRemoteRepository());
+            urls.add(mavenSettings.remoteRepository());
         }
         if (other) {
-            for (NBootRepositoryLocation activeRepository : mavenSettings.getActiveRepositories()) {
-                urls.add(activeRepository.getPath());
+            for (NBootRepositoryLocation activeRepository : mavenSettings.activeRepositories()) {
+                urls.add(activeRepository.path());
             }
         }
         return urls;
@@ -1015,13 +1015,13 @@ public class NReservedMavenUtilsBoot {
                             NBootDependency nId = NBootDependency.of(id);
                             switch (propName) {
                                 case "groupId":
-                                    propValue = nId.getGroupId();
+                                    propValue = nId.groupId();
                                     break;
                                 case "artifactId":
-                                    propValue = nId.getArtifactId();
+                                    propValue = nId.artifactId();
                                     break;
                                 case "version":
-                                    propValue = nId.getVersion();
+                                    propValue = nId.version();
                                     break;
                             }
                         }

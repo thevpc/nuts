@@ -80,7 +80,7 @@ public class NBootDependency {
         if (version == null || version.isBlank()) {
             return API_ID;
         }
-        return of(NBootConstants.Ids.NUTS_GROUP_ID, NBootConstants.Ids.NUTS_API_ARTIFACT_ID, version.getValue());
+        return of(NBootConstants.Ids.NUTS_GROUP_ID, NBootConstants.Ids.NUTS_API_ARTIFACT_ID, version.value());
     }
 
     public static List<NBootDependency> ofList(String value) {
@@ -113,19 +113,19 @@ public class NBootDependency {
 
     public NBootDependency(NBootDependency other) {
         this(
-                other.getRepository(), other.getGroupId(), other.getArtifactId(), other.getClassifier(),
-                other.getVersion(),
-                other.getScope(),
-                other.getOptional(),
-                other.getExclusions(),
-                other.getType(), other.getPropertiesQuery(),
-                other.getConditionArch(),
-                other.getConditionOs(),
-                other.getConditionOsDist(),
-                other.getConditionPlatform(),
-                other.getConditionDesktopEnvironment(),
-                other.getConditionProfiles(),
-                other.getConditionProperties()
+                other.repository(), other.groupId(), other.artifactId(), other.classifier(),
+                other.version(),
+                other.scope(),
+                other.optional(),
+                other.exclusions(),
+                other.type(), other.propertiesQuery(),
+                other.conditionArch(),
+                other.conditionOs(),
+                other.conditionOsDist(),
+                other.conditionPlatform(),
+                other.conditionDesktopEnvironment(),
+                other.conditionProfiles(),
+                other.conditionProperties()
         );
     }
 
@@ -178,51 +178,51 @@ public class NBootDependency {
         this.artifactId = NBootUtils.trimToNull(artifactId);
         this.classifier = NBootUtils.trimToNull(classifier);
         this.version = version == null ? "" : version;
-        setPropertiesQuery(propertiesQuery);
+        propertiesQuery(propertiesQuery);
     }
 
 
-    public NBootDependency setId(NBootDependency id) {
+    public NBootDependency id(NBootDependency id) {
         if (id == null) {
-            setRepository(null);
-            setGroupId(null);
-            setArtifactId(null);
-            setVersion(null);
+            repository(null);
+            groupId(null);
+            artifactId(null);
+            version(null);
         } else {
-            setRepository(id.getRepository());
-            setGroupId(id.getGroupId());
-            setArtifactId(id.getArtifactId());
-            setVersion(id.getVersion());
-            this.setProperties(id.getProperties());
+            repository(id.repository());
+            groupId(id.groupId());
+            artifactId(id.artifactId());
+            version(id.version());
+            this.properties(id.properties());
         }
         return this;
     }
 
 
-    public NBootDependency setDependency(NBootDependency value) {
+    public NBootDependency dependency(NBootDependency value) {
         return copyFrom(value);
     }
 
 
     public NBootDependency copyFrom(NBootDependency value) {
         if (value != null) {
-            setRepository(value.getRepository());
-            setGroupId(value.getGroupId());
-            setArtifactId(value.getArtifactId());
-            setVersion(value.getVersion());
-            setScope(value.getScope());
-            setOptional(value.getOptional());
-            setExclusions(value.getExclusions());
-            setClassifier(value.getClassifier());
-            setType(value.getType());
-            setProperties(value.getProperties());
-            this.setConditionOs(value.getConditionOs())
-                    .setConditionOsDist(value.getConditionOsDist())
-                    .setConditionArch(value.getConditionArch())
-                    .setConditionPlatform(value.getConditionPlatform())
-                    .setConditionDesktopEnvironment(value.getConditionDesktopEnvironment())
-                    .setConditionProfile(value.getConditionProfiles())
-                    .setConditionProperties(value.getConditionProperties());
+            repository(value.repository());
+            groupId(value.groupId());
+            artifactId(value.artifactId());
+            version(value.version());
+            scope(value.scope());
+            optional(value.optional());
+            exclusions(value.exclusions());
+            classifier(value.classifier());
+            type(value.type());
+            properties(value.properties());
+            this.conditionOs(value.conditionOs())
+                    .conditionOsDist(value.conditionOsDist())
+                    .conditionArch(value.conditionArch())
+                    .conditionPlatform(value.conditionPlatform())
+                    .conditionDesktopEnvironment(value.conditionDesktopEnvironment())
+                    .conditionProfile(value.conditionProfiles())
+                    .conditionProperties(value.conditionProperties());
         } else {
             clear();
         }
@@ -231,23 +231,23 @@ public class NBootDependency {
 
 
     public NBootDependency clear() {
-        setRepository(null);
-        setGroupId(null);
-        setArtifactId(null);
-        setVersion(null);
-        setScope(null);
-        setOptional(null);
-        setExclusions((List<NBootDependency>) null);
-        setClassifier(null);
-        setType(null);
-        setProperties(null);
-        setConditionArch(new ArrayList<>());
-        setConditionOs(new ArrayList<>());
-        setConditionOsDist(new ArrayList<>());
-        setConditionPlatform(new ArrayList<>());
-        setConditionDesktopEnvironment(new ArrayList<>());
-        setConditionProfile(new ArrayList<>());
-        setConditionProperties(new LinkedHashMap<>());
+        repository(null);
+        groupId(null);
+        artifactId(null);
+        version(null);
+        scope(null);
+        optional(null);
+        exclusions((List<NBootDependency>) null);
+        classifier(null);
+        type(null);
+        properties(null);
+        conditionArch(new ArrayList<>());
+        conditionOs(new ArrayList<>());
+        conditionOsDist(new ArrayList<>());
+        conditionPlatform(new ArrayList<>());
+        conditionDesktopEnvironment(new ArrayList<>());
+        conditionProfile(new ArrayList<>());
+        conditionProperties(new LinkedHashMap<>());
         return this;
     }
 
@@ -256,23 +256,23 @@ public class NBootDependency {
         return Boolean.parseBoolean(optional);
     }
 
-    public String getType() {
+    public String type() {
         return type;
     }
 
 
-    public NBootDependency setType(String type) {
+    public NBootDependency type(String type) {
         this.type = NBootUtils.trimToNull(type);
         return this;
     }
 
 
-    public String getOptional() {
+    public String optional() {
         return optional;
     }
 
 
-    public NBootDependency setOptional(String optional) {
+    public NBootDependency optional(String optional) {
         String o = NBootUtils.trimToNull(optional);
         if ("false".equals(o)) {
             o = null;
@@ -284,62 +284,62 @@ public class NBootDependency {
     }
 
 
-    public String getScope() {
+    public String scope() {
         return scope;
     }
 
 
-    public NBootDependency setScope(String scope) {
+    public NBootDependency scope(String scope) {
         this.scope = scope == null ? "" : scope;
         return this;
     }
 
 
-    public String getRepository() {
+    public String repository() {
         return repository;
     }
 
 
-    public NBootDependency setRepository(String repository) {
+    public NBootDependency repository(String repository) {
         this.repository = NBootUtils.trimToNull(repository);
         return this;
     }
 
 
-    public String getGroupId() {
+    public String groupId() {
         return groupId;
     }
 
 
-    public NBootDependency setGroupId(String groupId) {
+    public NBootDependency groupId(String groupId) {
         this.groupId = NBootUtils.trimToNull(groupId);
         return this;
     }
 
 
-    public String getArtifactId() {
+    public String artifactId() {
         return artifactId;
     }
 
 
-    public NBootDependency setArtifactId(String artifactId) {
+    public NBootDependency artifactId(String artifactId) {
         this.artifactId = NBootUtils.trimToNull(artifactId);
         return this;
     }
 
 
-    public String getClassifier() {
+    public String classifier() {
         return classifier;
     }
 
 
-    public NBootDependency setClassifier(String classifier) {
+    public NBootDependency classifier(String classifier) {
         this.classifier = NBootUtils.trimToNull(classifier);
         return this;
     }
 
 
-    public String getFullName() {
+    public String fullName() {
         if (NBootUtils.isBlank(groupId)) {
             return NBootUtils.trim(artifactId);
         }
@@ -347,23 +347,23 @@ public class NBootDependency {
     }
 
 
-    public String getVersion() {
+    public String version() {
         return version;
     }
 
 
-    public NBootDependency setVersion(String version) {
+    public NBootDependency version(String version) {
         this.version = version == null ? "" : version;
         return this;
     }
 
 
-    public List<NBootDependency> getExclusions() {
+    public List<NBootDependency> exclusions() {
         return exclusions;
     }
 
 
-    public NBootDependency setExclusions(List<NBootDependency> exclusions) {
+    public NBootDependency exclusions(List<NBootDependency> exclusions) {
         this.exclusions = NBootUtils.nonNullList(exclusions);
         return this;
     }
@@ -371,19 +371,19 @@ public class NBootDependency {
 
     public NBootDependency copy() {
         return new NBootDependency(
-                getRepository(), getGroupId(), getArtifactId(), getClassifier(),
-                getVersion(),
-                getScope(),
-                getOptional(),
-                getExclusions(),
-                getType(), getPropertiesQuery(),
-                getConditionArch(),
-                getConditionOs(),
-                getConditionOsDist(),
-                getConditionPlatform(),
-                getConditionDesktopEnvironment(),
-                getConditionProfiles(),
-                getConditionProperties()
+                repository(), groupId(), artifactId(), classifier(),
+                version(),
+                scope(),
+                optional(),
+                exclusions(),
+                type(), propertiesQuery(),
+                conditionArch(),
+                conditionOs(),
+                conditionOsDist(),
+                conditionPlatform(),
+                conditionDesktopEnvironment(),
+                conditionProfiles(),
+                conditionProperties()
         );
     }
 
@@ -392,23 +392,23 @@ public class NBootDependency {
         if (property != null) {
             switch (property) {
                 case NBootConstants.IdProperties.SCOPE: {
-                    setScope(value);
+                    scope(value);
                     break;
                 }
                 case NBootConstants.IdProperties.VERSION: {
-                    setVersion(value);
+                    version(value);
                     break;
                 }
                 case NBootConstants.IdProperties.OPTIONAL: {
-                    setOptional(value);
+                    optional(value);
                     break;
                 }
                 case NBootConstants.IdProperties.REPO: {
-                    setRepository(value);
+                    repository(value);
                     break;
                 }
                 case NBootConstants.IdProperties.EXCLUSIONS: {
-                    setExclusions(value);
+                    exclusions(value);
                     break;
                 }
                 case NBootConstants.IdProperties.OS: {
@@ -432,7 +432,7 @@ public class NBootDependency {
                     break;
                 }
                 case NBootConstants.IdProperties.TYPE: {
-                    setType(value);
+                    type(value);
                     break;
                 }
                 case NBootConstants.IdProperties.PROFILE: {
@@ -471,7 +471,7 @@ public class NBootDependency {
     }
 
 
-    public NBootDependency setProperties(Map<String, String> queryMap) {
+    public NBootDependency properties(Map<String, String> queryMap) {
         properties.clear();
         if (queryMap != null) {
             for (Map.Entry<String, String> e : queryMap.entrySet()) {
@@ -482,53 +482,53 @@ public class NBootDependency {
     }
 
 
-    public NBootDependency setPropertiesQuery(String propertiesQuery) {
-        setProperties(NBootStringMapFormat.DEFAULT.parse(propertiesQuery));
+    public NBootDependency propertiesQuery(String propertiesQuery) {
+        properties(NBootStringMapFormat.DEFAULT.parse(propertiesQuery));
         return this;
     }
 
 
-    public String getPropertiesQuery() {
+    public String propertiesQuery() {
         return NBootStringMapFormat.DEFAULT.format(properties);
     }
 
 
-    public Map<String, String> getProperties() {
+    public Map<String, String> properties() {
         return properties;
     }
 
 
 
 
-    public List<String> getConditionArch() {
+    public List<String> conditionArch() {
         return conditionArch;
     }
 
-    public List<String> getConditionOs() {
+    public List<String> conditionOs() {
         return conditionOs;
     }
 
-    public List<String> getConditionOsDist() {
+    public List<String> conditionOsDist() {
         return conditionOsDist;
     }
 
-    public List<String> getConditionPlatform() {
+    public List<String> conditionPlatform() {
         return conditionPlatform;
     }
 
-    public List<String> getConditionDesktopEnvironment() {
+    public List<String> conditionDesktopEnvironment() {
         return conditionDesktopEnvironment;
     }
 
-    public List<String> getConditionProfiles() {
+    public List<String> conditionProfiles() {
         return conditionProfiles;
     }
 
-    public Map<String, String> getConditionProperties() {
+    public Map<String, String> conditionProperties() {
         return conditionProperties;
     }
 
-    public NBootDependency setExclusions(String exclusions) {
+    public NBootDependency exclusions(String exclusions) {
         if (exclusions == null) {
             exclusions = "";
         }
@@ -539,16 +539,16 @@ public class NBootDependency {
                 ids.add(ii);
             }
         }
-        setExclusions(ids);
+        exclusions(ids);
         return this;
     }
 
 
-    public String getSimpleName() {
+    public String simpleName() {
         return NBootUtils.getIdShortName(groupId, artifactId);
     }
 
-    public String getLongName() {
+    public String longName() {
         return NBootUtils.getIdLongName(groupId, artifactId, version, classifier);
     }
 
@@ -563,33 +563,23 @@ public class NBootDependency {
         return toString().isEmpty();
     }
 
-    public String getFace() {
-        String s = getProperties().get(NBootConstants.IdProperties.FACE);
+    public String face() {
+        String s = properties().get(NBootConstants.IdProperties.FACE);
         return NBootUtils.trimToNull(s);
     }
 
-    public String getPackaging() {
-        String s = getProperties().get(NBootConstants.IdProperties.PACKAGING);
+    public String packaging() {
+        String s = properties().get(NBootConstants.IdProperties.PACKAGING);
         return NBootUtils.trimToNull(s);
     }
 
 
-    public NBootDependency setFace(String value) {
+    public NBootDependency face(String value) {
         return setProperty(NBootConstants.IdProperties.FACE, NBootUtils.trimToNull(value));
-//                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
 
-    public NBootDependency setFaceContent() {
-        return setFace(NBootConstants.QueryFaces.CONTENT);
-    }
-
-
-    public NBootDependency setFaceDescriptor() {
-        return setFace(NBootConstants.QueryFaces.DESCRIPTOR);
-    }
-
-    public NBootDependency setPackaging(String value) {
+    public NBootDependency packaging(String value) {
         return setProperty(NBootConstants.IdProperties.PACKAGING, NBootUtils.trimToNull(value));
     }
 
@@ -599,7 +589,7 @@ public class NBootDependency {
         return this;
     }
 
-    public String getShortName() {
+    public String shortName() {
         return NBootUtils.getIdShortName(groupId, artifactId);
     }
 
@@ -616,7 +606,7 @@ public class NBootDependency {
             sb.append(":").append(NBootUtils.trim(artifactId));
             sb.append(":").append(NBootUtils.trim(classifier));
         }
-        String v = getVersion();
+        String v = version();
         if (!NBootUtils.isBlank(v)) {
             sb.append("#");
             sb.append(v);
@@ -624,44 +614,44 @@ public class NBootDependency {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s;
 
-        if (getConditionArch() != null) {
-            s = getConditionArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (conditionArch() != null) {
+            s = conditionArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.ARCH, s);
             }
         }
-        if (getConditionOs() != null) {
-            s = getConditionOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (conditionOs() != null) {
+            s = conditionOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.OS, s);
             }
         }
-        if (getConditionOsDist() != null) {
-            s = getConditionOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (conditionOsDist() != null) {
+            s = conditionOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.OS_DIST, s);
             }
         }
-        if (getConditionPlatform() != null) {
-            s = NBootUtils.formatStringIdList(getConditionPlatform());
+        if (conditionPlatform() != null) {
+            s = NBootUtils.formatStringIdList(conditionPlatform());
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.PLATFORM, s);
             }
         }
-        if (getConditionDesktopEnvironment() != null) {
-            s = getConditionDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (conditionDesktopEnvironment() != null) {
+            s = conditionDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.DESKTOP, s);
             }
         }
-        if (getConditionProfiles() != null) {
-            s = getConditionProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (conditionProfiles() != null) {
+            s = conditionProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBootUtils.isBlank(s)) {
                 m.put(NBootConstants.IdProperties.PROFILE, s);
             }
         }
-        if (getConditionProperties() != null) {
-            Map<String, String> properties = getConditionProperties();
+        if (conditionProperties() != null) {
+            Map<String, String> properties = conditionProperties();
             if (!properties.isEmpty()) {
                 m.put(NBootConstants.IdProperties.CONDITIONAL_PROPERTIES, NBootStringMapFormat.DEFAULT.format(properties));
             }
@@ -685,8 +675,8 @@ public class NBootDependency {
         if (other == null) {
             return false;
         }
-        return NBootUtils.trim(groupId).equals(NBootUtils.trim(other.getArtifactId()))
-                && NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.getGroupId()));
+        return NBootUtils.trim(groupId).equals(NBootUtils.trim(other.artifactId()))
+                && NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.groupId()));
     }
 
 
@@ -694,26 +684,26 @@ public class NBootDependency {
         if (other == null) {
             return false;
         }
-        return NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.getArtifactId()))
-                && NBootUtils.trim(groupId).equals(NBootUtils.trim(other.getGroupId()))
+        return NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.artifactId()))
+                && NBootUtils.trim(groupId).equals(NBootUtils.trim(other.groupId()))
                 && Objects.equals((version == null || NBootUtils.isBlank(version)) ? null : version,
-                (other.getVersion() == null || NBootUtils.isBlank(other.getVersion())) ? null : other.getVersion())
-                && Objects.equals(getClassifier(), other.getClassifier())
+                (other.version() == null || NBootUtils.isBlank(other.version())) ? null : other.version())
+                && Objects.equals(classifier(), other.classifier())
                 ;
     }
 
 
-    public NBootDependency getShortId() {
+    public NBootDependency shortId() {
         return new NBootDependency(groupId, artifactId, classifier, null, "");
     }
 
 
-    public NBootDependency getLongId() {
+    public NBootDependency longId() {
         return new NBootDependency(groupId, artifactId, classifier, version, "");
     }
 
     public NBootDependency toDependency() {
-        Map<String, String> properties = getProperties();
+        Map<String, String> properties = properties();
         //CoreStringUtils.join(",", ex)
         String exc = properties.get(NBootConstants.IdProperties.EXCLUSIONS);
         if (exc == null) {
@@ -727,56 +717,56 @@ public class NBootDependency {
             }
         }
         return new NBootDependency()
-                .setRepository(getRepository())
-                .setArtifactId(getArtifactId())
-                .setGroupId(getGroupId())
-                .setClassifier(getClassifier())
-                .setVersion(getVersion())
-                .setScope(properties.get(NBootConstants.IdProperties.SCOPE))
-                .setOptional(properties.get(NBootConstants.IdProperties.OPTIONAL))
-                .setExclusions(a)
-                .setProperties(properties)
-                .setConditionOs(getConditionOs())
-                .setConditionOsDist(getConditionOsDist())
-                .setConditionArch(getConditionArch())
-                .setConditionPlatform(getConditionPlatform())
-                .setConditionDesktopEnvironment(getConditionDesktopEnvironment())
-                .setConditionProfile(getConditionProfiles())
-                .setConditionProperties(getConditionProperties())
+                .repository(repository())
+                .artifactId(artifactId())
+                .groupId(groupId())
+                .classifier(classifier())
+                .version(version())
+                .scope(properties.get(NBootConstants.IdProperties.SCOPE))
+                .optional(properties.get(NBootConstants.IdProperties.OPTIONAL))
+                .exclusions(a)
+                .properties(properties)
+                .conditionOs(conditionOs())
+                .conditionOsDist(conditionOsDist())
+                .conditionArch(conditionArch())
+                .conditionPlatform(conditionPlatform())
+                .conditionDesktopEnvironment(conditionDesktopEnvironment())
+                .conditionProfile(conditionProfiles())
+                .conditionProperties(conditionProperties())
                 ;
     }
 
-    public NBootDependency setConditionProperties(Map<String, String> conditionProperties) {
+    public NBootDependency conditionProperties(Map<String, String> conditionProperties) {
         this.conditionProperties = conditionProperties == null ? null : new HashMap<>(conditionProperties);
         return this;
     }
 
-    public NBootDependency setConditionDesktopEnvironment(List<String> conditionDesktopEnvironment) {
+    public NBootDependency conditionDesktopEnvironment(List<String> conditionDesktopEnvironment) {
         this.conditionDesktopEnvironment = NBootUtils.uniqueNonBlankStringList(conditionDesktopEnvironment);
         return this;
     }
 
-    public NBootDependency setConditionProfile(List<String> profiles) {
+    public NBootDependency conditionProfile(List<String> profiles) {
         this.conditionProfiles = profiles;
         return this;
     }
 
-    public NBootDependency setConditionPlatform(List<String> conditionPlatform) {
+    public NBootDependency conditionPlatform(List<String> conditionPlatform) {
         this.conditionPlatform = NBootUtils.uniqueNonBlankStringList(conditionPlatform);
         return this;
     }
 
-    public NBootDependency setConditionOsDist(List<String> conditionOsDist) {
+    public NBootDependency conditionOsDist(List<String> conditionOsDist) {
         this.conditionOsDist = NBootUtils.uniqueNonBlankStringList(conditionOsDist);
         return this;
     }
 
-    public NBootDependency setConditionOs(List<String> conditionOs) {
+    public NBootDependency conditionOs(List<String> conditionOs) {
         this.conditionOs = NBootUtils.uniqueNonBlankStringList(conditionOs);
         return this;
     }
 
-    public NBootDependency setConditionArch(List<String> conditionArch) {
+    public NBootDependency conditionArch(List<String> conditionArch) {
         this.conditionArch = NBootUtils.uniqueNonBlankStringList(conditionArch);
         return this;
     }
@@ -787,19 +777,19 @@ public class NBootDependency {
 
     public int compareTo(NBootDependency o2) {
         int x;
-        x = NBootUtils.trim(this.getGroupId()).compareTo(NBootUtils.trim(o2.getGroupId()));
+        x = NBootUtils.trim(this.groupId()).compareTo(NBootUtils.trim(o2.groupId()));
         if (x != 0) {
             return x;
         }
-        x = NBootUtils.trim(this.getArtifactId()).compareTo(NBootUtils.trim(o2.getArtifactId()));
+        x = NBootUtils.trim(this.artifactId()).compareTo(NBootUtils.trim(o2.artifactId()));
         if (x != 0) {
             return x;
         }
-        x = NBootUtils.trim(this.getClassifier()).compareTo(NBootUtils.trim(o2.getClassifier()));
+        x = NBootUtils.trim(this.classifier()).compareTo(NBootUtils.trim(o2.classifier()));
         if (x != 0) {
             return x;
         }
-        x = NBootVersion.of(this.getVersion()).compareTo(NBootVersion.of(o2.getVersion()));
+        x = NBootVersion.of(this.version()).compareTo(NBootVersion.of(o2.version()));
         return x;
     }
 }

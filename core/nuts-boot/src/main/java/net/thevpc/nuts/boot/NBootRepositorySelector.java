@@ -115,26 +115,26 @@ public class NBootRepositorySelector {
         return sb.toString();
     }
 
-    public String getOp() {
+    public String op() {
         return op;
     }
 
-    public String getName() {
-        return location.getName();
+    public String name() {
+        return location.name();
     }
 
-    public String getUrl() {
+    public String url() {
         return location.getFullLocation();
     }
 
-    public NBootRepositoryLocation getLocation() {
+    public NBootRepositoryLocation location() {
         return location;
     }
 
     public boolean matches(NBootRepositoryLocation other) {
-        String otherName = other.getName();
+        String otherName = other.name();
         String otherURL = other.getFullLocation();
-        String name0 = location.getName();
+        String name0 = location.name();
         String url0 = location.getFullLocation();
         otherName = otherName == null ? "" : otherName.trim();
         otherURL = otherURL == null ? "" : otherURL.trim();

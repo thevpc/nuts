@@ -1,7 +1,5 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.internal.util.NBootUtils;
-
 import java.util.*;
 
 public class NBootProperties {
@@ -18,15 +16,15 @@ public class NBootProperties {
     }
     private String condKey(NBootDescriptorProperty d){
         NBootDependency d2=new NBootDependency();
-        d2.setConditionOs(d.getConditionOs());
-        d2.setConditionOsDist(d.getConditionOsDist());
-        d2.setConditionArch(d.getConditionArch());
-        d2.setConditionDesktopEnvironment(d.getConditionDesktopEnvironment());
-        d2.setConditionProfile(d.getConditionProfiles());
-        d2.setConditionPlatform(d.getConditionPlatform());
-        d2.setConditionProperties(d.getConditionProperties());
-        d2.setGroupId("g");
-        d2.setArtifactId("a");
+        d2.conditionOs(d.conditionOs());
+        d2.conditionOsDist(d.conditionOsDist());
+        d2.conditionArch(d.conditionArch());
+        d2.conditionDesktopEnvironment(d.conditionDesktopEnvironment());
+        d2.conditionProfile(d.conditionProfiles());
+        d2.conditionPlatform(d.conditionPlatform());
+        d2.conditionProperties(d.conditionProperties());
+        d2.groupId("g");
+        d2.artifactId("a");
         String s = d2.toString();
         int i=s.indexOf("?");
         if(i>0){
@@ -37,7 +35,7 @@ public class NBootProperties {
 
     public NBootProperties remove(NBootDescriptorProperty p) {
         if (p != null) {
-            String n = p.getName();
+            String n = p.name();
             Map<String, NBootDescriptorProperty> m = properties.get(n);
             if (m != null) {
                 String c = condKey(p);
@@ -97,7 +95,7 @@ public class NBootProperties {
 
     public NBootProperties add(NBootDescriptorProperty p) {
         if (p != null) {
-            String n = p.getName();
+            String n = p.name();
             Map<String, NBootDescriptorProperty> m = properties.get(n);
             if (m == null) {
                 m = new LinkedHashMap<>();

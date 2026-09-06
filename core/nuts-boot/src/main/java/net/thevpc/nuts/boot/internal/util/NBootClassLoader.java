@@ -63,8 +63,8 @@ public class NBootClassLoader extends URLClassLoader {
     }
 
     public NBootClassLoaderNode search(NBootClassLoaderNode node, boolean deep) {
-        NBootDependency ii = NBootDependency.of(node.getId());
-        String sn = ii.getShortName();
+        NBootDependency ii = NBootDependency.of(node.id());
+        String sn = ii.shortName();
         NBootClassLoaderNode o = nodes.get(sn);
         if (o != null) {
             return o;
@@ -76,8 +76,8 @@ public class NBootClassLoader extends URLClassLoader {
     }
 
     public boolean add(NBootClassLoaderNode node) {
-        NBootDependency ii = NBootDependency.of(node.getId());
-        String sn = ii.getShortName();
+        NBootDependency ii = NBootDependency.of(node.id());
+        String sn = ii.shortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
             return add(node, true);
@@ -86,14 +86,14 @@ public class NBootClassLoader extends URLClassLoader {
     }
 
     protected boolean add(NBootClassLoaderNode node, boolean deep) {
-        String s = node.getId();
+        String s = node.id();
         NBootDependency ii = NBootDependency.of(s);
-        String sn = ii.getShortName();
+        String sn = ii.shortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);
-            super.addURL(node.getURL());
+            super.addURL(node.url());
             if (deep) {
-                for (NBootClassLoaderNode dependency : node.getDependencies()) {
+                for (NBootClassLoaderNode dependency : node.dependencies()) {
                     add(dependency, true);
                 }
             }

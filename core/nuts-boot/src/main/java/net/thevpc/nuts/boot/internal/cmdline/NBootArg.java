@@ -175,24 +175,14 @@ public class NBootArg {
     }
 
 
-    public String getStringKey() {
-        return getKey();
-    }
-
-
     public String key() {
-        String k = getStringKey();
+        String k = (key == null ? image : key);
         return k==null?"":k;
     }
 
 
-    public String value() {
-        return getStringValue();
-    }
-
-
-    public String getStringValue() {
-        return getValue();
+    public String stringValue() {
+        return value();
     }
 
 
@@ -223,47 +213,43 @@ public class NBootArg {
         return value != null;
     }
 
-    public String getOptionPrefix() {
+    public String optionPrefix() {
         return optionPrefix;
     }
 
 
-    public String getSeparator() {
+    public String separator() {
         return String.valueOf(eq);
     }
 
 
-    public String getOptionName() {
+    public String optionName() {
         return optionName;
     }
 
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 
 
-    public Boolean getBooleanValue() {
-        boolean v = NBootUtils.parseBooleanOr(getValue(), true);
+    public Boolean booleanValue() {
+        boolean v = NBootUtils.parseBooleanOr(value(), true);
         if (isNegated()) {
             return isNegated() != v;
         }
         return v;
     }
 
-    public Integer getIntValue() {
-        return NBootUtils.parseInt(getValue());
+    public Integer intValue() {
+        return NBootUtils.parseInt(value());
     }
 
-
-    public String getKey() {
-        return (key == null ? image : key);
-    }
 
 
     public boolean isFlagOption() {
         if (isOption()) {
-            if (getValue()==null) {
+            if (value()==null) {
                 return true;
             }
         }
@@ -274,7 +260,7 @@ public class NBootArg {
         return String.valueOf(image);
     }
 
-    public String getImage() {
+    public String image() {
         return image;
     }
 

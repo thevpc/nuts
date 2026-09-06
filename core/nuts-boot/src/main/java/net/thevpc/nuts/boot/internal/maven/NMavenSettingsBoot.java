@@ -10,38 +10,38 @@ public class NMavenSettingsBoot {
     private String remoteRepository;
     private List<NBootRepositoryLocation> activeRepositories;
 
-    public String getSettingsFile() {
+    public String settingsFile() {
         return settingsFile;
     }
 
-    public NMavenSettingsBoot setSettingsFile(String settingsFile) {
+    public NMavenSettingsBoot settingsFile(String settingsFile) {
         this.settingsFile = settingsFile;
         return this;
     }
 
-    public String getLocalRepository() {
+    public String localRepository() {
         return localRepository;
     }
 
-    public NMavenSettingsBoot setLocalRepository(String localRepository) {
+    public NMavenSettingsBoot localRepository(String localRepository) {
         this.localRepository = localRepository;
         return this;
     }
 
-    public String getRemoteRepository() {
+    public String remoteRepository() {
         return remoteRepository;
     }
 
-    public NMavenSettingsBoot setRemoteRepository(String remoteRepository) {
+    public NMavenSettingsBoot remoteRepository(String remoteRepository) {
         this.remoteRepository = remoteRepository;
         return this;
     }
 
-    public List<NBootRepositoryLocation> getActiveRepositories() {
+    public List<NBootRepositoryLocation> activeRepositories() {
         return activeRepositories;
     }
 
-    public NMavenSettingsBoot setActiveRepositories(List<NBootRepositoryLocation> activeRepositories) {
+    public NMavenSettingsBoot activeRepositories(List<NBootRepositoryLocation> activeRepositories) {
         this.activeRepositories = activeRepositories;
         return this;
     }

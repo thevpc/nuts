@@ -503,7 +503,7 @@ public class DefaultNWorkspaceConfigModel {
         if (wsModel.bootModel.getBootEffectiveOptions().runtimeBootDescriptor().isPresent()) {
             //not present in shaded jar mode
             NBootDescriptor d = wsModel.bootModel.getBootEffectiveOptions().runtimeBootDescriptor().get();
-            iruntimeId = NId.get(d.getId().toString()).get();
+            iruntimeId = NId.get(d.id().toString()).get();
         }
         wsModel.configModel.prepareBootClassPathConf(NIdType.API, workspace.apiId(), null, iruntimeId, false, false);
         NBootDef nBootNutsApi = null;

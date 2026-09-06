@@ -135,8 +135,8 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
             this.value(null);
             this.condition((NEnvCondition) null);
         } else {
-            this.name(value.getName());
-            this.value(value.getValue());
+            this.name(value.name());
+            this.value(value.value());
             this.condition(new DefaultNEnvConditionBuilder().copyConditionsFromProperty(value).build());
         }
         return this;

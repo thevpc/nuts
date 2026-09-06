@@ -32,11 +32,11 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         }
         this.unparsedOptions = unparsedOptions;
         NBootOptionsInfo userOptions = new NBootOptionsInfo();
-        userOptions.setStdin(unparsedOptions.in());
-        userOptions.setStdout(unparsedOptions.out());
-        userOptions.setStderr(unparsedOptions.err());
-        userOptions.setCreationTime(unparsedOptions.startTime());
-        InputStream in = userOptions.getStdin();
+        userOptions.stdin(unparsedOptions.in());
+        userOptions.stdout(unparsedOptions.out());
+        userOptions.stderr(unparsedOptions.err());
+        userOptions.creationTime(unparsedOptions.startTime());
+        InputStream in = userOptions.stdin();
         scanner = new Scanner(in == null ? System.in : in);
         if (unparsedOptions.complete() != null) {
             this.complete = unparsedOptions.complete();
@@ -50,10 +50,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
             allArgs.addAll(Arrays.asList(unparsedOptions.appArgs()));
         }
         parseArguments(allArgs.toArray(new String[0]), userOptions);
-        if (NBootUtils.firstNonNull(userOptions.getSkipErrors(), false)) {
+        if (NBootUtils.firstNonNull(userOptions.skipErrors(), false)) {
             StringBuilder errorMessage = new StringBuilder();
-            if (userOptions.getErrors() != null) {
-                for (String s : userOptions.getErrors()) {
+            if (userOptions.errors() != null) {
+                for (String s : userOptions.errors()) {
                     errorMessage.append(s).append("\n");
                 }
             }
@@ -64,11 +64,11 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         this.postInit();
     }
 
-    public NBootArguments getBootArguments() {
+    public NBootArguments bootArguments() {
         return unparsedOptions;
     }
 
-    public NBootOptionsInfo getOptions() {
+    public NBootOptionsInfo options() {
         return options;
     }
 
@@ -96,7 +96,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--min-time": {
                         a = cmdLine.nextEntry();
                         if (active) {
-                            String sValue = NBootUtils.firstNonNull(a.getStringValue(), "");
+                            String sValue = NBootUtils.firstNonNull(a.stringValue(), "");
                             try {
                                 this.minTime = NBootUtils.parseTimePeriod(sValue, k);
                             } catch (Exception ex) {
@@ -109,7 +109,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--wait-time": {
                         a = cmdLine.nextEntry();
                         if (active) {
-                            String sValue = NBootUtils.firstNonNull(a.getStringValue(), "");
+                            String sValue = NBootUtils.firstNonNull(a.stringValue(), "");
                             try {
                                 this.waitTime = NBootUtils.parseTimePeriod(sValue, k);
                             } catch (Exception ex) {
@@ -122,7 +122,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--max-count": {
                         a = cmdLine.nextEntry();
                         if (active) {
-                            String sValue = NBootUtils.firstNonNull(a.getStringValue(), "");
+                            String sValue = NBootUtils.firstNonNull(a.stringValue(), "");
                             try {
                                 this.maxCount = Long.parseLong(sValue);
                             } catch (Exception ex) {
@@ -138,8 +138,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "-j": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = NBootUtils.firstNonNull(a.getStringValue(), "");
-                            options.setJavaCommand(v);
+                            String v = NBootUtils.firstNonNull(a.stringValue(), "");
+                            options.javaCommand(v);
                         }
                         return (Collections.singletonList(a));
                     }
@@ -147,8 +147,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--boot-java-home": {
                         a = cmdLine.nextEntry();
                         if (active && options != null) {
-                            String v = a.getStringValue();
-                            options.setJavaCommand(NBootUtils.resolveJavaCommand(v));
+                            String v = a.stringValue();
+                            options.javaCommand(NBootUtils.resolveJavaCommand(v));
                         }
                         return (Collections.singletonList(a));
                     }
@@ -156,9 +156,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--boot-java-options":
                     case "-J": {
                         a = cmdLine.nextEntry();
-                        String v = NBootUtils.firstNonNull(a.getStringValue(), "");
+                        String v = NBootUtils.firstNonNull(a.stringValue(), "");
                         if (active && options != null) {
-                            options.setJavaOptions(v);
+                            options.javaOptions(v);
                         }
                         return (Collections.singletonList(a));
                     }
@@ -166,7 +166,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--gui": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setGui(a.getBooleanValue());
+                            options.gui(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -176,7 +176,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setBot(a.getBooleanValue());
+                                options.bot(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -188,7 +188,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setTrace(a.getBooleanValue());
+                                options.trace(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -200,16 +200,16 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                String s = a.getStringValue();
+                                String s = a.stringValue();
                                 if (a.isNegated()) {
                                     if (NBootUtils.isBlank(s)) {
                                         s = "false";
                                     } else {
                                         s = "false," + s;
                                     }
-                                    options.setProgressOptions(s);
+                                    options.progressOptions(s);
                                 } else {
-                                    options.setProgressOptions(s);
+                                    options.progressOptions(s);
                                 }
                             }
                             return (Collections.singletonList(a));
@@ -221,7 +221,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "-D": {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setDry(a.getBooleanValue());
+                            options.dry(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -230,7 +230,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     {
                         a = cmdLine.nextFlag();
                         if (active && options != null) {
-                            options.setShowStacktrace(a.getBooleanValue());
+                            options.showStacktrace(a.booleanValue());
                         }
                         return (Collections.singletonList(a));
                     }
@@ -238,13 +238,13 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                if (NBootUtils.isBlank(a.getStringValue())) {
-                                    options.setDebug(String.valueOf(a.isEnabled()));
+                                if (NBootUtils.isBlank(a.stringValue())) {
+                                    options.debug(String.valueOf(a.isEnabled()));
                                 } else {
                                     if (a.isNegated()) {
-                                        options.setDebug(String.valueOf(!NBootUtils.parseBoolean(a.getStringValue(), true, false)));
+                                        options.debug(String.valueOf(!NBootUtils.parseBoolean(a.stringValue(), true, false)));
                                     } else {
-                                        options.setDebug(a.getStringValue());
+                                        options.debug(a.stringValue());
                                     }
                                 }
                             }
@@ -295,12 +295,12 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--log-file-base":
                     case "--log-file-count": {
                         if (active) {
-                            NBootLogConfig logConfig = options.getLogConfig();
+                            NBootLogConfig logConfig = options.logConfig();
                             if (logConfig == null) {
                                 logConfig = new NBootLogConfig();
                             }
                             NBootArg r = NBootWorkspaceCmdLineParser.parseLogLevel(logConfig, cmdLine, active);
-                            options.setLogConfig(logConfig);
+                            options.logConfig(logConfig);
                             return r == null
                                     ? null
                                     : Collections.singletonList(r);
@@ -313,7 +313,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "-T": {
                         if (active) {
                             if (options != null) {
-                                options.addOutputFormatOptions(cmdLine.nextEntry().getStringValue());
+                                options.addOutputFormatOptions(cmdLine.nextEntry().stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -326,13 +326,13 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                String t = NBootUtils.firstNonNull(a.getStringValue(), "");
+                                String t = NBootUtils.firstNonNull(a.stringValue(), "");
                                 int i = NBootUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                                 if (i > 0) {
-                                    options.setOutputFormat((t.substring(0, i).toUpperCase()));
+                                    options.outputFormat((t.substring(0, i).toUpperCase()));
                                     options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
                                 } else {
-                                    options.setOutputFormat((t.toUpperCase()));
+                                    options.outputFormat((t.toUpperCase()));
                                     options.addOutputFormatOptions("");
                                 }
                             }
@@ -344,8 +344,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TSON");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TSON");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -355,8 +355,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("YAML");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("YAML");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -366,8 +366,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("JSON");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("JSON");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -377,8 +377,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("PLAIN");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("PLAIN");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -388,8 +388,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("XML");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("XML");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -399,8 +399,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TABLE");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TABLE");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -410,8 +410,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("TREE");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("TREE");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -421,8 +421,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                options.setOutputFormat("PROPS");
-                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.getStringValue(), ""));
+                                options.outputFormat("PROPS");
+                                options.addOutputFormatOptions(NBootUtils.firstNonNull(a.stringValue(), ""));
                             }
                         } else {
                             return (Collections.singletonList(a));
@@ -430,10 +430,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("YES");
+                                options.confirm("YES");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -443,10 +443,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--no":
                     case "-n": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("NO");
+                                options.confirm("NO");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -455,10 +455,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     }
                     case "--error": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("ERROR");
+                                options.confirm("ERROR");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -467,10 +467,10 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     }
                     case "--ask": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
                                 //explicitConfirm = true;
-                                options.setConfirm("ASK");
+                                options.confirm("ASK");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -479,9 +479,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     }
                     case "--open-file": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("OPEN");
+                                options.executionType("OPEN");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -492,9 +492,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--spawn":
                     case "-x": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("SPAWN");
+                                options.executionType("SPAWN");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -504,9 +504,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--user-cmd"://deprecated since 0.8.1
                     case "--system": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setExecutionType("SYSTEM");
+                                options.executionType("SYSTEM");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -516,9 +516,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     case "--root-cmd": //deprecated since 0.8.1
                     case "--as-root": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setRunAs("ROOT");
+                                options.runAs("ROOT");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -527,9 +527,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     }
                     case "--current-user": {
                         a = cmdLine.nextFlag();
-                        if (active && a.getBooleanValue()) {
+                        if (active && a.booleanValue()) {
                             if (options != null) {
-                                options.setRunAs("CURRENT_USER");
+                                options.runAs("CURRENT_USER");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -540,7 +540,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setRunAs("USER:" + a.getStringValue());
+                                options.runAs("USER:" + a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -551,7 +551,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setRunAs("SUDO");
+                                options.runAs("SUDO");
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -569,12 +569,12 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                             newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                             cmdLine.skipAll();
                             if (options != null) {
-                                if (a.getValue() != null) {
-                                    NBootWorkspaceHelper.addError(NBootMsg.ofC(NBootI18n.of("invalid argument for workspace: %s"), a.getImage()), options);
+                                if (a.value() != null) {
+                                    NBootWorkspaceHelper.addError(NBootMsg.ofC(NBootI18n.of("invalid argument for workspace: %s"), a.image()), options);
                                 }
-                                List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                                List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                                 applicationArguments.addAll(newArgs);
-                                options.setApplicationArguments(applicationArguments);
+                                options.applicationArguments(applicationArguments);
                             }
                             return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
                         } else {
@@ -590,7 +590,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setCommandVersion(a.isActive());
+                                options.commandVersion(a.isActive());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -601,7 +601,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setOutLinePrefix(a.getStringValue());
+                                options.outLinePrefix(a.stringValue());
                             }
                         }
                     }
@@ -609,7 +609,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setErrLinePrefix(a.getStringValue());
+                                options.errLinePrefix(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -620,8 +620,8 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setOutLinePrefix(a.getStringValue());
-                                options.setErrLinePrefix(a.getStringValue());
+                                options.outLinePrefix(a.stringValue());
+                                options.errLinePrefix(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -634,29 +634,29 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         if (active) {
                             List<String> newArgs = new ArrayList<>();
                             newArgs.add(a.toString());
-                            if (a.getBooleanValue()) {
+                            if (a.booleanValue()) {
                                 while ((a = cmdLine.next()) != null) {
                                     if (a.isOption()) {
                                         if (options != null) {
-                                            List<String> executorOptions = options.getExecutorOptions();
+                                            List<String> executorOptions = options.executorOptions();
                                             if (executorOptions == null) {
                                                 executorOptions = new ArrayList<>();
                                             }
-                                            executorOptions.add(NBootUtils.firstNonNull(a.getImage(), ""));
-                                            newArgs.add(NBootUtils.firstNonNull(a.getImage(), ""));
-                                            options.setExecutorOptions(executorOptions);
+                                            executorOptions.add(NBootUtils.firstNonNull(a.image(), ""));
+                                            newArgs.add(NBootUtils.firstNonNull(a.image(), ""));
+                                            options.executorOptions(executorOptions);
                                         } else {
-                                            newArgs.add(NBootUtils.firstNonNull(a.getImage(), ""));
+                                            newArgs.add(NBootUtils.firstNonNull(a.image(), ""));
                                         }
                                     } else {
                                         if (options != null) {
-                                            List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                                            List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                                             applicationArguments.add(NBootUtils.firstNonNull(a.toString(), ""));
                                             List<String> list = Arrays.asList(cmdLine.toStringArray());
                                             applicationArguments.addAll(list);
                                             newArgs.addAll(list);
                                             cmdLine.skipAll();
-                                            options.setApplicationArguments(applicationArguments);
+                                            options.applicationArguments(applicationArguments);
                                         } else {
                                             newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                                             cmdLine.skipAll();
@@ -679,7 +679,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setCommandHelp(a.getBooleanValue());
+                                options.commandHelp(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -690,7 +690,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextFlag();
                         if (active) {
                             if (options != null) {
-                                options.setSkipErrors(a.getBooleanValue());
+                                options.skipErrors(a.booleanValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -702,7 +702,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         a = cmdLine.nextEntry();
                         if (active) {
                             if (options != null) {
-                                options.setLocale(a.getStringValue());
+                                options.locale(a.stringValue());
                             }
                             return (Collections.singletonList(a));
                         } else {
@@ -714,16 +714,16 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             a = cmdLine.next();
                             if (options != null) {
-                                List<String> customOptions = options.getCustomOptions();
+                                List<String> customOptions = options.customOptions();
                                 if (customOptions == null) {
                                     customOptions = new ArrayList<>();
                                 }
                                 customOptions.add(a.toString());
-                                options.setCustomOptions(customOptions);
+                                options.customOptions(customOptions);
                             }
                             return (Collections.singletonList(a));
                         } else {
-                            NBootWorkspaceHelper.addError(NBootMsg.ofC(NBootI18n.of("nuts: invalid option %s"), a.getImage()), options);
+                            NBootWorkspaceHelper.addError(NBootMsg.ofC(NBootI18n.of("nuts: invalid option %s"), a.image()), options);
                             throw new NBootException(NBootMsg.ofC(NBootI18n.of("unsupported option %s"), a));
                         }
                     }
@@ -733,9 +733,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                 newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
                 if (options != null) {
-                    List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
+                    List<String> applicationArguments = NBootUtils.nonNullStrList(options.applicationArguments());
                     applicationArguments.addAll(newArgs);
-                    options.setApplicationArguments(applicationArguments);
+                    options.applicationArguments(applicationArguments);
                 }
                 return (newArgs.stream().map(NBootArg::of).collect(Collectors.toList()));
             }
@@ -747,14 +747,14 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     }
 
     private void postInit() {
-        if (this.options.getCreationTime() == null) {
-            this.options.setCreationTime(creationTime);
+        if (this.options.creationTime() == null) {
+            this.options.creationTime(creationTime);
         }
-        if (options.getApplicationArguments() == null) {
-            options.setApplicationArguments(new ArrayList<>());
+        if (options.applicationArguments() == null) {
+            options.applicationArguments(new ArrayList<>());
         }
-        if (options.getErrors() == null) {
-            options.setErrors(new ArrayList<>());
+        if (options.errors() == null) {
+            options.errors(new ArrayList<>());
         }
         this.bLog.setOptions(this.options);
     }
@@ -767,7 +767,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
 
 
     @Override
-    public NWorkspaceBase getWorkspace() {
+    public NWorkspaceBase workspace() {
         return new NWorkspaceBase() {
             @Override
             public void runBootCommand() {
@@ -791,18 +791,18 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                 cmdComplete = (NBootCompleteCmdlineRequest) r;
             }
         }
-        if (NBootUtils.firstNonNull(options.getCommandHelp(), false)) {
+        if (NBootUtils.firstNonNull(options.commandHelp(), false)) {
             NBootWorkspaceHelper.runCommandHelp(options, cmdComplete);
             return;
-        } else if (NBootUtils.firstNonNull(options.getCommandVersion(), false)) {
+        } else if (NBootUtils.firstNonNull(options.commandVersion(), false)) {
             NBootWorkspaceHelper.runCommandVersion(null, options, cmdComplete);
             return;
         }
 
-        if (options.getApplicationArguments().isEmpty()) {
+        if (options.applicationArguments().isEmpty()) {
             NBootWorkspaceHelper.addError(NBootMsg.ofPlain(NBootI18n.of("missing command")), options);
         }
-        if (!options.getErrors().isEmpty()) {
+        if (!options.errors().isEmpty()) {
             showErrors();
             StringBuilder sb = new StringBuilder();
             sb.append(NBootI18n.of("Unable to run command")).append("\n");
@@ -811,7 +811,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
             sb.append(" waitTime=").append(waitTime).append("\n");
             sb.append(" maxCount=").append(maxCount).append("\n");
             sb.append(" cmd     =")
-                    .append(options.getApplicationArguments().stream()
+                    .append(options.applicationArguments().stream()
                             .map(x -> "\"" + x + "\"")
                             .collect(Collectors.joining(" "))).append("\n");
             throw new NBootException(NBootMsg.ofC("%s", sb));
@@ -848,7 +848,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
         int i = 1;
         try {
             final Process p;
-            ProcessBuilder pb = new ProcessBuilder(options.getApplicationArguments());
+            ProcessBuilder pb = new ProcessBuilder(options.applicationArguments());
             pb.inheritIO();
             p = pb.start();
             i = p.waitFor();
@@ -859,9 +859,9 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     }
 
     private void showDebugLine(String err) {
-        NBootLogConfig lc = options.getLogConfig();
+        NBootLogConfig lc = options.logConfig();
         if (lc != null) {
-            Level lvl = lc.getLogTermLevel();
+            Level lvl = lc.logTermLevel();
             if (lvl != null && lvl.intValue() <= Level.FINE.intValue()) {
                 bLog.outln(err);
             }
@@ -874,7 +874,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
 
 
     private void showErrors() {
-        for (String error : options.getErrors()) {
+        for (String error : options.errors()) {
             showErrorLine(error);
         }
     }

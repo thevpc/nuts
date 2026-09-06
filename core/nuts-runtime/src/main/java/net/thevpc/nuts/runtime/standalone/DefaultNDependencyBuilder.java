@@ -113,17 +113,17 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     public NDependencyBuilder copyFrom(NBootDependency value) {
         if (value != null) {
-            repository(value.getRepository());
-            groupId(value.getGroupId());
-            artifactId(value.getArtifactId());
-            version(value.getVersion());
-            scope(value.getScope());
-            optional(value.getOptional());
-            exclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
-            classifier(value.getClassifier());
+            repository(value.repository());
+            groupId(value.groupId());
+            artifactId(value.artifactId());
+            version(value.version());
+            scope(value.scope());
+            optional(value.optional());
+            exclusions(value.exclusions()==null?null:value.exclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
+            classifier(value.classifier());
             condition().copyFrom(new DefaultNEnvConditionBuilder().copyConditionsFromDependency(value));
-            type(value.getType());
-            properties(value.getProperties());
+            type(value.type());
+            properties(value.properties());
         } else {
             clear();
         }

@@ -73,9 +73,9 @@ public class NBootLog {
     }
 
     public NBootLog(NBootOptionsInfo bootTerminal) {
-        in = (bootTerminal == null || bootTerminal.getStdin() == null) ? System.in : bootTerminal.getStdin();
-        out = (bootTerminal == null || bootTerminal.getStdout() == null) ? System.out : bootTerminal.getStdout();
-        err = (bootTerminal == null || bootTerminal.getStderr() == null) ? System.out : bootTerminal.getStderr();
+        in = (bootTerminal == null || bootTerminal.stdin() == null) ? System.in : bootTerminal.stdin();
+        out = (bootTerminal == null || bootTerminal.stdout() == null) ? System.out : bootTerminal.stdout();
+        err = (bootTerminal == null || bootTerminal.stderr() == null) ? System.out : bootTerminal.stderr();
         cachedTermLogLevel = Level.OFF.intValue();
         cachedFileLogLevel = Level.OFF.intValue();
     }
@@ -161,8 +161,8 @@ public class NBootLog {
     }
 
     public boolean isLoggableTerm(Level lvl) {
-        if (options.getBot() != null) {
-            if (options.getBot()) {
+        if (options.bot() != null) {
+            if (options.bot()) {
                 return false;
             }
         }
@@ -170,7 +170,7 @@ public class NBootLog {
             //this is a special case where we do log in all cases!
             return true;
         }
-        if (options == null || options.getLogConfig() == null) {
+        if (options == null || options.logConfig() == null) {
             if (lvl.intValue() >= Level.WARNING.intValue()) {
                 //this is a special case where we do log in all cases!
                 return true;
@@ -187,7 +187,7 @@ public class NBootLog {
             //this is a special case where we do log in all cases!
             return true;
         }
-        if (options == null || options.getLogConfig() == null) {
+        if (options == null || options.logConfig() == null) {
             return false;
         }
         return lvl.intValue() >= cachedFileLogLevel;
@@ -200,20 +200,20 @@ public class NBootLog {
 
     public void setOptions(NBootOptionsInfo options) {
         this.options = options;
-        NBootLogConfig nLogConfig = options.getLogConfig();
+        NBootLogConfig nLogConfig = options.logConfig();
         if (nLogConfig != null) {
-            if (nLogConfig.getLogTermLevel() != null) {
-                cachedTermLogLevel = nLogConfig.getLogTermLevel().intValue();
+            if (nLogConfig.logTermLevel() != null) {
+                cachedTermLogLevel = nLogConfig.logTermLevel().intValue();
             }
-            if (nLogConfig.getLogFileLevel() != null) {
-                cachedFileLogLevel = nLogConfig.getLogFileLevel().intValue();
+            if (nLogConfig.logFileLevel() != null) {
+                cachedFileLogLevel = nLogConfig.logFileLevel().intValue();
             }
             {
-                Level level = nLogConfig.getLogFileLevel();
-                String folder = nLogConfig.getLogFileBase();
-                String name = nLogConfig.getLogFileName();
-                int maxSize = nLogConfig.getLogFileSize();
-                int count = nLogConfig.getLogFileCount();
+                Level level = nLogConfig.logFileLevel();
+                String folder = nLogConfig.logFileBase();
+                String name = nLogConfig.logFileName();
+                int maxSize = nLogConfig.logFileSize();
+                int count = nLogConfig.logFileCount();
 //        String rootPackage = "net.thevpc.nuts";
                 if (level == null) {
                     level = Level.INFO;
@@ -246,7 +246,7 @@ public class NBootLog {
                                     break;
                                 }
                                 case 't': {
-                                    String tempFolder = Paths.get(NBootPlatformHome.of(options.getStoreLayout()).getWorkspaceStore("TEMP", options.getWorkspace())).toString();
+                                    String tempFolder = Paths.get(NBootPlatformHome.of(options.storeLayout()).getWorkspaceStore("TEMP", options.workspace())).toString();
                                     realName.append(tempFolder);
                                     break;
                                 }
@@ -267,7 +267,7 @@ public class NBootLog {
                     }
                 }
                 if (folder == null || NBootUtils.isBlank(folder)) {
-                    String logFolder = Paths.get(NBootPlatformHome.of(options.getStoreLayout()).getWorkspaceStore("LOG", options.getWorkspace())).toString();
+                    String logFolder = Paths.get(NBootPlatformHome.of(options.storeLayout()).getWorkspaceStore("LOG", options.workspace())).toString();
                     folder = logFolder + "/" + NBootConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NBootWorkspace.NUTS_BOOT_VERSION;
                 }
                 String pattern = (folder + "/" + realName).replace('/', File.separatorChar);

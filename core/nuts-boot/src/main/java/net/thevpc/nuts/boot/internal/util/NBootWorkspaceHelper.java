@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 public class NBootWorkspaceHelper {
 
     public static void printDryCommand(String cmd, NBootOptionsInfo options) {
-        String f = NBootUtils.firstNonNull(options.getOutputFormat(), "PLAIN");
+        String f = NBootUtils.firstNonNull(options.outputFormat(), "PLAIN");
         NBootLog log = NBootContext.log();
-        if (NBootUtils.firstNonNull(options.getDry(), false)) {
+        if (NBootUtils.firstNonNull(options.dry(), false)) {
             switch (NBootUtils.enumName(f)) {
                 case "JSON": {
                     log.outln("{");
@@ -56,8 +56,8 @@ public class NBootWorkspaceHelper {
     }
 
     public static void runCommandVersion(Supplier<String> digest, NBootOptionsInfo options, NBootCompleteCmdlineRequest complete) {
-        String f = NBootUtils.firstNonNull(options.getOutputFormat(), "PLAIN");
-        if (NBootUtils.firstNonNull(options.getDry(), false)) {
+        String f = NBootUtils.firstNonNull(options.outputFormat(), "PLAIN");
+        if (NBootUtils.firstNonNull(options.dry(), false)) {
             printDryCommand("version",options);
             return;
         }
@@ -126,7 +126,7 @@ public class NBootWorkspaceHelper {
     }
 
     public static void addError(NBootMsg err, NBootOptionsInfo options) {
-        List<String> showError = options.getErrors();
+        List<String> showError = options.errors();
         if (showError == null) {
             showError = new ArrayList<>();
         }
@@ -134,9 +134,9 @@ public class NBootWorkspaceHelper {
     }
 
     public static void runCommandHelp(NBootOptionsInfo options, NBootCompleteCmdlineRequest complete) {
-        String f = NBootUtils.firstNonNull(options.getOutputFormat(), "PLAIN");
+        String f = NBootUtils.firstNonNull(options.outputFormat(), "PLAIN");
         NBootLog log = NBootContext.log();
-        if (NBootUtils.firstNonNull(options.getDry(), false)) {
+        if (NBootUtils.firstNonNull(options.dry(), false)) {
             printDryCommand("help",options);
         } else {
             String msg = "nuts is an open source package manager mainly for java applications. Type 'nuts help' or visit https://github.com/thevpc/nuts for more help.";

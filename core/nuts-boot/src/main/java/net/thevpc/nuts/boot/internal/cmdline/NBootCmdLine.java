@@ -99,7 +99,7 @@ public class NBootCmdLine {
         return this;
     }
 
-    public String[] getSpecialSimpleOptions() {
+    public String[] specialSimpleOptions() {
         return specialSimpleOptions.toArray(new String[0]);
     }
 
@@ -122,12 +122,12 @@ public class NBootCmdLine {
             return false;
         }
         NBootArg a = new NBootArg(option);
-        String p = a.getOptionPrefix();
+        String p = a.optionPrefix();
         if (p == null || p.length() != 1) {
             return false;
         }
-        String o = a.getKey();
-        if (o == null) {
+        String o = a.key();
+        if (o == null || o.isEmpty()) {
             return false;
         }
         for (String registered : specialSimpleOptions) {
@@ -209,7 +209,7 @@ public class NBootCmdLine {
     }
 
     public NBootCmdLine throwUnexpectedArgument() {
-        return throwUnexpectedArgument((NBootMsg) null);
+        return throwUnexpectedArgument(null);
     }
 
     public NBootCmdLine pushBack(NBootArg arg) {
@@ -290,8 +290,8 @@ public class NBootCmdLine {
         if (names.length == 0) {
             if (hasNext()) {
                 NBootArg peeked = peek();
-                String string = peeked.getKey();
-                if (string != null) {
+                String string = peeked.key();
+                if (string != null && !string.isEmpty()) {
                     names = new String[]{string};
                 } else {
                     names = new String[0];
@@ -310,7 +310,7 @@ public class NBootCmdLine {
             String name = nameSeqArray[nameSeqArray.length - 1];
             NBootArg p = get(nameSeqArray.length - 1);
             if (p != null) {
-                String pks = p.getKey();
+                String pks = p.key();
                 if (pks != null && pks.equals(name)) {
                     switch (expectedValue) {
                         case ARG_TYPE_DEFAULT: {
@@ -325,7 +325,7 @@ public class NBootCmdLine {
                                 NBootArg r2 = peek();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
-                                    return (createArgument(NBootUtils.<String>firstNonNull(p == null ? null : p.toString(), "") + eq + NBootUtils.firstNonNull(r2, "")));
+                                    return (createArgument(NBootUtils.firstNonNull(p == null ? null : p.toString(), "") + eq + NBootUtils.firstNonNull(r2, "")));
                                 } else {
                                     return (p);
                                 }
@@ -336,7 +336,7 @@ public class NBootCmdLine {
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
                                     //should not happen
-                                    boolean x = NBootUtils.firstNonNull(p.getBooleanValue(), false);
+                                    boolean x = NBootUtils.firstNonNull(p.booleanValue(), false);
                                     if (pks != null) {
                                         return (createArgument(pks + eq + (!x)));
                                     }
@@ -433,7 +433,7 @@ public class NBootCmdLine {
             if (argument == null) {
                 return false;
             }
-            if (!Objects.equals(argument.getKey(), values[i])) {
+            if (!Objects.equals(argument.key(), values[i])) {
                 return false;
             }
         }
@@ -474,7 +474,7 @@ public class NBootCmdLine {
         int i = 0;
         while (i < length()) {
             NBootArg g = get(i);
-            if (g != null && Objects.equals(g.getKey(), name)) {
+            if (g != null && Objects.equals(g.key(), name)) {
                 return i;
             }
             i++;
@@ -573,7 +573,7 @@ public class NBootCmdLine {
             if (hasNext() && (!forceNonOption || !isNextOption())) {
                 return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek())));
             }
-            return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name)));
+            return emptyOptionalCformat("missing argument %s", highlightText(name == null ? "value" : name));
         }
         //ignored
     }

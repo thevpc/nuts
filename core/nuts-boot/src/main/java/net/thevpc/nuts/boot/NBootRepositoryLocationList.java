@@ -60,7 +60,7 @@ public class NBootRepositoryLocationList {
     public int indexOfName(String name, int offset) {
         String trimmedName = NBootUtils.trim(name);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NBootUtils.trim(all.get(i).getName()))) {
+            if (trimmedName.equals(NBootUtils.trim(all.get(i).name()))) {
                 return i;
             }
         }
@@ -69,7 +69,7 @@ public class NBootRepositoryLocationList {
     public int indexOfNames(String[] names, int offset) {
         for (int i = offset; i < all.size(); i++) {
             NBootRepositoryLocation loc = all.get(i);
-            String trimmedLocName = NBootUtils.trim(loc.getName());
+            String trimmedLocName = NBootUtils.trim(loc.name());
             for (String name : names) {
                 String trimmedName = NBootUtils.trim(name);
                 if (trimmedName.equals(trimmedLocName)) {
@@ -83,7 +83,7 @@ public class NBootRepositoryLocationList {
     public int indexOfURL(String url, int offset) {
         String trimmedName = NBootUtils.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NBootUtils.trim(all.get(i).getPath()))) {
+            if (trimmedName.equals(NBootUtils.trim(all.get(i).path()))) {
                 return i;
             }
         }
@@ -96,8 +96,8 @@ public class NBootRepositoryLocationList {
         }
         for (int i = offset; i < all.size(); i++) {
             NBootRepositoryLocation o = all.get(i);
-            if (NBootUtils.trim(other.getName()).equals(NBootUtils.trim(o.getName()))) {
-                if (NBootUtils.trim(other.getPath()).equals(NBootUtils.trim(o.getPath()))) {
+            if (NBootUtils.trim(other.name()).equals(NBootUtils.trim(o.name()))) {
+                if (NBootUtils.trim(other.path()).equals(NBootUtils.trim(o.path()))) {
                     return i;
                 }
             }
@@ -116,13 +116,13 @@ public class NBootRepositoryLocationList {
 
     public NBootRepositoryLocationList add(NBootRepositoryLocation a) {
         if (a != null) {
-            String n = NBootUtils.trim(a.getName());
+            String n = NBootUtils.trim(a.name());
             if (n.isEmpty()) {
                 if (indexOf(a, 0) < 0) {
                     all.add(a);
                 }
             } else {
-                if (indexOfName(a.getName(), 0) < 0) {
+                if (indexOfName(a.name(), 0) < 0) {
                     all.add(a);
                 }
             }

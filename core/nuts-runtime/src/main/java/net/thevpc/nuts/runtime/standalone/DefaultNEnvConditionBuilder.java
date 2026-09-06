@@ -160,25 +160,25 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     public NEnvConditionBuilder copyConditionsFromDependency(NBootDependency other) {
         if (other != null) {
-            arch(mergeLists(arch(), other.getConditionArch()));
-            os(mergeLists(os(), other.getConditionOs()));
-            osDist(mergeLists(osDist(), other.getConditionOsDist()));
-            platform(mergeLists(platform(), other.getConditionPlatform()));
-            desktopEnvironment(mergeLists(desktopEnvironment(), other.getConditionDesktopEnvironment()));
-            profile(mergeLists(profiles(), other.getConditionProfiles()));
-            setProperties(mergeMaps(properties(), other.getConditionProperties()));
+            arch(mergeLists(arch(), other.conditionArch()));
+            os(mergeLists(os(), other.conditionOs()));
+            osDist(mergeLists(osDist(), other.conditionOsDist()));
+            platform(mergeLists(platform(), other.conditionPlatform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.conditionDesktopEnvironment()));
+            profile(mergeLists(profiles(), other.conditionProfiles()));
+            setProperties(mergeMaps(properties(), other.conditionProperties()));
         }
         return this;
     }
     public NEnvConditionBuilder copyConditionsFromProperty(NBootDescriptorProperty other) {
         if (other != null) {
-            arch(mergeLists(arch(), other.getConditionArch()));
-            os(mergeLists(os(), other.getConditionOs()));
-            osDist(mergeLists(osDist(), other.getConditionOsDist()));
-            platform(mergeLists(platform(), other.getConditionPlatform()));
-            desktopEnvironment(mergeLists(desktopEnvironment(), other.getConditionDesktopEnvironment()));
-            profile(mergeLists(profiles(), other.getConditionProfiles()));
-            setProperties(mergeMaps(properties(), other.getConditionProperties()));
+            arch(mergeLists(arch(), other.conditionArch()));
+            os(mergeLists(os(), other.conditionOs()));
+            osDist(mergeLists(osDist(), other.conditionOsDist()));
+            platform(mergeLists(platform(), other.conditionPlatform()));
+            desktopEnvironment(mergeLists(desktopEnvironment(), other.conditionDesktopEnvironment()));
+            profile(mergeLists(profiles(), other.conditionProfiles()));
+            setProperties(mergeMaps(properties(), other.conditionProperties()));
         }
         return this;
     }

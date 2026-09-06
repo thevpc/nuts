@@ -61,15 +61,15 @@ public class NBootClassLoaderNode {
         return enabled;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
-    public URL getURL() {
+    public URL url() {
         return url;
     }
 
-    public List<NBootClassLoaderNode> getDependencies() {
+    public List<NBootClassLoaderNode> dependencies() {
         return dependencies;
     }
 

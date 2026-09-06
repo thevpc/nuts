@@ -25,16 +25,11 @@ public class NMavenSettingsLoaderBoot {
     public NMavenSettingsLoaderBoot() {
     }
 
-    public NBootLog getLog() {
-        return NBootContext.log();
-    }
-
-
-    public String getSettingsFilePath() {
+    public String settingsFilePath() {
         return settingsFilePath;
     }
 
-    public NMavenSettingsLoaderBoot setSettingsFilePath(String settingsFilePath) {
+    public NMavenSettingsLoaderBoot settingsFilePath(String settingsFilePath) {
         this.settingsFilePath = settingsFilePath;
         return this;
     }
@@ -113,7 +108,7 @@ public class NMavenSettingsLoaderBoot {
                         case "localRepository": {
                             String url0 = elementText(e);
                             if (!NBootUtils.isBlank(url0)) {
-                                settings.setLocalRepository(url0.trim());
+                                settings.localRepository(url0.trim());
                             }
                         }
                         case "mirrors": {
@@ -157,17 +152,17 @@ public class NMavenSettingsLoaderBoot {
                     }
                 }
             } catch (Exception ex) {
-                getLog().with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
+                NBootContext.log().with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
             }
         }
-        if (NBootUtils.isBlank(settings.getLocalRepository())) {
-            settings.setLocalRepository(System.getProperty("user.home") + NBootUtils.getNativePath("/.m2/repository"));
+        if (NBootUtils.isBlank(settings.localRepository())) {
+            settings.localRepository(System.getProperty("user.home") + NBootUtils.getNativePath("/.m2/repository"));
         }
-        if (NBootUtils.isBlank(settings.getRemoteRepository())) {
+        if (NBootUtils.isBlank(settings.remoteRepository())) {
             //always!
-            settings.setRemoteRepository("https://repo.maven.apache.org/maven2");
+            settings.remoteRepository("https://repo.maven.apache.org/maven2");
         }
-        settings.setActiveRepositories(list);
+        settings.activeRepositories(list);
         return settings;
     }
 }

@@ -1019,59 +1019,59 @@ public class DefaultNBootOptions implements NBootOptions {
 
     public NBootOptionsInfo toBootOptions() {
         NBootOptionsInfo r = new NBootOptionsInfo();
-        r.setApiVersion(this.apiVersion().map(Object::toString).orNull());
-        r.setRuntimeId(this.runtimeId().map(Object::toString).orNull());
-        r.setJavaCommand(this.javaCommand().orNull());
-        r.setJavaOptions(this.javaOptions().orNull());
-        r.setWorkspace(this.workspace().orNull());
-        r.setName(this.name().orNull());
-        r.setInstallCompanions(this.installCompanions().orNull());
-        r.setSkipWelcome(this.skipWelcome().orNull());
-        r.setSkipBoot(this.skipBoot().orNull());
-        r.setSystem(this.system().orNull());
-        r.setGui(this.gui().orNull());
-        r.setUserName(this.userName().orNull());
-        r.setCredential(this.credential().orNull());
-        r.setTerminalMode(this.terminalMode().map(NTerminalMode::id).orNull());
-        r.setReadOnly(this.readOnly().orNull());
-        r.setTrace(this.trace().orNull());
-        r.setProgressOptions(this.progressOptions().orNull());
+        r.apiVersion(this.apiVersion().map(Object::toString).orNull());
+        r.runtimeId(this.runtimeId().map(Object::toString).orNull());
+        r.javaCommand(this.javaCommand().orNull());
+        r.javaOptions(this.javaOptions().orNull());
+        r.workspace(this.workspace().orNull());
+        r.name(this.name().orNull());
+        r.installCompanions(this.installCompanions().orNull());
+        r.skipWelcome(this.skipWelcome().orNull());
+        r.skipBoot(this.skipBoot().orNull());
+        r.system(this.system().orNull());
+        r.gui(this.gui().orNull());
+        r.userName(this.userName().orNull());
+        r.credential(this.credential().orNull());
+        r.terminalMode(this.terminalMode().map(NTerminalMode::id).orNull());
+        r.readOnly(this.readOnly().orNull());
+        r.trace(this.trace().orNull());
+        r.progressOptions(this.progressOptions().orNull());
         {
             NLogConfig c = this.logConfig().orNull();
             NBootLogConfig v = null;
             if (c != null) {
                 v = new NBootLogConfig();
-                v.setLogFileBase(c.logFileBase());
-                v.setLogFileLevel(c.logFileLevel());
-                v.setLogTermLevel(c.logTermLevel());
-                v.setLogFileSize(c.logFileSize());
-                v.setLogFileCount(c.logFileCount());
-                v.setLogFileName(c.logFileName());
-                v.setLogFileBase(c.logFileBase());
+                v.logFileBase(c.logFileBase());
+                v.logFileLevel(c.logFileLevel());
+                v.logTermLevel(c.logTermLevel());
+                v.logFileSize(c.logFileSize());
+                v.logFileCount(c.logFileCount());
+                v.logFileName(c.logFileName());
+                v.logFileBase(c.logFileBase());
             }
-            r.setLogConfig(v);
+            r.logConfig(v);
         }
-        r.setConfirm(this.confirm().map(NConfirmationMode::id).orNull());
-        r.setConfirm(this.confirm().map(NConfirmationMode::id).orNull());
-        r.setOutputFormat(this.outputFormat().map(NContentType::id).orNull());
-        r.setOutputFormatOptions(this.outputFormatOptions().orNull());
-        r.setOpenMode(this.openMode().map(NOpenMode::id).orNull());
-        r.setCreationTime(this.creationTime().orNull());
-        r.setDry(this.dry().orNull());
-        r.setShowStacktrace(this.showStacktrace().orNull());
-        r.setClassLoaderSupplier(this.classLoaderSupplier().orNull());
-        r.setExecutorOptions(this.executorOptions().orNull());
-        r.setRecover(this.recover().orNull());
-        r.setReset(this.reset().orNull());
-        r.setResetHard(this.resetHard().orNull());
-        r.setCommandVersion(this.commandVersion().orNull());
-        r.setCommandHelp(this.commandHelp().orNull());
-        r.setDebug(this.debug().orNull());
-        r.setInherited(this.inherited().orNull());
-        r.setExecutionType(this.executionType().map(NExecutionType::id).orNull());
-        r.setRunAs(this.runAs().map(NRunAs::toString).orNull());
-        r.setArchetype(this.archetype().orNull());
-        r.setStoreStrategy(this.storeStrategy().map(NStoreStrategy::id).orNull());
+        r.confirm(this.confirm().map(NConfirmationMode::id).orNull());
+        r.confirm(this.confirm().map(NConfirmationMode::id).orNull());
+        r.outputFormat(this.outputFormat().map(NContentType::id).orNull());
+        r.outputFormatOptions(this.outputFormatOptions().orNull());
+        r.openMode(this.openMode().map(NOpenMode::id).orNull());
+        r.creationTime(this.creationTime().orNull());
+        r.dry(this.dry().orNull());
+        r.showStacktrace(this.showStacktrace().orNull());
+        r.classLoaderSupplier(this.classLoaderSupplier().orNull());
+        r.executorOptions(this.executorOptions().orNull());
+        r.recover(this.recover().orNull());
+        r.reset(this.reset().orNull());
+        r.resetHard(this.resetHard().orNull());
+        r.commandVersion(this.commandVersion().orNull());
+        r.commandHelp(this.commandHelp().orNull());
+        r.debug(this.debug().orNull());
+        r.inherited(this.inherited().orNull());
+        r.executionType(this.executionType().map(NExecutionType::id).orNull());
+        r.runAs(this.runAs().map(NRunAs::toString).orNull());
+        r.archetype(this.archetype().orNull());
+        r.storeStrategy(this.storeStrategy().map(NStoreStrategy::id).orNull());
         {
             Map<NHomeLocation, String> c = this.homeLocations().orNull();
             Map<NBootHomeLocation, String> v = null;
@@ -1084,7 +1084,7 @@ public class DefaultNBootOptions implements NBootOptions {
                     ), e.getValue());
                 }
             }
-            r.setHomeLocations(v);
+            r.homeLocations(v);
         }
         {
             Map<NStoreType, String> c = this.storeLocations().orNull();
@@ -1095,34 +1095,34 @@ public class DefaultNBootOptions implements NBootOptions {
                     v.put(e.getKey().id(), e.getValue());
                 }
             }
-            r.setStoreLocations(v);
+            r.storeLocations(v);
         }
-        r.setStoreLayout(this.storeLayout().map(Enum::toString).orNull());
-        r.setStoreStrategy(this.storeStrategy().map(Enum::toString).orNull());
-        r.setRepositoryStoreStrategy(this.repositoryStoreStrategy().map(Enum::toString).orNull());
-        r.setFetchStrategy(this.fetchStrategy().map(Enum::toString).orNull());
-        r.setCached(this.cached().orNull());
-        r.setIndexed(this.indexed().orNull());
-        r.setTransitive(this.transitive().orNull());
-        r.setBot(this.bot().orNull());
-        r.setStdin(this.stdin().orNull());
-        r.setStdout(this.stdout().orNull());
-        r.setStderr(this.stderr().orNull());
-        r.setExecutorService(this.executorService().orNull());
+        r.storeLayout(this.storeLayout().map(Enum::toString).orNull());
+        r.storeStrategy(this.storeStrategy().map(Enum::toString).orNull());
+        r.repositoryStoreStrategy(this.repositoryStoreStrategy().map(Enum::toString).orNull());
+        r.setchStrategy(this.fetchStrategy().map(Enum::toString).orNull());
+        r.cached(this.cached().orNull());
+        r.indexed(this.indexed().orNull());
+        r.transitive(this.transitive().orNull());
+        r.bot(this.bot().orNull());
+        r.stdin(this.stdin().orNull());
+        r.stdout(this.stdout().orNull());
+        r.stderr(this.stderr().orNull());
+        r.executorService(this.executorService().orNull());
 //        r.setBootRepositories(this.getBootRepositories());
 
-        r.setExcludedExtensions(this.excludedExtensions().orNull());
+        r.excludedExtensions(this.excludedExtensions().orNull());
 //        r.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
-        r.setRepositories(this.repositories().orNull());
-        r.setApplicationArguments(this.applicationArguments().orNull());
-        r.setCustomOptions(this.customOptions().orNull());
-        r.setExpireTime(this.expireTime().orNull());
-        r.setErrors(this.errors().isNotPresent() ? new ArrayList<>() : this.errors().get().stream().map(NMsg::toString).collect(Collectors.toList()));
-        r.setSkipErrors(this.skipErrors().orNull());
-        r.setSwitchWorkspace(this.switchWorkspace().orNull());
-        r.setLocale(this.locale().orNull());
-        r.setTheme(this.theme().orNull());
-        r.setDependencySolver(this.dependencySolver().orNull());
+        r.repositories(this.repositories().orNull());
+        r.applicationArguments(this.applicationArguments().orNull());
+        r.customOptions(this.customOptions().orNull());
+        r.expireTime(this.expireTime().orNull());
+        r.errors(this.errors().isNotPresent() ? new ArrayList<>() : this.errors().get().stream().map(NMsg::toString).collect(Collectors.toList()));
+        r.skipErrors(this.skipErrors().orNull());
+        r.switchWorkspace(this.switchWorkspace().orNull());
+        r.locale(this.locale().orNull());
+        r.theme(this.theme().orNull());
+        r.dependencySolver(this.dependencySolver().orNull());
         r.isolationLevel(this.isolationLevel().map(NIsolationLevel::id).orNull());
         r.initLaunchers(this.initLaunchers().orNull());
         r.initJava(this.initJava().orNull());
@@ -1131,16 +1131,16 @@ public class DefaultNBootOptions implements NBootOptions {
         r.desktopLauncher(this.desktopLauncher().map(NSupportMode::id).orNull());
         r.menuLauncher(this.menuLauncher().map(NSupportMode::id).orNull());
         r.userLauncher(this.userLauncher().map(NSupportMode::id).orNull());
-        r.setSharedInstance(this.sharedInstance().orNull());
-        r.setPreviewRepo(this.previewRepo().orNull());
+        r.sharedInstance(this.sharedInstance().orNull());
+        r.previewRepo(this.previewRepo().orNull());
 
-        r.setBootRepositories(this.bootRepositories().orNull());
-        r.setRuntimeBootDependencyNode(convertNode(this.runtimeBootDependencyNode().orNull()));
-        r.setBootWorkspaceFactory(this.bootWorkspaceFactory().orNull());
-        r.setClassWorldURLs(this.classWorldURLs().orNull());
-        r.setClassWorldLoader(this.classWorldLoader().orNull());
-        r.setUuid(this.uuid().orNull());
-        r.setRuntimeBootDescriptor(this.runtimeBootDescriptor().orNull());
+        r.bootRepositories(this.bootRepositories().orNull());
+        r.runtimeBootDependencyNode(convertNode(this.runtimeBootDependencyNode().orNull()));
+        r.bootWorkspaceFactory(this.bootWorkspaceFactory().orNull());
+        r.classWorldURLs(this.classWorldURLs().orNull());
+        r.classWorldLoader(this.classWorldLoader().orNull());
+        r.uuid(this.uuid().orNull());
+        r.runtimeBootDescriptor(this.runtimeBootDescriptor().orNull());
 
         return r;
     }

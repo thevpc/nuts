@@ -28,7 +28,6 @@ package net.thevpc.nuts.boot;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -68,11 +67,11 @@ public class NBootLogConfig implements Serializable, Cloneable {
         }
     }
 
-    public Level getLogFileLevel() {
+    public Level logFileLevel() {
         return logFileLevel;
     }
 
-    public NBootLogConfig setLogFileLevel(Level logFileLevel) {
+    public NBootLogConfig logFileLevel(Level logFileLevel) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -80,11 +79,11 @@ public class NBootLogConfig implements Serializable, Cloneable {
         return this;
     }
 
-    public Level getLogTermLevel() {
+    public Level logTermLevel() {
         return logTermLevel;
     }
 
-    public NBootLogConfig setLogTermLevel(Level logTermLevel) {
+    public NBootLogConfig logTermLevel(Level logTermLevel) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -97,7 +96,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      *
      * @return log file size
      */
-    public int getLogFileSize() {
+    public int logFileSize() {
         return logFileSize;
     }
 
@@ -107,7 +106,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      * @param logFileSize Log File Size in Mega Bytes
      * @return {@code this} instance
      */
-    public NBootLogConfig setLogFileSize(int logFileSize) {
+    public NBootLogConfig logFileSize(int logFileSize) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -120,7 +119,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      *
      * @return log rotation files count
      */
-    public int getLogFileCount() {
+    public int logFileCount() {
         return logFileCount;
     }
 
@@ -130,7 +129,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      * @param logFileCount Log File rotation count
      * @return {@code this} instance
      */
-    public NBootLogConfig setLogFileCount(int logFileCount) {
+    public NBootLogConfig logFileCount(int logFileCount) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -143,7 +142,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Name pattern
      */
-    public String getLogFileName() {
+    public String logFileName() {
         return logFileName;
     }
 
@@ -153,7 +152,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      * @param logFileName Log File Name pattern
      * @return {@code this} instance
      */
-    public NBootLogConfig setLogFileName(String logFileName) {
+    public NBootLogConfig logFileName(String logFileName) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }
@@ -166,7 +165,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      *
      * @return Log File Base directory
      */
-    public String getLogFileBase() {
+    public String logFileBase() {
         return logFileBase;
     }
 
@@ -176,7 +175,7 @@ public class NBootLogConfig implements Serializable, Cloneable {
      * @param logFileBase Log File Base directory
      * @return {@code this} instance
      */
-    public NBootLogConfig setLogFileBase(String logFileBase) {
+    public NBootLogConfig logFileBase(String logFileBase) {
         if(readOnly){
             throw new IllegalArgumentException("read only");
         }

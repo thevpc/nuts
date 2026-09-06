@@ -104,7 +104,7 @@ public class NBootHomeLocation {
      *
      * @return OS family
      */
-    public String getOsFamily() {
+    public String osFamily() {
         return osFamily;
     }
 
@@ -113,7 +113,7 @@ public class NBootHomeLocation {
      *
      * @return Store Location
      */
-    public String getStoreLocation() {
+    public String storeLocation() {
         return storeLocation;
     }
 

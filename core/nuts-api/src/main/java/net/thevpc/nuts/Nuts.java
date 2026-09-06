@@ -315,7 +315,7 @@ public final class Nuts {
      * @throws NBootUnsatisfiedRequirementsException if workspace creation fails
      */
     public static NWorkspace openWorkspace(NBootArguments args) throws NBootUnsatisfiedRequirementsException {
-        return (NWorkspace) NBootWorkspace.of(args).getWorkspace();
+        return (NWorkspace) NBootWorkspace.of(args).workspace();
     }
 
     /**
@@ -373,7 +373,7 @@ public final class Nuts {
      * @return a new workspace instance configured using the given options
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).getWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).workspace();
     }
 
 
@@ -409,7 +409,7 @@ public final class Nuts {
      * @return the workspace session after execution
      */
     public static NWorkspace runWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).runWorkspace().getWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options == null ? null : options.toBootOptionsInfo()).runWorkspace().workspace();
     }
 
 
@@ -430,6 +430,6 @@ public final class Nuts {
      * @throws NExecutionException if an error occurs while running the workspace
      */
     public static NWorkspace runWorkspace(NBootArguments args) throws NExecutionException {
-        return (NWorkspace) NBootWorkspace.of(args).runWorkspace().getWorkspace();
+        return (NWorkspace) NBootWorkspace.of(args).runWorkspace().workspace();
     }
 }
