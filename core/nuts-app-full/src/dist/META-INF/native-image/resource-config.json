@@ -69,6 +69,8 @@
   }, {
     "pattern":"jdk.internal.le:\\Qjdk/internal/org/jline/utils/dumb.caps\\E"
   }, {
+    "pattern":"jdk.internal.le:\\Qjdk/internal/org/jline/utils/xterm-256color.caps\\E"
+  }, {
     "pattern":"net/thevpc/nuts/runtime/.*\\.properties"
   }, {
     "pattern":"net/thevpc/nuts/runtime/settings/.*\\.sh"
