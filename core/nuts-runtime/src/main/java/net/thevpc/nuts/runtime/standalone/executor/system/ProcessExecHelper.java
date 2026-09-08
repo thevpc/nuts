@@ -51,8 +51,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private NExecOutput out;
     private NExecOutput err;
     private boolean dry;
+    private boolean showCommand;
+    private List<NText> xargs;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry,boolean showCommand,List<NText> xargs) {
         super();
         this.pb = pb;
         this.trace = trace;
@@ -61,13 +63,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         this.out = out;
         this.err = err;
         this.dry = dry;
+        this.showCommand = showCommand;
+        this.xargs = xargs;
     }
 
     public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory,
                                            boolean showCommand, boolean failFast, NDuration sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs, String[] executorOptions,
-                                           boolean dry) {
+                                           boolean dry,List<NText> xargs) {
         List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions);
         ProcessBuilder2 pb = new ProcessBuilder2();
         pb.setCommand(newCommands)
@@ -95,7 +99,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 NOut.println(NMsg.ofP(pb.getCommandString()));
             }
         }
-        return new ProcessExecHelper(definition, pb, NSession.of().out(), in, out, err, dry);
+        return new ProcessExecHelper(definition, pb, NSession.of().out(), in, out, err, dry,showCommand,xargs);
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
@@ -103,7 +107,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  NExecInput in, NExecOutput out, NExecOutput err,
                                                  NRunAs runAs,
                                                  String[] executorOptions,
-                                                 boolean dry
+                                                 boolean dry,
+                                                 List<NText> xargs
     ) throws NExecutionException {
         boolean jdk=false;
         String remoteVendor=null;
@@ -215,10 +220,26 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 in, out, err,
                 runAs,
                 executorOptions,
-                dry);
+                dry,xargs);
     }
 
     public int exec() {
+        if (showCommand || CoreNUtils.isShowCommand()) {
+            if(!xargs.isEmpty()) {
+                trace.println(NMsg.ofC("%s ", NText.ofStyled("nuts-exec", NTextStyle.primary1())));
+                for (int i = 0; i < xargs.size(); i++) {
+                    NText xarg = xargs.get(i);
+                    trace.println(NMsg.ofC("\t\t %s", xarg));
+                }
+            }
+            if(!pb.getCommand().isEmpty()) {
+                trace.println(NMsg.ofC("%s ", NText.ofStyled(pb.getCommand().get(0), NTextStyle.primary1())));
+                for (int i = 1; i < pb.getCommand().size(); i++) {
+                    String xarg = pb.getCommand().get(i);
+                    trace.println(NMsg.ofC("\t\t %s", xarg));
+                }
+            }
+        }
         NSession session = NSession.of();
         if (session.isDry()) {
             if (trace.terminalMode() == NTerminalMode.FORMATTED) {

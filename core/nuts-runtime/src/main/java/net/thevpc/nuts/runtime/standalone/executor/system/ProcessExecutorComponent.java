@@ -102,7 +102,8 @@ public class ProcessExecutorComponent implements NExecutorComponent {
                 executionContext.in(), executionContext.out(), executionContext.err(),
                 executionContext.runAs(),
                 executionContext.executorOptions().toArray(new String[0]),
-                executionContext.isDry()
+                executionContext.isDry(),
+                new ArrayList<>()
         );
     }
 }
