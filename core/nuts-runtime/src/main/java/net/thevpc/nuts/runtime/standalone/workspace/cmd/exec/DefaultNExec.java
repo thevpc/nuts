@@ -109,9 +109,9 @@ public class DefaultNExec extends AbstractNExec {
                 if ("exec".equals(cmd)) {
                     NCmdLine cmdLine = NCmdLine.of(command0);
                     cmdLine.skip(); //skip exec
-                    command(new ArrayList<>());//reset command
+                    clearCommand();
                     while (cmdLine.hasNext()) {
-                        configureLast(cmdLine);
+                        configureFirst(cmdLine);
                     }
                     someUpdates = true;
                 } else if ("-".equals(cmd)) {
@@ -123,12 +123,14 @@ public class DefaultNExec extends AbstractNExec {
                         newCmd.add("-c");
                         newCmd.addAll(command0);
                     }
+                    clearCommand();
                     command(newCmd);
                     someUpdates = true;
                 } else if (NArg.of(cmd).isOption()) {
                     ArrayList<String> aa = new ArrayList<>();
                     aa.add("exec");
                     aa.addAll(command0);
+                    clearCommand();
                     command(aa);
                     someUpdates = true;
                 }
