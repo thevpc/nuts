@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.boot.NBootCompleteRequest;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.core.*;
 
@@ -68,6 +69,12 @@ public final class JavaExecutorOptions {
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
                                List<String> executorOptions, NPath dir, net.thevpc.nuts.platform.NEnv targetEnv) {
         showCommand = CoreNUtils.isShowCommand();
+        if(executorOptions!=null) {
+            NCmdLine.of(executorOptions).matcher()
+                    .when("--show-command").asFlag(a -> this.showCommand = (a.booleanValue()))
+                    .whenAny().skip()
+                    .requireAll();
+        }
         NId id = def.id();
         Path path = def.content().flatMap(NPath::toPath).orNull();
         this.dir = dir;

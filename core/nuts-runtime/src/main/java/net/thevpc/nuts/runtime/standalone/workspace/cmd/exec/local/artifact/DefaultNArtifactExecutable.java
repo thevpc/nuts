@@ -63,15 +63,16 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         this.executionType = executionType;
         this.execCommand = execCommand;
 
-        List<String> executorOptionsList = new ArrayList<>();
-        this.executorOptions = executorOptionsList;
-        NCmdLine.of(this.executorOptions).matcher()
-                .when("--show-command").asFlag(a->this.showCommand = (a.booleanValue()))
-                .when("--nuts-exec-mode").asFlag(a->this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                .when("--nuts-auto-install").asFlag(a->this.autoInstall = a.booleanValue())
-                .whenAny().asArg(a->executorOptionsList.add(a.image()))
-                .requireAll();
-
+        this.executorOptions = new ArrayList<>();
+        if(executorOptions!=null) {
+            this.executorOptions.addAll(executorOptions);
+            NCmdLine.of(executorOptions).matcher()
+                    .when("--show-command").asFlag(a -> this.showCommand = (a.booleanValue()))
+                    .when("--nuts-exec-mode").asFlag(a -> this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
+                    .when("--nuts-auto-install").asFlag(a -> this.autoInstall = a.booleanValue())
+                    .whenAny().skip()
+                    .requireAll();
+        }
         this.workspaceOptions = workspaceOptions;
     }
 

@@ -20,6 +20,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutable
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,8 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.err(),
                 execCommand.runAs(),
                 executorOptions.toArray(new String[0]),
-                ExtraApiUtils.asBooleanOr(execCommand.dry(), NSession.of().isDry())
+                ExtraApiUtils.asBooleanOr(execCommand.dry(), NSession.of().isDry()),
+                new ArrayList<>()
         );
     }
 
