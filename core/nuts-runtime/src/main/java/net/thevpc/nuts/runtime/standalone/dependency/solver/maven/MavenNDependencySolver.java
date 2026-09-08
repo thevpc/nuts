@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.solver.maven;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -291,8 +292,10 @@ public class MavenNDependencySolver implements NDependencySolver {
             if (!NBlankable.isBlank(managed.scope()) && NBlankable.isBlank(dependency.scope())) {
                 b.scope(managed.scope());
             }
-            if (dependency.exclusions().isEmpty() && !managed.exclusions().isEmpty()) {
-                b.exclusions(managed.exclusions());
+            if (!managed.exclusions().isEmpty()) {
+                LinkedHashSet<NId> all = new LinkedHashSet<>(dependency.exclusions());
+                all.addAll(managed.exclusions());
+                b.exclusions(new ArrayList<>(all));
             }
             return b.build();
         }

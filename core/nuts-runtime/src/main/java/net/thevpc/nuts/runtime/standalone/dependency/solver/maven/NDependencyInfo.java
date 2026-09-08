@@ -11,14 +11,20 @@ public class NDependencyInfo {
     public NDependency dependency;
     boolean optional;
     boolean provided;
+    public boolean rejected;
 
     public NDependencyInfo(NDependency dependency, int depth, boolean optional, boolean provided) {
+        this(dependency, depth, optional, provided, false);
+    }
+
+    public NDependencyInfo(NDependency dependency, int depth, boolean optional, boolean provided, boolean rejected) {
         this.real=dependency.toId();
         this.normalized = normalizedId(real);
         this.depth = depth;
         this.dependency = dependency;
         this.optional = optional;
         this.provided = provided;
+        this.rejected = rejected;
     }
 
     public static NId normalizedId(NId id) {

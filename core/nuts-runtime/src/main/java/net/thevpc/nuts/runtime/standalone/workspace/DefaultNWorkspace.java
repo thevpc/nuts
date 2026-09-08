@@ -1032,37 +1032,40 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
         for (NDependency d : oldDependencies) {
-            if (NBlankable.isBlank(d.scope())
-                    || d.version().isBlank()
-                    || NBlankable.isBlank(d.optional())) {
-                NDependency standardDependencyOk = null;
-                for (NDependency standardDependency : effStandardDeps) {
-                    if (standardDependency.shortName().equals(d.toId().shortName())) {
-                        standardDependencyOk = standardDependency;
-                        break;
+            NDependency standardDependencyOk = null;
+            for (NDependency standardDependency : effStandardDeps) {
+                if (standardDependency.shortName().equals(d.toId().shortName())) {
+                    standardDependencyOk = standardDependency;
+                    break;
+                }
+            }
+            if (standardDependencyOk != null) {
+                if (NBlankable.isBlank(d.scope())
+                        && !NBlankable.isBlank(standardDependencyOk.scope())) {
+                    someChange = true;
+                    d = d.builder().scope(standardDependencyOk.scope()).build();
+                }
+                if (NBlankable.isBlank(d.optional())
+                        && !NBlankable.isBlank(standardDependencyOk.optional())) {
+                    someChange = true;
+                    d = d.builder().optional(standardDependencyOk.optional()).build();
+                }
+                if (d.version().isBlank()
+                        && !standardDependencyOk.version().isBlank()) {
+                    someChange = true;
+                    d = d.builder().version(standardDependencyOk.version()).build();
+                }
+                if (!standardDependencyOk.exclusions().isEmpty()) {
+                    LinkedHashSet<NId> allExclusions = new LinkedHashSet<>(d.exclusions());
+                    if (allExclusions.addAll(standardDependencyOk.exclusions())) {
+                        someChange = true;
+                        d = d.builder().exclusions(new ArrayList<>(allExclusions)).build();
                     }
                 }
-                if (standardDependencyOk != null) {
-                    if (NBlankable.isBlank(d.scope())
-                            && !NBlankable.isBlank(standardDependencyOk.scope())) {
-                        someChange = true;
-                        d = d.builder().scope(standardDependencyOk.scope()).build();
-                    }
-                    if (NBlankable.isBlank(d.optional())
-                            && !NBlankable.isBlank(standardDependencyOk.optional())) {
-                        someChange = true;
-                        d = d.builder().optional(standardDependencyOk.optional()).build();
-                    }
-                    if (d.version().isBlank()
-                            && !standardDependencyOk.version().isBlank()) {
-                        someChange = true;
-                        d = d.builder().version(standardDependencyOk.version()).build();
-                    }
-                }
-                if (d.version().isBlank()) {
-                    wsModel.LOG
-                            .log(NMsg.ofC("failed to resolve effective version for %s", d).asFineFail());
-                }
+            }
+            if (d.version().isBlank()) {
+                wsModel.LOG
+                        .log(NMsg.ofC("failed to resolve effective version for %s", d).asFineFail());
             }
 
             if ("import".equals(d.scope())) {

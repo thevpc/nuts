@@ -56,7 +56,9 @@ class PassProcessor {
         }
         NDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
         if (effectiveDescriptor != null) {
-            mavenNDependencySolver.registerManagedDependencies(effectiveDescriptor);
+            if (currentNode.depth == 0) {
+                mavenNDependencySolver.registerManagedDependencies(effectiveDescriptor);
+            }
             if (currentNode.depth == 0) {
                 if (currentNode.dependency != null && !currentNode.isAcceptableDependency(currentNode.dependency)) {
                     return;
@@ -102,6 +104,9 @@ class PassProcessor {
                     }
                 } else {
                     mavenNDependencySolver.logRejectedDependency(dependency);
+                    if (currentNode.depth == 0) {
+                        mergedVisitedSet.add(new NDependencyInfo(dependency, 0, dependency.isOptional(), false, true));
+                    }
                 }
 
             }
@@ -141,7 +146,9 @@ class PassProcessor {
         }
         List<NDependencyTreeNode> mergedRootNodes = mergedRootNodeBuilders.stream().map(NDependencyTreeNodeBuild::build).collect(Collectors.toList());
         List<NDependencyTreeNode> nonMergedRootNodes = nonMergedRootNodeBuilders.stream().map(NDependencyTreeNodeBuild::build).collect(Collectors.toList());
-        final NDependency[] mergedDepsList = mergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
+        final NDependency[] mergedDepsList = mergedVisitedSet.visitedSet.values().stream()
+                .filter(x -> !x.rejected)
+                .map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
         final NDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NDependencyInfo::getDependency)
                 .toArray(NDependency[]::new);
