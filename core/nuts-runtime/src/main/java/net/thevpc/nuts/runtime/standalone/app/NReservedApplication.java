@@ -127,16 +127,6 @@ public final class NReservedApplication {
         }
         Class<?> appClass = NReflectUtils.unproxyType(appInstance.getClass());
         NApp appAnnotation = appClass.getAnnotation(NApp.class);
-        if (appAnnotation == null) {
-            /**
-             * N boot exception.
-             *
-             * @param appClass.getName()) app class.get name())
-             * @return n boot exception result
-             */
-            throw new NBootException(NBootMsg.ofC("class %s is missing annotation @" + NApp.class.getSimpleName(), appClass.getName()));
-        }
-        NAssert.requireNamedNonNull(appAnnotation, "@NApp annotation");
         List<Method> runMethods = new ArrayList<>();
         List<Method> installMethods = new ArrayList<>();
         List<Method> uninstallMethods = new ArrayList<>();
@@ -167,52 +157,26 @@ public final class NReservedApplication {
                     }
                 }
             }
-            try {
-                for (Method m : cc.getDeclaredMethods()) {
-                  /**
-                   * Check allowed method with nuts annotation.
-                   *
-                   * @param m m
-                   * @param NAppRun.class n app run.class
-                   */
-                    checkAllowedMethodWithNutsAnnotation(m, NAppRun.class);
-                  /**
-                   * Check allowed method with nuts annotation.
-                   *
-                   * @param m m
-                   * @param NAppInstall.class n app install.class
-                   */
-                    checkAllowedMethodWithNutsAnnotation(m, NAppInstall.class);
-                  /**
-                   * Check allowed method with nuts annotation.
-                   *
-                   * @param m m
-                   * @param NAppUninstall.class n app uninstall.class
-                   */
-                    checkAllowedMethodWithNutsAnnotation(m, NAppUninstall.class);
-                  /**
-                   * Check allowed method with nuts annotation.
-                   *
-                   * @param m m
-                   * @param NAppUpdate.class n app update.class
-                   */
-                    checkAllowedMethodWithNutsAnnotation(m, NAppUpdate.class);
-                  /**
-                   * Check allowed method with nuts annotation.
-                   *
-                   * @param m m
-                   * @param NAppComplete.class n app complete.class
-                   */
-                    checkAllowedMethodWithNutsAnnotation(m, NAppComplete.class);
+            if(appAnnotation!=null) {
+                try {
+                    for (Method m : cc.getDeclaredMethods()) {
+                        checkAllowedMethodWithNutsAnnotation(m, NAppRun.class);
+                        checkAllowedMethodWithNutsAnnotation(m, NAppInstall.class);
+                        checkAllowedMethodWithNutsAnnotation(m, NAppUninstall.class);
+                        checkAllowedMethodWithNutsAnnotation(m, NAppUpdate.class);
+                        checkAllowedMethodWithNutsAnnotation(m, NAppComplete.class);
+                    }
+                } catch (Exception e) {
+                    throw NException.ofUncheckedException(e);
                 }
-            } catch (Exception e) {
-                throw NException.ofUncheckedException(e);
             }
             cc = cc.getSuperclass();
         }
-//        if (runMethods.isEmpty()) {
-//            throw new NBootException(NBootMsg.ofC("class %s has annotation @NApp. it should define a public no arg @NAppRun method", appClass.getName()));
-//        }
+        if(appAnnotation==null){
+            if(!runMethods.isEmpty() || !installMethods.isEmpty() || !updateMethods.isEmpty() || !uninstallMethods.isEmpty() || !completeMethods.isEmpty()){
+                throw new NBootException(NBootMsg.ofC("class %s is missing annotation @" + NApp.class.getSimpleName(), appClass.getName()));
+            }
+        }
         return new AnnotationClassNApplicationHandler(runMethods, installMethods, updateMethods, uninstallMethods, completeMethods, appInstance);
     }
 
@@ -227,21 +191,9 @@ public final class NReservedApplication {
         Annotation u = m.getAnnotation(annClass);
         if (u != null) {
             if (m.getParameterCount() != 0) {
-                /**
-                 * N boot exception.
-                 *
-                 * @param annClass.getName()) ann class.get name())
-                 * @return n boot exception result
-                 */
                 throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should not have parameters", m, annClass.getName()));
             }
             if (!Modifier.isPublic(m.getModifiers())) {
-                /**
-                 * N boot exception.
-                 *
-                 * @param annClass.getName()) ann class.get name())
-                 * @return n boot exception result
-                 */
                 throw new NBootException(NBootMsg.ofC("method %s has annotation @%s. it should be public", m, annClass.getName()));
             }
             return true;
