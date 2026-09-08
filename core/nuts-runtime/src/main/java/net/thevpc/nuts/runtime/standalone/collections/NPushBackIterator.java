@@ -89,7 +89,7 @@ public class NPushBackIterator<T> extends NIteratorBase<T> {
     @Override
     public void remove() {
         if (lastHasNext == null) {
-            throw new UnsupportedOperationException("unsupported");
+            throw new UnsupportedOperationException("unsupported remove, no more elements");
         }
         base.remove();
     }
@@ -98,7 +98,7 @@ public class NPushBackIterator<T> extends NIteratorBase<T> {
         if (lastHasNext == null || !lastValConsumed) {
             lastHasNext = true;
         } else {
-            throw new UnsupportedOperationException("unsupported");
+            throw new UnsupportedOperationException("unsupported pushBack, no more elements");
         }
     }
 }

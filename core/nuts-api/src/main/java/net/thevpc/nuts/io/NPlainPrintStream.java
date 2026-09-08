@@ -375,12 +375,7 @@ public class NPlainPrintStream implements NPrintStream {
 
     @Override
     public NSystemTerminalBase terminal() {
-        /**
-         * Unsupported operation exception.
-         *
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("unsupported terminal for plain print stream");
     }
 
     @Override

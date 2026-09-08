@@ -5,7 +5,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-app</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
+    <packaging>jar</packaging>
     <name>Nuts Community App</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Package Manager Bootstrap</description>
@@ -75,7 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
 
                 <configuration>
                     <archive>
@@ -92,7 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -205,7 +205,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.4.2</version>
                         <configuration>
                             <archive>
                                 <manifestEntries>
@@ -315,7 +315,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.4.2</version>
                         <configuration>
                             <archive>
                                 <manifestEntries>

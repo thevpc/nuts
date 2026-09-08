@@ -684,12 +684,7 @@ public class NStringUtils {
                 return sb.toString();
             }
         }
-        /**
-         * Unsupported operation exception.
-         *
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("unsupported NPositionType "+position);
     }
 
     /**

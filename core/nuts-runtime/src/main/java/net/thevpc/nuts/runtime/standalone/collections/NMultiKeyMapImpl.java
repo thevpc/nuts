@@ -83,9 +83,9 @@ public class NMultiKeyMapImpl<K, V> implements NMultiKeyMap<K, V> {
         } else if (s2 != null) {
             s2.add(k1);
         } else {
-            if (s1 != s2) {
-                throw new UnsupportedOperationException("unexpected");
-            }
+//            if (s1 != s2) {
+//                throw new UnsupportedOperationException("unexpected");
+//            }
         }
     }
 

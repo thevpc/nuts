@@ -1523,8 +1523,11 @@ public final class NWorkspaceCmdLineParser {
                                 if (showError == null) {
                                     showError = new ArrayList<>();
                                     options.errors(showError);
+                                }else{
+                                    showError = new ArrayList<>(showError);
                                 }
                                 showError.add(NMsg.ofC("nuts: invalid option %s", a.asString().orNull()));
+                                options.errors(showError);
                             }
                             NArg finalA1 = a;
                             return NOptional.ofEmpty(() -> NMsg.ofC("unsupported option %s", finalA1));

@@ -460,13 +460,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
                 return true;
             }
             default: {
-                /**
-                 * Unsupported operation exception.
-                 *
-                 * @param value.mode() value.mode()
-                 * @return unsupported operation exception result
-                 */
-                throw new UnsupportedOperationException("unsupported " + value.mode());
+                throw new UnsupportedOperationException("unsupported NRunAs " + value.mode());
             }
         }
     }

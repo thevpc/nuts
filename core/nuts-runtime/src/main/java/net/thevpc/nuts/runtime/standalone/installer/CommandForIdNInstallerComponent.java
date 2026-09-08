@@ -107,9 +107,9 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                         .commandDefinition(def2.build())
                         .command("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
-                    cmd.executorOptions("--nuts-auto-install=false");
+                    cmd.executorOptions("--auto-install=false");
                 }else if (mode.equals("uninstall")) {
-                    cmd.executorOptions("--nuts-auto-install=false");
+                    cmd.executorOptions("--auto-install=false");
                 }
                 cmd.command(executionContext.arguments())
                         .executionType(NWorkspace.of().bootOptions().executionType().orNull())

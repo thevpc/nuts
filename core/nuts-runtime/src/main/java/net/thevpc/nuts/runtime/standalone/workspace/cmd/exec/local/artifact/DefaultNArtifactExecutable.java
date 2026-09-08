@@ -69,7 +69,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
             NCmdLine.of(executorOptions).matcher()
                     .when("--show-command").asFlag(a -> this.showCommand = (a.booleanValue()))
                     .when("--nuts-exec-mode").asFlag(a -> this.completeRequest = NBootCompleteRequest.parseOrNull(a.stringValue()))
-                    .when("--nuts-auto-install").asFlag(a -> this.autoInstall = a.booleanValue())
+                    .when("--auto-install").asFlag(a -> this.autoInstall = a.booleanValue())
                     .whenAny().skip()
                     .requireAll();
         }

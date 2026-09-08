@@ -62,7 +62,7 @@ public class NErrorHandlerIterator<T> extends NIteratorBase<T> {
                 }
             }
         }
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("unsupported NIteratorErrorHandlerType "+type);
     }
 
     @Override

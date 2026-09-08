@@ -2492,7 +2492,7 @@ public final class NBootUtils {
                 return sb.toString();
             }
         }
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("unsupported NBootPositionTypeBoot "+position);
     }
 
     public static String formatStringLiteral(String text) {

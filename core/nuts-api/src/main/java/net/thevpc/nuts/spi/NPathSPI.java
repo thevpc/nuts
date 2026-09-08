@@ -406,12 +406,6 @@ public interface NPathSPI {
      * @param permissions permissions
      */
     default void setPermissions(NPath basePath, NPathPermission... permissions) {
-        /**
-         * N unsupported operation exception.
-         *
-         * @param supported") supported")
-         * @return n unsupported operation exception result
-         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 
@@ -422,12 +416,6 @@ public interface NPathSPI {
      * @param permissions permissions
      */
     default void addPermissions(NPath basePath, NPathPermission... permissions) {
-        /**
-         * N unsupported operation exception.
-         *
-         * @param supported") supported")
-         * @return n unsupported operation exception result
-         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 
@@ -438,12 +426,6 @@ public interface NPathSPI {
      * @param permissions permissions
      */
     default void removePermissions(NPath basePath, NPathPermission... permissions) {
-        /**
-         * N unsupported operation exception.
-         *
-         * @param supported") supported")
-         * @return n unsupported operation exception result
-         */
         throw new NUnsupportedOperationException(NMsg.ofC("permissions are not supported"));
     }
 

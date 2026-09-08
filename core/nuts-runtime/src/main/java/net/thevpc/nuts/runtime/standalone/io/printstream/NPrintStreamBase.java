@@ -122,9 +122,9 @@ public abstract class NPrintStreamBase implements NPrintStream {
                 case TITLE:
                 default: {
                     if (NWorkspace.get().isPresent()) {
-                        throw new NUnsupportedOperationException();
+                        throw new NUnsupportedOperationException(NMsg.ofC("unsupported NTextType %s in printNormalized", b.type()));
                     } else {
-                        throw new UnsupportedOperationException();
+                        throw new UnsupportedOperationException("unsupported NTextType "+b.type()+" in printNormalized");
                     }
                 }
             }

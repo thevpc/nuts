@@ -26,13 +26,7 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware connectionString(String connectionString) {
-        /**
-         * Unsupported operation exception.
-         *
-         * @param interface" interface"
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException("Override in concrete interface");
+        throw new UnsupportedOperationException("Override `connectionString(String connectionString)` in concrete interface");
     }
 
     /**
@@ -42,13 +36,7 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware at(String connectionString) {
-        /**
-         * Unsupported operation exception.
-         *
-         * @param interface" interface"
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException("Override in concrete interface");
+        throw new UnsupportedOperationException("Override `at(String connectionString)` in concrete interface");
     }
 
     /**
@@ -58,13 +46,7 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware at(NConnectionString connectionString) {
-        /**
-         * Unsupported operation exception.
-         *
-         * @param interface" interface"
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException("Override in concrete interface");
+        throw new UnsupportedOperationException("Override `at(NConnectionString connectionString)` in concrete interface");
     }
 
     /**
@@ -74,12 +56,6 @@ public interface NConnectionStringAware {
      * @return this instance for fluent API usage
      */
     default NConnectionStringAware connectionString(NConnectionString connectionString) {
-        /**
-         * Unsupported operation exception.
-         *
-         * @param interface" interface"
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException("Override in concrete interface");
+        throw new UnsupportedOperationException("Override `connectionString(NConnectionString connectionString)` in concrete interface");
     }
 }

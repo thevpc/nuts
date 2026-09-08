@@ -39,12 +39,6 @@ public class NImmutableConvertedList<A, B> extends AbstractList<B>{
 
     @Override
     public B set(int index, B element) {
-        /**
-         * Unsupported operation exception.
-         *
-         * @param List" list"
-         * @return unsupported operation exception result
-         */
-        throw new UnsupportedOperationException("Immutable List");
+        throw new UnsupportedOperationException("unsupported set on an Immutable List");
     }
 }
