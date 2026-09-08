@@ -1,0 +1,2 @@
+#!/bin/sh
+docker run -it --rm eclipse-temurin:8-jre bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"

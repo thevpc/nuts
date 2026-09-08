@@ -1,8 +1,13 @@
 #!/bin/bash
+
 rm -Rf $HOME/.config/nuts/
 rm -Rf $HOME/.local/share/nuts/
 rm -Rf $HOME/.local/bin/nuts/
 rm -Rf $HOME/.local/lib/nuts/
 rm -Rf $HOME/.local/log/nuts/
 rm -Rf $HOME/.local/state/nuts/
+rm -Rf $HOME/.nuts
+rm -Rf $HOME/.cache/nuts
+rm -Rf $HOME/.local/share/nuts
+
 rm -Rf $HOME/xprojects/nuts-world/nuts/nuts/test/nuts-runtime-test/runtime/test

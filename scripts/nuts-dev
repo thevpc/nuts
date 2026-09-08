@@ -77,7 +77,10 @@ while (( "$#" )); do
             exit 1
             ;;
         *)
-            shift
+            # first non-option token is the actual nuts command:
+            # stop parsing launcher options and leave it (and everything
+            # after it) intact in "$@" for the final invocation
+            break
             ;;
     esac
 done
@@ -92,3 +95,4 @@ fi
 
 # Execute the Java application with debugging options and arguments
 $JAVA_CMD $JAVA_OPTS $NUTS_DEBUG_ARG -jar "$NUTS_APP_JAR" -w development "$@"
+
