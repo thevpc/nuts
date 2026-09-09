@@ -174,7 +174,10 @@ public interface NHttpResponse {
      *
      * @return if error throw result
      */
+    @Deprecated
     NHttpResponse ifErrorThrow();
+
+    NHttpResponse failFast();
 
     /**
      * Checks if is client error.

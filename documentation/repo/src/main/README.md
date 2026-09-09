@@ -96,20 +96,19 @@ nuts update
 
 ## Quick Examples
 
-| Command                                                                        | What it does                                                  |
-|--------------------------------------------------------------------------------|---------------------------------------------------------------|
-| `nuts org.apache.netbeans:netbeans`                                            | install and run NetBeans IDE                                  |
-| `nuts org.springframework.boot:spring-boot-cli init --dependencies=web my-app` | scaffold a Spring Boot project                                |
-| `nuts jd-gui`                                                                  | decompile a JAR                                               |
-| `nuts uninstall jd-gui#1.6.6`                                                  | uninstall version jd-gui version 1.6.6                        |
-| `nuts update nsh`                                                              | update to the newest version of java bash compatible shell    |
-| `nuts org.postgresql:postgresql-server initdb -D ~/pgdata`                     | initialize a portable PostgreSQL instance (not a java app)    |
-| `nuts --at=ssh://me@myserver install myapp:2.0`                                | deploy to remote server                                       |
-| `nuts settings bundle`                                                         | create offline deployment bundle (air-gapped deployment)      |
-| `nuts search --installed --json`                                               | list installed apps as JSON                                   |
-| `nuts myapp#1.0.0`                                                             | run a specific installed version                              |
-| `nuts nsh -c "cp http://host/a.pdf ssh://user@server/b.pdf"`                   | cross-protocol file copy                                      |
-| `nuts settings install-service myapp`                                          | Register system service across all major init systems         |
+| Command                                                                        | What it does                                                                                 |
+|--------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| `nuts org.apache.netbeans:netbeans`                                            | install and run NetBeans IDE                                                                 |
+| `nuts org.springframework.boot:spring-boot-cli init --dependencies=web my-app` | scaffold a Spring Boot project                                                               |
+| `nuts org.jd:jd-gui`                                                           | decompile a JAR                                                                              |
+| `nuts uninstall org.jd:jd-gui#1.6.6`                                           | uninstall version jd-gui version 1.6.6                                                       |
+| `nuts update nsh`                                                              | update to the newest version of java bash compatible shell                                   |
+| `nuts org.postgresql:postgresql-server initdb -D ~/pgdata`                     | initialize a portable PostgreSQL instance (not a java app)                                   |
+| `nuts --at=ssh://me@myserver install myapp:2.0`                                | deploy to remote server                                                                      |
+| `nuts bundle nsh`                                                              | create offline deployment bundle (air-gapped deployment) of nsh with all of its dependencies |
+| `nuts search --installed --json`                                               | list installed apps as JSON                                                                  |
+| `nuts net.thevpc.nsh:nsh#1.0.0`                                                | run a specific installed version of nsh                                                      |
+| `nuts nsh -c "cp http://host/a.pdf ssh://user@server/b.pdf"`                   | cross-protocol file copy                                                                     |
 
 → [See the full showcase](documentation/tutorials/SHOWCASE.md) for more examples including databases, IDEs, security tools, and games.
 

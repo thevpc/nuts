@@ -18,7 +18,7 @@ public class HttpClientTest {
         NHttpClient.of()
                 .GET("http://localhost:8080/p/image.png")
                 .authorizationBasic("taha","taha")
-                .run().ifErrorThrow();
+                .run().failFast();
     }
 
 }

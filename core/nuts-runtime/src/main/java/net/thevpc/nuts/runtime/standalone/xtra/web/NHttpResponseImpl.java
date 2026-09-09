@@ -219,6 +219,14 @@ public class NHttpResponseImpl implements NHttpResponse {
         return this;
     }
 
+    @Override
+    public NHttpResponse failFast() {
+        if (isError()) {
+            throw new NHttpResponseException(msg, msgCode, httpCode);
+        }
+        return this;
+    }
+
     public boolean isClientError() {
         if (httpCode == null) {
             return false;

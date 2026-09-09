@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.mon.NChronometer;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.io.NIOUtils;
 
@@ -91,8 +94,14 @@ public class NDigestUtils {
 
     public static String evalSHA1Hex(NPath file) {
         try {
+            NChronometer ch = NChronometer.of();
             try (InputStream is = file.inputStream()) {
-                return evalSHA1Hex(is, true);
+                String s = evalSHA1Hex(is, true);
+                ch.stop();
+                if (ch.duration().toMillis() > 500) {
+                    NLog.of(NDigestUtils.class).debug(NMsg.ofC("SHA1 %s : %s", file, ch));
+                }
+                return s;
             }
         } catch (IOException e) {
             throw new NIOException(e);

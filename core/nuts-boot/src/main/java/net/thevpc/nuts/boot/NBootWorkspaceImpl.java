@@ -207,7 +207,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 li.add(new NReservedErrorInfo(null, null, null, NBootMsg.ofC("unexpected error :%s", NBootUtils.getErrorMessage(e)), e));
                 NBootOptionsInfo currOptions = options == null ? userOptions : options;
                 logError(new URL[0], li, currOptions);
-                throw new NBootException(NBootMsg.ofC(NBootI18n.of("unable to initialize boot %s#%s : %s"), NBootConstants.Ids.NUTS_API, currOptions.apiVersion(), e));
+                throw new NBootException(NBootMsg.ofC(NBootI18n.of("unable to initialize boot %s#%s : %s"), NBootConstants.Ids.NUTS_API,
+                        NBootUtils.firstNonNull(currOptions.apiVersion(),NUTS_BOOT_VERSION)
+                        , e));
             }
         });
     }

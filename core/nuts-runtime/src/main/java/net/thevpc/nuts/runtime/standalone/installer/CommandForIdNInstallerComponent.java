@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -39,10 +39,12 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
+import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
+import net.thevpc.nuts.spi.NScopeType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
-@NScore(fixed = NScorable.DEFAULT_SCORE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class CommandForIdNInstallerComponent implements NInstallerComponent {
     NDefinition runnerId;
 
@@ -69,6 +71,12 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             }
         }
         return NScorable.UNSUPPORTED_SCORE;
+    }
+
+    public CommandForIdNInstallerComponent(NScorableContext ctx) {
+        if (ctx.criteria() instanceof NDefinition) {
+            this.runnerId = ctx.criteria();
+        }
     }
 
     public CommandForIdNInstallerComponent(NDefinition runnerId) {
@@ -98,7 +106,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             if (descriptor.isNutsApplication()) {
                 DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
                         .setInstallInformation(
-                                ()->new DefaultNInstallInfo(definition.installInformation().get())
+                                () -> new DefaultNInstallInfo(definition.installInformation().get())
                                         .setInstallStatus(
                                                 definition.installInformation().get().installStatus().withInstalled(true)
                                         )
@@ -108,7 +116,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                         .command("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
                     cmd.executorOptions("--auto-install=false");
-                }else if (mode.equals("uninstall")) {
+                } else if (mode.equals("uninstall")) {
                     cmd.executorOptions("--auto-install=false");
                 }
                 cmd.command(executionContext.arguments())

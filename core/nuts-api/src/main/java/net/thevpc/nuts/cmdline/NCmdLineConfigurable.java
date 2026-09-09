@@ -53,12 +53,6 @@ public interface NCmdLineConfigurable {
      * @return {@code this} instance
      */
     default Object configure(boolean skipUnsupported, String... args) {
-      /**
-       * Configure.
-       *
-       * @param skipUnsupported skip unsupported
-       * @param NCmdLine.of(args) n cmd line.of(args)
-       */
         configure(skipUnsupported, NCmdLine.of(args));
         return this;
     }

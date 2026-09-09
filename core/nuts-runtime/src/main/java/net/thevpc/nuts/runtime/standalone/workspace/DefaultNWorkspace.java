@@ -1409,13 +1409,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             NInstallerComponent best = wsModel.extensions
-                    .createSupported(NInstallerComponent.class, runnerFile == null ? nutToInstall : runnerFile).orNull();
+                    .createSupported(NInstallerComponent.class, runnerFile).orNull();
             if (best != null) {
                 return best;
             }
             return new CommandForIdNInstallerComponent(runnerFile);
         }
-        return new CommandForIdNInstallerComponent(null);
+        return new CommandForIdNInstallerComponent();
     }
 
 

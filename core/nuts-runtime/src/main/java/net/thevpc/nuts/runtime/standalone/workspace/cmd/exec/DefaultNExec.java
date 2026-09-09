@@ -20,6 +20,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.NInternalCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.service.DefaultNServiceInternalExecutable;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.spi.NExecTargetSPI;
 import net.thevpc.nuts.text.NMsg;
@@ -646,6 +647,7 @@ public class DefaultNExec extends AbstractNExec {
             case "which":         return new DefaultNWhichInternalExecutable(args, this,executorOptions);
             case "exec":          return new DefaultNExecInternalExecutable(args, this,executorOptions);
             case "settings":      return new DefaultNSettingsInternalExecutable(args, this,executorOptions);
+            case "service":       return new DefaultNServiceInternalExecutable(args, this,executorOptions);
             default:              return null;
         }
     }

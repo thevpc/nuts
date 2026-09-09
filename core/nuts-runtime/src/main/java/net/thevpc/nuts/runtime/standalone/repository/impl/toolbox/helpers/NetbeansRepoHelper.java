@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
@@ -16,6 +18,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHel
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -136,6 +141,15 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     }
 
     private String getUrl(NVersion version) {
+        NOptional<NArg> nArgNOptional = NWorkspace.of().bootOptions().customOptionArg("---local-urls");
+        if(nArgNOptional.isPresent()){
+            String value = nArgNOptional.get().getStringValue().orNull();
+            NPath s = NBlankable.isBlank(value)?NPath.ofUserHome().resolve(".nuts/local-urls"):NPath.of(value);
+            NPath q = s.resolve("downloads.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
+            if(q.exists()){
+                return q.toString();
+            }
+        }
 //        if (true) {
 //            // for test purposes
 //            return NPath.ofUserHome()+"/Downloads/netbeans-" + version + "-bin.zip";

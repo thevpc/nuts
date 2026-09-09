@@ -14,11 +14,31 @@ import net.thevpc.nuts.util.NOptional;
 public enum NOsServiceType implements NEnum {
     INITD,
     SYSTEMD,
+    DEFAULT,
     UNSUPPORTED;
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
+
+    public static NOptional<NOsServiceType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NOsServiceType.class, s -> {
+            String n = s.normalizedValue();
+            switch (n) {
+                case "INITD":
+                    return NOptional.of(INITD);
+
+                case "SYSTEMD":
+                    return NOptional.of(SYSTEMD);
+
+                case "UNSUPPORTED":
+                    return NOptional.of(UNSUPPORTED);
+                case "DEFAULT":
+                    return NOptional.of(DEFAULT);
+            }
+            return null;
+        });
+    }
 
     /**
      * default constructor
@@ -27,15 +47,6 @@ public enum NOsServiceType implements NEnum {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    /**
-     * Parse.
-     *
-     * @param value value
-     * @return parse result
-     */
-    public static NOptional<NOsServiceType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NOsServiceType.class);
-    }
 
     /**
      * lower cased identifier.

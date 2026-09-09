@@ -1,9 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.installer.svc;
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.service;
 
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NInstallSvcCmd;
 import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.io.NTrace;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NOsServiceType;
@@ -33,13 +35,11 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private String serviceName;
     private NPath root;
     private NPath workingDirectory;
-    private boolean verbose;
     private String[] startCommand;
     private String[] stopCommand;
     private String[] statusCommand;
-    private DefaultMapper vars = new DefaultMapper(this);
+    private final DefaultMapper vars = new DefaultMapper(this);
     private Map<String, String> env;
-    private String nutsApiVersion = "0.8.4";
     private String serviceDescription = "System service";
 
     public DefaultInstallSvcCommand() {
@@ -80,15 +80,6 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     public NInstallSvcCmd workingDirectory(NPath workingDirectory) {
         this.workingDirectory = workingDirectory;
-        return this;
-    }
-
-    public boolean isVerbose() {
-        return verbose;
-    }
-
-    public NInstallSvcCmd setVerbose(boolean verbose) {
-        this.verbose = verbose;
         return this;
     }
 
@@ -360,7 +351,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void logVerbose(NMsg msg) {
-        if (verbose) {
+        if (NSession.of().isTrace()) {
             NTrace.println(NMsg.ofC("[DEBUG] %s", msg));
         }
     }
@@ -398,6 +389,9 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     public NOsServiceType getActualServiceType() {
         if (serviceType != null) {
+            if(serviceType==NOsServiceType.DEFAULT){
+                return systemServiceType();
+            }
             return serviceType;
         }
         return systemServiceType();
@@ -461,7 +455,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     private void createFileFromTemplate(String resource0, String file) {
         String resource = "/net/thevpc/nuts/runtime/svc/" + resource0;
-        logVerbose(NMsg.ofC("[FILE] CREATE FILE %s",NMsg.ofStyledPath(resource)));
+        logVerbose(NMsg.ofC("[FILE] CREATE FILE %s", NMsg.ofStyledPath(resource)));
         String lineSeparator = NNewLineMode.system().value();
         if (getClass().getResource(resource) == null) {
             throw new NNoSuchElementException(NMsg.ofC("resource not found %s", resource));
@@ -473,7 +467,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                     for (String line2 : SvcHelper.splitLines(vars.replaceVars(line))) {
                         bw.write(line2);
                         bw.write(lineSeparator);
-                        logVerbose(NMsg.ofC("[FILE] %s",NMsg.ofStyledPath(line2)));
+                        logVerbose(NMsg.ofC("[FILE] %s", NMsg.ofStyledPath(line2)));
                     }
                 }
             }
@@ -488,8 +482,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private static class DefaultMapper implements Function<String, String> {
-        private Pattern PATTERN = Pattern.compile("[$][$](?<name>([^$]+))[$][$]");
-        private DefaultInstallSvcCommand base;
+        private final Pattern PATTERN = Pattern.compile("[$][$](?<name>([^$]+))[$][$]");
+        private final DefaultInstallSvcCommand base;
 
         public DefaultMapper(DefaultInstallSvcCommand base) {
             this.base = base;
@@ -503,7 +497,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                 case "JAVA":
                     return System.getProperty("java.home") + "/bin/java";
                 case "NUTS_APP_JAR":
-                    return base.getLibDir() + "/net/thevpc/nuts/nuts-app/" + base.nutsApiVersion + "/nuts-app-" + base.nutsApiVersion + ".jar";
+                    return base.getLibDir() + "/net/thevpc/nuts/nuts-app/" + NWorkspace.of().apiVersion() + "/nuts-app-" + NWorkspace.of().appId().version() + ".jar";
                 case "USER":
                     return System.getProperty("user.name");
                 case "START_COMMANDLINE": {
@@ -556,10 +550,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         if (NBlankable.isBlank(root)) {
             return false;
         }
-        if (root.toString().equals("/")) {
-            return false;
-        }
-        return true;
+        return !root.toString().equals("/");
     }
 
     private NPath rootFile(String path) {
@@ -597,7 +588,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         return NStringUtils.replaceDollarPlaceHolder(text, new Function<String, String>() {
             @Override
             public String apply(String s) {
-                return getProp(s, "${"+s+"}", m, err, max - 1);
+                return getProp(s, "${" + s + "}", m, err, max - 1);
             }
         });
     }
@@ -608,7 +599,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void runAsRoot(ScriptBuilder script) {
-        logVerbose(NMsg.ofC("[ROOT-SCRIPT] %s (%s)",NMsg.ofStyledPrimary1(script.name),script.description));
+        logVerbose(NMsg.ofC("[ROOT-SCRIPT] %s (%s)", NMsg.ofStyledPrimary1(script.name), script.description));
         File tempFile = null;
         try {
             tempFile = File.createTempFile("script-", ".root");
@@ -656,7 +647,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
         }
         if (x == null) {
             if (err) {
-                throw NException.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s",n));
+                throw NException.ofSafeIllegalArgumentException(NMsg.ofC("svc var not found : %s", n));
             } else {
                 x = image;
             }
@@ -671,6 +662,48 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
+//        private NOsServiceType systemServiceType;
+//        private NOsServiceType serviceType;
+//        private String serviceName;
+//        private NPath root;
+//        private NPath workingDirectory;
+//        private boolean verbose;
+//        private String[] startCommand;
+//        private String[] stopCommand;
+//        private String[] statusCommand;
+//        private DefaultMapper vars = new DefaultMapper(this);
+//        private Map<String, String> env;
+//        private String serviceDescription = "System service";
+        NArg a;
+        if ((a = cmdLine.nextFlag("--name").orNull()) != null) {
+            this.serviceName = a.stringValue();
+            return true;
+        }else if ((a = cmdLine.nextFlag("--description").orNull()) != null) {
+            this.serviceDescription = a.stringValue();
+            return true;
+        } else if ((a = cmdLine.nextFlag("--root").orNull()) != null) {
+            this.root = NBlankable.isBlank(a.stringValue()) ? null : NPath.of(a.stringValue());
+            return true;
+        } else if ((a = cmdLine.nextFlag("--type").orNull()) != null) {
+            this.serviceType = NBlankable.isBlank(a.stringValue()) ? null : NOsServiceType.valueOf(a.stringValue());
+            return true;
+        } else if ((a = cmdLine.nextFlag("--dir").orNull()) != null) {
+            this.workingDirectory = NBlankable.isBlank(a.stringValue()) ? null : NPath.of(a.stringValue());
+            return true;
+        } else if ((a = cmdLine.nextFlag("--start").orNull()) != null) {
+            this.startCommand = NBlankable.isBlank(a.stringValue()) ? null : NCmdLine.of(a.stringValue()).expandArgumentsFile(false).expandSimpleOptions(false).toStringArray();
+            return true;
+        } else if ((a = cmdLine.nextFlag("--stop").orNull()) != null) {
+            this.stopCommand = NBlankable.isBlank(a.stringValue()) ? null : NCmdLine.of(a.stringValue()).expandArgumentsFile(false).expandSimpleOptions(false).toStringArray();
+            return true;
+        } else if ((a = cmdLine.nextFlag("--status").orNull()) != null) {
+            this.statusCommand = NBlankable.isBlank(a.stringValue()) ? null : NCmdLine.of(a.stringValue()).expandArgumentsFile(false).expandSimpleOptions(false).toStringArray();
+            return true;
+        } else if ((a = cmdLine.nextFlag("env").orNull()) != null) {
+            NArg aa = NArg.of(a.stringValue());
+            this.env.put(aa.key(),aa.value());
+            return true;
+        }
         return false;
     }
 

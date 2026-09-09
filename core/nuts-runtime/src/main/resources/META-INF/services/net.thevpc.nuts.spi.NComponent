@@ -42,7 +42,7 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.push.DefaultNPush
 net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch
 net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfo
 net.thevpc.nuts.runtime.standalone.workspace.cmd.install.DefaultNInstall
-net.thevpc.nuts.runtime.standalone.installer.svc.DefaultInstallSvcCommand
+net.thevpc.nuts.runtime.standalone.workspace.cmd.service.DefaultInstallSvcCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstall
 net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdate
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStats
