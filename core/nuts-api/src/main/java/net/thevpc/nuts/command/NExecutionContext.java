@@ -100,6 +100,9 @@ public interface NExecutionContext extends NSessionProvider {
     @NGetter
     NDefinition definition();
 
+    @NGetter
+    NDefinition runner();
+
     /**
      * command arguments
      *

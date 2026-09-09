@@ -76,7 +76,6 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNWorkspaceExtensionModel;
-import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
@@ -1383,37 +1382,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     @Override
-    public NInstallerComponent getInstaller(NDefinition nutToInstall) {
+    public NInstallerComponent getInstaller(NExecutionContext executionContext) {
+        NDefinition nutToInstall=executionContext.definition();
         if (nutToInstall != null && nutToInstall.content().isPresent()) {
-            NDescriptor descriptor = nutToInstall.descriptor();
-            NArtifactCall installerDescriptor = descriptor.installer();
-            NDefinition runnerFile = null;
-            if (installerDescriptor != null) {
-                NId installerId = installerDescriptor.id();
-                if (installerId != null) {
-                    // nsh is the only installer that does not need to have groupId!
-                    if (NBlankable.isBlank(installerId.groupId())
-                            && "nsh".equals(installerId.artifactId())
-                    ) {
-                        installerId = installerId.builder().groupId("net.thevpc.nsh").build();
-                    }
-                    //ensure installer is always well qualified!
-                    CoreNIdUtils.checkShortId(installerId);
-                    runnerFile = NSearch.of().id(installerId)
-                            .dependencyFilter(NDependencyFilter.ofRunnable())
-                            .latest(true)
-                            .distinct(true)
-                            .getResultDefinitions()
-                            .findFirst().orNull();
-
-                }
-            }
             NInstallerComponent best = wsModel.extensions
-                    .createSupported(NInstallerComponent.class, runnerFile).orNull();
+                    .createSupported(NInstallerComponent.class, executionContext).orNull();
             if (best != null) {
                 return best;
             }
-            return new CommandForIdNInstallerComponent(runnerFile);
         }
         return new CommandForIdNInstallerComponent();
     }
@@ -1516,9 +1492,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NExecutionContextBuilder createExecutionContext() {
         NSession session = NSession.of();
         return new DefaultNExecutionContextBuilder()
-                .setDry(session.isDry())
-                .setBot(session.isBot())
-                .setExecutionType(this.bootOptions().executionType().orNull())
+                .session(NSession.of())
+                .dry(session.isDry())
+                .bot(session.isBot())
+                .executionType(this.bootOptions().executionType().orNull())
                 ;
     }
 

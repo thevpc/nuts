@@ -119,8 +119,8 @@ public class NWorkspaceExtAdapter extends AbstractNWorkspace implements NWorkspa
     }
 
     @Override
-    public NInstallerComponent getInstaller(NDefinition nutToInstall) {
-        return baseExt.getInstaller(nutToInstall);
+    public NInstallerComponent getInstaller(NExecutionContext executionContext) {
+        return baseExt.getInstaller(executionContext);
     }
 
     @Override

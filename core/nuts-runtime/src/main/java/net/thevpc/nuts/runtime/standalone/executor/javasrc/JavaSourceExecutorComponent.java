@@ -95,8 +95,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .copyFrom(executionContext)
-                    .setDefinition(d.build())
-                    .setExecutorOptions(z)
+                    .definition(d.build())
+                    .executorOptions(z)
                     .failFast(true)
                     .temporary()
                     .build();
@@ -124,8 +124,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .copyFrom(executionContext)
-                    .setDefinition(d.build())
-                    .setExecutorOptions(z)
+                    .definition(d.build())
+                    .executorOptions(z)
                     .failFast(true)
                     .temporary()
                     .build();

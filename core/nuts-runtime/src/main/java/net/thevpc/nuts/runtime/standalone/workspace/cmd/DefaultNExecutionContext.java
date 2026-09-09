@@ -10,7 +10,7 @@
  * other 'things' . It's based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -46,25 +46,26 @@ import java.util.Map;
  */
 public class DefaultNExecutionContext implements NExecutionContext {
 
-    private NDefinition definition;
-    private Map<String, String> env;
-    private List<String> executorOptions;
-    private List<String> workspaceOptions;
-    private List<String> arguments;
+    private final NDefinition definition;
+    private final Map<String, String> env;
+    private final List<String> executorOptions;
+    private final List<String> workspaceOptions;
+    private final List<String> arguments;
     private NSession session;
-    private NArtifactCall executorDescriptor;
-    private NPath cwd;
-    private String commandName;
-    private boolean failFast;
-    private boolean temporary;
-    private NDuration sleepDuration;
-    private NExecutionType executionType;
+    private final NArtifactCall executorDescriptor;
+    private final NPath cwd;
+    private final String commandName;
+    private final boolean failFast;
+    private final boolean temporary;
+    private final NDuration sleepDuration;
+    private final NExecutionType executionType;
     private NRunAs runAs;
     private NExecInput in;
     private NExecOutput out;
     private NExecOutput err;
     private boolean dry;
-    private boolean bot;
+    private final boolean bot;
+    private final NDefinition runner;
 
     public DefaultNExecutionContext(NDefinition definition,
                                     List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env,
@@ -77,7 +78,9 @@ public class DefaultNExecutionContext implements NExecutionContext {
                                     NExecOutput out,
                                     NExecOutput err,
                                     boolean dry,
-                                    boolean bot
+                                    boolean bot,
+                                    NDefinition runner,
+                                    NRunAs runAs,NSession session
     ) {
         this.commandName = commandName;
         this.definition = definition;
@@ -99,6 +102,9 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.err = err;
         this.dry = dry;
         this.bot = bot;
+        this.runner = runner;
+        this.runAs = runAs;
+        this.session = session;
     }
 
     public DefaultNExecutionContext(NExecutionContext other) {
@@ -120,6 +126,8 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.err = other.err();
         this.dry = other.isDry();
         this.bot = other.isBot();
+        this.runner = other.runner();
+        this.runAs = other.runAs();
     }
 
     public boolean isDry() {
@@ -189,6 +197,11 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
+    public NDefinition runner() {
+        return runner;
+    }
+
+    @Override
     public List<String> arguments() {
         return arguments;
     }
@@ -227,68 +240,13 @@ public class DefaultNExecutionContext implements NExecutionContext {
         return executionType;
     }
 
-    public DefaultNExecutionContext setDefinition(NDefinition definition) {
-        this.definition = definition;
-        return this;
-    }
-
-    public DefaultNExecutionContext setEnv(Map<String, String> env) {
-        this.env = env;
-        return this;
-    }
-
-    public DefaultNExecutionContext setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = NCollections.unmodifiableList(Arrays.asList(executorOptions));
-        return this;
-    }
-
-    public DefaultNExecutionContext setArguments(String[] arguments) {
-        this.arguments = NCollections.unmodifiableList(Arrays.asList(arguments));
-        return this;
-    }
-
-    public DefaultNExecutionContext setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
-
-    public DefaultNExecutionContext setExecutorDescriptor(NArtifactCall executorDescriptor) {
-        this.executorDescriptor = executorDescriptor;
-        return this;
-    }
-
-    public DefaultNExecutionContext setCwd(NPath cwd) {
-        this.cwd = cwd;
-        return this;
-    }
-
-    public DefaultNExecutionContext setCommandName(String commandName) {
-        this.commandName = commandName;
-        return this;
-    }
-
-    public DefaultNExecutionContext failFast(boolean failFast) {
-        this.failFast = failFast;
-        return this;
-    }
-
-    public DefaultNExecutionContext setTemporary(boolean temporary) {
-        this.temporary = temporary;
-        return this;
-    }
-
-    public DefaultNExecutionContext setExecutionType(NExecutionType executionType) {
-        this.executionType = executionType;
-        return this;
-    }
 
     @Override
     public NRunAs runAs() {
         return runAs;
     }
 
-    public DefaultNExecutionContext setRunAs(NRunAs runAs) {
-        this.runAs = runAs;
-        return this;
+    public NExecutionContextBuilder builder() {
+        return new DefaultNExecutionContextBuilder(this);
     }
 }

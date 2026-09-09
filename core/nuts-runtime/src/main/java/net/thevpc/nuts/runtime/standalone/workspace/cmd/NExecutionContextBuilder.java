@@ -29,6 +29,7 @@ import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionType;
 import net.thevpc.nuts.core.NRunAs;
+import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
@@ -53,37 +54,39 @@ public interface NExecutionContextBuilder {
      *
      * @return command name
      */
-    String getCommandName();
+    String commandName();
 
-    NDuration getSleepDuration();
+    NDuration sleepDuration();
 
     /**
      * executor options
      *
      * @return executor options
      */
-    String[] getExecutorOptions();
+    String[] executorOptions();
 
     /**
      * command definition if any
      *
      * @return command definition if any
      */
-    NDefinition getDefinition();
+    NDefinition definition();
+
+    NDefinition runner();
 
     /**
      * command arguments
      *
      * @return command arguments
      */
-    List<String> getArguments();
+    List<String> arguments();
 
     /**
      * executor descriptor
      *
      * @return executor descriptor
      */
-    NArtifactCall getExecutorDescriptor();
+    NArtifactCall executorDescriptor();
 
 
     /**
@@ -91,14 +94,14 @@ public interface NExecutionContextBuilder {
      *
      * @return execution environment
      */
-    Map<String, String> getEnv();
+    Map<String, String> env();
 
     /**
      * current working directory
      *
      * @return current working directory
      */
-    NPath getDirectory();
+    NPath directory();
 
     /**
      * when true, any non 0 exited command will throw an Exception
@@ -121,33 +124,34 @@ public interface NExecutionContextBuilder {
      *
      * @return execution type
      */
-    NExecutionType getExecutionType();
+    NExecutionType executionType();
 
-    NRunAs getRunAs();
+    NRunAs runAs();
 
-    NExecutionContextBuilder setDefinition(NDefinition definition);
+    NExecutionContextBuilder definition(NDefinition definition);
+    NExecutionContextBuilder runner(NDefinition definition);
 
-    NExecutionContextBuilder setSleepDuration(NDuration sleepMillis);
+    NExecutionContextBuilder sleepDuration(NDuration sleepMillis);
 
-    NExecutionContextBuilder setEnv(Map<String, String> env);
+    NExecutionContextBuilder env(Map<String, String> env);
 
-    NExecutionContextBuilder setExecutorOptions(List<String> executorOptions);
+    NExecutionContextBuilder executorOptions(List<String> executorOptions);
 
-    NExecutionContextBuilder setWorkspaceOptions(List<String> workspaceOptions);
+    NExecutionContextBuilder workspaceOptions(List<String> workspaceOptions);
 
-    NExecutionContextBuilder setExecutorOptions(String[] executorOptions);
+    NExecutionContextBuilder executorOptions(String[] executorOptions);
 
     NExecutionContextBuilder addExecutorOptions(String[] executorOptions);
 
     NExecutionContextBuilder addExecutorOptions(List<String> executorOptions);
 
-    NExecutionContextBuilder setArguments(String[] arguments);
+    NExecutionContextBuilder arguments(String[] arguments);
 
-    NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor);
+    NExecutionContextBuilder executorDescriptor(NArtifactCall executorDescriptor);
 
-    NExecutionContextBuilder setDirectory(NPath cwd);
+    NExecutionContextBuilder directory(NPath cwd);
 
-    NExecutionContextBuilder setCommandName(String commandName);
+    NExecutionContextBuilder commandName(String commandName);
 
     NExecutionContextBuilder failFast(boolean failFast);
 
@@ -155,26 +159,27 @@ public interface NExecutionContextBuilder {
 
     NExecutionContextBuilder temporary();
 
-    NExecutionContextBuilder setExecutionType(NExecutionType executionType);
+    NExecutionContextBuilder executionType(NExecutionType executionType);
+    NExecutionContextBuilder session(NSession session);
 
-    NExecutionContextBuilder setRunAs(NRunAs runAs);
+    NExecutionContextBuilder runAs(NRunAs runAs);
 
     NExecutionContext build();
 
     NExecutionContextBuilder copyFrom(NExecutionContext other);
 
-    NExecutionContextBuilder setIn(NExecInput in);
+    NExecutionContextBuilder in(NExecInput in);
 
-    NExecutionContextBuilder setOut(NExecOutput out);
+    NExecutionContextBuilder out(NExecOutput out);
 
-    NExecutionContextBuilder setErr(NExecOutput err);
+    NExecutionContextBuilder err(NExecOutput err);
 
     boolean isDry();
 
-    NExecutionContextBuilder setDry(boolean dry);
+    NExecutionContextBuilder dry(boolean dry);
 
     boolean isBot();
 
-    NExecutionContextBuilder setBot(boolean dry);
+    NExecutionContextBuilder bot(boolean dry);
 
 }

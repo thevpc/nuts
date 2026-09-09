@@ -11,6 +11,7 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NIdType;
 import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.concurrent.NScopedValue;
 import net.thevpc.nuts.core.NSession;
@@ -65,7 +66,7 @@ public interface NWorkspaceExt {
 
     NIdType resolveNutsIdType(NId id);
 
-    NInstallerComponent getInstaller(NDefinition nutToInstall);
+    NInstallerComponent getInstaller(NExecutionContext executionContext);
 
     /**
      * true when runtime extension is required for running this workspace. A

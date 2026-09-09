@@ -443,7 +443,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 Map<String, String> newEnv = new HashMap<>(NWorkspaceExt.of().getSysEnv());
                 newEnv.putAll(executionContext.env());
                 newEnv.putAll(NExecutionContextUtils.defaultEnv(def));
-                ((DefaultNExecutionContext) executionContext).setEnv(newEnv);
+                ((DefaultNExecutionContext) executionContext).env().clear();
+                ((DefaultNExecutionContext) executionContext).env().putAll(newEnv);
                 th = session.copy().callWith(() -> {
                     Throwable th2 = null;
                     try {

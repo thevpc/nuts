@@ -14,10 +14,13 @@ import net.thevpc.nuts.runtime.standalone.event.DefaultNInstallEvent;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNUpdateEvent;
 import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
@@ -30,8 +33,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InstallHelper {
-    private DefaultNWorkspace ws;
-    private InstallCache cache;
+    private final DefaultNWorkspace ws;
+    private final InstallCache cache;
     protected NDefinition[] result;
     protected NId[] failed;
     protected RuntimeException[] failedReasons;
@@ -330,6 +333,61 @@ public class InstallHelper {
 //        def = fetch2.getResultDefinition();
 //    }
 
+    public NExecutionContext createExecutionContext(NDefinition def, List<String> args) {
+        //should change def to reflect install location!
+        NExecutionContextBuilder cc = ws.createExecutionContext()
+                .definition(def).arguments(args.toArray(new String[0])).failFast(true).temporary(false)
+                .runAs(NRunAs.currentUser())// install or update always uses current user
+                ;
+        NArtifactCall installer = def.descriptor().installer();
+        if (installer != null) {
+            String scriptName = installer.scriptName();
+            String scriptContent = installer.scriptContent();
+            NPath installScriptPath = null;
+            if (!NBlankable.isBlank(scriptName) && !NBlankable.isBlank(scriptContent)) {
+                installScriptPath = NPath.ofTempIdFile(scriptName, def.id());
+            }
+            Map<String, String> installVars = NExecHelper.defVarMap(def, null);
+            if (installScriptPath != null) {
+                installScriptPath.writeString(scriptContent == null ? "" : scriptContent);
+                installVars.put("nutsIdInstallScriptPath", installScriptPath.toString());
+            }
+
+            // all vars are replicated as environment vars
+            Map<String, String> installEnv = NExecHelper.asConstVarNames(installVars);
+            //accept both namings...
+            installEnv.putAll(installVars);
+            cc.env(installEnv);
+            cc.addExecutorOptions(
+                    installer.arguments()
+                            .stream().map(x -> NMsg.ofV(x, installVars
+                            ).toString()).collect(Collectors.toList())
+            );
+
+            NDefinition runnerFile = null;
+            NId installerId = installer.id();
+            if (installerId != null) {
+                // nsh is the only installer that does not need to have groupId!
+                if (NBlankable.isBlank(installerId.groupId())
+                        && "nsh".equals(installerId.artifactId())
+                ) {
+                    installerId = installerId.builder().groupId("net.thevpc.nsh").build();
+                }
+                //ensure installer is always well qualified!
+                CoreNIdUtils.checkShortId(installerId);
+                runnerFile = NSearch.of().id(installerId)
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .latest(true)
+                        .distinct(true)
+                        .getResultDefinitions()
+                        .findFirst().orNull();
+
+            }
+            cc.runner(runnerFile);
+        }
+        return cc.build();
+    }
+
     public boolean doInstallOneImplUnsafe(InstallIdInfo info, InstallIdList list) {
         if (info == null) {
             return false;
@@ -389,48 +447,18 @@ public class InstallHelper {
                     }
                 }
             }
+            NExecutionContext executionContext = createExecutionContext(def, args);
             if (reinstall) {
                 if (!info.flags.require) {
                     if (def.installInformation().get().installStatus().isInstalled()) {
                         info.cacheItem.revalidate(false);
-                        uninstallImpl(info, resolveInstaller, true, false, false);
+                        uninstallImpl(info, resolveInstaller, true, false, false, executionContext);
                     }
                 }
             }
             info.oldDef = reloadOldDef(info);
             out.flush();
             if (def.content().isPresent() || def.descriptor().isNoContent()) {
-                //should change def to reflect install location!
-                NExecutionContextBuilder cc = ws.createExecutionContext()
-                        .setDefinition(def).setArguments(args.toArray(new String[0])).failFast(true).temporary(false)
-                        .setRunAs(NRunAs.currentUser())// install or update always uses current user
-                        ;
-                NArtifactCall installer = def.descriptor().installer();
-                if (installer != null) {
-                    String scriptName = installer.scriptName();
-                    String scriptContent = installer.scriptContent();
-                    NPath installScriptPath = null;
-                    if (!NBlankable.isBlank(scriptName) && !NBlankable.isBlank(scriptContent)) {
-                        installScriptPath = NPath.ofTempIdFile(scriptName, def.id());
-                    }
-                    Map<String, String> installVars = NExecHelper.defVarMap(def, null);
-                    if (installScriptPath != null) {
-                        installScriptPath.writeString(scriptContent == null ? "" : scriptContent);
-                        installVars.put("nutsIdInstallScriptPath", installScriptPath.toString());
-                    }
-
-                    // all vars are replicated as environment vars
-                    Map<String, String> installEnv = NExecHelper.asConstVarNames(installVars);
-                    //accept both namings...
-                    installEnv.putAll(installVars);
-                    cc.setEnv(installEnv);
-                    cc.addExecutorOptions(
-                            installer.arguments()
-                                    .stream().map(x -> NMsg.ofV(x, installVars
-                                    ).toString()).collect(Collectors.toList())
-                    );
-                }
-                NExecutionContext executionContext = cc.build();
                 NInstallInformation before = installedRepository.getInstallInformation(executionContext.definition().id());
                 if (updateMode || info.flags.install) {
                     newNInstallInformation = installedRepository.deploy(executionContext.definition());
@@ -447,7 +475,7 @@ public class InstallHelper {
                 if (info.flags.switchVersion) {
                     installedRepository.setDefaultVersion(def.id());
                 }
-                if(before!=null && newNInstallInformation!=null) {
+                if (before != null && newNInstallInformation != null) {
                     DefaultNInstallInfo after = new DefaultNInstallInfo(newNInstallInformation);
                     after.setWasInstalled(before.isWasInstalled());
                     after.setWasRequired(before.isWasRequired());
@@ -465,14 +493,13 @@ public class InstallHelper {
                 }
                 //update definition in the execution context
                 NDefinition defOnInstallRepo = fetch2.getResultDefinition();
-                cc.setDefinition(defOnInstallRepo);
-                executionContext = cc.build();
+                executionContext = new DefaultNExecutionContextBuilder(executionContext).definition(defOnInstallRepo).build();
                 NRepository rep = ws.getRepository(def.repositoryUuid()).orNull();
                 remoteRepo = rep == null || rep.isRemote();
                 if (updateMode) {
                     NInstallerComponent installerComponent = null;
                     if (resolveInstaller) {
-                        installerComponent = ws.getInstaller(def);
+                        installerComponent = ws.getInstaller(executionContext);
                     }
                     RuntimeException updateError = null;
                     if (installerComponent != null) {
@@ -496,7 +523,7 @@ public class InstallHelper {
                 } else if (info.flags.install) {
                     NInstallerComponent installerComponent = null;
                     if (resolveInstaller) {
-                        installerComponent = ws.getInstaller(def);
+                        installerComponent = ws.getInstaller(executionContext);
                     }
                     if (installerComponent != null) {
                         RuntimeException updateError = null;
@@ -791,18 +818,19 @@ public class InstallHelper {
                               boolean runInstaller,
                               boolean deleteFiles,
                               boolean eraseFiles,
-                              boolean traceBeforeEvent) {
+                              boolean traceBeforeEvent,
+                              NExecutionContext cc) {
         NPrintStream out = CoreIOUtils.resolveOut();
         NDefinition definition = def.cacheItem.getDefinition();
         if (runInstaller) {
-            NInstallerComponent installerComponent = ws.getInstaller(definition);
+            NInstallerComponent installerComponent = ws.getInstaller(cc);
             if (installerComponent != null) {
                 NExecutionContext executionContext = ws.createExecutionContext()
-                        .setDefinition(definition)
-                        .setArguments(buildArgs(def).toArray(new String[0]))
+                        .definition(definition)
+                        .arguments(buildArgs(def).toArray(new String[0]))
                         .failFast(true)
                         .temporary(false)
-                        .setRunAs(NRunAs.currentUser())//uninstall always uses current user
+                        .runAs(NRunAs.currentUser())//uninstall always uses current user
                         .build();
                 installerComponent.uninstall(executionContext, eraseFiles);
             }

@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
-import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
@@ -889,22 +888,22 @@ public class DefaultNExec extends AbstractNExec {
 
             NExecutionContextBuilder ecb = NWorkspaceExt.of().createExecutionContext();
             NExecutionContext executionContext = ecb
-                    .setDefinition(def)
-                    .setArguments(appArgs)
-                    .setExecutorOptions(executorArgs.toArray(new String[0]))
-                    .setWorkspaceOptions(workspaceOptions)
-                    .setEnv(env)
-                    .setDirectory(dir)
+                    .definition(def)
+                    .arguments(appArgs)
+                    .executorOptions(executorArgs.toArray(new String[0]))
+                    .workspaceOptions(workspaceOptions)
+                    .env(env)
+                    .directory(dir)
                     .failFast(failFast)
                     .temporary(temporary)
-                    .setExecutionType(executionType)
-                    .setRunAs(runAs)
-                    .setCommandName(commandName)
-                    .setSleepDuration(sleepDuration())
-                    .setIn(in)
-                    .setOut(out)
-                    .setErr(err)
-                    .setDry(session.isDry())
+                    .executionType(executionType)
+                    .runAs(runAs)
+                    .commandName(commandName)
+                    .sleepDuration(sleepDuration())
+                    .in(in)
+                    .out(out)
+                    .err(err)
+                    .dry(session.isDry())
                     .build();
             return new NExecutorComponentAndContext(execComponent, executionContext);
         }

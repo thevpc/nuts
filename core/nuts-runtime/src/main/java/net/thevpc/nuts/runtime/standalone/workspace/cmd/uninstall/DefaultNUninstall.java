@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.command.NUninstall;
 import net.thevpc.nuts.core.NConstants;
@@ -86,7 +87,8 @@ public class DefaultNUninstall extends AbstractNUninstall {
             throw new NCancelException(cancelMessage);
         }
         for (InstallIdInfo def : infos) {
-            h.uninstallImpl(def, true, true, isErase(), true);
+            NExecutionContext executionContext = h.createExecutionContext(def.cacheItem.getDefinition(), new ArrayList<>());
+            h.uninstallImpl(def, true, true, isErase(), true, executionContext);
         }
         return this;
     }
@@ -100,7 +102,7 @@ public class DefaultNUninstall extends AbstractNUninstall {
                         NText.ofStyled(saction,
                                 saction.equals("set as default") ? NTextStyle.primary3() :
                                         saction.equals("ignored") ? NTextStyle.pale() :
-                                        NTextStyle.primary1()
+                                                NTextStyle.primary1()
                         );
                 NTextBuilder msg = NTextBuilder.of();
                 msg.append("the following ")

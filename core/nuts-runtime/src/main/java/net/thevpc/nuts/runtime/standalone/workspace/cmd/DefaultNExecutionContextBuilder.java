@@ -44,6 +44,8 @@ import java.util.*;
 public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder {
 
     private NDefinition definition;
+    private NSession session;
+    private NDefinition runner;
     private Map<String, String> env;
     private List<String> executorOptions = new ArrayList<>();
     private List<String> workspaceOptions = new ArrayList<>();
@@ -76,7 +78,10 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
                                            NExecOutput out,
                                            NExecOutput err,
                                            boolean dry,
-                                           boolean bot
+                                           boolean bot,
+                                           NDefinition runner,
+                                           NRunAs runAs,
+                                           NSession session
     ) {
         this.commandName = commandName;
         this.definition = definition;
@@ -97,6 +102,9 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.err = err;
         this.dry = dry;
         this.bot = bot;
+        this.runner = runner;
+        this.runAs = runAs;
+        this.session = session;
     }
 
     public DefaultNExecutionContextBuilder(NExecutionContext other) {
@@ -116,13 +124,27 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.err = other.err();
         this.dry = other.isDry();
         this.bot = other.isBot();
+        this.runner = other.runner();
+        this.runAs = other.runAs();
+        this.session = other.session();
+    }
+
+    @Override
+    public NDefinition runner() {
+        return runner;
+    }
+
+    @Override
+    public NExecutionContextBuilder runner(NDefinition runner) {
+        this.runner=runner;
+        return this;
     }
 
     public boolean isDry() {
         return dry;
     }
 
-    public NExecutionContextBuilder setDry(boolean dry) {
+    public NExecutionContextBuilder dry(boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -131,47 +153,47 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return bot;
     }
 
-    public NExecutionContextBuilder setBot(boolean bot) {
+    public NExecutionContextBuilder bot(boolean bot) {
         this.bot = bot;
         return this;
     }
 
     @Override
-    public String getCommandName() {
+    public String commandName() {
         return commandName;
     }
 
-    public NDuration getSleepDuration() {
+    public NDuration sleepDuration() {
         return sleepDuration;
     }
 
     @Override
-    public String[] getExecutorOptions() {
+    public String[] executorOptions() {
         return executorOptions.toArray(new String[0]);
     }
 
     @Override
-    public NDefinition getDefinition() {
+    public NDefinition definition() {
         return definition;
     }
 
     @Override
-    public List<String> getArguments() {
+    public List<String> arguments() {
         return arguments;
     }
 
     @Override
-    public NArtifactCall getExecutorDescriptor() {
+    public NArtifactCall executorDescriptor() {
         return executorDescriptor;
     }
 
     @Override
-    public Map<String, String> getEnv() {
+    public Map<String, String> env() {
         return env;
     }
 
     @Override
-    public NPath getDirectory() {
+    public NPath directory() {
         return cwd;
     }
 
@@ -185,34 +207,34 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionType getExecutionType() {
+    public NExecutionType executionType() {
         return executionType;
     }
 
     @Override
-    public NRunAs getRunAs() {
+    public NRunAs runAs() {
         return runAs;
     }
 
     @Override
-    public NExecutionContextBuilder setDefinition(NDefinition definition) {
+    public NExecutionContextBuilder definition(NDefinition definition) {
         this.definition = definition;
         return this;
     }
 
-    public NExecutionContextBuilder setSleepDuration(NDuration sleepMillis) {
+    public NExecutionContextBuilder sleepDuration(NDuration sleepMillis) {
         this.sleepDuration = sleepMillis;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setEnv(Map<String, String> env) {
+    public NExecutionContextBuilder env(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setExecutorOptions(List<String> executorOptions) {
+    public NExecutionContextBuilder executorOptions(List<String> executorOptions) {
         this.executorOptions.clear();
         if (executorOptions != null) {
             this.executorOptions.addAll(NCollections.nonNullList(executorOptions));
@@ -221,7 +243,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setWorkspaceOptions(List<String> workspaceOptions) {
+    public NExecutionContextBuilder workspaceOptions(List<String> workspaceOptions) {
         this.workspaceOptions.clear();
         if (workspaceOptions != null) {
             this.workspaceOptions.addAll(NCollections.nonNullList(workspaceOptions));
@@ -230,7 +252,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setExecutorOptions(String[] executorOptions) {
+    public NExecutionContextBuilder executorOptions(String[] executorOptions) {
         this.executorOptions.clear();
         if (executorOptions != null) {
             this.executorOptions.addAll(Arrays.asList(executorOptions));
@@ -255,25 +277,25 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setArguments(String[] arguments) {
+    public NExecutionContextBuilder arguments(String[] arguments) {
         this.arguments = NCollections.nonNullList(Arrays.asList(arguments));
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor) {
+    public NExecutionContextBuilder executorDescriptor(NArtifactCall executorDescriptor) {
         this.executorDescriptor = executorDescriptor;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setDirectory(NPath cwd) {
+    public NExecutionContextBuilder directory(NPath cwd) {
         this.cwd = cwd;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setCommandName(String commandName) {
+    public NExecutionContextBuilder commandName(String commandName) {
         this.commandName = commandName;
         return this;
     }
@@ -296,13 +318,19 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setExecutionType(NExecutionType executionType) {
+    public NExecutionContextBuilder executionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;
     }
 
     @Override
-    public NExecutionContextBuilder setRunAs(NRunAs runAs) {
+    public NExecutionContextBuilder session(NSession session) {
+        this.session=session;
+        return this;
+    }
+
+    @Override
+    public NExecutionContextBuilder runAs(NRunAs runAs) {
         this.runAs = runAs == null ? NRunAs.currentUser() : runAs;
         return this;
     }
@@ -312,8 +340,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return new DefaultNExecutionContext(
                 definition, arguments, executorOptions, workspaceOptions, env, cwd,
                 failFast, temporary, executionType,
-                commandName, sleepDuration, in, out, err,dry,bot
-        ).setSession(NSession.of());
+                commandName, sleepDuration, in, out, err,dry,bot,runner,runAs, session
+        );
     }
 
     public NExecutionContextBuilder copyFrom(NExecutionContext other) {
@@ -335,6 +363,9 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.out = other.out();
         this.err = other.err();
         this.dry = other.isDry();
+        this.runner = other.runner();
+        this.runAs = other.runAs();
+        this.session = other.session();
         return this;
     }
 
@@ -343,7 +374,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setIn(NExecInput in) {
+    public NExecutionContextBuilder in(NExecInput in) {
         this.in = in;
         return this;
     }
@@ -353,7 +384,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setOut(NExecOutput out) {
+    public NExecutionContextBuilder out(NExecOutput out) {
         this.out = out;
         return this;
     }
@@ -363,7 +394,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setErr(NExecOutput err) {
+    public NExecutionContextBuilder err(NExecOutput err) {
         this.err = err;
         return this;
     }

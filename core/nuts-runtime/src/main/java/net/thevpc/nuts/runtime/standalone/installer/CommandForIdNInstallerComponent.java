@@ -54,18 +54,18 @@ import java.util.List;
  */
 @NComponentScope(NScopeType.PROTOTYPE)
 public class CommandForIdNInstallerComponent implements NInstallerComponent {
-    NDefinition runnerId;
-
-    public CommandForIdNInstallerComponent() {
-
-    }
 
     @NScore
     public static int getScore(NScorableContext ctx) {
-        NDefinition def = ctx.criteria(NDefinition.class);
-        if (def != null) {
-            if (def.descriptor() != null) {
-                if ("jar".equals(def.descriptor().packaging())) {
+        NExecutionContext ec = ctx.criteria(NExecutionContext.class);
+        if (ec != null && ec.definition() != null) {
+            if (ec.definition().descriptor() != null) {
+                if ("jar".equals(ec.definition().descriptor().packaging())) {
+                    return NScorable.DEFAULT_SCORE;
+                }
+            }
+            if (ec.runner() != null && ec.runner().descriptor() != null) {
+                if ("jar".equals(ec.runner().descriptor().packaging())) {
                     return NScorable.DEFAULT_SCORE;
                 }
             }
@@ -73,14 +73,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
         return NScorable.UNSUPPORTED_SCORE;
     }
 
-    public CommandForIdNInstallerComponent(NScorableContext ctx) {
-        if (ctx.criteria() instanceof NDefinition) {
-            this.runnerId = ctx.criteria();
-        }
-    }
-
-    public CommandForIdNInstallerComponent(NDefinition runnerId) {
-        this.runnerId = runnerId;
+    public CommandForIdNInstallerComponent() {
     }
 
     @Override
@@ -100,58 +93,89 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
 
     public void runMode(NExecutionContext executionContext, String mode) {
         NWorkspaceUtils.of().checkReadOnly();
-        if (runnerId == null) {
-            NDefinition definition = executionContext.definition();
-            NDescriptor descriptor = definition.descriptor();
-            if (descriptor.isNutsApplication()) {
-                DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
-                        .setInstallInformation(
-                                () -> new DefaultNInstallInfo(definition.installInformation().get())
-                                        .setInstallStatus(
-                                                definition.installInformation().get().installStatus().withInstalled(true)
-                                        )
-                        );
-                NExec cmd = NExec.of()
-                        .commandDefinition(def2.build())
-                        .command("--nuts-exec-mode=" + mode);
-                if (mode.equals("install")) {
-                    cmd.executorOptions("--auto-install=false");
-                } else if (mode.equals("uninstall")) {
-                    cmd.executorOptions("--auto-install=false");
-                }
-                cmd.command(executionContext.arguments())
-                        .executionType(NWorkspace.of().bootOptions().executionType().orNull())
-                        .failFast(true)
-                        .run();
+        switch (mode) {
+            case "install":
+            case "update": {
+                runModeScript(executionContext, mode);
+                runModeJar(executionContext, mode);
+                break;
             }
-        } else {
-            NDefinition definition = runnerId;
-            NDescriptor descriptor = definition.descriptor();
-            if (descriptor.isNutsApplication()) {
-                NDefinitionBuilder def2 = definition.builder()
-                        .installInformation(
-                                new DefaultNInstallInfo(definition.installInformation().get())
-                                        .setInstallStatus(
-                                                definition.installInformation().get().installStatus().withInstalled(true)
-                                        )
-                        );
-                List<String> eargs = new ArrayList<>();
-                for (String a : executionContext.executorOptions()) {
-                    eargs.add(evalString(a, mode, executionContext));
-                }
-                eargs.addAll(executionContext.arguments());
-                NExec.of()
-                        .commandDefinition(def2.build())
-                        .env(executionContext.env())
-                        .command(eargs)
-                        .executionType(NWorkspace.of().bootOptions().executionType().orNull())
-                        .executionType(
-                                NConstants.Ids.NSH.equals(def2.id().shortName()) ?
-                                        NExecutionType.EMBEDDED : NExecutionType.SPAWN
-                        )
-                        .failFast(true)
-                        .run();
+            case "uninstall": {
+                runModeJar(executionContext, mode);
+                runModeScript(executionContext, mode);
+                return;
             }
+        }
+        runModeJar(executionContext, mode);
+    }
+
+    public void runModeScript(NExecutionContext executionContext, String mode) {
+        NDefinition runner = executionContext.runner();
+        if (runner == null) {
+            return;
+        }
+        if (runner.descriptor() != null) {
+            if (!"jar".equals(runner.descriptor().packaging())) {
+                return;
+            }
+        }
+
+        NDescriptor descriptor = runner.descriptor();
+        if (descriptor.isNutsApplication()) {
+            NDefinitionBuilder def2 = runner.builder()
+                    .installInformation(
+                            new DefaultNInstallInfo(runner.installInformation().get())
+                                    .setInstallStatus(
+                                            runner.installInformation().get().installStatus().withInstalled(true)
+                                    )
+                    );
+            List<String> eargs = new ArrayList<>();
+            for (String a : executionContext.executorOptions()) {
+                eargs.add(evalString(a, mode, executionContext));
+            }
+            eargs.addAll(executionContext.arguments());
+            NExec.of()
+                    .commandDefinition(def2.build())
+                    .env(executionContext.env())
+                    .command(eargs)
+                    .executionType(NWorkspace.of().bootOptions().executionType().orNull())
+                    .executionType(
+                            NConstants.Ids.NSH.equals(def2.id().shortName()) ?
+                                    NExecutionType.EMBEDDED : NExecutionType.SPAWN
+                    )
+                    .failFast(true)
+                    .run();
+        }
+    }
+
+    public void runModeJar(NExecutionContext executionContext, String mode) {
+        NDefinition definition = executionContext.definition();
+        if (definition.descriptor() != null) {
+            if (!"jar".equals(definition.descriptor().packaging())) {
+                return;
+            }
+        }
+        NDescriptor descriptor = definition.descriptor();
+        if (descriptor.isNutsApplication()) {
+            DefaultNDefinitionBuilder2 def2 = new DefaultNDefinitionBuilder2(definition)
+                    .setInstallInformation(
+                            () -> new DefaultNInstallInfo(definition.installInformation().get())
+                                    .setInstallStatus(
+                                            definition.installInformation().get().installStatus().withInstalled(true)
+                                    )
+                    );
+            NExec cmd = NExec.of()
+                    .commandDefinition(def2.build())
+                    .command("--nuts-exec-mode=" + mode);
+            if (mode.equals("install")) {
+                cmd.executorOptions("--auto-install=false");
+            } else if (mode.equals("uninstall")) {
+                cmd.executorOptions("--auto-install=false");
+            }
+            cmd.command(executionContext.arguments())
+                    .executionType(NWorkspace.of().bootOptions().executionType().orNull())
+                    .failFast(true)
+                    .run();
         }
     }
 
