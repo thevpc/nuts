@@ -28,6 +28,7 @@ import net.thevpc.nuts.artifact.NArtifactCall;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExecutionContext;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
@@ -84,12 +85,19 @@ public class ExecExecutorComponent implements NExecutorComponent {
         NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.id()));
         List<String> args = new ArrayList<>(executionContext.executorOptions());
         args.addAll(executionContext.arguments());
-        String directory = null;
-        return NExecHelper.ofDefinition(
-                def,
-                args.toArray(new String[0]), osEnv, directory, true,
-                true, executionContext.sleepDuration(),
+        NPath directory = executionContext.directory();
+        boolean showCommand = true;
+        boolean failFast = executionContext.isFailFast();
+        return NExecHelper.ofArgs(
+                args.toArray(new String[0]),
+                osEnv,directory==null?null: directory.toPath().orNull(),showCommand,failFast,executionContext.sleepDuration(),
                 executionContext.in(), executionContext.out(), executionContext.err(), executionContext.runAs()
         );
+//        return NExecHelper.ofDefinition(
+//                def,
+//                args.toArray(new String[0]), osEnv, directory, showCommand,
+//                failFast, executionContext.sleepDuration(),
+//                executionContext.in(), executionContext.out(), executionContext.err(), executionContext.runAs()
+//        );
     }
 }

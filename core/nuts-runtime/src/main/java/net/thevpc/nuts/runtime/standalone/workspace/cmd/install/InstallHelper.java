@@ -19,7 +19,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
@@ -350,7 +349,7 @@ public class InstallHelper {
             Map<String, String> installVars = NExecHelper.defVarMap(def, null);
             if (installScriptPath != null) {
                 installScriptPath.writeString(scriptContent == null ? "" : scriptContent);
-                installVars.put("nutsIdInstallScriptPath", installScriptPath.toString());
+                installVars.put("NUTS_DEPLOY_INSTALL_SCRIPT", installScriptPath.toString());
             }
 
             // all vars are replicated as environment vars
@@ -493,7 +492,10 @@ public class InstallHelper {
                 }
                 //update definition in the execution context
                 NDefinition defOnInstallRepo = fetch2.getResultDefinition();
-                executionContext = new DefaultNExecutionContextBuilder(executionContext).definition(defOnInstallRepo).build();
+                // refresh env vars: nutsIdContentPath now points to the deployed location
+                Map<String, String> refreshedEnv = new LinkedHashMap<>(executionContext.env());
+                refreshedEnv.putAll(NExecHelper.defVarMap(defOnInstallRepo, null));
+                executionContext = new DefaultNExecutionContextBuilder(executionContext).definition(defOnInstallRepo).env(refreshedEnv).build();
                 NRepository rep = ws.getRepository(def.repositoryUuid()).orNull();
                 remoteRepo = rep == null || rep.isRemote();
                 if (updateMode) {

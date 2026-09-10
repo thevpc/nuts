@@ -416,13 +416,6 @@ public class DefaultNExec extends AbstractNExec {
                 if (remoteInfo0 != null) {
                     NAssert.requireNamedNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
-//                    NDefinition def2 = NSearchCmd.of()
-//                            .addId(session.getWorkspace().getApiId())
-//                            .latest()
-//                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
-//                            .failFast()
-//                            .getResultDefinitions()
-//                            .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, null,
                             !ts.isEmpty() ? ts.get(0) : "",
                             (!NBlankable.isBlank(connectionString()) && ts.size() == 1) ? ts.get(0) : NCmdLine.of(ts).toString(),
@@ -437,7 +430,7 @@ public class DefaultNExec extends AbstractNExec {
                     } catch (Exception ex) {
                         //
                     }
-                    if (c != null) {
+                    if (c != null && c.getDescriptor()!=null && !NBlankable.isBlank(c.getDescriptor().installer())) {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {

@@ -97,7 +97,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
                 NPath.of(dir).toAbsolute().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory,
-                showCommand, true,
+                showCommand, executionContext.isFailFast(),
                 executionContext.sleepDuration(),
                 executionContext.in(), executionContext.out(), executionContext.err(),
                 executionContext.runAs(),

@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.LocalUrlHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -86,14 +87,14 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         NStringBuilder installerScript = NStringBuilder.of();
         installerScript
                 .println("echo 'Extracting Apache Tomcat...'")
-                .println("unzip --skip-root \"$nutsIdContentPath\" -d \"$nutsIdBinPath/app\"")
-                .println("chmod +x \"$nutsIdBinPath/app/bin/\"*.sh")
+                .println("unzip --skip-root \"${NUTS_DEPLOY_CONTENT}\" -d \"${NUTS_DEPLOY_BIN}/app\"")
+                .println("chmod +x \"${NUTS_DEPLOY_BIN}/app/bin/\"*.sh")
                 .println()
-                .println("make-wrapper --target \"$nutsIdBinPath/tomcat-wrapper\" \\")
-                .println("    --default catalina=\"$nutsIdBinPath/app/bin/catalina.sh\" \\")
-                .println("    --cmd startup=\"$nutsIdBinPath/app/bin/startup.sh\" \\")
-                .println("    --cmd shutdown=\"$nutsIdBinPath/app/bin/shutdown.sh\" \\")
-                .println("    --cmd version=\"$nutsIdBinPath/app/bin/version.sh\"")
+                .println("make-wrapper --target \"${NUTS_DEPLOY_BIN}/tomcat-wrapper\" \\")
+                .println("    --default catalina=\"${NUTS_DEPLOY_BIN}/app/bin/catalina.sh\" \\")
+                .println("    --cmd startup=\"${NUTS_DEPLOY_BIN}/app/bin/startup.sh\" \\")
+                .println("    --cmd shutdown=\"${NUTS_DEPLOY_BIN}/app/bin/shutdown.sh\" \\")
+                .println("    --cmd version=\"${NUTS_DEPLOY_BIN}/app/bin/version.sh\"")
                 .println("echo 'Done.'");
 
         // For Windows, use .bat files
@@ -113,14 +114,14 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
                 )
                 .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
-                        .arguments("$nutsIdInstallScriptPath")
+                        .arguments("${NUTS_DEPLOY_INSTALL_SCRIPT}")
                         .scriptName("install-tomcat.nsh")
                         .scriptContent(installerScript.build())
                         .build()
                 )
                 .executor(NArtifactCallBuilder.of()
                         .id(NId.of("exec"))
-                        .arguments("$nutsIdBinPath/tomcat-wrapper")
+                        .arguments("${NUTS_DEPLOY_BIN}/tomcat-wrapper")
                         .build()
                 )
                 .condition(NEnvConditionBuilder.of()
@@ -151,8 +152,9 @@ public class TomcatRepoHelper implements ToolboxRepoHelper {
         int major = version.getPartAt(0).map(NVersionPart::value).map(Integer::parseInt).orElse(0);
         String prefix = (major < 5) ? "jakarta-tomcat-" : "apache-tomcat-";
         String binDir = (version.compareTo("4.1.27") == 0) ? "binaries" : "bin";
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT
+        String s = HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT
                 + "tomcat-" + major + "/v" + version + "/" + binDir + "/" + prefix + version + extension;
+        return LocalUrlHelper.getOverridePath(s).toString();
     }
 
     private String requiredJavaVersion(NVersion version) {

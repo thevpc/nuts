@@ -29,38 +29,56 @@ public class NExecutionContextUtils {
         @Override
         public String get(String key, NDefinition definition) {
             switch (key) {
-                case "NUTS_ID": {
+                case "NUTS_ID":
+                case "NUTS_DEPLOY_ID":
+                {
                     return (definition.id().toString());
                 }
-                case "NUTS_ID_BIN": {
+                case "NUTS_ID_BIN":
+                case "NUTS_DEPLOY_BIN":
+                {
                     NPath v = NPath.of(NStoreKey.ofBin(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_CONF": {
+                case "NUTS_ID_CONF":
+                case "NUTS_DEPLOY_CONF":
+                {
                     NPath v = NPath.of(NStoreKey.ofConf(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_LOG": {
+                case "NUTS_ID_LOG":
+                case "NUTS_DEPLOY_LOG":
+                {
                     NPath v = NPath.of(NStoreKey.ofLog(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_CACHE": {
+                case "NUTS_ID_CACHE":
+                case "NUTS_DEPLOY_CACHE":
+                {
                     NPath v = NPath.of(NStoreKey.ofCache(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_LIB": {
+                case "NUTS_ID_LIB":
+                case "NUTS_DEPLOY_LIB":
+                {
                     NPath v = NPath.of(NStoreKey.ofLib(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_RUN": {
+                case "NUTS_ID_RUN":
+                case "NUTS_DEPLOY_RUN":
+                {
                     NPath v = NPath.of(NStoreKey.ofRun(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_TEMP": {
+                case "NUTS_ID_TEMP":
+                case "NUTS_DEPLOY_TEMP":
+                {
                     NPath v = NPath.of(NStoreKey.ofTemp(definition.id()));
                     return (v.toString());
                 }
-                case "NUTS_ID_VAR": {
+                case "NUTS_ID_VAR":
+                case "NUTS_DEPLOY_VAR":
+                {
                     NPath v = NPath.of(NStoreKey.ofVar(definition.id()));
                     return (v.toString());
                 }

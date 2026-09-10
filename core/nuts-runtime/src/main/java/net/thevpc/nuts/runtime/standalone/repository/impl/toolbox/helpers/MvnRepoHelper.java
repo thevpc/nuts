@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.LocalUrlHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.pipeline.NIterator;
@@ -86,11 +87,15 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
         NStringBuilder installerScript = NStringBuilder.of();
         installerScript
                 .println("echo 'Extracting Apache Maven...'")
-                .println("unzip --skip-root \"$nutsIdContentPath\" -d \"$nutsIdBinPath/app\"")
-                .println("chmod +x \"$nutsIdBinPath/app/bin/mvn\"")
+                .println("unzip --skip-root \"${NUTS_DEPLOY_CONTENT}\" -d \"${NUTS_DEPLOY_BIN}/app\"")
+                .println("chmod +x \"${NUTS_DEPLOY_BIN}/app/bin/mvn\"")
                 .println()
-                .println("make-wrapper --target \"$nutsIdBinPath/mvn-wrapper\" \\")
-                .println("    --default mvn=\"$nutsIdBinPath/app/bin/mvn\"")
+                .println("make-wrapper --target \"${NUTS_DEPLOY_BIN}/mvn-wrapper\" \\")
+                .println("    --default mvn=\"${NUTS_DEPLOY_BIN}/app/bin/mvn\"")
+                .println("    --cmd mvnenc=\"${NUTS_DEPLOY_BIN}/app/bin/mvnenc\"")
+                .println("    --cmd mvnup=\"${NUTS_DEPLOY_BIN}/app/bin/mvnup\"")
+                .println("    --cmd mvnDebug=\"${NUTS_DEPLOY_BIN}/app/bin/mvnDebug\"")
+                .println("    --cmd mvnyjp=\"${NUTS_DEPLOY_BIN}/app/bin/mvnyjp\"")
                 .println("echo 'Done.'");
 
         // For Windows, ensure .bat is used
@@ -104,14 +109,14 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
                 .icons("https://maven.apache.org/images/maven-logo-black-on-white.png")
                 .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
-                        .arguments("$nutsIdInstallScriptPath")
+                        .arguments("${NUTS_DEPLOY_INSTALL_SCRIPT}")
                         .scriptName("install-maven.nsh")
                         .scriptContent(installerScript.build())
                         .build()
                 )
                 .executor(NArtifactCallBuilder.of()
                         .id(NId.of("exec"))
-                        .arguments("$nutsIdBinPath/mvn-wrapper")
+                        .arguments("${NUTS_DEPLOY_BIN}/mvn-wrapper")
                         .build()
                 )
                 .condition(NEnvConditionBuilder.of()
@@ -138,7 +143,8 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
     private String getZipUrl(NVersion version) {
         int major = version.getPartAt(0).map(NVersionPart::value).map(Integer::parseInt).orElse(3);
         String base = HTTPS_ARCHIVE_APACHE_ORG_DIST_MAVEN + major + "/" + version + "/binaries/";
-        return base + "apache-maven-" + version + "-bin.zip";
+        String s = base + "apache-maven-" + version + "-bin.zip";
+        return LocalUrlHelper.getOverridePath(s).toString();
     }
 
     private String requiredJavaVersion(NVersion version) {

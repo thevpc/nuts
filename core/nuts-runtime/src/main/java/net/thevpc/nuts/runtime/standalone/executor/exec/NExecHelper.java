@@ -100,15 +100,15 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
             mm.putAll(env);
         }
         if (def != null) {
-            mm.put("nutsIdContentPath", def.content().map(NPath::toString).orNull());
-            mm.put("nutsIdBinPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.BIN)).toString());
-            mm.put("nutsIdConfPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.CONF)).toString());
-            mm.put("nutsIdVarPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.VAR)).toString());
-            mm.put("nutsIdLogPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.LOG)).toString());
-            mm.put("nutsIdTempPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.TEMP)).toString());
-            mm.put("nutsIdCachePath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.CACHE)).toString());
-            mm.put("nutsIdLibPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.LIB)).toString());
-            mm.put("nutsRunLibPath", NPath.of(NStoreKey.of(def.id()).type(NStoreType.RUN)).toString());
+            mm.put("NUTS_DEPLOY_CONTENT", def.content().map(NPath::toString).orNull());
+            mm.put("NUTS_DEPLOY_BIN", NPath.of(NStoreKey.of(def.id()).type(NStoreType.BIN)).toString());
+            mm.put("NUTS_DEPLOY_CONF", NPath.of(NStoreKey.of(def.id()).type(NStoreType.CONF)).toString());
+            mm.put("NUTS_DEPLOY_VAR", NPath.of(NStoreKey.of(def.id()).type(NStoreType.VAR)).toString());
+            mm.put("NUTS_DEPLOY_LOG", NPath.of(NStoreKey.of(def.id()).type(NStoreType.LOG)).toString());
+            mm.put("NUTS_DEPLOY_TEMP", NPath.of(NStoreKey.of(def.id()).type(NStoreType.TEMP)).toString());
+            mm.put("NUTS_DEPLOY_CACHE", NPath.of(NStoreKey.of(def.id()).type(NStoreType.CACHE)).toString());
+            mm.put("NUTS_DEPLOY_LIB", NPath.of(NStoreKey.of(def.id()).type(NStoreType.LIB)).toString());
+            mm.put("NUTS_DEPLOY_RUN", NPath.of(NStoreKey.of(def.id()).type(NStoreType.RUN)).toString());
         }
         return mm;
     }
@@ -131,25 +131,26 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                         if (v != null) {
                             return v;
                         }
+
                         if (def != null) {
                             switch (n) {
-                                case "nutsIdContentPath":
+                                case "NUTS_DEPLOY_CONTENT":
                                     return def.content().map(NPath::toString).orNull();
-                                case "nutsIdBinPath":
+                                case "NUTS_DEPLOY_BIN":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.BIN)).toString();
-                                case "nutsIdConfPath":
+                                case "NUTS_DEPLOY_CONF":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.CONF)).toString();
-                                case "nutsIdVarPath":
+                                case "NUTS_DEPLOY_VAR":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.VAR)).toString();
-                                case "nutsIdLogPath":
+                                case "NUTS_DEPLOY_LOG":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.LOG)).toString();
-                                case "nutsIdTempPath":
+                                case "NUTS_DEPLOY_TEMP":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.TEMP)).toString();
-                                case "nutsIdCachePath":
+                                case "NUTS_DEPLOY_CACHE":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.CACHE)).toString();
-                                case "nutsIdLibPath":
+                                case "NUTS_DEPLOY_LIB":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.LIB)).toString();
-                                case "nutsRunLibPath":
+                                case "NUTS_DEPLOY_RUN":
                                     return NPath.of(NStoreKey.of(def.id()).type(NStoreType.RUN)).toString();
                             }
                         }

@@ -108,44 +108,22 @@ public class NCmdLineMatcherImpl implements NCmdLineMatcher {
 
     @Override
     public NCmdLineMatcherCondition whenArg(Predicate<NArg> condition) {
-        /**
-         * When raw.
-         *
-         * @param condition.test(c.peek().get())) condition.test(c.peek().get()))
-         * @return when raw result
-         */
         return whenRaw((c) -> c.hasNext() && (condition == null || condition.test(c.peek().get())));
     }
 
     @Override
     public NCmdLineMatcherCondition whenNonOption() {
-        /**
-         * When raw.
-         *
-         * @param c.isNextNonOption() c.is next non option()
-         * @return when raw result
-         */
         return whenRaw((c) -> c.isNextNonOption());
     }
 
     @Override
     public NCmdLineMatcherCondition whenOption() {
-        /**
-         * When raw.
-         *
-         * @param c.isNextOption() c.is next option()
-         * @return when raw result
-         */
         return whenRaw((c) -> c.isNextOption());
     }
 
     @Override
     public NCmdLineMatcher withDefaults() {
-        /**
-         * With.
-         *
-         * @param NCmdLineProcessor(n cmd line processor(
-         */
+
         with(new NCmdLineProcessor() {
             @Override
             public boolean process(NCmdLine cmdLine) {
@@ -169,9 +147,6 @@ public class NCmdLineMatcherImpl implements NCmdLineMatcher {
     @Override
     public void requireAll() {
         while (cmdLine.hasNext()) {
-            /**
-             * Require.
-             */
             require();
         }
     }

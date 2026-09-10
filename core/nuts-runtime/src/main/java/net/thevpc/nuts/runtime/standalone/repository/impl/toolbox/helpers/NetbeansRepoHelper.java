@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.helpers;
 
 import net.thevpc.nuts.artifact.*;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.concurrent.NCachedValue;
 import net.thevpc.nuts.core.NConstants;
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
@@ -16,11 +14,10 @@ import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.runtime.standalone.platform.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.LocalUrlHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.time.NDuration;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -70,14 +67,16 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                 )
                 .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
-                        .arguments("$nutsIdInstallScriptPath")
+                        .arguments("${NUTS_DEPLOY_INSTALL_SCRIPT}")
                         .scriptName("post-install.sh")
                         .scriptContent(
-                                "####"
-                                        + "\necho unzip to ${nutsIdBinPath}/app..."
-                                        + "\nunzip --skip-root \"$nutsIdContentPath\" -d \"$nutsIdBinPath/app\""
-                                        + "\necho prepare executables..."
-                                        + "\nchmod +x \"$nutsIdBinPath/app/bin/netbeans\""
+                                NStringBuilder.of()
+                                        .println("####")
+                                        .println("echo unzip to ${NUTS_DEPLOY_BIN}/app ...")
+                                        .println("unzip --skip-root \"${NUTS_DEPLOY_CONTENT}\" -d \"${NUTS_DEPLOY_BIN}/app\"")
+                                        .println("echo prepare executables...")
+                                        .println("chmod +x \"${NUTS_DEPLOY_BIN}/app/bin/netbeans\"")
+                                        .build()
                         )
                         .build()
                 )
@@ -85,8 +84,8 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
                         .id(NId.of("exec"))
                         .arguments(
                                 NEnv.of().osFamily().isWindow()
-                                        ? "$nutsIdBinPath/app/bin/netbeans.exe"
-                                        : "$nutsIdBinPath/app/bin/netbeans"
+                                        ? "${NUTS_DEPLOY_BIN}/app/bin/netbeans.exe"
+                                        : "${NUTS_DEPLOY_BIN}/app/bin/netbeans"
                         )
                         .build()
                 )
@@ -141,27 +140,13 @@ public class NetbeansRepoHelper implements ToolboxRepoHelper {
     }
 
     private String getUrl(NVersion version) {
-        NOptional<NArg> nArgNOptional = NWorkspace.of().bootOptions().customOptionArg("---local-urls");
-        if(nArgNOptional.isPresent()){
-            String value = nArgNOptional.get().getStringValue().orNull();
-            NPath s = NBlankable.isBlank(value)?NPath.ofUserHome().resolve(".nuts/local-urls"):NPath.of(value);
-            NPath q = s.resolve("downloads.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
-            if(q.exists()){
-                return q.toString();
-            }
+        NPath p = LocalUrlHelper.getOverridePath("https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
+        if(p.exists()){
+            return p.toString();
         }
-//        if (true) {
-//            // for test purposes
-//            return NPath.ofUserHome()+"/Downloads/netbeans-" + version + "-bin.zip";
-//        }
-        //nuts supports out of the box navigating apache website using htmlfs
-        NPath b = NPath.of("https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
-        if (b.exists()) {
-            return "https://archive.apache.org/dist/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip";
-        }
-        b = NPath.of("https://downloads.apache.org/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
-        if (b.exists()) {
-            return "https://downloads.apache.org/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip";
+        p = LocalUrlHelper.getOverridePath("https://downloads.apache.org/netbeans/netbeans/" + version + "/netbeans-" + version + "-bin.zip");
+        if(p.exists()){
+            return p.toString();
         }
         return null;
     }

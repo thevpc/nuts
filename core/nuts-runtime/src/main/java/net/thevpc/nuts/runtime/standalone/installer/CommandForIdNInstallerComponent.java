@@ -33,6 +33,8 @@ import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.command.NExecutionContext;
 import net.thevpc.nuts.command.NExecutionType;
+import net.thevpc.nuts.command.NInstallInformation;
+import net.thevpc.nuts.command.NInstallStatus;
 import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinitionBuilder2;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
@@ -98,7 +100,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             case "update": {
                 runModeScript(executionContext, mode);
                 runModeJar(executionContext, mode);
-                break;
+                return;
             }
             case "uninstall": {
                 runModeJar(executionContext, mode);
@@ -106,7 +108,6 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 return;
             }
         }
-        runModeJar(executionContext, mode);
     }
 
     public void runModeScript(NExecutionContext executionContext, String mode) {
@@ -121,13 +122,14 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
         }
 
         NDescriptor descriptor = runner.descriptor();
-        if (descriptor.isNutsApplication()) {
+        //if (descriptor.isNutsApplication()) {
+            NInstallStatus runnerStatus = runner.installInformation()
+                    .map(NInstallInformation::installStatus)
+                    .orElse(NInstallStatus.NONE);
             NDefinitionBuilder def2 = runner.builder()
                     .installInformation(
-                            new DefaultNInstallInfo(runner.installInformation().get())
-                                    .setInstallStatus(
-                                            runner.installInformation().get().installStatus().withInstalled(true)
-                                    )
+                            new DefaultNInstallInfo(runner.installInformation().orNull())
+                                    .setInstallStatus(runnerStatus.withInstalled(true))
                     );
             List<String> eargs = new ArrayList<>();
             for (String a : executionContext.executorOptions()) {
@@ -145,7 +147,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     )
                     .failFast(true)
                     .run();
-        }
+        //}
     }
 
     public void runModeJar(NExecutionContext executionContext, String mode) {

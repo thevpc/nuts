@@ -15,6 +15,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepoHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.toolbox.ToolboxRepositoryModel;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.LocalUrlHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.SingleBaseIdFilterHelper;
 import net.thevpc.nuts.spi.NDefinitionFactory;
 import net.thevpc.nuts.text.NMsg;
@@ -105,9 +106,10 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
      */
     private static String zonkyJarUrl(String version) {
         String artifactId = zonkyArtifactId();
-        return ZONKY_BASE_URL + zonkyPlatform()
+        String s = ZONKY_BASE_URL + zonkyPlatform()
                 + "/" + version
                 + "/" + artifactId + "-" + version + ".jar";
+        return LocalUrlHelper.getOverridePath(s).toString();
     }
 
     // -------------------------------------------------------------------------
@@ -185,12 +187,10 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
         // quick HEAD-like check: try opening the stream
         boolean found = false;
         try {
-            URL url = new URL(jarUrl);
+            NPath url = NPath.of(jarUrl);
             NSession session = NSession.of();
             session.terminal().printProgress(NMsg.ofC("peek %s", jarUrl));
-            try (InputStream is = url.openStream()) {
-                found = true;
-            }
+            found = url.exists();
         } catch (Exception ex) {
             found = false;
         }
@@ -200,8 +200,8 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
 
         NEnv env = NEnv.of();
         String execBin = env.osFamily().isWindow()
-                ? "$nutsIdBinPath/pgsql/bin/postgres.exe"
-                : "$nutsIdBinPath/pgsql/bin/postgres";
+                ? "${NUTS_DEPLOY_BIN}/pgsql/bin/postgres.exe"
+                : "${NUTS_DEPLOY_BIN}/pgsql/bin/postgres";
 
         return NDescriptorBuilder.of()
                 .id(id.longId())
@@ -214,16 +214,19 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                 )
                 .installer(NArtifactCallBuilder.of()
                         .id(NId.of(NConstants.Ids.NSH))
-                        .arguments("$nutsIdInstallScriptPath")
+                        .arguments("${NUTS_DEPLOY_INSTALL_SCRIPT}")
                         .scriptName("post-install.sh")
                         .scriptContent(
                                 NStringBuilder.of()
                                         .println("echo 'Extracting Zonky PostgreSQL jar...'")
-                                        .println("unzip -o \"$nutsIdContentPath\" -d \"$nutsIdBinPath/tmp\"")
-                                        .println("mkdir -p \"$nutsIdBinPath/pgsql\"")
-                                        .println("tar -xJf \"$nutsIdBinPath/tmp\"/*.txz -C \"$nutsIdBinPath/pgsql\"")
-                                        .println("rm -rf \"$nutsIdBinPath/tmp\"")
-                                        .println("make-wrapper --target \"$nutsIdBinPath/postgresql-wrapper\" --default \"$nutsIdBinPath/pgsql/bin/postgres\" --cmd \"$nutsIdBinPath/pgsql/bin/initdb\" --cmd \"$nutsIdBinPath/pgsql/bin/pg_ctl\"")
+                                        .println("unzip -o \"${NUTS_DEPLOY_CONTENT}\" -d \"${NUTS_DEPLOY_BIN}/tmp\"")
+                                        .println("mkdir -p \"${NUTS_DEPLOY_BIN}/pgsql\"")
+                                        .println("tar -xJf \"${NUTS_DEPLOY_BIN}/tmp\"/*.txz -C \"${NUTS_DEPLOY_BIN}/pgsql\"")
+                                        .println("rm -rf \"${NUTS_DEPLOY_BIN}/tmp\"")
+                                        .println("make-wrapper --target \"${NUTS_DEPLOY_BIN}/postgresql-wrapper\" \\")
+                                        .println("    --default \"${NUTS_DEPLOY_BIN}/pgsql/bin/postgres\" \\")
+                                        .println("    --cmd \"${NUTS_DEPLOY_BIN}/pgsql/bin/initdb\" \\")
+                                        .println("    --cmd \"${NUTS_DEPLOY_BIN}/pgsql/bin/pg_ctl\" ")
                                         .println("echo 'Done.'")
                                         .build()
                         )
@@ -231,7 +234,7 @@ public class PostgresRepoHelper implements ToolboxRepoHelper {
                 )
                 .executor(NArtifactCallBuilder.of()
                         .id(NId.of("exec"))
-                        .arguments("$nutsIdBinPath/postgresql-wrapper")
+                        .arguments("${NUTS_DEPLOY_BIN}/postgresql-wrapper")
                         .build()
                 )
                 .setProperty(DYNAMIC_DESCRIPTOR, "true")

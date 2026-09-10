@@ -62,7 +62,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
         return ProcessExecHelper.ofArgs(null,
                 execCommand.command().toArray(new String[0]), e2,
                 execCommand.directory() == null ? null : execCommand.directory().toPath().get(),
-                showCommand, true,
+                showCommand, execCommand.isFailFast(),
                 execCommand.sleepDuration(),
                 execCommand.in(),
                 execCommand.out(),

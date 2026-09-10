@@ -44,18 +44,12 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 NText xarg = xargs.get(i);
-//                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-//                    for (String s : xarg.split(";")) {
-//                        out.println("\t\t\t " + s);
-//                    }
-//                } else {
                 out.println("\t\t " + xarg);
-//                }
             }
             String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
             return ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory,
-                    joptions.isShowCommand(), true,
+                    joptions.isShowCommand(), executionContext.isFailFast(),
                     executionContext.sleepDuration(),
                     executionContext.in(),
                     executionContext.out(),
@@ -82,7 +76,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
         return ProcessExecHelper.ofDefinition(def,
                 args.toArray(new String[0]), osEnv, directory,
                 joptions.isShowCommand(),
-                true,
+                executionContext.isFailFast(),
                 executionContext.sleepDuration(),
                 executionContext.in(),
                 executionContext.out(),
