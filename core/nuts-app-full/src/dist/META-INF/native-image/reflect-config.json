@@ -859,6 +859,9 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNSearch"
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.service.DefaultInstallSvcCommand"
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NSettingsAliasSubCommand"
 },
 {

@@ -24,8 +24,8 @@ public class VersionsPanel extends WizardPageBase {
     ButtonGroup bg;
     JPanel panel;
     JEditorPane jep;
-    JToggleButton ltsButton;
-    JToggleButton standardButton;
+    JToggleButton stableButton;
+    JToggleButton latestButton;
     JToggleButton errorButton;
     boolean errorMode;
 //    Color greenFg = Color.GREEN;
@@ -34,8 +34,8 @@ public class VersionsPanel extends WizardPageBase {
 //    Color greenBg = new Color(161, 205, 161);
 //    Color orangeBg = new Color(255, 224, 101);
 //    Color redBg = new Color(255, 100, 101);
-    ButtonInfo ltsButtonInfo = new ButtonInfo("LTS", "LTS", InstallPalette.ltsLight, InstallPalette.ltsDark, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
-    ButtonInfo stdButtonInfo = new ButtonInfo("Standard", "Standard", InstallPalette.standardLight, InstallPalette.standardDark, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo stableButtonInfo = new ButtonInfo("Stable", "Stable", InstallPalette.stableLight, InstallPalette.stableDark, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
+    ButtonInfo latestButtonInfo = new ButtonInfo("Latest", "Latest", InstallPalette.latestLight, InstallPalette.latestDark, UiHelper2.getCheckedImageIcon(false), UiHelper2.getCheckedImageIcon(true));
     ButtonInfo errButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connection</body></html>", InstallPalette.errorLight, InstallPalette.errorDark, UiHelper2.getStopImageIcon(false), UiHelper2.getStopImageIcon(true));
     ItemListener defaultButtonListener = new ItemListener() {
         @Override
@@ -85,15 +85,15 @@ public class VersionsPanel extends WizardPageBase {
     @Override
     public void sendAction(String[] action) {
         switch (action[0]) {
-            case "lts": {
+            case "stable": {
                 SwingUtilities.invokeLater(() -> {
-                    ltsButton.setSelected(true);
+                    stableButton.setSelected(true);
                 });
                 break;
             }
-            case "standard": {
+            case "latest": {
                 SwingUtilities.invokeLater(() -> {
-                    standardButton.setSelected(true);
+                    latestButton.setSelected(true);
                 });
                 break;
             }
@@ -127,28 +127,28 @@ public class VersionsPanel extends WizardPageBase {
             gg.setVgap(10);
             gg.setHgap(10);
             panel.removeAll();
-            if (standardButton != null) {
-                bg.remove(standardButton);
+            if (latestButton != null) {
+                bg.remove(latestButton);
             }
-            if (ltsButton != null) {
-                bg.remove(ltsButton);
+            if (stableButton != null) {
+                bg.remove(stableButton);
             }
             panel.setLayout(gg);
             int w = 160;
             panel.setPreferredSize(new Dimension(2 * w, w));
             panel.setMaximumSize(new Dimension(2 * w, w));
 
-            if (standardButton == null) {
-                standardButton = add2(stdButtonInfo);
+            if (latestButton == null) {
+                latestButton = add2(latestButtonInfo);
             } else {
-                panel.add(standardButton);
-                bg.add(standardButton);
+                panel.add(latestButton);
+                bg.add(latestButton);
             }
-            if (ltsButton == null) {
-                ltsButton = add2(ltsButtonInfo);
+            if (stableButton == null) {
+                stableButton = add2(stableButtonInfo);
             } else {
-                panel.add(ltsButton);
-                bg.add(ltsButton);
+                panel.add(stableButton);
+                bg.add(stableButton);
             }
         }
     }
@@ -164,11 +164,11 @@ public class VersionsPanel extends WizardPageBase {
     @Override
     public void onNext() {
         InstallData id = InstallData.of(getInstallerContext());
-        if (ltsButton.isSelected() || !standardButton.isEnabled()) {
-            ButtonInfo jj = ButtonInfo.of(ltsButton);
+        if (stableButton.isSelected() || !latestButton.isEnabled()) {
+            ButtonInfo jj = ButtonInfo.of(stableButton);
             id.setInstallVersion(jj.verInfo);
         } else {
-            ButtonInfo jj = ButtonInfo.of(standardButton);
+            ButtonInfo jj = ButtonInfo.of(latestButton);
             id.setInstallVersion(jj.verInfo);
         }
         super.onNext();
@@ -177,8 +177,8 @@ public class VersionsPanel extends WizardPageBase {
     @Override
     public void onShow() {
         boolean darkMode = InstallData.of(getInstallerContext()).darkMode;
-        ltsButtonInfo.setDarkMode(darkMode);
-        stdButtonInfo.setDarkMode(darkMode);
+        stableButtonInfo.setDarkMode(darkMode);
+        latestButtonInfo.setDarkMode(darkMode);
         errButtonInfo.setDarkMode(darkMode);
         switchMode(false);
         getInstallerContext().getExitButton().setEnabled(false);
@@ -189,8 +189,8 @@ public class VersionsPanel extends WizardPageBase {
     @Override
     public void applyPlaf() {
         boolean darkMode = InstallData.of(getInstallerContext()).darkMode;
-        ltsButtonInfo.setDarkMode(darkMode);
-        stdButtonInfo.setDarkMode(darkMode);
+        stableButtonInfo.setDarkMode(darkMode);
+        latestButtonInfo.setDarkMode(darkMode);
         errButtonInfo.setDarkMode(darkMode);
         switchMode(errorMode);
         super.applyPlaf();
@@ -202,27 +202,27 @@ public class VersionsPanel extends WizardPageBase {
         Info info = loadInfo();
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
-            ButtonInfo ii = ButtonInfo.of(ltsButton);
+            ButtonInfo ii = ButtonInfo.of(stableButton);
             ii.verInfo = info.stable;
             if (ii.verInfo.valid) {
                 switchMode(false);
-                ltsButton.setEnabled(true);
-                ii.html = ("<html><body>Select the <strong>LTS</strong> version <strong>" + info.stable.runtime + "</strong> for maximum stability and long-term support. It receives critical security patches only</body></html>");
-                ltsButtonInfo.applyButtonInfo(ltsButton);
-                updateObservations(ltsButtonInfo);
-                ButtonInfo jj = ButtonInfo.of(standardButton);
-                jj.html = ("<html><body>Select the <strong>Standard</strong> version <strong>" + info.preview.runtime + "</strong> to get the latest features, updates, and bug fixes. If you are not sure what to choose, choose Standard</body></html>");
+                stableButton.setEnabled(true);
+                ii.html = ("<html><body>Select the <strong>Stable</strong> version <strong>" + info.stable.runtime + "</strong> for maximum stability and long-term support. It receives critical security patches only</body></html>");
+                stableButtonInfo.applyButtonInfo(stableButton);
+                updateObservations(stableButtonInfo);
+                ButtonInfo jj = ButtonInfo.of(latestButton);
+                jj.html = ("<html><body>Select the <strong>Latest</strong> version <strong>" + info.preview.runtime + "</strong> to get the latest features, updates, and bug fixes. If you are not sure what to choose, choose Standard</body></html>");
                 jj.verInfo = info.preview;
                 if (Objects.equals(info.stable.runtime, info.preview.runtime)) {
-                    standardButton.setEnabled(false);
-                    standardButton.setText("Standard");
+                    latestButton.setEnabled(false);
+                    latestButton.setText("Latest");
                 } else {
-//                previewButton.setText("<html><body><center>Standard<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
-                    standardButton.setText("Standard");
-                    standardButton.setEnabled(true);
+//                previewButton.setText("<html><body><center>Latest<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
+                    latestButton.setText("Latest");
+                    latestButton.setEnabled(true);
                 }
-                standardButton.setVisible(ii.verInfo.valid);
-                standardButton.setSelected(true);
+                latestButton.setVisible(ii.verInfo.valid);
+                latestButton.setSelected(true);
             } else {
                 switchMode(true);
             }

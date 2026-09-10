@@ -150,20 +150,6 @@ public class NAnsiTermHelper {
                 }
             }
         }
-        /**
-         * Styled.
-         *
-         * @param foreground foreground
-         * @param background background
-         * @param bold bold
-         * @param blink blink
-         * @param underlined underlined
-         * @param striked striked
-         * @param italic italic
-         * @param reversed reversed
-         * @param intensity intensity
-         * @return styled result
-         */
         return styled(foreground, background, bold, blink, underlined, striked, italic, reversed, intensity);
     }
 
@@ -184,11 +170,6 @@ public class NAnsiTermHelper {
                     if (intColor >= 15) {
                         intColor = 15;
                     }
-                  /**
-                   * Return.
-                   *
-                   * @param FG8[intColor] fg8[int color]
-                   */
                     return ("" + FG8[intColor]);
                 }
                 case BITS_8: {
@@ -199,11 +180,6 @@ public class NAnsiTermHelper {
                     if (intColor >= 255) {
                         intColor = 255;
                     }
-                  /**
-                   * Return.
-                   *
-                   * @param intColor int color
-                   */
                     return ("38;5;" + intColor);
                 }
                 case BITS_16:
@@ -214,11 +190,6 @@ public class NAnsiTermHelper {
                     int red = c.red();
                     int green = c.green();
                     int blue = c.blue();
-                  /**
-                   * Return.
-                   *
-                   * @param blue blue
-                   */
                     return ("38;2;" + red + ";" + green + ";" + blue);
                 }
                 default: {
@@ -264,11 +235,6 @@ public class NAnsiTermHelper {
                     if (intColor >= 255) {
                         intColor = 255;
                     }
-                  /**
-                   * Return.
-                   *
-                   * @param intColor int color
-                   */
                     return ("48;5;" + intColor);
                 }
                 case BITS_16:
@@ -279,11 +245,6 @@ public class NAnsiTermHelper {
                     int red = c.red();
                     int green = c.green();
                     int blue = c.blue();
-                  /**
-                   * Return.
-                   *
-                   * @param blue blue
-                   */
                     return ("48;2;" + red + ";" + green + ";" + blue);
                 }
             }
@@ -385,11 +346,6 @@ public class NAnsiTermHelper {
     public String command(NTerminalCmd command) {
         switch (command.name()) {
             case NTerminalCmd.Ids.MOVE_LINE_START: {
-              /**
-               * Return.
-               *
-               * @param "\r" "\r"
-               */
                 return ("\r");
             }
             case NTerminalCmd.Ids.MOVE_TO: {
@@ -398,11 +354,6 @@ public class NAnsiTermHelper {
                     Integer col = NLiteral.of(a.get(0)).asInt().orNull();
                     Integer row = NLiteral.of(a.get(1)).asInt().orNull();
                     if (col != null && row != null) {
-                      /**
-                       * Return.
-                       *
-                       * @param "H" "h"
-                       */
                         return ("\u001b[" + row + ";" + col + "H");
                     }
                 }
@@ -414,11 +365,6 @@ public class NAnsiTermHelper {
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
-                      /**
-                       * Return.
-                       *
-                       * @param "A" "a"
-                       */
                         return ("\u001b[" + count1 + "A");
                     }
                 }
@@ -429,11 +375,6 @@ public class NAnsiTermHelper {
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
-                      /**
-                       * Return.
-                       *
-                       * @param "B" "b"
-                       */
                         return ("\u001b[" + count1 + "B");
                     }
                 }
@@ -444,11 +385,6 @@ public class NAnsiTermHelper {
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
-                      /**
-                       * Return.
-                       *
-                       * @param "C" "c"
-                       */
                         return ("\u001b[" + count1 + "C");
                     }
                 }
@@ -459,62 +395,27 @@ public class NAnsiTermHelper {
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
                     if (count1 != null) {
-                      /**
-                       * Return.
-                       *
-                       * @param "D" "d"
-                       */
                         return ("\u001b[" + count1 + "D");
                     }
                 }
                 return null;
             }
             case NTerminalCmd.Ids.CLEAR_SCREEN: {
-              /**
-               * Return.
-               *
-               * @param "J" "j"
-               */
                 return ("\u001b[" + 2 + "J");
             }
             case NTerminalCmd.Ids.CLEAR_SCREEN_FROM_CURSOR: {
-              /**
-               * Return.
-               *
-               * @param "J" "j"
-               */
                 return ("\u001b[" + 0 + "J");
             }
             case NTerminalCmd.Ids.CLEAR_SCREEN_TO_CURSOR: {
-              /**
-               * Return.
-               *
-               * @param "J" "j"
-               */
                 return ("\u001b[" + 1 + "J");
             }
             case NTerminalCmd.Ids.CLEAR_LINE: {
-              /**
-               * Return.
-               *
-               * @param "K" "k"
-               */
                 return ("\u001b[" + 2 + "K");
             }
             case NTerminalCmd.Ids.CLEAR_LINE_FROM_CURSOR: {
-              /**
-               * Return.
-               *
-               * @param "K" "k"
-               */
                 return ("\u001b[" + 0 + "K");
             }
             case NTerminalCmd.Ids.CLEAR_LINE_TO_CURSOR: {
-              /**
-               * Return.
-               *
-               * @param "K" "k"
-               */
                 return ("\u001b[" + 1 + "K");
             }
         }

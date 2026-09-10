@@ -274,4 +274,11 @@ public class AnsiColors {
             return new Color(r, r, r);
         }
     }
+
+    public static String stripAnsi(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replaceAll("\u001B(\\[[;\\d]*[A-Za-z]|[^\\[\\]])", "");
+    }
 }

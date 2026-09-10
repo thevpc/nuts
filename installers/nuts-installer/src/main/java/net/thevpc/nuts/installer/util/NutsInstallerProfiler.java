@@ -36,10 +36,10 @@ public class NutsInstallerProfiler {
                 waitAndSendAction(1, "light");
                 waitAndSendAction(1, "dark");
                 waitAndSendAction(1, "light");
-                waitAndSendAction(1, "lts");
-                waitAndSendAction(1, "standard");
-                waitAndSendAction(1, "lts");
-                waitAndSendAction(1, "standard");
+                waitAndSendAction(1, "stable");
+                waitAndSendAction(1, "latest");
+                waitAndSendAction(1, "stable");
+                waitAndSendAction(1, "latest");
                 waitAndSendAction(1, "next");
 
                 // PackagesPanel

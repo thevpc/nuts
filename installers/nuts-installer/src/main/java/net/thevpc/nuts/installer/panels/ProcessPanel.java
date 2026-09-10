@@ -247,7 +247,7 @@ public class ProcessPanel extends WizardPageBase {
                 sb.append(c);
             }
         }
-        logLabel.setText(sb.toString());
+        logLabel.setText(AnsiColors.stripAnsi(sb.toString()));
     }
 
     @Override

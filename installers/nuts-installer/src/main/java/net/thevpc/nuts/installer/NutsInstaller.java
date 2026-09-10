@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class NutsInstaller extends WizardBase {
-    private final static String VERSION = "0.8.9.0";
+    private final static String VERSION = "1.0.0.0";
     public static final Color TAGLINE_COLOR_LIGHT_MODE = new Color(0x2A, 0xB5, 0x9A);
     public static final Color TAGLINE_COLOR_DARK_MODE = new Color(0x2A, 0xB5, 0x9A).darker().darker();
     public static final Color URL_COLOR_LIGHT_MODE = new Color(0x2A, 0xB5, 0x9A);

@@ -8,14 +8,14 @@ import java.awt.*;
 public class InstallPalette {
     public static final String THEME_DARK_CONTAINER_COLOR = "#3b3e40";
     public static final String THEME_LIGHT_CONTAINER_COLOR = "#f0f0f0";
-    public static StatusButtonColorSet standardLight = new StatusButtonColorSet(
+    public static StatusButtonColorSet latestLight = new StatusButtonColorSet(
             new ButtonColorSet(new Color(0xE8, 0xE8, 0xE8), new Color(0x55, 0x55, 0x55)), // normal
             new ButtonColorSet(new Color(0xF7, 0xC9, 0x7A), new Color(0x6B, 0x3F, 0x00)), // selected ★
             new ButtonColorSet(new Color(0xF0, 0xF0, 0xF0), new Color(0xAA, 0xAA, 0xAA)), // disabled
             new ButtonColorSet(new Color(0xF5, 0xE0, 0xB0), new Color(0x8B, 0x5E, 0x2C))  // hover
     );
 
-    public static StatusButtonColorSet standardDark = new StatusButtonColorSet(
+    public static StatusButtonColorSet latestDark = new StatusButtonColorSet(
             new ButtonColorSet(new Color(0x55, 0x5A, 0x5D), new Color(0xAA, 0xAA, 0xAA)), // normal
             new ButtonColorSet(new Color(0xE8, 0x94, 0x0A), Color.WHITE),                  // selected ★ — option A
             new ButtonColorSet(new Color(0x42, 0x45, 0x47), new Color(0x77, 0x77, 0x77)), // disabled
@@ -23,14 +23,14 @@ public class InstallPalette {
     );
 
 
-    public static StatusButtonColorSet ltsLight = new StatusButtonColorSet(
+    public static StatusButtonColorSet stableLight = new StatusButtonColorSet(
             new ButtonColorSet(new Color(0xE8, 0xE8, 0xE8), new Color(0x55, 0x55, 0x55)), // normal
             new ButtonColorSet(new Color(0x7A, 0xBF, 0x96), new Color(0x0D, 0x3B, 0x26)), // selected ★
             new ButtonColorSet(new Color(0xF0, 0xF0, 0xF0), new Color(0xAA, 0xAA, 0xAA)), // disabled
             new ButtonColorSet(new Color(0xC0, 0xE0, 0xCC), new Color(0x1E, 0x5A, 0x3E))  // hover
     );
 
-    public static StatusButtonColorSet ltsDark = new StatusButtonColorSet(
+    public static StatusButtonColorSet stableDark = new StatusButtonColorSet(
             new ButtonColorSet(new Color(0x55, 0x5A, 0x5D), new Color(0xAA, 0xAA, 0xAA)), // normal
             new ButtonColorSet(new Color(0x2E, 0x7A, 0x54), Color.WHITE),                  // selected ★
             new ButtonColorSet(new Color(0x42, 0x45, 0x47), new Color(0x77, 0x77, 0x77)), // disabled
