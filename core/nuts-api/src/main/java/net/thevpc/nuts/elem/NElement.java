@@ -86,19 +86,20 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * Convert any.
      *
      * @param any any
-     * @param to to
+     * @param to  to
      * @return convert any result
      */
     static <T> T convertAny(Object any, Class<T> to) {
         return NElementRPI.of().getSharedElements().convert(any, to);
     }
+
     /**
      * Do with mapper store.
      *
      * @param doWith do with
      * @return do with mapper store result
      */
-    static NElements doWithMapperStore(Consumer<NElementMapperStore> doWith){
+    static NElements doWithMapperStore(Consumer<NElementMapperStore> doWith) {
         return NElementRPI.of().getSharedElements().doWithMapperStore(doWith);
     }
 
@@ -108,7 +109,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -129,7 +130,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -140,7 +141,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -151,7 +152,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -162,7 +163,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -173,7 +174,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -184,7 +185,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -195,7 +196,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -206,7 +207,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -217,7 +218,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -228,7 +229,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -239,7 +240,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -250,7 +251,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -261,7 +262,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair result
      */
@@ -272,7 +273,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of pair builder.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return of pair builder result
      */
@@ -312,8 +313,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of binary infix operator.
      *
-     * @param op op
-     * @param first first
+     * @param op     op
+     * @param first  first
      * @param second second
      * @return of binary infix operator result
      */
@@ -324,7 +325,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of unary prefix operator.
      *
-     * @param op op
+     * @param op    op
      * @param first first
      * @return of unary prefix operator result
      */
@@ -335,9 +336,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of expr builder.
      *
-     * @param op op
+     * @param op     op
      * @param fixity fixity
-     * @param first first
+     * @param first  first
      * @param second second
      * @return of expr builder result
      */
@@ -354,8 +355,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of expr builder.
      *
-     * @param op op
-     * @param first first
+     * @param op     op
+     * @param first  first
      * @param second second
      * @return of expr builder result
      */
@@ -375,7 +376,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of expr builder.
      *
-     * @param op op
+     * @param op    op
      * @param first first
      * @return of expr builder result
      */
@@ -530,7 +531,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of string.
      *
-     * @param value value
+     * @param value        value
      * @param stringLayout string layout
      * @return of string result
      */
@@ -629,7 +630,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of float.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of float result
      */
@@ -640,7 +641,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of float.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of float result
      */
@@ -671,7 +672,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of byte result
@@ -683,7 +684,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of byte result
@@ -695,7 +696,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of byte result
      */
@@ -706,7 +707,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of byte result
      */
@@ -717,7 +718,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of byte result
      */
@@ -728,7 +729,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of byte.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of byte result
      */
@@ -759,7 +760,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of short result
@@ -771,7 +772,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of short result
@@ -783,7 +784,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of short result
      */
@@ -794,7 +795,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of short result
      */
@@ -805,7 +806,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of short result
      */
@@ -816,7 +817,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of short.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of short result
      */
@@ -847,7 +848,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of int result
      */
@@ -858,7 +859,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of int result
      */
@@ -869,7 +870,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of int result
@@ -881,7 +882,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of int result
@@ -893,7 +894,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of int result
      */
@@ -904,7 +905,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of int result
      */
@@ -935,7 +936,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of long result
      */
@@ -946,7 +947,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of long result
      */
@@ -957,7 +958,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of long result
@@ -969,7 +970,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of long result
@@ -981,7 +982,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of long result
      */
@@ -992,7 +993,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of long.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of long result
      */
@@ -1072,7 +1073,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of double.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of double result
      */
@@ -1083,7 +1084,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of double.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of double result
      */
@@ -1115,8 +1116,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of double complex.
      *
-     * @param real real
-     * @param imag imag
+     * @param real   real
+     * @param imag   imag
      * @param suffix suffix
      * @return of double complex result
      */
@@ -1148,8 +1149,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of float complex.
      *
-     * @param real real
-     * @param imag imag
+     * @param real   real
+     * @param imag   imag
      * @param suffix suffix
      * @return of float complex result
      */
@@ -1181,8 +1182,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of big complex.
      *
-     * @param real real
-     * @param imag imag
+     * @param real   real
+     * @param imag   imag
      * @param suffix suffix
      * @return of big complex result
      */
@@ -1203,7 +1204,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of number.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of number result
@@ -1225,7 +1226,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of big decimal.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of big decimal result
      */
@@ -1246,7 +1247,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of big int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @param suffix suffix
      * @return of big int result
@@ -1258,7 +1259,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of big int.
      *
-     * @param value value
+     * @param value  value
      * @param layout layout
      * @return of big int result
      */
@@ -1269,7 +1270,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of big int.
      *
-     * @param value value
+     * @param value  value
      * @param suffix suffix
      * @return of big int result
      */
@@ -1318,7 +1319,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of tuple.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of tuple result
      */
@@ -1329,7 +1330,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of named tuple.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of named tuple result
      */
@@ -1420,7 +1421,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of array.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of array result
      */
@@ -1431,7 +1432,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of named array.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of named array result
      */
@@ -1442,9 +1443,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of full array.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of full array result
      */
     static NArrayElement ofFullArray(String name, NElement[] params, NElement... items) {
@@ -1454,9 +1455,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of array.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of array result
      */
     static NArrayElement ofArray(String name, NElement[] params, NElement... items) {
@@ -1467,7 +1468,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * Creates a new instance of of param array.
      *
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of param array result
      */
     static NArrayElement ofParamArray(NElement[] params, NElement... items) {
@@ -1487,9 +1488,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of param array.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of param array result
      */
     static NArrayElement ofParamArray(String name, NElement[] params, NElement... items) {
@@ -1499,7 +1500,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of param array.
      *
-     * @param name name
+     * @param name   name
      * @param params params
      * @return of param array result
      */
@@ -1642,7 +1643,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of object.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of object result
      */
@@ -1653,7 +1654,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of named object.
      *
-     * @param name name
+     * @param name  name
      * @param items items
      * @return of named object result
      */
@@ -1664,9 +1665,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of full object.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of full object result
      */
     static NObjectElement ofFullObject(String name, NElement[] params, NElement... items) {
@@ -1677,7 +1678,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * Creates a new instance of of param object.
      *
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of param object result
      */
     static NObjectElement ofParamObject(NElement[] params, NElement... items) {
@@ -1697,9 +1698,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of param object.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of param object result
      */
     static NObjectElement ofParamObject(String name, NElement[] params, NElement... items) {
@@ -1709,9 +1710,9 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of object.
      *
-     * @param name name
+     * @param name   name
      * @param params params
-     * @param items items
+     * @param items  items
      * @return of object result
      */
     static NObjectElement ofObject(String name, NElement[] params, NElement... items) {
@@ -1721,7 +1722,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of param object.
      *
-     * @param name name
+     * @param name   name
      * @param params params
      * @return of param object result
      */
@@ -1782,7 +1783,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of binary stream.
      *
-     * @param value value
+     * @param value          value
      * @param blocIdentifier bloc identifier
      * @return of binary stream result
      */
@@ -1803,7 +1804,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Creates a new instance of of char stream.
      *
-     * @param value value
+     * @param value          value
      * @param blocIdentifier bloc identifier
      * @return of char stream result
      */
@@ -3092,6 +3093,8 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      *
      * @return is any operator result
      */
+    boolean isAnyExpr();
+
     boolean isAnyOperator();
 
     /**
@@ -3158,7 +3161,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     /**
      * Transform.
      *
-     * @param context context
+     * @param context   context
      * @param transform transform
      * @return transform result
      */
@@ -3360,7 +3363,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * Converts to formatted string.
      *
      * @param contentType content type
-     * @param formatter formatter
+     * @param formatter   formatter
      * @return to formatted string result
      */
     String toFormattedString(NContentType contentType, NElementFormatter formatter);

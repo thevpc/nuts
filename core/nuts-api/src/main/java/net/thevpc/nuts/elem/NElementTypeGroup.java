@@ -45,7 +45,7 @@ public enum NElementTypeGroup implements NEnum {
     STREAM,
     STRING,
     TEMPORAL,
-    OPERATOR,
+    EXPR,
     CUSTOM,
     OTHER,
     ;

@@ -110,12 +110,12 @@ public enum NElementType implements NEnum {
     CHAR_STREAM(NElementTypeGroup.STREAM),
 
 
-    OPERATOR_SYMBOL(NElementTypeGroup.OPERATOR),
-    BINARY_OPERATOR(NElementTypeGroup.OPERATOR),
-    TERNARY_OPERATOR(NElementTypeGroup.OPERATOR),
-    NARY_OPERATOR(NElementTypeGroup.OPERATOR),
-    UNARY_OPERATOR(NElementTypeGroup.OPERATOR),
-    FLAT_EXPR(NElementTypeGroup.OPERATOR),
+    OPERATOR_SYMBOL(NElementTypeGroup.EXPR),
+    BINARY_OPERATOR(NElementTypeGroup.EXPR),
+    TERNARY_OPERATOR(NElementTypeGroup.EXPR),
+    NARY_OPERATOR(NElementTypeGroup.EXPR),
+    UNARY_OPERATOR(NElementTypeGroup.EXPR),
+    FLAT_EXPR(NElementTypeGroup.EXPR),
 
     PAIR(NElementTypeGroup.CONTAINER),
     /**
