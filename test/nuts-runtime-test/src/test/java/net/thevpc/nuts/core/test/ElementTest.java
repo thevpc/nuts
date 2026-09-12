@@ -201,6 +201,7 @@ public class ElementTest {
         NElement p = memExample();
         testSelectorHelper(p, "", "[[{first:{name:\"first name\",valid:true,children:[{path:\"path1\",color:\"red\"}{path:\"path2\",color:\"green\"}]}}{second:{name:\"second name\",valid:true,children:[{path:\"path3\",color:\"yellow\"}{path:\"path4\",color:\"magenta\"}]}}]]");
     }
+
     @Test
     public void testPaths2() {
         NElement p = memExample();
@@ -291,7 +292,8 @@ public class ElementTest {
 
 
     }
-  @Test
+
+    @Test
     public void testIndestructibleObjects3() {
         NText styledText = NText.ofStyled("Hello", NTextStyle.success());
         NElements e = NElements.of();
@@ -312,13 +314,13 @@ public class ElementTest {
                     ).build();
             e.setNtf(false);
             q = e.toElement(b);
-            q=q.transform(new NElementTransform() {
+            q = q.transform(new NElementTransform() {
                 @Override
                 public List<NElement> preTransform(NElementTransformContext context) {
                     NElement ee = context.element();
-                    if(ee instanceof NCustomElement){
+                    if (ee instanceof NCustomElement) {
                         Object v = ((NCustomElement) ee).value();
-                        ee=e.toElement(v);
+                        ee = e.toElement(v);
                     }
                     return Collections.singletonList(ee);
                 }
@@ -329,7 +331,32 @@ public class ElementTest {
             Assertions.assertEquals(expected, q);
         }
     }
+    @Test
+    public void testFormat() {
+        NElement e2 = NElementReader.ofTson().read("documentChapter=\"Antennes\"");
+        TestUtils.println(e2);
+        TestUtils.println(e2.format(NContentType.TSON, NElementFormatter.ofCompact()));
+        TestUtils.println(e2.format(NContentType.TSON, NElementFormatter.ofStable()));
+        TestUtils.println(e2.format(NContentType.TSON, NElementFormatter.ofPretty()));
+        TestUtils.println(e2.format(NContentType.TSON, NElementFormatter.ofSimple()));
+        TestUtils.println(e2.format(NContentType.TSON, NElementFormatter.ofVerbatim()));
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.toString());
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.format(NContentType.TSON, NElementFormatter.ofCompact()).toString());
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.format(NContentType.TSON, NElementFormatter.ofStable()).toString());
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.format(NContentType.TSON, NElementFormatter.ofPretty()).toString());
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.format(NContentType.TSON, NElementFormatter.ofSimple()).toString());
+        Assertions.assertEquals("documentChapter=\"Antennes\"", e2.format(NContentType.TSON, NElementFormatter.ofVerbatim()).toString());
 
+        NElement e3 = NElementReader.ofTson().read("MACHINE==\"i9\"");
+        Assertions.assertEquals("MACHINE==\"i9\"", e3.toString());
+        Assertions.assertEquals("MACHINE==\"i9\"", e3.format(NContentType.TSON, NElementFormatter.ofCompact()).toString());
+        Assertions.assertEquals("MACHINE==\"i9\"", e3.format(NContentType.TSON, NElementFormatter.ofSimple()).toString());
+
+        NElement e4 = NElementReader.ofTson().read("a+\"b\"");
+        Assertions.assertEquals("a+\"b\"", e4.toString());
+        Assertions.assertEquals("a+\"b\"", e4.format(NContentType.TSON, NElementFormatter.ofCompact()).toString());
+        Assertions.assertEquals("a+\"b\"", e4.format(NContentType.TSON, NElementFormatter.ofSimple()).toString());
+    }
 
 
 }

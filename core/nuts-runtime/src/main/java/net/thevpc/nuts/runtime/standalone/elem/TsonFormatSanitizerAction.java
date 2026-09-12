@@ -33,7 +33,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 if(globalSeps.isEmpty()) {
                     if (a.params().isPresent()) {
                         NElementAnnotationBuilder bhb = a.builder();
-                        bhb.setParams(addSeparators(a.params().get()));
+                        bhb.setParams(addSeparators(a.params().get(), true));
                         b.setAffixAt(i, bhb.build(), oldAffix.anchor());
                     }
                 }
@@ -87,14 +87,14 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_1).collect(Collectors.toList());
                     if(globalSeps.isEmpty()) {
-                        eb.setParams(addSeparators(nElements));
+                        eb.setParams(addSeparators(nElements, true));
                     }
                 }
                 nElements = eb.children();
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_2).collect(Collectors.toList());
                     if(globalSeps.isEmpty()) {
-                        eb.setChildren(addSeparators(nElements));
+                        eb.setChildren(addSeparators(nElements, true));
                     }
                 }
                 break;
@@ -108,12 +108,12 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_1).collect(Collectors.toList());
                     if(globalSeps.isEmpty()) {
-                        eb.setParams(addSeparators(nElements));
+                        eb.setParams(addSeparators(nElements, true));
                     }
                 }
                 List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_2).collect(Collectors.toList());
                 if(globalSeps.isEmpty()) {
-                    eb.setChildren(addSeparators(eb.children()));
+                    eb.setChildren(addSeparators(eb.children(), true));
                 }
                 break;
             }
@@ -126,7 +126,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_1).collect(Collectors.toList());
                     if(globalSeps.isEmpty()) {
-                        eb.setParams(addSeparators(nElements));
+                        eb.setParams(addSeparators(nElements, true));
                     }
                 }
                 break;
@@ -137,14 +137,14 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                 if (nElements != null) {
                     List<NBoundAffix> globalSeps = eb.affixes().stream().filter(x -> x.anchor() == NAffixAnchor.SEP_1).collect(Collectors.toList());
                     if(globalSeps.isEmpty()) {
-                        eb.setParams(addSeparators(nElements));
+                        eb.setParams(addSeparators(nElements, true));
                     }
                 }
                 break;
             }
             case FLAT_EXPR: {
                 NFlatExprElementBuilder eb = (NFlatExprElementBuilder) b;
-                eb.setChildren(addSeparators(eb.children()));
+                eb.setChildren(addSeparators(eb.children(), false));
                 break;
             }
             case UNARY_OPERATOR:
@@ -152,7 +152,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             case TERNARY_OPERATOR:
             case NARY_OPERATOR: {
                 NOperatorElementBuilder eb = (NOperatorElementBuilder) b;
-                eb.setChildren(addSeparators(eb.children()));
+                eb.setChildren(addSeparators(eb.children(), false));
                 break;
             }
             case ORDERED_LIST:
@@ -199,7 +199,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
     }
 
 
-    private List<NElement> addSeparators(List<NElement> oldList) {
+    private List<NElement> addSeparators(List<NElement> oldList, boolean allowComma) {
         List<NElement> newList = new ArrayList<>();
         if(oldList.isEmpty()){
             return newList;
@@ -213,7 +213,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
             NElement last = newList.get(i-1);
             NElement curr = oldList.get(i);
             if (isCollision(last, curr)) {
-                if(commaFirst) {
+                if(allowComma && commaFirst) {
                     curr=curr.builder().addSeparatorAffix(",", NAffixAnchor.START).build();
                 }else {
                     curr=curr.builder().addSpaceAffix(" ", NAffixAnchor.START).build();
@@ -357,6 +357,9 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         if (isCloseSep(bc) && (isQuote(ac) || isNameOrDigit(ac))) {
             return CollisionType.UNPRETTY;
         }
+        if (isOpenSep(bc)) {
+            return CollisionType.NO_COLLISION;
+        }
         if (isFirstOrderSep(ac) || isFirstOrderSep(bc)) return CollisionType.NO_COLLISION;
 
         // Logic: If both are Alphanumeric or both are Operators, they will glue.
@@ -366,14 +369,14 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
         if (isQuote(bc) && isNameOrDigit(ac)) {
             return CollisionType.UNPRETTY;
         }
-        if (isCloseSep(bc) && isNameOrDigit(ac)) {
-            return CollisionType.UNPRETTY;
-        }
         if (ac == bc) {
             return CollisionType.FATAL;
         }
         if (isOp(bc) && isOp(ac)) {
             return CollisionType.FATAL;
+        }
+        if ((isOp(bc) && isQuote(ac)) || (isQuote(bc) && isOp(ac))) {
+            return CollisionType.NO_COLLISION;
         }
         if (isQuote(ac) || isQuote(bc)) {
             return CollisionType.UNPRETTY;
@@ -645,7 +648,7 @@ public class TsonFormatSanitizerAction implements NElementFormatterAction {
                     return ")";
                 }
                 if (!ea.name().isEmpty()) {
-                    return ea.name().substring(ea.name().length() - 2, ea.name().length() - 1);
+                    return ea.name().substring(ea.name().length() - 1);
                 }
                 return "@";
             }
