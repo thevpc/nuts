@@ -968,8 +968,13 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public boolean isAnyExpr() {
+        return type().group() == NElementTypeGroup.EXPR;
+    }
+
+    @Override
     public boolean isAnyOperator() {
-        return type().group() == NElementTypeGroup.OPERATOR;
+        return asOperator().isPresent();
     }
 
     @Override
