@@ -135,58 +135,14 @@ public class NStreamTokenizer {
      * Private constructor that initializes everything except the streams.
      */
     private NStreamTokenizer() {
-      /**
-       * Word chars.
-       *
-       * @param 'a' 'a'
-       * @param 'z' 'z'
-       */
         wordChars('a', 'z');
-      /**
-       * Word chars.
-       *
-       * @param 'A' 'a'
-       * @param 'Z' 'z'
-       */
         wordChars('A', 'Z');
-      /**
-       * Word chars.
-       *
-       * @param 32 32
-       * @param 255 255
-       */
         wordChars(128 + 32, 255);
-      /**
-       * Whitespace chars.
-       *
-       * @param 0 0
-       * @param ' '
-       */
         whitespaceChars(0, ' ');
 //        commentChar('/');
-      /**
-       * Quote char.
-       *
-       * @param '"' '"'
-       */
         quoteChar('"');
-      /**
-       * Quote char.
-       *
-       * @param '\'' '\''
-       */
         quoteChar('\'');
-      /**
-       * Quote char.
-       *
-       * @param '`' '`'
-       */
         quoteChar('`');
-      /**
-       * Parse numbers.
-       *
-       * @param true true
-       */
         parseNumbers(true);
     }
 
@@ -198,9 +154,6 @@ public class NStreamTokenizer {
      * @since JDK1.1
      */
     public NStreamTokenizer(Reader r) {
-      /**
-       * This.
-       */
         this();
         reader = r == null ? new StringReader("") : r;
     }
@@ -212,11 +165,6 @@ public class NStreamTokenizer {
      * @return n stream tokenizer result
      */
     public NStreamTokenizer(String r) {
-      /**
-       * This.
-       *
-       * @param r) r)
-       */
         this(new StringReader(r == null ? "" : r));
     }
 
@@ -413,12 +361,6 @@ public class NStreamTokenizer {
      * @param tt tt
      */
     public void acceptTokenType(int tt) {
-      /**
-       * Accept token type.
-       *
-       * @param tt tt
-       * @param true true
-       */
         acceptTokenType(tt, true);
     }
 
@@ -433,12 +375,6 @@ public class NStreamTokenizer {
             parsableTokenTypes[-tt] = b;
             return;
         }
-        /**
-         * Illegal argument exception.
-         *
-         * @param "unsupported" "unsupported"
-         * @return illegal argument exception result
-         */
         throw new IllegalArgumentException("unsupported");
     }
 
@@ -479,12 +415,6 @@ public class NStreamTokenizer {
      *             C-style comments.
      */
     public void slashStarComments(boolean flag) {
-      /**
-       * Accept token type.
-       *
-       * @param NToken.TT_COMMENT_MULTILINE_C n token.tt_comment_multiline_c
-       * @param flag flag
-       */
         acceptTokenType(NToken.TT_COMMENT_MULTILINE_C, flag);
     }
 
@@ -502,12 +432,6 @@ public class NStreamTokenizer {
      *             C++-style comments.
      */
     public void slashSlashComments(boolean flag) {
-      /**
-       * Accept token type.
-       *
-       * @param NToken.TT_COMMENT_LINE_C n token.tt_comment_line_c
-       * @param flag flag
-       */
         acceptTokenType(NToken.TT_COMMENT_LINE_C, flag);
     }
 
@@ -518,24 +442,8 @@ public class NStreamTokenizer {
      * @return xml comments result
      */
     public NStreamTokenizer xmlComments(boolean flag) {
-      /**
-       * Accept token type.
-       *
-       * @param NToken.TT_COMMENT_MULTILINE_XML n token.tt_comment_multiline_xml
-       * @param flag flag
-       */
         acceptTokenType(NToken.TT_COMMENT_MULTILINE_XML, flag);
-      /**
-       * Slash slash comments.
-       *
-       * @param false false
-       */
         slashSlashComments(false);
-      /**
-       * Slash star comments.
-       *
-       * @param false false
-       */
         slashStarComments(false);
         return this;
     }
@@ -546,23 +454,8 @@ public class NStreamTokenizer {
      * @return java comments result
      */
     public NStreamTokenizer javaComments() {
-      /**
-       * Comment char.
-       *
-       * @param '/' '/'
-       */
         commentChar('/');
-      /**
-       * Slash slash comments.
-       *
-       * @param true true
-       */
         slashSlashComments(true);
-      /**
-       * Slash star comments.
-       *
-       * @param true true
-       */
         slashStarComments(true);
         return this;
     }
@@ -573,30 +466,9 @@ public class NStreamTokenizer {
      * @return python comments result
      */
     public NStreamTokenizer pythonComments() {
-      /**
-       * Accept token type.
-       *
-       * @param NToken.TT_COMMENT_LINE_SH n token.tt_comment_line_sh
-       * @param true true
-       */
         acceptTokenType(NToken.TT_COMMENT_LINE_SH, true);
-      /**
-       * Comment char.
-       *
-       * @param '#' '#'
-       */
         commentChar('#');
-      /**
-       * Slash slash comments.
-       *
-       * @param false false
-       */
         slashSlashComments(false);
-      /**
-       * Slash star comments.
-       *
-       * @param false false
-       */
         slashStarComments(false);
         return this;
     }
@@ -626,12 +498,6 @@ public class NStreamTokenizer {
         try {
             return reader.read();
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -646,12 +512,6 @@ public class NStreamTokenizer {
         try {
             reader.mark(count);
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -665,12 +525,6 @@ public class NStreamTokenizer {
         try {
             reader.reset();
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -684,19 +538,11 @@ public class NStreamTokenizer {
         if (pushedBack) {
             return true;
         }
-      /**
-       * Mark char.
-       *
-       * @param 1 1
-       */
         markChar(1);
         c = readChar();
         if (c < 0) {
             return false;
         }
-      /**
-       * Reset char.
-       */
         resetChar();
         return true;
     }
@@ -914,33 +760,19 @@ public class NStreamTokenizer {
         if ((ctype & CT_DIGIT) != 0) {
             StringBuilder image = new StringBuilder();
             if(c=='.'){
-              /**
-               * Mark char.
-               *
-               * @param 1 1
-               */
                 markChar(1);
                 int n = readChar();
                 if(n<0){
                     return false;
                 }
                 if(n=='.'){
-                  /**
-                   * Reset char.
-                   */
                     resetChar();
                     return false;
                 }
                 if(n>='0' && n<='9'){
-                  /**
-                   * Reset char.
-                   */
                     resetChar();
                     //continue
                 }else{
-                  /**
-                   * Reset char.
-                   */
                     resetChar();
                     return false;
                 }
@@ -978,16 +810,8 @@ public class NStreamTokenizer {
                 c = readChar();
                 while (true) {
                     if (c == '.' && seendot == 0) {
-                      /**
-                       * Mark char.
-                       *
-                       * @param 1 1
-                       */
                         markChar(1);
                         int n = readChar();
-                      /**
-                       * Reset char.
-                       */
                         resetChar();
                         if (n == '.') {
                             // double dot ("..") — stop the number here, leave this '.' as peekc for the next token
@@ -1098,44 +922,56 @@ public class NStreamTokenizer {
         if (c == '<' && isParsable(NToken.TT_COMMENT_MULTILINE_XML)) {
             StringBuilder sb = new StringBuilder();
             sb.append((char) c);
-          /**
-           * Mark char.
-           *
-           * @param 4 4
-           */
             markChar(4);
             int a = readChar();
             if (a == '!') {
-                sb.append((char) c);
                 a = readChar();
                 if (a == '-') {
-                    sb.append((char) c);
                     a = readChar();
                     if (a == '-') {
-                        sb.append((char) c);
+                        sb.append("!--");
+                        int state = 0;
                         while (true) {
                             c = readChar();
-                            boolean wasEnd = false;
-                            if (c == '-') {
+                            if (c < 0) {
+                                break;
+                            }
+                            if (c == '\r') {
+                                LINENO++;
                                 sb.append((char) c);
-                                a = readChar();
-                                if (a == '-') {
-                                    a = readChar();
-                                    if (a == '>') {
-                                        wasEnd = true;
-                                    }
-                                }
-                                if (wasEnd) {
-                                    sb.append("->");
-                                    break;
+                                markChar(1);
+                                int n2 = readChar();
+                                if (n2 == '\n') {
+                                    sb.append((char) n2);
                                 } else {
-                                  /**
-                                   * Reset char.
-                                   */
                                     resetChar();
                                 }
+                                state = 0;
+                            } else if (c == '\n') {
+                                LINENO++;
+                                sb.append((char) c);
+                                state = 0;
                             } else {
                                 sb.append((char) c);
+                                if (state == 0) {
+                                    if (c == '-') {
+                                        state = 1;
+                                    }
+                                } else if (state == 1) {
+                                    if (c == '-') {
+                                        state = 2;
+                                    } else {
+                                        state = 0;
+                                    }
+                                } else if (state == 2) {
+                                    if (c == '>') {
+                                        break;
+                                    } else if (c == '-') {
+                                        state = 2;
+                                    } else {
+                                        state = 0;
+                                    }
+                                }
                             }
                         }
                         if (returnComments) {
@@ -1143,18 +979,12 @@ public class NStreamTokenizer {
                             ttype = NToken.TT_COMMENTS;
                             return true;
                         } else {
-                          /**
-                           * Next token.
-                           */
-                            nextToken();
+                            ttype = nextToken();
                             return true;
                         }
                     }
                 }
             }
-          /**
-           * Reset char.
-           */
             resetChar();
         }
         return false;
@@ -1230,9 +1060,6 @@ public class NStreamTokenizer {
                         return true;
                     }
                     peekc = c;
-                  /**
-                   * Next token.
-                   */
                     nextToken();
                     return true;
                 } else {
@@ -1254,11 +1081,6 @@ public class NStreamTokenizer {
     private boolean _read_string() {
         boolean interpolatedString=false;
         if(c=='$'){
-          /**
-           * Mark char.
-           *
-           * @param 1 1
-           */
             markChar(1);
             c=readChar();
             int ctype2 = c < 256 ? commonCharTypes[c] : CT_ALPHA;
@@ -1266,9 +1088,6 @@ public class NStreamTokenizer {
                 ctype=ctype2;
                 interpolatedString=true;
             }else{
-              /**
-               * Reset char.
-               */
                 resetChar();
                 return false;
             }
