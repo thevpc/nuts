@@ -94,4 +94,21 @@ public class HeavyInstallTest {
         Assertions.assertEquals(0, e);
     }
 
+    @Test
+    public void testInstallNoApi() {
+        if (!NPath.ofUserHome().resolve(".nuts/local-urls").isDirectory()) {
+            return;
+        }
+        NPath folder = NPath.ofTempFolder();
+        NPath.of("classpath://net/thevpc/nuts/core/test/sample-api-01.json").copyTo(folder.resolve("api.json"));
+        NExec ee = NExec.of("noapi").directory(folder);
+        ee.grabAll();
+        int e = ee.run().exitCode();
+        String str = ee.grabbedAll();
+        Assertions.assertTrue(str.contains("read open-api file"));
+        Assertions.assertTrue(str.contains("generate  pdf file"));
+        Assertions.assertEquals(0, e);
+        Assertions.assertTrue(folder.resolve("dist-version-1.2.3/api-1.2.3.pdf").isRegularFile());
+    }
+
 }

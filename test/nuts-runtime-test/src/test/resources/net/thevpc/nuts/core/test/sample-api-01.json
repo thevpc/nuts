@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "My Application API",
+    "version": "1.2.3",
+    "description": "This document is part of My Application Documentation. It describes WebServices API exposed by My Application to Consumer Systems.",
+    "contact": {
+      "name": "My Company Support",
+      "email": "contact@mycompany.com",
+      "url": "https://www.mycompany.com",
+      "phone": "11 22 33 44"
+    },
+    "x-logo": {
+      "url": ""
+    },
+    "changes": [
+      {
+        "date": "2010-02-12",
+        "version": "1.1",
+        "title": "Added /login",
+        "observations": "The following are the changes since 1.0",
+        "details": [
+          "ADDED REQUEST: added /login"
+        ]
+      },
+      {
+        "date": "2009-08-07",
+        "version": "1.0.0",
+        "title": "Initial version",
+        "observations": "firstAPIs",
+        "details": [
+        ]
+      }
+    ]
+  },
+  "custom": {
+    "openapi-document-id": "my-api",
+    "config": {
+      "description": "This document is part of My Application Documentation. It describes WebServices API exposed by My Application to Consumer Systems."
+    }
+  },
+  "servers": [
+    {
+      "url": "https://myapp.com",
+      "description": "This is the main My Application api server URL. An example is https://your-company.myapp.tn/api"
+    }
+  ],
+  "paths": {
+    "/version": {
+      "get": {
+        "summary": "Returns the deployed API version",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Returns the deployed API version information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionResponse"
+                },
+                "example": {
+                  "version": "1.2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Log into the system and obtain an access authorization token. This Method is used by Mobile Application to log the user in",
+        "tags": [],
+        "requestBody": {
+          "description": "Login information",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModel"
+              },
+              "example": {
+                "username": "customer",
+                "password": "1234"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a well formed token information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "example": {
+                  "accessToken": "5odHRwLlJlc3BvbnNlR...ICA5Iik7DQogIGFsdGhW50aXR="
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns object not found if the user or the token does not match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorType"
+                },
+                "example": {
+                  "success": false,
+                  "error": "USER_NOT_FOUND",
+                  "details": "invalid login or password",
+                  "api-version": "1.0"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns forbidden access if the access could not be granted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorType"
+                },
+                "example": {
+                  "error": true,
+                  "message": "Access Not Allowed"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "JWTAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Example: \n> Authorization: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "LoginModel": {
+        "type": "object",
+        "format": "object::intermediate-structure",
+        "description": "LoginModel details the information used for Login method input",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "User name",
+            "example": "customer"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "1234"
+          }
+        },
+        "required": [
+          "phoneNumber",
+          "emailAddress"
+        ],
+        "example": {
+          "username": "customer",
+          "password": "1234"
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "format": "object::intermediate-structure",
+        "description": "LoginResponse details information used as Login method result",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 512,
+            "description": "Authorization Token",
+            "example": "ICAgIGFsdGh...5odHRwLlJlc3BvbnNlRW50aXR5Iik7DQo="
+          }
+        },
+        "required": [
+          "accessToken"
+        ],
+        "example": {
+          "accessToken": "ICAgIGFsdGh...5odHRwLlJlc3BvbnNlRW50aXR5Iik7DQo="
+        }
+      },
+      "VersionResponse": {
+        "type": "object",
+        "description": "VersionResponse details all API version information",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "version string",
+            "example": "1.2.3"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "example": {
+          "value": "1.2.3"
+        }
+      },
+      "ErrorType": {
+        "type": "object",
+        "description": "Message format when any error occurs",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "The value must be 'false'",
+            "enum": [
+              "false"
+            ],
+            "example": "true"
+          },
+          "error": {
+            "type": "string",
+            "description": "An error code",
+            "example": "DOCUMENT_NOT_FOUND"
+          },
+          "details": {
+            "type": "string",
+            "description": "A user friendly error message. Can be null or non present",
+            "example": "document should not be missing"
+          },
+          "api-version": {
+            "type": "string",
+            "description": "Server side api-version",
+            "example": "1.0"
+          }
+        },
+        "required": [
+          "success",
+          "error"
+        ],
+        "example": {
+          "success": false,
+          "error": "DOCUMENT_NOT_FOUND",
+          "details": "document should not be missing",
+          "api-version": "1.0"
+        }
+      }
+    },
+    "responses": {},
+    "parameters": {}
+  },
+  "tags": [],
+  "security": [
+    {
+      "JWTAuth": []
+    }
+  ]
+}

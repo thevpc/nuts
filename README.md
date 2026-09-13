@@ -9,7 +9,7 @@
 ```
 
 > **The package manager Java never had.**
-> Website: https://thevpc.github.io/nuts  
+> Website: https://thevpc.github.io/nuts
 
 [![Download](https://img.shields.io/badge/download-nuts-blue)]([https://github.com/thevpc/nuts](https://thevpc.github.io/nuts/download.html))
 [![License](https://img.shields.io/badge/license-LGPLv3-blue)](https://www.gnu.org/licenses/lgpl-3.0.html)

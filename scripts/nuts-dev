@@ -77,7 +77,10 @@ while (( "$#" )); do
             exit 1
             ;;
         *)
-            shift
+            # first non-option token is the actual nuts command:
+            # stop parsing launcher options and leave it (and everything
+            # after it) intact in "$@" for the final invocation
+            break
             ;;
     esac
 done
