@@ -127,8 +127,7 @@ public class NCmdLineMatcherImpl implements NCmdLineMatcher {
         with(new NCmdLineProcessor() {
             @Override
             public boolean process(NCmdLine cmdLine) {
-                NSession.of().configureFirst(cmdLine);
-                return true;
+                return NSession.of().configureFirst(cmdLine);
             }
         });
         return this;
