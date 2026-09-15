@@ -208,6 +208,9 @@ public class DefaultNDigest implements NDigest {
             return i;
         } else if (file.isFile()) {
             try (InputStream is = file.inputStream()) {
+                if(is==null){
+                    return null;
+                }
                 return incrementalUpdateFileDigestInputStream(is, md, file.name());
             } catch (IOException ex) {
                 throw new NIOException(ex);
