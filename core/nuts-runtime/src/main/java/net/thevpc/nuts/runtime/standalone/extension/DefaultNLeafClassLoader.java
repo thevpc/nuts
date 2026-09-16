@@ -27,19 +27,18 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NClasspathEntry;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
-import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.reflect.NClassLoader;
 import net.thevpc.nuts.reflect.NMutableClassLoader;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Leaf (single-source) NutsClassLoader backed by exactly one jar URL.
@@ -56,6 +55,13 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
     private final String name;
     private final NId id;
     private final NPath path;
+
+    static final List<NClassLoaderResolution.NResolutionTier<Class<?>>> CLASS_TIERS =
+            Collections.unmodifiableList(createClassTiers());
+    static final List<NClassLoaderResolution.NResolutionTier<URL>> SINGLE_RESOURCE_TIERS =
+            Collections.unmodifiableList(createSingleResourceTiers());
+    static final List<NClassLoaderResolution.NResolutionTier<List<URL>>> MULTI_RESOURCE_TIERS =
+            Collections.unmodifiableList(createMultiResourceTiers());
 
     DefaultNLeafClassLoader(NId id, NPath path, ClassLoader parent) {
         super(toURLArray(path), parent == null ? ClassLoader.getSystemClassLoader() : parent);
@@ -108,46 +114,267 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
         return NClassLoaderBase.search(node, this, false);
     }
 
+    private static List<NClassLoaderResolution.NResolutionTier<Class<?>>> createClassTiers() {
+        return Arrays.asList(
+                new NClassLoaderResolution.NResolutionTier<Class<?>>() {
+                    @Override
+                    public String name() {
+                        return "own";
+                    }
+
+                    @Override
+                    public Class<?> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        try {
+                            return requester.loadClassFromParentAndOwn(key);
+                        } catch (ClassNotFoundException ignored) {
+                            return null;
+                        }
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<Class<?>>() {
+                    @Override
+                    public String name() {
+                        return "tccl";
+                    }
+
+                    @Override
+                    public Class<?> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        if (!NClassLoaderContext.isSiblingLookup()
+                                && tccl != null && tccl != requester && tccl != requester.getParent()
+                                && !(tccl instanceof NClassLoaderPeer)) {
+                            try {
+                                return tccl.loadClass(key);
+                            } catch (ClassNotFoundException ignored) {
+                                return null;
+                            }
+                        }
+                        return null;
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<Class<?>>() {
+                    @Override
+                    public String name() {
+                        return "peer";
+                    }
+
+                    @Override
+                    public Class<?> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        NClassLoaderPeer peer = NClassLoaderContext.current();
+                        if (peer != null && !NClassLoaderContext.isSiblingLookup()) {
+                            try {
+                                return peer.loadClassFromChildren(requester, key);
+                            } catch (ClassNotFoundException ignored) {
+                                return null;
+                            }
+                        }
+                        return null;
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<Class<?>>() {
+                    @Override
+                    public String name() {
+                        return "registry";
+                    }
+
+                    @Override
+                    public Class<?> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        if (NClassLoaderContext.current() == null) {
+                            NLog.of(DefaultNLeafClassLoader.class).debug(
+                                    NMsg.ofC("Composite-scoped resolution was unavailable (no active NClassLoaderContext); falling back to VM-wide registry for class %s", key));
+                        }
+                        try {
+                            return NIdClassLoaderRegistry.findInRegisteredLeaves(requester, key);
+                        } catch (ClassNotFoundException ignored) {
+                            return null;
+                        }
+                    }
+                }
+        );
+    }
+
+    private static List<NClassLoaderResolution.NResolutionTier<URL>> createSingleResourceTiers() {
+        return Arrays.asList(
+                new NClassLoaderResolution.NResolutionTier<URL>() {
+                    @Override
+                    public String name() {
+                        return "own";
+                    }
+
+                    @Override
+                    public URL tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        return requester.findOwnResource(key);
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<URL>() {
+                    @Override
+                    public String name() {
+                        return "tccl";
+                    }
+
+                    @Override
+                    public URL tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        if (!NClassLoaderContext.isSiblingLookup()
+                                && tccl != null && tccl != requester && tccl != requester.getParent()
+                                && !(tccl instanceof NClassLoaderPeer)) {
+                            return tccl.getResource(key);
+                        }
+                        return null;
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<URL>() {
+                    @Override
+                    public String name() {
+                        return "peer";
+                    }
+
+                    @Override
+                    public URL tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        NClassLoaderPeer peer = NClassLoaderContext.current();
+                        if (peer != null && !NClassLoaderContext.isSiblingLookup()) {
+                            try {
+                                List<URL> urls = peer.loadResourcesFromChildren(requester, key);
+                                if (urls != null && !urls.isEmpty()) {
+                                    return urls.get(0);
+                                }
+                            } catch (IOException ignored) {
+                                return null;
+                            }
+                        }
+                        return null;
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<URL>() {
+                    @Override
+                    public String name() {
+                        return "registry";
+                    }
+
+                    @Override
+                    public URL tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        if (NClassLoaderContext.current() == null) {
+                            NLog.of(DefaultNLeafClassLoader.class).debug(
+                                    NMsg.ofC("Composite-scoped resolution was unavailable (no active NClassLoaderContext); falling back to VM-wide registry for resource %s", key));
+                        }
+                        List<URL> urls = NIdClassLoaderRegistry.findResourcesInRegisteredLeaves(requester, key);
+                        if (urls != null && !urls.isEmpty()) {
+                            return urls.get(0);
+                        }
+                        return null;
+                    }
+                }
+        );
+    }
+
+    private static List<NClassLoaderResolution.NResolutionTier<List<URL>>> createMultiResourceTiers() {
+        return Arrays.asList(
+                new NClassLoaderResolution.NResolutionTier<List<URL>>() {
+                    @Override
+                    public String name() {
+                        return "own";
+                    }
+
+                    @Override
+                    public List<URL> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        try {
+                            Enumeration<URL> e = requester.findOwnResources(key);
+                            List<URL> list = new ArrayList<>();
+                            if (e != null) {
+                                while (e.hasMoreElements()) {
+                                    URL u = e.nextElement();
+                                    if (u != null) {
+                                        list.add(u);
+                                    }
+                                }
+                            }
+                            return list;
+                        } catch (IOException ignored) {
+                            return Collections.emptyList();
+                        }
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<List<URL>>() {
+                    @Override
+                    public String name() {
+                        return "tccl";
+                    }
+
+                    @Override
+                    public List<URL> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                        if (!NClassLoaderContext.isSiblingLookup()
+                                && tccl != null && tccl != requester && tccl != requester.getParent()
+                                && !(tccl instanceof NClassLoaderPeer)) {
+                            try {
+                                Enumeration<URL> e = tccl.getResources(key);
+                                List<URL> list = new ArrayList<>();
+                                if (e != null) {
+                                    while (e.hasMoreElements()) {
+                                        URL u = e.nextElement();
+                                        if (u != null) {
+                                            list.add(u);
+                                        }
+                                    }
+                                }
+                                return list;
+                            } catch (IOException ignored) {
+                                return Collections.emptyList();
+                            }
+                        }
+                        return Collections.emptyList();
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<List<URL>>() {
+                    @Override
+                    public String name() {
+                        return "peer";
+                    }
+
+                    @Override
+                    public List<URL> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        NClassLoaderPeer peer = NClassLoaderContext.current();
+                        if (peer != null && !NClassLoaderContext.isSiblingLookup()) {
+                            try {
+                                return peer.loadResourcesFromChildren(requester, key);
+                            } catch (IOException ignored) {
+                                return Collections.emptyList();
+                            }
+                        }
+                        return Collections.emptyList();
+                    }
+                },
+                new NClassLoaderResolution.NResolutionTier<List<URL>>() {
+                    @Override
+                    public String name() {
+                        return "registry";
+                    }
+
+                    @Override
+                    public List<URL> tryResolve(DefaultNLeafClassLoader requester, String key) {
+                        if (NClassLoaderContext.current() == null) {
+                            NLog.of(DefaultNLeafClassLoader.class).debug(
+                                    NMsg.ofC("Composite-scoped resolution was unavailable (no active NClassLoaderContext); falling back to VM-wide registry for resources %s", key));
+                        }
+                        return NIdClassLoaderRegistry.findResourcesInRegisteredLeaves(requester, key);
+                    }
+                }
+        );
+    }
+
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         try {
-            return super.loadClass(name);
+            Class<?> c = NClassLoaderResolution.NResolutionChain.resolveFirst(this, name, CLASS_TIERS);
+            if (c != null) {
+                return c;
+            }
         } catch (ClassNotFoundException e) {
-            // Linking can happen later, after the original composite call has
-            // returned (for example while invoking an application method).
-            // In that case use the application TCCL as the durable bridge.
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            if (!NClassLoaderContext.isSiblingLookup()
-                    && tccl != null && tccl != this && tccl != getParent()) {
-                try {
-                    // Calling a composite TCCL here would re-enter the leaf
-                    // that is already asking it to load this class. The
-                    // active-composite and registry paths below are cycle-safe.
-                    if (!(tccl instanceof NClassLoaderPeer)) {
-                        return tccl.loadClass(name);
-                    }
-                } catch (ClassNotFoundException ignored) {
-                    // Try the active composite below.
-                }
-            }
-            // The leaf is intentionally parented by the system loader and is
-            // shared VM-wide. Resolve application dependencies through the
-            // workspace composite that is currently using this leaf.
-            NClassLoaderPeer peer = NClassLoaderContext.current();
-            if (peer != null && !NClassLoaderContext.isSiblingLookup()) {
-                try {
-                    return peer.loadClassFromChildren(this, name);
-                } catch (ClassNotFoundException ignored) {
-                    // Preserve the original failure and its useful class name.
-                }
-            }
-            try {
-                return NIdClassLoaderRegistry.findInRegisteredLeaves(this, name);
-            } catch (ClassNotFoundException ignored) {
-                // Preserve the original failure and its useful class name.
-            }
             throw e;
+        } catch (Exception e) {
+            throw new ClassNotFoundException(name, e);
         }
+        throw new ClassNotFoundException(name);
     }
 
     Class<?> findOwnClass(String name) throws ClassNotFoundException {
@@ -159,21 +386,47 @@ class DefaultNLeafClassLoader extends URLClassLoader implements NClassLoader {
         return super.loadClass(name);
     }
 
-    @Override
-    public URL getResource(String name) {
+    URL findOwnResource(String name) {
         return super.getResource(name);
     }
 
-    @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
+    Enumeration<URL> findOwnResources(String name) throws IOException {
         return super.getResources(name);
     }
 
     @Override
-    public InputStream getResourceAsStream(String name) {
-        return super.getResourceAsStream(name);
+    public URL getResource(String name) {
+        try {
+            return NClassLoaderResolution.NResolutionChain.resolveFirst(this, name, SINGLE_RESOURCE_TIERS);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        try {
+            List<URL> all = NClassLoaderResolution.NResolutionChain.resolveAll(this, name, MULTI_RESOURCE_TIERS);
+            return Collections.enumeration(all);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String name) {
+        URL u = getResource(name);
+        if (u == null) {
+            return null;
+        }
+        try {
+            return u.openStream();
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     @Override
     public String name() {

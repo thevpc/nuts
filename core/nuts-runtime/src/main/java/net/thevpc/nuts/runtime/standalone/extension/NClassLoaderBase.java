@@ -525,15 +525,54 @@ public abstract class NClassLoaderBase extends URLClassLoader implements NClassL
     }
 
     @Override
+    public List<URL> loadResourcesFromChildren(ClassLoader requester, String name) throws IOException {
+        NClassLoaderContext.beginSiblingLookup();
+        try {
+            List<URL> all = new ArrayList<>();
+            for (NClassLoader child : children) {
+                if (child.asClassLoader() == requester) {
+                    continue;
+                }
+                try {
+                    NClassLoaderContext.enter(this);
+                    Enumeration<URL> e = child.getResources(name);
+                    while (e.hasMoreElements()) {
+                        URL u = e.nextElement();
+                        if (u != null) {
+                            all.add(u);
+                        }
+                    }
+                } finally {
+                    NClassLoaderContext.exit(this);
+                }
+            }
+            return all;
+        } finally {
+            NClassLoaderContext.endSiblingLookup();
+        }
+    }
+
+    @Override
+    public boolean isShortNameVersionAllowed(NId candidateId) {
+        if (candidateId == null) {
+            return true;
+        }
+        String shortName = candidateId.shortName();
+        NVersion loadedVersion = loadedShortNameVersions.get(shortName);
+        if (loadedVersion != null && !Objects.equals(loadedVersion, candidateId.version())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        NClassLoaderBase that = (NClassLoaderBase) o;
-        return Objects.equals(name, that.name) && Objects.equals(baseEntries, that.baseEntries);
+        return this == o;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, baseEntries);
+        return System.identityHashCode(this);
     }
 
     /**

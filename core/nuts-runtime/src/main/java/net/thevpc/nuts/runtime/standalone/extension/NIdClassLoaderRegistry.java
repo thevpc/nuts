@@ -27,9 +27,12 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
 
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
@@ -52,6 +55,12 @@ import java.util.jar.JarFile;
  * respect JVM class identity semantics (leaves are pinned as long as any
  * Class they defined is reachable, which is effectively forever for most
  * workloads).
+ * <p>
+ * <em>Lifecycle note:</em> Registry entries and leaf indexes are held for the lifetime
+ * of the JVM unless explicitly invalidated via {@link #invalidate(NId)},
+ * {@link #invalidate(NPath)}, or {@link #invalidateAll()}. Applications embedding
+ * Nuts in long-running processes should manage registry lifecycle when extensions
+ * are dynamically loaded and discarded.
  *
  * @app.category Internal
  */
@@ -82,6 +91,12 @@ public final class NIdClassLoaderRegistry {
      * Index of package name -> set of leaf classloaders containing classes in that package.
      */
     private static final ConcurrentHashMap<String, Set<DefaultNLeafClassLoader>> PACKAGE_TO_LEAVES =
+            new ConcurrentHashMap<>();
+
+    /**
+     * Index of resource name -> set of leaf classloaders containing it in their jar/folder.
+     */
+    private static final ConcurrentHashMap<String, Set<DefaultNLeafClassLoader>> RESOURCE_TO_LEAVES =
             new ConcurrentHashMap<>();
 
     /**
@@ -149,6 +164,11 @@ public final class NIdClassLoaderRegistry {
             return new DefaultNLeafClassLoader(id, resolvedJarPath, LEAF_PARENT());
         });
         if (created[0]) {
+            try {
+                BY_PATH.putIfAbsent(resolvedJarPath.toAbsolute().toString(), leaf);
+            } catch (Exception ex) {
+                BY_PATH.putIfAbsent(resolvedJarPath.toString(), leaf);
+            }
             registerLeaf(leaf);
         }
         return leaf;
@@ -196,13 +216,26 @@ public final class NIdClassLoaderRegistry {
     /** Find a class in another registered leaf without re-entering its parent. */
     static Class<?> findInRegisteredLeaves(DefaultNLeafClassLoader requester, String name)
             throws ClassNotFoundException {
+        NClassLoaderPeer peer = NClassLoaderContext.current();
+        if (peer == null) {
+            NLog.of(NIdClassLoaderRegistry.class).warn(
+                    NMsg.ofC("Registry fallback for class %s used without active composite context; version isolation cannot be guaranteed.", name));
+        }
+
         // 1. Check resolved class cache
         ClassRecord rec = RESOLVED_CLASS_CACHE.get(name);
         if (rec != null) {
             if (rec.definingLeaf != requester) {
-                return rec.clazz;
+                if (peer != null && !peer.isShortNameVersionAllowed(rec.definingLeaf.id())) {
+                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                            NMsg.ofC("Registry fallback rejected cached leaf %s for class %s: version conflict with active composite.",
+                                    rec.definingLeaf.id(), name));
+                } else {
+                    return rec.clazz;
+                }
+            } else {
+                throw new ClassNotFoundException(name);
             }
-            throw new ClassNotFoundException(name);
         }
 
         // 2. Check negative cache
@@ -213,12 +246,18 @@ public final class NIdClassLoaderRegistry {
         // 3. Check known class owner from jar index
         DefaultNLeafClassLoader owner = CLASS_TO_LEAF.get(name);
         if (owner != null && owner != requester) {
-            try {
-                Class<?> c = owner.loadClassFromParentAndOwn(name);
-                RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, owner));
-                return c;
-            } catch (ClassNotFoundException ignored) {
-                // In case indexing had an entry that couldn't be loaded, fall through
+            if (peer != null && !peer.isShortNameVersionAllowed(owner.id())) {
+                NLog.of(NIdClassLoaderRegistry.class).warn(
+                        NMsg.ofC("Registry fallback rejected owner leaf %s for class %s: version conflict with active composite.",
+                                owner.id(), name));
+            } else {
+                try {
+                    Class<?> c = owner.loadClassFromParentAndOwn(name);
+                    RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, owner));
+                    return c;
+                } catch (ClassNotFoundException ignored) {
+                    // In case indexing had an entry that couldn't be loaded, fall through
+                }
             }
         }
 
@@ -229,6 +268,12 @@ public final class NIdClassLoaderRegistry {
         if (pkgLeaves != null) {
             for (DefaultNLeafClassLoader leaf : pkgLeaves) {
                 if (leaf != requester && leaf != owner) {
+                    if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
+                        NLog.of(NIdClassLoaderRegistry.class).warn(
+                                NMsg.ofC("Registry fallback rejected package leaf %s for class %s: version conflict with active composite.",
+                                        leaf.id(), name));
+                        continue;
+                    }
                     try {
                         Class<?> c = leaf.loadClassFromParentAndOwn(name);
                         RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, leaf));
@@ -242,6 +287,12 @@ public final class NIdClassLoaderRegistry {
         // 5. Check unindexed leaves (fallback)
         for (DefaultNLeafClassLoader leaf : UNINDEXED_LEAVES) {
             if (leaf != requester && leaf != owner) {
+                if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
+                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                            NMsg.ofC("Registry fallback rejected unindexed leaf %s for class %s: version conflict with active composite.",
+                                    leaf.id(), name));
+                    continue;
+                }
                 try {
                     Class<?> c = leaf.loadClassFromParentAndOwn(name);
                     RESOLVED_CLASS_CACHE.put(name, new ClassRecord(c, leaf));
@@ -254,6 +305,48 @@ public final class NIdClassLoaderRegistry {
         // 6. Not found in any registered leaf! Record in negative cache.
         NEGATIVE_CLASS_CACHE.add(name);
         throw new ClassNotFoundException(name);
+    }
+
+    /** Find resources in registered leaves without re-entering parents. */
+    static List<URL> findResourcesInRegisteredLeaves(DefaultNLeafClassLoader requester, String name) {
+        NClassLoaderPeer peer = NClassLoaderContext.current();
+        if (peer == null) {
+            NLog.of(NIdClassLoaderRegistry.class).warn(
+                    NMsg.ofC("Registry fallback for resource %s used without active composite context; version isolation cannot be guaranteed.", name));
+        }
+        List<URL> out = new ArrayList<>();
+        Set<DefaultNLeafClassLoader> owners = RESOURCE_TO_LEAVES.get(name);
+        if (owners != null) {
+            for (DefaultNLeafClassLoader leaf : owners) {
+                if (leaf != requester) {
+                    if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
+                        NLog.of(NIdClassLoaderRegistry.class).warn(
+                                NMsg.ofC("Registry fallback rejected leaf %s for resource %s: version conflict with active composite.",
+                                        leaf.id(), name));
+                        continue;
+                    }
+                    URL u = leaf.findOwnResource(name);
+                    if (u != null) {
+                        out.add(u);
+                    }
+                }
+            }
+        }
+        for (DefaultNLeafClassLoader leaf : UNINDEXED_LEAVES) {
+            if (leaf != requester && (owners == null || !owners.contains(leaf))) {
+                if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
+                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                            NMsg.ofC("Registry fallback rejected unindexed leaf %s for resource %s: version conflict with active composite.",
+                                    leaf.id(), name));
+                    continue;
+                }
+                URL u = leaf.findOwnResource(name);
+                if (u != null) {
+                    out.add(u);
+                }
+            }
+        }
+        return out;
     }
 
     public static ClassLoader getIfPresent(NId id) {
@@ -278,6 +371,13 @@ public final class NIdClassLoaderRegistry {
         if (id != null) {
             DefaultNLeafClassLoader removed = BY_ID.remove(id.longName());
             if (removed != null) {
+                if (removed.path() != null) {
+                    try {
+                        BY_PATH.remove(removed.path().toAbsolute().toString());
+                    } catch (Exception ex) {
+                        BY_PATH.remove(removed.path().toString());
+                    }
+                }
                 unregisterLeaf(removed);
             }
         }
@@ -292,6 +392,9 @@ public final class NIdClassLoaderRegistry {
                 removed = BY_PATH.remove(path.toString());
             }
             if (removed != null) {
+                if (removed.id() != null) {
+                    BY_ID.remove(removed.id().longName());
+                }
                 unregisterLeaf(removed);
             }
         }
@@ -303,6 +406,7 @@ public final class NIdClassLoaderRegistry {
         LEAF_INDEXES.clear();
         CLASS_TO_LEAF.clear();
         PACKAGE_TO_LEAVES.clear();
+        RESOURCE_TO_LEAVES.clear();
         UNINDEXED_LEAVES.clear();
         RESOLVED_CLASS_CACHE.clear();
         NEGATIVE_CLASS_CACHE.clear();
@@ -331,6 +435,9 @@ public final class NIdClassLoaderRegistry {
             for (String pkg : idx.packages) {
                 PACKAGE_TO_LEAVES.computeIfAbsent(pkg, k -> ConcurrentHashMap.newKeySet()).add(leaf);
             }
+            for (String res : idx.resources) {
+                RESOURCE_TO_LEAVES.computeIfAbsent(res, k -> ConcurrentHashMap.newKeySet()).add(leaf);
+            }
         } else {
             UNINDEXED_LEAVES.add(leaf);
         }
@@ -349,6 +456,15 @@ public final class NIdClassLoaderRegistry {
                     set.remove(leaf);
                     if (set.isEmpty()) {
                         PACKAGE_TO_LEAVES.remove(pkg);
+                    }
+                }
+            }
+            for (String res : idx.resources) {
+                Set<DefaultNLeafClassLoader> set = RESOURCE_TO_LEAVES.get(res);
+                if (set != null) {
+                    set.remove(leaf);
+                    if (set.isEmpty()) {
+                        RESOURCE_TO_LEAVES.remove(res);
                     }
                 }
             }
@@ -378,6 +494,7 @@ public final class NIdClassLoaderRegistry {
         }
         Set<String> classes = new HashSet<>();
         Set<String> packages = new HashSet<>();
+        Set<String> resources = new HashSet<>();
         try {
             if (file.isFile()) {
                 try (JarFile jar = new JarFile(file)) {
@@ -394,13 +511,17 @@ public final class NIdClassLoaderRegistry {
                             } else {
                                 packages.add("");
                             }
+                        } else if (!entry.isDirectory()) {
+                            if (ename.startsWith("META-INF/services/")) {
+                                resources.add(ename);
+                            }
                         }
                     }
-                    return new LeafIndex(classes, packages, true);
+                    return new LeafIndex(classes, packages, resources, true);
                 }
             } else if (file.isDirectory()) {
-                indexDirectory(file, "", classes, packages);
-                return new LeafIndex(classes, packages, true);
+                indexDirectory(file, "", "", classes, packages, resources);
+                return new LeafIndex(classes, packages, resources, true);
             }
         } catch (Exception ignored) {
             // fallback
@@ -408,32 +529,40 @@ public final class NIdClassLoaderRegistry {
         return LeafIndex.EMPTY;
     }
 
-    private static void indexDirectory(File dir, String pkgPrefix, Set<String> classes, Set<String> packages) {
+    private static void indexDirectory(File dir, String pkgPrefix, String pathPrefix,
+                                       Set<String> classes, Set<String> packages, Set<String> resources) {
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File f : files) {
+            String relName = pathPrefix.isEmpty() ? f.getName() : pathPrefix + "/" + f.getName();
             if (f.isDirectory()) {
                 String subPkg = pkgPrefix.isEmpty() ? f.getName() : pkgPrefix + "." + f.getName();
                 packages.add(subPkg);
-                indexDirectory(f, subPkg, classes, packages);
-            } else if (f.isFile() && f.getName().endsWith(".class")) {
-                String cname = f.getName().substring(0, f.getName().length() - 6);
-                String fullClass = pkgPrefix.isEmpty() ? cname : pkgPrefix + "." + cname;
-                classes.add(fullClass);
-                packages.add(pkgPrefix);
+                indexDirectory(f, subPkg, relName, classes, packages, resources);
+            } else if (f.isFile()) {
+                if (f.getName().endsWith(".class")) {
+                    String cname = f.getName().substring(0, f.getName().length() - 6);
+                    String fullClass = pkgPrefix.isEmpty() ? cname : pkgPrefix + "." + cname;
+                    classes.add(fullClass);
+                    packages.add(pkgPrefix);
+                } else if (relName.startsWith("META-INF/services/")) {
+                    resources.add(relName);
+                }
             }
         }
     }
 
     private static class LeafIndex {
-        static final LeafIndex EMPTY = new LeafIndex(Collections.emptySet(), Collections.emptySet(), false);
+        static final LeafIndex EMPTY = new LeafIndex(Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), false);
         final Set<String> classes;
         final Set<String> packages;
+        final Set<String> resources;
         final boolean complete;
 
-        LeafIndex(Set<String> classes, Set<String> packages, boolean complete) {
+        LeafIndex(Set<String> classes, Set<String> packages, Set<String> resources, boolean complete) {
             this.classes = classes;
             this.packages = packages;
+            this.resources = resources;
             this.complete = complete;
         }
     }
