@@ -783,7 +783,7 @@ public class DefaultNCp implements NCp {
                 Path temp = null;
                 if (_target2.jpath != null) {
                     NPath.of(_target2.jpath).mkParentDirs();
-                    temp = _target2.jpath.resolveSibling(_target2.jpath.getFileName() + "~");
+                    temp = _target2.jpath.resolveSibling(_target2.jpath.getFileName() + "." + UUID.randomUUID() + ".part~");
                 } else {
                     temp = NPath.ofTempFile("temp~").toPath().get();
                 }
@@ -803,7 +803,7 @@ public class DefaultNCp implements NCp {
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if (NIOUtils.compareContent(temp, _target2.jpath)) {
+                            if (Files.exists(_target2.jpath) && (temp == null || !Files.exists(temp) || NIOUtils.compareContent(temp, _target2.jpath))) {
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }

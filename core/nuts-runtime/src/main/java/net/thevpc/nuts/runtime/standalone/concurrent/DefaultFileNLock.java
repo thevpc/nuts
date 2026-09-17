@@ -22,6 +22,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
@@ -92,6 +94,16 @@ public class DefaultFileNLock extends AbstractNLock {
         public Instant getMaxValidInstant() { return maxValidInstant; }
     }
 
+    private static class PathLockState {
+        Thread ownerThread;
+        int holdCount;
+    }
+    private static final Map<Path, PathLockState> ACTIVE_LOCKS = new HashMap<>();
+
+    private Path canonicalPath() {
+        return path == null ? null : path.toAbsolutePath().normalize();
+    }
+
     public DefaultFileNLock(Path path, Object lockedObject) {
         this.path = path;
         this.lockedObject = lockedObject;
@@ -111,8 +123,12 @@ public class DefaultFileNLock extends AbstractNLock {
     }
 
     @Override
-    public synchronized boolean isHeldByCurrentThread() {
-        return isLocked() && Thread.currentThread() == ownerThread;
+    public boolean isHeldByCurrentThread() {
+        synchronized (DefaultFileNLock.class) {
+            Path cp = canonicalPath();
+            PathLockState s = cp == null ? null : ACTIVE_LOCKS.get(cp);
+            return s != null && s.ownerThread == Thread.currentThread() && Files.exists(path);
+        }
     }
 
     @Override
@@ -168,21 +184,31 @@ public class DefaultFileNLock extends AbstractNLock {
     }
 
     @Override
-    public synchronized void unlock() {
-        if (ownerThread != null && Thread.currentThread() != ownerThread) {
-            throw new NLockReleaseException(
-                    NMsg.ofC("Lock not held by current thread. Owner: %s",
-                            ownerThread != null ? ownerThread.getName() : "none"),
-                    lockedObject, this, null);
-        }
-        try {
-            if (Files.exists(path)) {
-                Files.delete(path);
+    public void unlock() {
+        synchronized (DefaultFileNLock.class) {
+            Path cp = canonicalPath();
+            PathLockState state = cp == null ? null : ACTIVE_LOCKS.get(cp);
+            if (state == null || state.ownerThread != Thread.currentThread()) {
+                throw new NLockReleaseException(
+                        NMsg.ofC("Lock not held by current thread. Owner: %s",
+                                state != null && state.ownerThread != null ? state.ownerThread.getName() : "none"),
+                        lockedObject, this, null);
             }
-        } catch (IOException ex) {
-            throw new NLockReleaseException(null, lockedObject, this, ex);
-        } finally {
-            ownerThread = null;
+            state.holdCount--;
+            if (state.holdCount == 0) {
+                try {
+                    ACTIVE_LOCKS.remove(cp);
+                    if (Files.exists(path)) {
+                        Files.delete(path);
+                    }
+                } catch (IOException ex) {
+                    throw new NLockReleaseException(null, lockedObject, this, ex);
+                } finally {
+                    ownerThread = null;
+                }
+            } else {
+                ownerThread = null;
+            }
         }
     }
 
@@ -273,11 +299,17 @@ public class DefaultFileNLock extends AbstractNLock {
     }
 
     public boolean tryLockImmediately() {
-        // Support reentrancy: if current thread already owns the lock, return true
-        if (ownerThread == Thread.currentThread()) {
-            return true;
-        }
         synchronized (DefaultFileNLock.class) {
+            Path cp = canonicalPath();
+            PathLockState state = cp == null ? null : ACTIVE_LOCKS.get(cp);
+            if (state != null) {
+                if (state.ownerThread == Thread.currentThread()) {
+                    state.holdCount++;
+                    ownerThread = Thread.currentThread();
+                    return true;
+                }
+                return false;
+            }
             try {
                 LockInfo existingLock = readLockInfo();
 
@@ -292,6 +324,13 @@ public class DefaultFileNLock extends AbstractNLock {
 
                 // Atomic acquisition attempt
                 writeLockAtomic();
+                PathLockState newState = new PathLockState();
+                newState.ownerThread = Thread.currentThread();
+                newState.holdCount = 1;
+                if (cp != null) {
+                    ACTIVE_LOCKS.put(cp, newState);
+                }
+                ownerThread = Thread.currentThread();
                 return true;
             } catch (FileAlreadyExistsException e) {
                 // Lost the race to another process/thread

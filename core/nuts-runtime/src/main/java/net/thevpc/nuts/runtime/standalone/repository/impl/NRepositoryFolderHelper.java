@@ -122,6 +122,12 @@ public class NRepositoryFolderHelper {
     public NPath fetchContentImpl(NId id) {
         NPath cacheContent = getLongIdLocalFile(id.builder().faceContent().build());
         if (cacheContent != null && pathExists(cacheContent)) {
+            if (cacheFolder && cacheContent.contentLength() <= 0) {
+                _LOG().log(NMsg.ofC("[%s] deleted corrupted empty cached content %s", repo == null ? "local" : repo.name(), cacheContent).asWarning());
+                cacheContent.delete();
+                cacheContent.resolveSibling(cacheContent.name() + ".sha1").delete();
+                return null;
+            }
             return cacheContent.userCache(cacheFolder).userTemporary(false);
         }
         return null;
@@ -154,7 +160,24 @@ public class NRepositoryFolderHelper {
         NPath versionFolder = getLongIdLocalFolder(id);
         goodFile = versionFolder.resolve(idFilename);
         if (pathExists(goodFile)) {
-            return NDescriptorParser.of().descriptorStyle(NDescriptorStyle.NUTS).parse(goodFile).get();
+            if (goodFile.contentLength() <= 0) {
+                if (cacheFolder) {
+                    _LOG().log(NMsg.ofC("[%s] deleted corrupted empty cached descriptor %s", repo == null ? "local" : repo.name(), goodFile).asWarning());
+                    goodFile.delete();
+                    goodFile.resolveSibling(goodFile.name() + ".sha1").delete();
+                }
+                return null;
+            }
+            NOptional<NDescriptor> parsed = NDescriptorParser.of().descriptorStyle(NDescriptorStyle.NUTS).parse(goodFile);
+            if (parsed.isPresent()) {
+                return parsed.get();
+            }
+            if (cacheFolder) {
+                _LOG().log(NMsg.ofC("[%s] deleted corrupted cached descriptor %s", repo == null ? "local" : repo.name(), goodFile).asWarning());
+                goodFile.delete();
+                goodFile.resolveSibling(goodFile.name() + ".sha1").delete();
+            }
+            return null;
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;
@@ -216,7 +239,7 @@ public class NRepositoryFolderHelper {
 
     protected NDescriptor loadMatchingDescriptor(NPath file, NId id) {
         if (pathExists(file)) {
-            NDescriptor d = file.isRegularFile() ? NDescriptorParser.of().parse(file).get() : null;
+            NDescriptor d = (file.isRegularFile() && file.contentLength() > 0) ? NDescriptorParser.of().parse(file).orNull() : null;
             if (d != null) {
                 Map<String, String> query = id.properties();
                 String os = query.get(NConstants.IdProperties.OS);
@@ -320,11 +343,22 @@ public class NRepositoryFolderHelper {
 
             @Override
             public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) {
-                if (cacheFolder && CoreIOUtils.isObsoletePath(pathname)) {
-                    //this is invalid cache!
+                if (cacheFolder && (CoreIOUtils.isObsoletePath(pathname) || pathname.contentLength() <= 0)) {
+                    if (pathname.contentLength() <= 0) {
+                        pathname.delete();
+                        pathname.resolveSibling(pathname.name() + ".sha1").delete();
+                    }
                     return null;
                 } else {
-                    return NDescriptorParser.of().parse(pathname).get();
+                    NOptional<NDescriptor> p = NDescriptorParser.of().parse(pathname);
+                    if (p.isError() || p.isEmpty()) {
+                        if (cacheFolder) {
+                            pathname.delete();
+                            pathname.resolveSibling(pathname.name() + ".sha1").delete();
+                        }
+                        return null;
+                    }
+                    return p.orNull();
                 }
             }
         }, maxDepth, kind, extraInfoElements, true
@@ -442,8 +476,17 @@ public class NRepositoryFolderHelper {
                 return descFile;
             }
         }
-        return NLock.ofId(id).callWith(() -> {
-            NDescriptorWriter.ofPlain().print(desc, descFile);
+        return NLock.ofId(id.builder().faceDescriptor().build()).callWith(() -> {
+            String ext = "." + UUID.randomUUID() + ".part";
+            NPath tempDescFile = descFile.resolveSibling(descFile.name() + ext);
+            try {
+                NDescriptorWriter.ofPlain().print(desc, tempDescFile);
+                tempDescFile.moveTo(descFile, NPathOption.REPLACE_EXISTING);
+            } finally {
+                if (tempDescFile.exists()) {
+                    tempDescFile.delete();
+                }
+            }
             byte[] bytes = NDigest.of().sha1().source(desc).computeString().getBytes();
             NCp.of()
                     .from(NInputSource.of(
@@ -456,7 +499,7 @@ public class NRepositoryFolderHelper {
                                     )
                             )
                     ).to(descFile.resolveSibling(descFile.name() + ".sha1")).options(NPathOption.SAFE).run();
-            _LOG().log(NMsg.ofC("[%s] cached descriptor %s to %s", repo.name(), id,descFile).asFinest().withIntent(NMsgIntent.CACHE));
+            _LOG().log(NMsg.ofC("[%s] cached descriptor %s to %s", repo == null ? "local" : repo.name(), id, descFile).asFinest().withIntent(NMsgIntent.CACHE));
             return descFile;
         });
     }

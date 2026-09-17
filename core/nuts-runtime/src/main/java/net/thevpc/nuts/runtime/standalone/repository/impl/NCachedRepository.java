@@ -38,6 +38,7 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.core.NRepositorySpec;
+import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -142,6 +143,20 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
         Callable<NOptional<NDescriptor>> nOptionalCallable = () -> {
             try {
+                if (fetchMode != NFetchMode.REMOTE) {
+                    if (lib.isReadEnabled()) {
+                        NDescriptor libDesc = lib.fetchDescriptorImpl(id);
+                        if (libDesc != null) {
+                            return NOptional.of(libDesc);
+                        }
+                    }
+                    if (cache.isReadEnabled() && session.isCached()) {
+                        NDescriptor cacheDesc = cache.fetchDescriptorImpl(id);
+                        if (cacheDesc != null) {
+                            return NOptional.of(cacheDesc);
+                        }
+                    }
+                }
                 NDescriptor success = fetchDescriptorCore(id, fetchMode);
                 if (success != null) {
                     if (cache.isWriteEnabled()) {
@@ -277,6 +292,18 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         RuntimeException mirrorsEx = null;
         NPath c = null;
         Callable<NOptional<NPath>> nOptionalCallable = () -> {
+            if (fetchMode != NFetchMode.REMOTE) {
+                NPath c0 = lib.fetchContentImpl(id);
+                if (c0 != null) {
+                    return NOptional.of(c0);
+                }
+            }
+            if (cache.isReadEnabled() && session.isCached()) {
+                NPath c0 = cache.fetchContentImpl(id);
+                if (c0 != null) {
+                    return NOptional.of(c0);
+                }
+            }
             if (cache.isWriteEnabled()) {
                 NPath c2 = null;
                 RuntimeException impl2Ex = null;
@@ -287,7 +314,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     impl2Ex = ex;
                 }
                 if (c2 != null) {
-                    NCp.of().from(c2).to(cachePath).run();
+                    NCp.of().from(c2).to(cachePath).options(NPathOption.SAFE).run();
                     return NOptional.of(cachePath.userCache(true).userTemporary(false));
                 } else if (impl2Ex instanceof NArtifactNotFoundException) {
                     return NOptional.ofNamedEmpty(id.toString());

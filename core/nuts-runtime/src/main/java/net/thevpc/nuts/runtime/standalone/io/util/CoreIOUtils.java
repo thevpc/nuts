@@ -1159,10 +1159,10 @@ public class CoreIOUtils {
 
         Path parent = target.getParent();
         if (parent != null) Files.createDirectories(parent);
-
+        String ext = "."+UUID.randomUUID().toString()+".part";
         Path tmp = parent != null
-                ? parent.resolve(target.getFileName() + ".part")
-                : target.resolveSibling(target.getFileName() + ".part");
+                ? parent.resolve(target.getFileName() + ext)
+                : target.resolveSibling(target.getFileName() + ext);
 
         try {
             byte[] buf = new byte[1024 * 1024]; // 128KB buffer
