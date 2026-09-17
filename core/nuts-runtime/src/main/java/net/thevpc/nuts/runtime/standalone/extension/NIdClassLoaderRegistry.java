@@ -218,7 +218,7 @@ public final class NIdClassLoaderRegistry {
             throws ClassNotFoundException {
         NClassLoaderPeer peer = NClassLoaderContext.current();
         if (peer == null) {
-            NLog.of(NIdClassLoaderRegistry.class).warn(
+            NLog.of(NIdClassLoaderRegistry.class).debug(
                     NMsg.ofC("Registry fallback for class %s used without active composite context; version isolation cannot be guaranteed.", name));
         }
 
@@ -227,7 +227,7 @@ public final class NIdClassLoaderRegistry {
         if (rec != null) {
             if (rec.definingLeaf != requester) {
                 if (peer != null && !peer.isShortNameVersionAllowed(rec.definingLeaf.id())) {
-                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                    NLog.of(NIdClassLoaderRegistry.class).debug(
                             NMsg.ofC("Registry fallback rejected cached leaf %s for class %s: version conflict with active composite.",
                                     rec.definingLeaf.id(), name));
                 } else {
@@ -247,7 +247,7 @@ public final class NIdClassLoaderRegistry {
         DefaultNLeafClassLoader owner = CLASS_TO_LEAF.get(name);
         if (owner != null && owner != requester) {
             if (peer != null && !peer.isShortNameVersionAllowed(owner.id())) {
-                NLog.of(NIdClassLoaderRegistry.class).warn(
+                NLog.of(NIdClassLoaderRegistry.class).debug(
                         NMsg.ofC("Registry fallback rejected owner leaf %s for class %s: version conflict with active composite.",
                                 owner.id(), name));
             } else {
@@ -269,7 +269,7 @@ public final class NIdClassLoaderRegistry {
             for (DefaultNLeafClassLoader leaf : pkgLeaves) {
                 if (leaf != requester && leaf != owner) {
                     if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
-                        NLog.of(NIdClassLoaderRegistry.class).warn(
+                        NLog.of(NIdClassLoaderRegistry.class).debug(
                                 NMsg.ofC("Registry fallback rejected package leaf %s for class %s: version conflict with active composite.",
                                         leaf.id(), name));
                         continue;
@@ -288,7 +288,7 @@ public final class NIdClassLoaderRegistry {
         for (DefaultNLeafClassLoader leaf : UNINDEXED_LEAVES) {
             if (leaf != requester && leaf != owner) {
                 if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
-                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                    NLog.of(NIdClassLoaderRegistry.class).debug(
                             NMsg.ofC("Registry fallback rejected unindexed leaf %s for class %s: version conflict with active composite.",
                                     leaf.id(), name));
                     continue;
@@ -311,7 +311,7 @@ public final class NIdClassLoaderRegistry {
     static List<URL> findResourcesInRegisteredLeaves(DefaultNLeafClassLoader requester, String name) {
         NClassLoaderPeer peer = NClassLoaderContext.current();
         if (peer == null) {
-            NLog.of(NIdClassLoaderRegistry.class).warn(
+            NLog.of(NIdClassLoaderRegistry.class).debug(
                     NMsg.ofC("Registry fallback for resource %s used without active composite context; version isolation cannot be guaranteed.", name));
         }
         List<URL> out = new ArrayList<>();
@@ -320,7 +320,7 @@ public final class NIdClassLoaderRegistry {
             for (DefaultNLeafClassLoader leaf : owners) {
                 if (leaf != requester) {
                     if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
-                        NLog.of(NIdClassLoaderRegistry.class).warn(
+                        NLog.of(NIdClassLoaderRegistry.class).debug(
                                 NMsg.ofC("Registry fallback rejected leaf %s for resource %s: version conflict with active composite.",
                                         leaf.id(), name));
                         continue;
@@ -335,7 +335,7 @@ public final class NIdClassLoaderRegistry {
         for (DefaultNLeafClassLoader leaf : UNINDEXED_LEAVES) {
             if (leaf != requester && (owners == null || !owners.contains(leaf))) {
                 if (peer != null && !peer.isShortNameVersionAllowed(leaf.id())) {
-                    NLog.of(NIdClassLoaderRegistry.class).warn(
+                    NLog.of(NIdClassLoaderRegistry.class).debug(
                             NMsg.ofC("Registry fallback rejected unindexed leaf %s for resource %s: version conflict with active composite.",
                                     leaf.id(), name));
                     continue;
