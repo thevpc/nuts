@@ -341,7 +341,7 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<NParametrizedContainerElement> asParametrizedContainer() {
-        if (isListContainer()) {
+        if (isParametrizedContainer()) {
             return NOptional.of((NParametrizedContainerElement) this);
         }
         return NOptional.ofEmpty(_expected("parametrized container"));
