@@ -23,7 +23,7 @@ import net.thevpc.nuts.util.NStringBuilder;
  * only recent versions, which breaks the "3 OS families" requirement.
  * <p>
  * Instead this uses IzPack's own documented unattended mode:
- *   java -DINSTALL_PATH=&lt;dir&gt; -jar jeditXinstall.jar -options-system
+ *   java -jar jeditXinstall.jar auto &lt;install-dir&gt;
  * This is plain JVM invocation (no ar/tar/dpkg/native shell tooling), fully
  * headless/non-interactive, and works identically on Windows, Linux and
  * macOS since install.jar itself is cross-platform Java. It's still
@@ -31,15 +31,14 @@ import net.thevpc.nuts.util.NStringBuilder;
  * is the closest cross-platform equivalent to "unzip and go" that jEdit
  * actually offers.
  * <p>
- * UNVERIFIED, worth a one-time dry-run to confirm before relying on this:
- *  - INSTALL_PATH is IzPack's conventional default TargetPanel variable
- *    name, but the exact name is whatever jEdit's own install.xml declares.
- *  - The installed layout is assumed to be the conventional jEdit layout
- *    (jedit.jar at the install root, alongside jars/, doc/, macros/).
- *  - NUTS_DEPLOY_CONFIG is ASSUMED to be the env var Nuts injects for the
- *    XDG-compliant config dir - only NUTS_DEPLOY_BIN / NUTS_DEPLOY_CONTENT /
- *    NUTS_DEPLOY_INSTALL_SCRIPT were visible from the NetBeans helper, so
- *    rename this if the real constant differs.
+ * VERIFIED against jedit 5.7.0 (IzPack 5.x): the installer rejects the
+ * legacy "-DINSTALL_PATH + -options-system" flags and only accepts the
+ * "auto &lt;install-dir&gt;" subcommand, which unpacks the conventional
+ * jEdit layout (jedit.jar at the install root, alongside jars/, doc/,
+ * macros/) non-interactively (exit 0).
+ * <p>
+ * NUTS_DEPLOY_CONF is the env var Nuts injects for the XDG-compliant
+ * config dir (see NExecHelper.defVarMap).
  */
 public class JeditRepoHelper implements ToolboxRepoHelper {
 
@@ -76,11 +75,11 @@ public class JeditRepoHelper implements ToolboxRepoHelper {
                         .scriptContent(
                                 NStringBuilder.of()
                                         .println("####")
-                                        .println("echo running jEdit IzPack installer unattended (no GUI, no prompts) into ${NUTS_DEPLOY_BIN}/app ...")
+                                        .println("echo running jEdit IzPack installer in unattended mode into ${NUTS_DEPLOY_BIN}/app ...")
                                         .println("mkdir -p \"${NUTS_DEPLOY_BIN}/app\"")
-                                        .println("java -DINSTALL_PATH=\"${NUTS_DEPLOY_BIN}/app\" -jar \"${NUTS_DEPLOY_CONTENT}\" -options-system")
+                                        .println("java -jar \"${NUTS_DEPLOY_CONTENT}\" auto \"${NUTS_DEPLOY_BIN}/app\"")
                                         .println("echo mapping jEdit settings into the Nuts XDG-compliant config folder ...")
-                                        .println("mkdir -p \"${NUTS_DEPLOY_CONFIG}/jedit\"")
+                                        .println("mkdir -p \"${NUTS_DEPLOY_CONF}/jedit\"")
                                         .build()
                         )
                         .build()
@@ -93,12 +92,12 @@ public class JeditRepoHelper implements ToolboxRepoHelper {
                                 "java",
                                 "-jar",
                                 "${NUTS_DEPLOY_BIN}/app/jedit.jar",
-                                "-settings=${NUTS_DEPLOY_CONFIG}/jedit"
+                                "-settings=${NUTS_DEPLOY_CONF}/jedit"
                         )
                         .build()
                 )
                 .description("jEdit programmer's text editor, deployed via IzPack's unattended " +
-                        "(-options-system) install mode - no GUI, works on Windows/Linux/macOS - " +
+                        "install mode - no GUI, works on Windows/Linux/macOS - " +
                         "with settings redirected into the Nuts XDG config folder")
                 .setProperty(DYNAMIC_DESCRIPTOR, "true")
                 .build();
