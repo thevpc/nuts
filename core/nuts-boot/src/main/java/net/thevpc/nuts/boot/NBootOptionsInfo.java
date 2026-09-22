@@ -253,6 +253,12 @@ public final class NBootOptionsInfo {
     private Boolean dry;
 
     /**
+     * if true, command code is invited to bypass its own safety guards.
+     * option-type : exported (inherited in child workspaces)
+     */
+    private Boolean force;
+
+    /**
      * if true show exception stacktrace
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -600,6 +606,11 @@ public final class NBootOptionsInfo {
     }
 
 
+    public Boolean force() {
+        return force;
+    }
+
+
     public Boolean showStacktrace() {
         return showStacktrace;
     }
@@ -613,6 +624,19 @@ public final class NBootOptionsInfo {
 
     public NBootOptionsInfo dry(Boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    /**
+     * set force
+     *
+     * @param force new value
+     * @return {@code this} instance
+     * @since 0.8.9
+     */
+
+    public NBootOptionsInfo force(Boolean force) {
+        this.force = force;
         return this;
     }
 
@@ -1510,6 +1534,7 @@ public final class NBootOptionsInfo {
         this.openMode(other.openMode());
         this.creationTime(other.creationTime());
         this.dry(other.dry());
+        this.force(other.force());
         this.showStacktrace(other.showStacktrace());
         this.classLoaderSupplier(other.classLoaderSupplier());
         this.executorOptions(other.executorOptions());
@@ -1646,6 +1671,9 @@ public final class NBootOptionsInfo {
             }
             if (o.dry() != null) {
                 this.dry(o.dry());
+            }
+            if (o.force() != null) {
+                this.force(o.force());
             }
             if (o.showStacktrace() != null) {
                 this.showStacktrace(o.showStacktrace());

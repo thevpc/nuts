@@ -208,6 +208,16 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
     NWorkspaceOptionsBuilder dry(Boolean dry);
 
     /**
+     * Set force flag value. When true, command code is invited to bypass its
+     * own safety guards (e.g. overwriting existing files).
+     *
+     * @param force new value
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NWorkspaceOptionsBuilder force(Boolean force);
+
+    /**
      * Show stacktrace.
      *
      * @param showStacktrace show stacktrace
@@ -954,6 +964,17 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      */
 
     NOptional<Boolean> dry();
+
+    /**
+     * When true, command code is invited to bypass its own safety guards
+     * (e.g. overwriting existing files).
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
+     * @return force flag
+     * @since 1.0.0
+     */
+    NOptional<Boolean> force();
 
     /**
      * if true, show exception stacktrace when error.

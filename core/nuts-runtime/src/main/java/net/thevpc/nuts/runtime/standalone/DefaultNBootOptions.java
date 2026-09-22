@@ -263,6 +263,12 @@ public class DefaultNBootOptions implements NBootOptions {
     private final Boolean dry;
 
     /**
+     * if true, command code is invited to bypass its own safety guards.
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final Boolean force;
+
+    /**
      * if true show exception stacktrace, option-type : runtime (available only for the
      * current workspace instance)
      */
@@ -454,7 +460,7 @@ public class DefaultNBootOptions implements NBootOptions {
                                NId runtimeId, String javaCommand, String javaOptions, String workspace,
                                String outLinePrefix, String errLinePrefix, String name, Boolean installCompanions,
                                Boolean skipWelcome, Boolean skipBoot, Boolean system, Boolean gui,
-                               Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
+                               Boolean dry, Boolean force, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
                                char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
                                Boolean trace, String progressOptions, String dependencySolver,
                                NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
@@ -509,6 +515,7 @@ public class DefaultNBootOptions implements NBootOptions {
         this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
+        this.force = force;
         this.showStacktrace = showStacktrace;
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
@@ -635,6 +642,11 @@ public class DefaultNBootOptions implements NBootOptions {
     @Override
     public NOptional<Boolean> dry() {
         return NOptional.ofNamed(dry, "dry");
+    }
+
+    @Override
+    public NOptional<Boolean> force() {
+        return NOptional.ofNamed(force, "force");
     }
 
     @Override
@@ -1058,6 +1070,7 @@ public class DefaultNBootOptions implements NBootOptions {
         r.openMode(this.openMode().map(NOpenMode::id).orNull());
         r.creationTime(this.creationTime().orNull());
         r.dry(this.dry().orNull());
+        r.force(this.force().orNull());
         r.showStacktrace(this.showStacktrace().orNull());
         r.classLoaderSupplier(this.classLoaderSupplier().orNull());
         r.executorOptions(this.executorOptions().orNull());
@@ -1192,6 +1205,7 @@ public class DefaultNBootOptions implements NBootOptions {
         b.openMode(this.openMode().orNull());
         b.creationTime(this.creationTime().orNull());
         b.dry(this.dry().orNull());
+        b.force(this.force().orNull());
         b.showStacktrace(this.showStacktrace().orNull());
         b.classLoaderSupplier(this.classLoaderSupplier().orNull());
         b.executorOptions(this.executorOptions().orNull());

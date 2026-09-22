@@ -244,6 +244,12 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     private Boolean dry;
 
     /**
+     * if true, command code is invited to bypass its own safety guards.
+     * option-type : exported (inherited in child workspaces)
+     */
+    private Boolean force;
+
+    /**
      * if true show exception stacktrace
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -480,7 +486,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 outputFormatOptions().orNull(), customOptions().orNull(), apiVersion().orNull(), runtimeId().orNull(), javaCommand().orNull(),
                 javaOptions().orNull(), workspace().orNull(), outLinePrefix().orNull(), errLinePrefix().orNull(),
                 name().orNull(), installCompanions().orNull(), skipWelcome().orNull(), skipBoot().orNull(),
-                system().orNull(), gui().orNull(), dry().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(), commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(), cached().orNull(), transitive().orNull(), bot().orNull(),
+                system().orNull(), gui().orNull(), dry().orNull(), force().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(), commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(), cached().orNull(), transitive().orNull(), bot().orNull(),
                 isolationLevel().orNull(), initLaunchers().orNull(), initScripts().orNull(), initPlatforms().orNull(),
                 initJava().orNull(), excludedExtensions().orNull(), repositories().orNull(), userName().orNull(),
                 credential().orNull(), terminalMode().orNull(), readOnly().orNull(), trace().orNull(), progressOptions().orNull(),
@@ -527,7 +533,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.outputFormatOptions(other.outputFormatOptions().orNull());
         this.openMode(other.openMode().orNull());
         this.creationTime(other.creationTime().orNull());
-        this.cry(other.dry().orNull());
+        this.dry(other.dry().orNull());
+        this.force(other.force().orNull());
         this.showStacktrace(other.showStacktrace().orNull());
         this.classLoaderSupplier(other.classLoaderSupplier().orNull());
         this.executorOptions(other.executorOptions().orNull());
@@ -612,7 +619,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.outputFormatOptions(other.outputFormatOptions().orNull());
         this.openMode(other.openMode().orNull());
         this.creationTime(other.creationTime().orNull());
-        this.cry(other.dry().orNull());
+        this.dry(other.dry().orNull());
+        this.force(other.force().orNull());
         this.showStacktrace(other.showStacktrace().orNull());
         this.classLoaderSupplier(other.classLoaderSupplier().orNull());
         this.executorOptions(other.executorOptions().orNull());
@@ -704,7 +712,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.outputFormatOptions(other.outputFormatOptions().orNull());
         this.openMode(other.openMode().orNull());
         this.creationTime(other.creationTime().orNull());
-        this.cry(other.dry().orNull());
+        this.dry(other.dry().orNull());
+        this.force(other.force().orNull());
         this.showStacktrace(other.showStacktrace().orNull());
         this.classLoaderSupplier(other.classLoaderSupplier().orNull());
         this.executorOptions(other.executorOptions().orNull());
@@ -902,7 +911,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
             this.creationTime(other.creationTime().orNull());
         }
         if (other.dry().isPresent()) {
-            this.cry(other.dry().orNull());
+            this.dry(other.dry().orNull());
+        }
+        if (other.force().isPresent()) {
+            this.force(other.force().orNull());
         }
         if (other.showStacktrace().isPresent()) {
             this.showStacktrace(other.showStacktrace().orNull());
@@ -1130,7 +1142,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
             this.creationTime(other.creationTime().orNull());
         }
         if (other.dry().isPresent()) {
-            this.cry(other.dry().orNull());
+            this.dry(other.dry().orNull());
+        }
+        if (other.force().isPresent()) {
+            this.force(other.force().orNull());
         }
         if (other.showStacktrace().isPresent()) {
             this.showStacktrace(other.showStacktrace().orNull());
@@ -1342,6 +1357,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.openMode(this.openMode().map(x -> x.id()).orNull());
         r.creationTime(this.creationTime().orNull());
         r.dry(this.dry().orNull());
+        r.force(this.force().orNull());
         r.showStacktrace(this.showStacktrace().orNull());
         r.classLoaderSupplier(this.classLoaderSupplier().orNull());
         r.executorOptions(this.executorOptions().orNull());
@@ -1576,6 +1592,11 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
+    public NOptional<Boolean> force() {
+        return NOptional.ofNamed(force, "force");
+    }
+
+    @Override
     public NOptional<Boolean> showStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
@@ -1587,8 +1608,21 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
      * @return {@code this} instance
      */
     @Override
-    public NBootOptionsBuilder cry(Boolean dry) {
+    public NBootOptionsBuilder dry(Boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    /**
+     * Set force flag value.
+     *
+     * @param force new value
+     * @return {@code this} instance
+     * @since 0.8.9
+     */
+    @Override
+    public NBootOptionsBuilder force(Boolean force) {
+        this.force = force;
         return this;
     }
 
@@ -2501,7 +2535,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.outputFormatOptions(other.outputFormatOptions());
         this.openMode(NOpenMode.parse(other.openMode()).orNull());
         this.creationTime(other.creationTime());
-        this.cry(other.dry());
+        this.dry(other.dry());
+        this.force(other.force());
         this.showStacktrace(other.showStacktrace());
         this.classLoaderSupplier(other.classLoaderSupplier());
         this.executorOptions(other.executorOptions());
@@ -2774,7 +2809,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         runAs(null);
         reset(null);
         recover(null);
-        cry(null);
+        dry(null);
         showStacktrace(null);
         executorOptions(null);
         applicationArguments(null);
@@ -2823,6 +2858,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         indexed(null);
         transitive(null);
         bot(null);
+        force(null);
         fetchStrategy(null);
         confirm(null);
         outputFormat(null);

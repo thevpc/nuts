@@ -130,6 +130,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         options.cached(session.isCached());
         options.indexed(session.isIndexed());
         options.confirm(session.confirm().orDefault());
+        options.force(session.isForce());
         options.transitive(session.isTransitive());
         options.outputFormat(session.outputFormat().orDefault());
         switch (options.terminalMode().orElse(NTerminalMode.DEFAULT)) {

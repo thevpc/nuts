@@ -32,6 +32,7 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.text.NContentType;
 import net.thevpc.nuts.text.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NAsk;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.concurrent.NCallable;
 import net.thevpc.nuts.util.NAssertException;
@@ -743,6 +744,37 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return true if dry mode
      */
     boolean isDry();
+
+    /**
+     * Returns the force flag. When true, command code is invited to bypass its
+     * own safety guards (e.g. overwriting existing files) and {@link NAsk} will
+     * resolve {@link NConfirmationMode#ASK} prompts as if they were {@link NConfirmationMode#YES}.
+     * Explicit {@code YES}/{@code NO}/{@code ERROR} confirmation modes are not changed
+     * by this flag.
+     *
+     * @return force flag as NOptional
+     * @since 1.0.0
+     */
+    NOptional<Boolean> force();
+
+    /**
+     * primitive getter for {@link #force()}. Returns {@code false} when unset.
+     *
+     * @return true if force flag is armed
+     * @since 1.0.0
+     */
+    boolean isForce();
+
+    /**
+     * Set force flag value. When true, command code is invited to bypass its
+     * own safety guards and {@link NAsk} will resolve ASK prompts as YES.
+     * Passing {@code null} resets to default (false).
+     *
+     * @param value new value or null
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NSession force(Boolean value);
 
     /**
      * Log term level.

@@ -186,6 +186,17 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<Boolean> dry();
 
     /**
+     * When true, command code is invited to bypass its own safety guards
+     * (e.g. overwriting existing files).
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
+     * @return force flag
+     * @since 1.0.0
+     */
+    NOptional<Boolean> force();
+
+    /**
      * if true, show exception stacktrace when error.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)

@@ -1596,6 +1596,17 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
        * @param false false
        */
         fillOption("--dry", "-D", options.dry().orNull(), false, arguments, false);
+        /**
+         * Fill option.
+         *
+         * @param "--force" "--force"
+         * @param null null
+         * @param options.force().orNull() options.force().or null()
+         * @param false false
+         * @param arguments arguments
+         * @param false false
+         */
+        fillOption("--force", null, options.force().orNull(), false, arguments, false);
         if (isApiVersionOrAfter(V085)) {
           /**
            * Fill option.

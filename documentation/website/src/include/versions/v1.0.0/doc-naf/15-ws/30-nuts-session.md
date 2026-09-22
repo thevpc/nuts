@@ -31,7 +31,7 @@ Returns an Optional session, or empty if not available.
 
 ## What Does a Session Do?
 
-- Holds contextual flags like --trace, --yes, --bot, --dry, --confirm
+- Holds contextual flags like --trace, --yes, --bot, --dry, --force, --confirm
 - Controls output formatting: plain, json, xml, tree, table, etc.
 - Configures confirmation/interaction modes
 - Tracks fetch/cache strategies and expiration
@@ -59,6 +59,7 @@ String result = session.callWith(() -> computeSomething());
 -  `--yes`	`isYes()`	Assume “yes” for confirmations
 -  `--no`	`isNo()`	Assume “no” for confirmations
 -  `--ask`	`isAsk()`	Always ask for confirmation
+-  `--force`	`isForce()`	Resolve ASK confirmations as YES (since 0.8.9)
 -  `--bot`	`isBot()`	Enable non-interactive/script mode
 -  `--dry`	`isDry()`	Dry-run only, no actual execution
 
@@ -140,6 +141,23 @@ session.ask();              // Always prompt
 
 session.setConfirm(NConfirmationMode.YES);
 ```
+
+### Confirmation Modes
+
+Confirmation modes determine how a prompt is handled when a command asks for confirmation:
+
+- `ASK`: prompt the user interactively (the default mode).
+- `YES`: never prompt, always perform the operation.
+- `NO`: never prompt, ignore the operation and continue.
+- `ERROR`: never prompt, cancel the operation with an error.
+
+Since 0.8.9, the `--force` flag (or `session.force(true)` / `NSession.force()`)
+arms the session so that an `ASK` confirmation is promoted to `YES` without
+prompting — useful for bypassing safety guards in scripting. Only `ASK` is
+affected: an explicit `YES`/`NO`/`ERROR` mode is never overridden. Individual
+questions can opt out of the promotion via `NAsk.ignoreForce()` (see
+`NAsk.isIgnoreForce()`). Note that `--force` is a long-only option; `-f`
+remains `--fetch` and `-F` remains `--offline`.
 
 
 ## Interactive Session Features

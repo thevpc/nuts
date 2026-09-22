@@ -68,7 +68,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             null, null,
             null,
             null, null, null,
-            null, null, null, null, null,null);
+            null, null, null, null, null,null, null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -239,6 +239,12 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
      * current workspace instance)
      */
     private final Boolean dry;
+
+    /**
+     * if true, command code is invited to bypass its own safety guards.
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final Boolean force;
 
     /**
      * if true show exception stacktrace, option-type : runtime (available only for the
@@ -438,7 +444,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
                                     Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
                                     Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
-                                    Boolean trace, Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion,
+                                    Boolean trace, Boolean dry, Boolean force, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion,
                                     Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
                                     Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
                                     NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
@@ -489,6 +495,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
+        this.force = force;
         this.showStacktrace = showStacktrace;
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
@@ -571,6 +578,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.openMode(this.openMode().map(x -> x.id()).orNull());
         r.creationTime(this.creationTime().orNull());
         r.dry(this.dry().orNull());
+        r.force(this.force().orNull());
         r.showStacktrace(this.showStacktrace().orNull());
         r.classLoaderSupplier(this.classLoaderSupplier().orNull());
         r.executorOptions(this.executorOptions().orNull());
@@ -725,6 +733,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     @Override
     public NOptional<Boolean> dry() {
         return NOptional.ofNamed(dry, "dry");
+    }
+
+    @Override
+    public NOptional<Boolean> force() {
+        return NOptional.ofNamed(force, "force");
     }
 
     @Override

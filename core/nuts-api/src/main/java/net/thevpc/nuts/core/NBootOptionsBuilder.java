@@ -26,7 +26,6 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
@@ -223,7 +222,17 @@ public interface NBootOptionsBuilder extends NComponent {
      * @param dry dry
      * @return cry result
      */
-    NBootOptionsBuilder cry(Boolean dry);
+    NBootOptionsBuilder dry(Boolean dry);
+
+    /**
+     * Set force flag value. When true, command code is invited to bypass its
+     * own safety guards (e.g. overwriting existing files).
+     *
+     * @param force new value
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NBootOptionsBuilder force(Boolean force);
 
     /**
      * Show stacktrace.
@@ -1024,6 +1033,17 @@ public interface NBootOptionsBuilder extends NComponent {
      */
 
     NOptional<Boolean> dry();
+
+    /**
+     * When true, command code is invited to bypass its own safety guards
+     * (e.g. overwriting existing files).
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
+     * @return force flag
+     * @since 0.8.9
+     */
+    NOptional<Boolean> force();
 
     /**
      * if true, show exception stacktrace when error.

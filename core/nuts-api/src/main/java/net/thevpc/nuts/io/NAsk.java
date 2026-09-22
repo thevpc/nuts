@@ -284,6 +284,41 @@ public interface NAsk<T> extends NCmdLineConfigurable {
     NAsk<T> validator(NAskValidator<T> validator);
 
     /**
+     * When invoked, this question will actually prompt the user even if
+     * {@code --force} is armed on the session. Useful for irreversible
+     * operations that must be confirmed regardless of user-supplied flags.
+     * <p>
+     * Note: this only defeats the {@code ASK→YES} induction caused by
+     * {@code --force}. An explicitly set {@code YES}/{@code NO}/{@code ERROR}
+     * confirmation mode still applies.
+     *
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NAsk<T> ignoreForce();
+
+    /**
+     * When invoked, this question will actually prompt the user even if
+     * {@code --force} is armed on the session. Useful for irreversible
+     * operations that must be confirmed regardless of user-supplied flags.
+     * <p>
+     * Note: this only defeats the {@code ASK→YES} induction caused by
+     * {@code --force}. An explicitly set {@code YES}/{@code NO}/{@code ERROR}
+     * confirmation mode still applies.
+     *
+     * @param value ignoreForce value
+     * @return {@code this} instance
+     * @since 1.0.0
+     */
+    NAsk<T> ignoreForce(boolean value);
+
+    /**
+     * @return true if this question will ignore the session's force flag
+     * @since 0.8.9
+     */
+    boolean isIgnoreForce();
+
+    /**
      * Run.
      *
      * @return run result

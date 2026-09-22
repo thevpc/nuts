@@ -863,6 +863,17 @@ public final class NWorkspaceCmdLineParser {
                             return NOptional.of(Collections.singletonList(a));
                         }
                     }
+                    case "--force": {
+                        a = cmdLine.nextFlag().get();
+                        if (active && a.getBooleanValue().get()) {
+                            if (options != null) {
+                                options.force(true);
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                    }
                     case "--cached": {
                         a = cmdLine.nextFlag().get();
                         if (active && a.getBooleanValue().get()) {

@@ -81,7 +81,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     private NRunAs runAs;
 
     private NExecutionType executionType;
-    //    private Boolean force;
+    private Boolean force;
     private Boolean dry;
     private Boolean showStacktrace;
     private Level logTermLevel;
@@ -260,14 +260,6 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                     }
                     return true;
                 }
-//                case "-f":
-//                case "--force": {
-//                    a = cmdLine.nextBoolean();
-//                    if (active) {
-//                        this.setForce(a.getBooleanValue());
-//                    }
-//                    return true;
-//                }
                 case "-y":
                 case "--yes": {
                     if (active) {
@@ -296,6 +288,13 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                         this.confirm(NConfirmationMode.ERROR);
                     }
                     cmdLine.skip();
+                    return true;
+                }
+                case "--force": {
+                    a = cmdLine.nextFlag().get();
+                    if (active && a.getBooleanValue().isPresent()) {
+                        this.force(a.getBooleanValue().get());
+                    }
                     return true;
                 }
                 case "--trace": {
@@ -874,6 +873,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
         this.trace = other.getTrace().orNull();
         this.confirm = other.confirm().orNull();
         this.dry = other.dry().orNull();
+        this.force = other.force().orNull();
         this.gui = other.gui().orNull();
         this.bot = other.bot().orNull();
         this.errLinePrefix = other.errLinePrefix();
@@ -902,6 +902,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             this.debug = options.debug().orNull();
             this.progressOptions = options.progressOptions().orNull();
             this.dry = options.dry().orNull();
+            this.force = options.force().orNull();
             this.cached = options.cached().orNull();
             this.indexed = options.indexed().orNull();
             this.gui = options.gui().orNull();
@@ -931,6 +932,7 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             this.debug = options.debug().orNull();
             this.progressOptions = options.progressOptions().orNull();
             this.dry = options.dry().orNull();
+            this.force = options.force().orNull();
             this.cached = options.cached().orNull();
             this.indexed = options.indexed().orNull();
             this.gui = options.gui().orNull();
@@ -1363,6 +1365,22 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
     }
 
     @Override
+    public NOptional<Boolean> force() {
+        return NOptional.ofNamed(force, "force").withDefault(() -> NWorkspace.of().bootOptions().force().orElse(false));
+    }
+
+    @Override
+    public boolean isForce() {
+        return force().orDefault();
+    }
+
+    @Override
+    public NSession force(Boolean value) {
+        this.force = value;
+        return this;
+    }
+
+    @Override
     public NSession showStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
@@ -1390,6 +1408,9 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
             }
             if (options.dry().isPresent()) {
                 this.dry(options.dry().orNull());
+            }
+            if (options.force().isPresent()) {
+                this.force(options.force().orNull());
             }
             if (options.outputFormat().isPresent()) {
                 this.outputFormat(options.outputFormat().orNull());

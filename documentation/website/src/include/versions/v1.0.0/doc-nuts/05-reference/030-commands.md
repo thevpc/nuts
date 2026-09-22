@@ -54,6 +54,8 @@ Additionally, commands can be run in **dry mode** using the `--dry` flag. This s
 Many commands accept global options to modify their behavior:
 * `-y` or `--yes`: Automatically confirms all interactive prompts. Ideal for CI/CD environments.
 * `-n` or `--no`: Automatically rejects all interactive prompts.
+* `--ask`: Forces interactive prompting even in automated contexts.
+* `--force`: Asks that an ASK confirmation be treated as a `YES` (see the session confirmation modes below). Long-only option, no short alias (`-f` is `--fetch` and `-F` is `--offline`).
 * `--bot`: Enables bot mode, formatting output for automated processing and suppressing interactive prompts.
 * `--json`: Formats the output as structured JSON.
 * `--workspace=<path>`: Specifies an alternative workspace directory.

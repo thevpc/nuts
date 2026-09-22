@@ -241,6 +241,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean dry;
 
     /**
+     * if true, command code is invited to bypass its own safety guards.
+     * option-type : exported (inherited in child workspaces)
+     */
+    private Boolean force;
+
+    /**
      * if true show exception stacktrace
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -681,6 +687,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
+    public NOptional<Boolean> force() {
+        return NOptional.ofNamed(force, "force");
+    }
+
+    @Override
     public NOptional<Boolean> showStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
@@ -694,6 +705,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     @Override
     public NWorkspaceOptionsBuilder dry(Boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    /**
+     * Set force flag value.
+     *
+     * @param force new value
+     * @return {@code this} instance
+     * @since 0.8.9
+     */
+    @Override
+    public NWorkspaceOptionsBuilder force(Boolean force) {
+        this.force = force;
         return this;
     }
 
@@ -1598,6 +1622,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.openMode(other.openMode().orNull());
         this.creationTime(other.creationTime().orNull());
         this.dry(other.dry().orNull());
+        this.force(other.force().orNull());
         this.showStacktrace(other.showStacktrace().orNull());
         this.classLoaderSupplier(other.classLoaderSupplier().orNull());
         this.executorOptions(other.executorOptions().orNull());
@@ -1684,6 +1709,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.openMode(other.openMode().orNull());
         this.creationTime(other.creationTime().orNull());
         this.dry(other.dry().orNull());
+        this.force(other.force().orNull());
         this.showStacktrace(other.showStacktrace().orNull());
         this.classLoaderSupplier(other.classLoaderSupplier().orNull());
         this.executorOptions(other.executorOptions().orNull());
@@ -1786,6 +1812,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.openMode(NOpenMode.parse(other.openMode()).orNull());
         this.creationTime(other.creationTime());
         this.dry(other.dry());
+        this.force(other.force());
         this.showStacktrace(other.showStacktrace());
         this.classLoaderSupplier(other.classLoaderSupplier());
         this.executorOptions(other.executorOptions());
@@ -2083,7 +2110,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 runAs().orNull(), creationTime().orNull(), expireTime().orNull(),
                 installCompanions().orNull(), skipWelcome().orNull(), skipBoot().orNull(),
                 system().orNull(), gui().orNull(), readOnly().orNull(), trace().orNull(),
-                dry().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(),
+                dry().orNull(), force().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(),
                 commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(),
                 indexed().orNull(), transitive().orNull(), bot().orNull(), skipErrors().orNull(),
                 isolationLevel().orNull(), initLaunchers().orNull(), initScripts().orNull(), initPlatforms().orNull(),
@@ -2196,6 +2223,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         indexed(null);
         transitive(null);
         bot(null);
+        force(null);
         fetchStrategy(null);
         confirm(null);
         outputFormat(null);

@@ -113,6 +113,7 @@ public class NBootOptionRegistry {
         l.add(NBootOptionSpec.flag("--no", "-n"));
         l.add(NBootOptionSpec.flag("--error"));
         l.add(NBootOptionSpec.flag("--ask"));
+        l.add(NBootOptionSpec.flag("--force"));
         l.add(NBootOptionSpec.flag("--cached"));
         l.add(NBootOptionSpec.flag("--indexed"));
         l.add(NBootOptionSpec.flag("--transitive"));

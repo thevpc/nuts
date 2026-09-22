@@ -941,6 +941,17 @@ public final class NBootWorkspaceCmdLineParser {
                             return (Collections.singletonList(a));
                         }
                     }
+                    case "--force": {
+                        a = cmdLine.nextFlag();
+                        if (active && a.booleanValue()) {
+                            if (options != null) {
+                                options.force(true);
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            return (Collections.singletonList(a));
+                        }
+                    }
                     case "--cached": {
                         a = cmdLine.nextFlag();
                         if (active && a.booleanValue()) {

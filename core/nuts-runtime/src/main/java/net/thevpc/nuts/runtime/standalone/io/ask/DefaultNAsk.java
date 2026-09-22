@@ -4,6 +4,7 @@ import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.core.NConfirmationMode;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NEnv;
@@ -36,6 +37,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private NAskParser<T> parser;
     private NAskValidator<T> validator;
     private boolean traceConfirmation = false;
+    private boolean ignoreForce = false;
     private boolean executed = false;
     private boolean password = false;
     private Object lastResult = null;
@@ -69,7 +71,11 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
         }
         if (!traceConfirmation && isBooleanType()) {
-            switch (session.confirm().orDefault()) {
+            NConfirmationMode effectiveMode = session.confirm().orDefault();
+            if (effectiveMode == NConfirmationMode.ASK && session.isForce() && !ignoreForce) {
+                effectiveMode = NConfirmationMode.YES;
+            }
+            switch (effectiveMode) {
                 case YES: {
                     return (T) Boolean.TRUE;
                 }
@@ -503,6 +509,23 @@ public class DefaultNAsk<T> implements NAsk<T> {
     public NAsk<T> validator(NAskValidator<T> validator) {
         this.validator = validator;
         return this;
+    }
+
+    @Override
+    public NAsk<T> ignoreForce() {
+        this.ignoreForce = true;
+        return this;
+    }
+
+    @Override
+    public NAsk<T> ignoreForce(boolean value) {
+        this.ignoreForce = true;
+        return this;
+    }
+
+    @Override
+    public boolean isIgnoreForce() {
+        return ignoreForce;
     }
 
     @Override
