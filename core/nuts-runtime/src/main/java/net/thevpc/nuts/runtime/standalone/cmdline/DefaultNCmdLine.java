@@ -101,11 +101,6 @@ public class DefaultNCmdLine implements NCmdLine {
      */
     public DefaultNCmdLine(String[] args, NShellFamily shellFamily) {
         this.shellFamily = shellFamily == null ? NShellFamily.current() : shellFamily;
-      /**
-       * Sets the arguments.
-       *
-       * @param args args
-       */
         setArguments(args);
     }
 
@@ -116,11 +111,6 @@ public class DefaultNCmdLine implements NCmdLine {
      * @return default n cmd line result
      */
     public DefaultNCmdLine(List<String> args) {
-      /**
-       * Sets the arguments.
-       *
-       * @param args args
-       */
         setArguments(args);
     }
 
@@ -232,11 +222,6 @@ public class DefaultNCmdLine implements NCmdLine {
                 return this;
             }
         }
-      /**
-       * Throw error.
-       *
-       * @param option) option)
-       */
         throwError(NMsg.ofC("invalid special option %s", option));
         return this;
     }
@@ -302,12 +287,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NCmdLine throwUnexpectedArgument(NText errorMessage) {
-        /**
-         * Throw unexpected argument.
-         *
-         * @param errorMessage) error message)
-         * @return throw unexpected argument result
-         */
         return throwUnexpectedArgument(NMsg.ofC("%s", errorMessage));
     }
 
@@ -315,9 +294,6 @@ public class DefaultNCmdLine implements NCmdLine {
     public NCmdLine throwUnexpectedArgument(NMsg errorMessage) {
         if (!isEmpty()) {
             if (isCompleteMode()) {
-              /**
-               * Skip all.
-               */
                 skipAll();
                 return this;
             }
@@ -329,11 +305,6 @@ public class DefaultNCmdLine implements NCmdLine {
                 sb.append(", %s");
                 ep.add(errorMessage);
             }
-          /**
-           * Throw error.
-           *
-           * @param ep.toArray()) ep.to array())
-           */
             throwError(NMsg.ofC(sb.toString(), ep.toArray()));
         }
         return this;
@@ -343,17 +314,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public NCmdLine throwMissingArgument() {
         if (isEmpty()) {
             if (isCompleteMode()) {
-              /**
-               * Skip all.
-               */
                 skipAll();
                 return this;
             }
-          /**
-           * Throw error.
-           *
-           * @param argument") argument")
-           */
             throwError(NMsg.ofP("missing argument"));
         }
         return this;
@@ -362,24 +325,13 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public NCmdLine throwMissingArgument(String argumentName) {
         if (NBlankable.isBlank(argumentName)) {
-          /**
-           * Throw missing argument.
-           */
             throwMissingArgument();
         } else {
             if (isEmpty()) {
                 if (isCompleteMode()) {
-                  /**
-                   * Skip all.
-                   */
                     skipAll();
                     return this;
                 }
-              /**
-               * Throw error.
-               *
-               * @param NMsg.ofStyledKeyword(argumentName)) n msg.of styled keyword(argument name))
-               */
                 throwError(NMsg.ofC("missing argument %s", NMsg.ofStyledKeyword(argumentName)));
             }
             return this;
@@ -391,9 +343,6 @@ public class DefaultNCmdLine implements NCmdLine {
     public NCmdLine throwMissingArgument(NMsg errorMessage) {
         if (isEmpty()) {
             if (isCompleteMode()) {
-              /**
-               * Skip all.
-               */
                 skipAll();
                 return this;
             }
@@ -404,11 +353,6 @@ public class DefaultNCmdLine implements NCmdLine {
                 sb.append(", %s");
                 ep.add(errorMessage);
             }
-          /**
-           * Throw error.
-           *
-           * @param ep.toArray()) ep.to array())
-           */
             throwError(NMsg.ofC(sb.toString(), ep.toArray()));
         }
         return this;
@@ -446,56 +390,26 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean isNextOption() {
-        /**
-         * Peek.
-         *
-         * @param ).map(NArg::isOption).orElse(false ).map(n arg::is option).or else(false
-         * @return peek result
-         */
         return peek().map(NArg::isOption).orElse(false);
     }
 
     @Override
     public boolean isNextNonOption() {
-        /**
-         * Peek.
-         *
-         * @param ).map(NArg::isNonOption).orElse(false ).map(n arg::is non option).or else(false
-         * @return peek result
-         */
         return peek().map(NArg::isNonOption).orElse(false);
     }
 
     @Override
     public NOptional<NArg> peek() {
-        /**
-         * Returns the get.
-         *
-         * @param 0 0
-         * @return get result
-         */
         return get(0);
     }
 
     @Override
     public NOptional<NArg> peekNonOption() {
-        /**
-         * Returns the get.
-         *
-         * @param x.isNonOption() x.is non option()
-         * @return get result
-         */
         return get(0).filter(x -> x.isNonOption());
     }
 
     @Override
     public NOptional<NArg> peekOption() {
-        /**
-         * Returns the get.
-         *
-         * @param x.isOption() x.is option()
-         * @return get result
-         */
         return get(0).filter(x -> x.isOption());
     }
 
@@ -506,115 +420,51 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean hasNextOption() {
-        /**
-         * Checks if has next.
-         *
-         * @param peek().get().isOption( peek().get().is option(
-         * @return has next result
-         */
         return hasNext() && peek().get().isOption();
     }
 
     @Override
     public boolean hasNextNonOption() {
-        /**
-         * Checks if has next.
-         *
-         * @param peek().get().isNonOption( peek().get().is non option(
-         * @return has next result
-         */
         return hasNext() && peek().get().isNonOption();
     }
 
     @Override
     public NOptional<NArg> nextFlag(String... names) {
-        /**
-         * Next.
-         *
-         * @param NArgType.FLAG n arg type.flag
-         * @param names names
-         * @return next result
-         */
         return next(NArgType.FLAG, names);
     }
 
     @Override
     public NOptional<NArg> nextEntry(String... names) {
-        /**
-         * Next.
-         *
-         * @param NArgType.ENTRY n arg type.entry
-         * @param names names
-         * @return next result
-         */
         return next(NArgType.ENTRY, names);
     }
 
     @Override
     public NOptional<NArg> nextAttachedEntry(String... names) {
-        /**
-         * Next.
-         *
-         * @param NArgType.ATTACHED_ENTRY n arg type.attached_entry
-         * @param names names
-         * @return next result
-         */
         return next(NArgType.ATTACHED_ENTRY, names);
     }
 
     @Override
     public NOptional<NArg> nextRequiredEntry(String... names) {
-        /**
-         * Next.
-         *
-         * @param NArgType.REQUIRED_ENTRY n arg type.required_entry
-         * @param names names
-         * @return next result
-         */
         return next(NArgType.REQUIRED_ENTRY, names);
     }
 
     @Override
     public NOptional<NArg> nextAttachedEntry() {
-        /**
-         * Next.
-         *
-         * @param NArgType.ATTACHED_ENTRY n arg type.attached_entry
-         * @return next result
-         */
         return next(NArgType.ATTACHED_ENTRY);
     }
 
     @Override
     public NOptional<NArg> nextRequiredEntry() {
-        /**
-         * Next.
-         *
-         * @param NArgType.REQUIRED_ENTRY n arg type.required_entry
-         * @return next result
-         */
         return next(NArgType.REQUIRED_ENTRY);
     }
 
     @Override
     public NOptional<NArg> nextEntry() {
-        /**
-         * Next entry.
-         *
-         * @param String[0] string[0]
-         * @return next entry result
-         */
         return nextEntry(new String[0]);
     }
 
     @Override
     public NOptional<NArg> nextFlag() {
-        /**
-         * Next flag.
-         *
-         * @param String[0] string[0]
-         * @return next flag result
-         */
         return nextFlag(new String[0]);
     }
 
@@ -629,27 +479,11 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> next(String... names) {
-        /**
-         * Next.
-         *
-         * @param NArgType.DEFAULT n arg type.default
-         * @param names names
-         * @return next result
-         */
         return next(NArgType.DEFAULT, names);
     }
 
     @Override
     public NOptional<NArg> next(NArgType expectedArgType, String... names) {
-        /**
-         * Next.
-         *
-         * @param expectedArgType expected arg type
-         * @param null null
-         * @param null null
-         * @param names names
-         * @return next result
-         */
         return next(expectedArgType, null, null, names);
     }
 
@@ -705,19 +539,9 @@ public class DefaultNCmdLine implements NCmdLine {
             NArgCompleteResult rvalues = valueComplete.searchValue(createSearchContext());
             if (rvalues != null) {
                 for (NArgCompleteCandidate c : rvalues.candidates()) {
-                  /**
-                   * Adds the specified candidate.
-                   *
-                   * @param c c
-                   */
                     addCandidate(c);
                 }
                 for (NArgCompleteFlag f : rvalues.flags()) {
-                  /**
-                   * Adds the specified candidate flag.
-                   *
-                   * @param f f
-                   */
                     addCandidateFlag(f);
                 }
                 return;
@@ -725,11 +549,6 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         // no finder or finder returned null — fall back to a display-hint placeholder
         if (argDisplay != null) {
-          /**
-           * Adds the specified candidate.
-           *
-           * @param NArgCompleteCandidate.of(argDisplay) n arg complete candidate.of(arg display)
-           */
             addCandidate(NArgCompleteCandidate.of(argDisplay));
         }
     }
@@ -775,11 +594,6 @@ public class DefaultNCmdLine implements NCmdLine {
             if (isCompleteMode()) {
                 NArgCompleteCandidate[] candidates = resolveRecommendations(expectedArgType, argDisplay, valueComplete, names);
                 for (NArgCompleteCandidate c : candidates) {
-                  /**
-                   * Adds the specified candidate.
-                   *
-                   * @param c c
-                   */
                     addCandidate(c);
                 }
             }
@@ -800,20 +614,10 @@ public class DefaultNCmdLine implements NCmdLine {
                 if (pks.isPresent() && pks.get().equals(name)) {
                     switch (expectedArgType) {
                         case DEFAULT: {
-                          /**
-                           * Skip.
-                           *
-                           * @param nameSeqArray.length name seq array.length
-                           */
                             skip(nameSeqArray.length);
                             return NOptional.of(p);
                         }
                         case ENTRY: {
-                          /**
-                           * Skip.
-                           *
-                           * @param nameSeqArray.length name seq array.length
-                           */
                             skip(nameSeqArray.length);
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
@@ -822,17 +626,8 @@ public class DefaultNCmdLine implements NCmdLine {
                                 if (r2 != null && !r2.isOption()) {
                                     if (isCompleteMode() && isAtCompletePosition()) {
                                         // cursor is at the value token — invoke valueComplete
-                                      /**
-                                       * Adds the specified value candidates.
-                                       *
-                                       * @param valueComplete value complete
-                                       * @param argDisplay arg display
-                                       */
                                         addValueCandidates(valueComplete, argDisplay);
                                     }
-                                  /**
-                                   * Skip.
-                                   */
                                     skip();
                                     return NOptional.of(createArgument(p.asString().orElse("") + eq + r2.asString().orElse("")));
                                 } else {
@@ -841,11 +636,6 @@ public class DefaultNCmdLine implements NCmdLine {
                             }
                         }
                         case REQUIRED_ENTRY: {
-                          /**
-                           * Skip.
-                           *
-                           * @param nameSeqArray.length name seq array.length
-                           */
                             skip(nameSeqArray.length);
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
@@ -855,37 +645,17 @@ public class DefaultNCmdLine implements NCmdLine {
                                 if (r2 != null) {
                                     if (isCompleteMode() && isAtCompletePosition()) {
                                         // cursor is at the value token — invoke valueComplete
-                                      /**
-                                       * Adds the specified value candidates.
-                                       *
-                                       * @param valueComplete value complete
-                                       * @param argDisplay arg display
-                                       */
                                         addValueCandidates(valueComplete, argDisplay);
                                     }
-                                  /**
-                                   * Skip.
-                                   */
                                     skip();
                                     return NOptional.of(createArgument(p.asString().orElse("") + eq + r2.asString().orElse("")));
                                 } else {
                                     if (isCompleteMode()) {
                                         // no value token yet but complete mode — suggest values at end
-                                      /**
-                                       * Adds the specified value candidates.
-                                       *
-                                       * @param valueComplete value complete
-                                       * @param argDisplay arg display
-                                       */
                                         addValueCandidates(valueComplete, argDisplay);
                                         return NOptional.of(p);
                                     } else {
                                         // should i throw exception?
-                                      /**
-                                       * Throw missing argument.
-                                       *
-                                       * @param provided") provided")
-                                       */
                                         throwMissingArgument(NMsg.ofC("option '%s' expects a value that was not provided"));
                                         return NOptional.of(p);
                                     }
@@ -893,22 +663,12 @@ public class DefaultNCmdLine implements NCmdLine {
                             }
                         }
                         case ATTACHED_ENTRY: {
-                          /**
-                           * Skip.
-                           *
-                           * @param nameSeqArray.length name seq array.length
-                           */
                             skip(nameSeqArray.length);
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
                             } else {
                                 if (isCompleteMode()) {
                                     // advertise "--k=" as the only valid continuation — no bare-token grab
-                                  /**
-                                   * Adds the specified candidate.
-                                   *
-                                   * @param eq) eq)
-                                   */
                                     addCandidate(NArgCompleteCandidate.of(pks.orElse(name) + eq));
                                 } else {
                                     // should i throw exception?
@@ -917,11 +677,6 @@ public class DefaultNCmdLine implements NCmdLine {
                             }
                         }
                         case FLAG: {
-                          /**
-                           * Skip.
-                           *
-                           * @param nameSeqArray.length name seq array.length
-                           */
                             skip(nameSeqArray.length);
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
@@ -945,13 +700,6 @@ public class DefaultNCmdLine implements NCmdLine {
                             break;
                         }
                         default: {
-                            /**
-                             * Error optional cformat.
-                             *
-                             * @param %s" %s"
-                             * @param highlightText(String.valueOf(expectedArgType)) highlight text( string.value of(expected arg type))
-                             * @return error optional cformat result
-                             */
                             return errorOptionalCformat("unsupported %s", highlightText(String.valueOf(expectedArgType)));
                         }
                     }
@@ -959,12 +707,6 @@ public class DefaultNCmdLine implements NCmdLine {
             }
 
         }
-        /**
-         * Empty optional cformat.
-         *
-         * @param argument" argument"
-         * @return empty optional cformat result
-         */
         return emptyOptionalCformat("missing argument");
     }
 
@@ -1023,13 +765,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NOptional<NArg> nextNonOption(String display) {
-        /**
-         * Next non option.
-         *
-         * @param display display
-         * @param null null
-         * @return next non option result
-         */
         return nextNonOption(display, null);
     }
 
@@ -1039,43 +774,19 @@ public class DefaultNCmdLine implements NCmdLine {
             if (isAtCompletePosition()) {
                 NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(createSearchContext());
                 if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
-                  /**
-                   * Adds the specified candidate.
-                   *
-                   * @param display) display)
-                   */
                     addCandidate(NArgCompleteCandidate.of(display == null ? "<value>" : display));
                 } else {
                     for (NArgCompleteCandidate value : rvalues.candidates()) {
-                      /**
-                       * Adds the specified candidate.
-                       *
-                       * @param value value
-                       */
                         addCandidate(value);
                     }
                     for (NArgCompleteFlag value : rvalues.flags()) {
-                      /**
-                       * Adds the specified candidate flag.
-                       *
-                       * @param value value
-                       */
                         addCandidateFlag(value);
                     }
                 }
             }
             NArg r = peek().orNull();
-          /**
-           * Skip.
-           */
             skip();
             if (r == null) {
-                /**
-                 * Empty optional cformat.
-                 *
-                 * @param argument" argument"
-                 * @return empty optional cformat result
-                 */
                 return emptyOptionalCformat("expected argument");
             }
             return NOptional.of(r);
@@ -1084,27 +795,12 @@ public class DefaultNCmdLine implements NCmdLine {
                 if (isAtCompletePosition()) {
                     NArgCompleteResult rvalues = complete == null ? null : complete.searchValue(createSearchContext());
                     if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
-                      /**
-                       * Adds the specified candidate.
-                       *
-                       * @param display) display)
-                       */
                         addCandidate(NArgCompleteCandidate.of(display == null ? "<value>" : display));
                     } else {
                         for (NArgCompleteCandidate value : rvalues.candidates()) {
-                          /**
-                           * Adds the specified candidate.
-                           *
-                           * @param value value
-                           */
                             addCandidate(value);
                         }
                         for (NArgCompleteFlag value : rvalues.flags()) {
-                          /**
-                           * Adds the specified candidate flag.
-                           *
-                           * @param value value
-                           */
                             addCandidateFlag(value);
                         }
                     }
@@ -1112,11 +808,6 @@ public class DefaultNCmdLine implements NCmdLine {
                 return NOptional.of(createArgument(""));
             }
             return emptyOptionalCformat("missing non-option argument %s",
-                  /**
-                   * Highlight text.
-                   *
-                   * @param display) display)
-                   */
                     highlightText(display == null ? "value" : display));
         }
     }
@@ -1124,19 +815,8 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public NOptional<NArg> nextNonOption() {
         if (hasNext() && !isNextOption()) {
-            /**
-             * Next.
-             *
-             * @return next result
-             */
             return next();
         }
-        /**
-         * Empty optional cformat.
-         *
-         * @param non-option" non-option"
-         * @return empty optional cformat result
-         */
         return emptyOptionalCformat("missing non-option");
     }
 
@@ -1151,12 +831,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public int skip() {
-        /**
-         * Skip.
-         *
-         * @param 1 1
-         * @return skip result
-         */
         return skip(1);
     }
 
@@ -1179,13 +853,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean accept(String... values) {
-        /**
-         * Accept.
-         *
-         * @param 0 0
-         * @param values values
-         * @return accept result
-         */
         return accept(0, values);
     }
 
@@ -1207,34 +874,13 @@ public class DefaultNCmdLine implements NCmdLine {
     public NOptional<NArg> find(String name) {
         int index = indexOf(name);
         if (index >= 0) {
-            /**
-             * Returns the get.
-             *
-             * @param index index
-             * @return get result
-             */
             return get(index);
         }
-        /**
-         * Empty optional cformat.
-         *
-         * @param argument" argument"
-         * @return empty optional cformat result
-         */
         return emptyOptionalCformat("missing argument");
     }
 
     @Override
     public NOptional<NArg> get(int index) {
-        /**
-         * Returns the get.
-         *
-         * @param index index
-         * @param isExpandSimpleOptions() is expand simple options()
-         * @param true true
-         * @param isExpandArgumentsFile() is expand arguments file()
-         * @return get result
-         */
         return get(index, isExpandSimpleOptions(), true, isExpandArgumentsFile());
     }
 
@@ -1249,12 +895,6 @@ public class DefaultNCmdLine implements NCmdLine {
      */
     private NOptional<NArg> get(int index, boolean expandSimpleOptions, boolean ignoreExistingExpanded, boolean expandArgumentsFile) {
         if (index < 0) {
-            /**
-             * Empty optional cformat.
-             *
-             * @param argument" argument"
-             * @return empty optional cformat result
-             */
             return emptyOptionalCformat("missing argument");
         }
         if (index < lookahead.size()) {
@@ -1268,12 +908,6 @@ public class DefaultNCmdLine implements NCmdLine {
         if (index < lookahead.size()) {
             return NOptional.of(lookahead.get(index));
         }
-        /**
-         * Empty optional cformat.
-         *
-         * @param argument" argument"
-         * @return empty optional cformat result
-         */
         return emptyOptionalCformat("missing argument");
     }
 
@@ -1307,21 +941,12 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public String[] toStringArray() {
-        /**
-         * Converts to string list.
-         *
-         * @param String[0] string[0]
-         * @return to string list result
-         */
         return toStringList().toArray(new String[0]);
     }
 
     @Override
     public String[] nextAllAsStringArray() {
         String[] a = toStringArray();
-      /**
-       * Skip all.
-       */
         skipAll();
         return a;
     }
@@ -1329,9 +954,6 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public List<String> nextAllAsStringList() {
         List<String> a = toStringList();
-      /**
-       * Skip all.
-       */
         skipAll();
         return a;
     }
@@ -1339,9 +961,6 @@ public class DefaultNCmdLine implements NCmdLine {
     @Override
     public NArg[] nextAllAsArgumentArray() {
         NArg[] a = toArgumentArray();
-      /**
-       * Skip all.
-       */
         skipAll();
         return a;
     }
@@ -1368,23 +987,11 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean isOption(int index) {
-        /**
-         * Returns the get.
-         *
-         * @param index).map(NArg::isOption).orElse(false index).map(n arg::is option).or else(false
-         * @return get result
-         */
         return get(index).map(NArg::isOption).orElse(false);
     }
 
     @Override
     public boolean isNonOption(int index) {
-        /**
-         * Returns the get.
-         *
-         * @param index).map(NArg::isNonOption).orElse(false index).map(n arg::is non option).or else(false
-         * @return get result
-         */
         return get(index).map(NArg::isNonOption).orElse(false);
     }
 
@@ -1396,20 +1003,8 @@ public class DefaultNCmdLine implements NCmdLine {
      */
     public NCmdLine setArguments(List<String> arguments) {
         if (arguments == null) {
-            /**
-             * Sets the arguments.
-             *
-             * @param String[0] string[0]
-             * @return set arguments result
-             */
             return setArguments(new String[0]);
         }
-        /**
-         * Sets the arguments.
-         *
-         * @param String[0]) string[0])
-         * @return set arguments result
-         */
         return setArguments(arguments.toArray(new String[0]));
     }
 
@@ -1532,52 +1127,6 @@ public class DefaultNCmdLine implements NCmdLine {
         return true;
     }
 
-//    public NOptional<NArg> next(NArgName name, boolean forceNonOption) {
-//        if (hasNext() && (!forceNonOption || !isNextOption())) {
-//            if (isAtCompletePosition()) {
-//                NArgCompleteResult rvalues = name == null ? null : name.resolveCandidates();
-//                if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
-//                    addCandidate(NArgCompleteCandidate.of(name == null ? "<value>" : name.name()));
-//                } else {
-//                    for (NArgCompleteCandidate value : rvalues.candidates()) {
-//                        addCandidate(value);
-//                    }
-//                    for (NArgCompleteFlag value : rvalues.flags()) {
-//                        addCandidateFlag(value);
-//                    }
-//                }
-//            }
-//            NArg r = peek().orNull();
-//            skip();
-//            if (r == null) {
-//                return emptyOptionalCformat("expected argument");
-//            }
-//            return NOptional.of(r);
-//        } else {
-//            if (isCompleteMode()) {
-//                if (isAtCompletePosition()) {
-//                    NArgCompleteResult rvalues = name == null ? null : name.resolveCandidates();
-//                    if (rvalues == null || (rvalues.candidates().isEmpty() && rvalues.flags().isEmpty())) {
-//                        addCandidate(NArgCompleteCandidate.of(name == null ? "<value>" : name.name()));
-//                    } else {
-//                        for (NArgCompleteCandidate value : rvalues.candidates()) {
-//                            addCandidate(value);
-//                        }
-//                        for (NArgCompleteFlag value : rvalues.flags()) {
-//                            addCandidateFlag(value);
-//                        }
-//                    }
-//                }
-//                return NOptional.of(createArgument(""));
-//            }
-//            if (hasNext() && (!forceNonOption || !isNextOption())) {
-//                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().image())));
-//            }
-//            return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.name())));
-//        }
-//        //ignored
-//    }
-
     /**
      * Next.
      *
@@ -1593,26 +1142,12 @@ public class DefaultNCmdLine implements NCmdLine {
             String v = args.removeFirst();
             return NOptional.of(createArgument(v));
         } else {
-            /**
-             * Empty optional cformat.
-             *
-             * @param argument" argument"
-             * @return empty optional cformat result
-             */
             return emptyOptionalCformat("missing argument");
         }
     }
 
     @Override
     public String toString() {
-        /**
-         * Converts to string list.
-         *
-         * @param NStringUtils.formatStringLiteral(x n string utils.format string literal(x
-         * @param NElementType.DOUBLE_QUOTED_STRING n element type.double_quoted_string
-         * @param ") ")
-         * @return to string list result
-         */
         return toStringList().stream().map(x -> NStringUtils.formatStringLiteral(x, NElementType.DOUBLE_QUOTED_STRING, NSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
 
@@ -1689,20 +1224,8 @@ public class DefaultNCmdLine implements NCmdLine {
             return all;
         } else {
             if (path.exists()) {
-                /**
-                 * N illegal argument exception.
-                 *
-                 * @param path) path)
-                 * @return n illegal argument exception result
-                 */
                 throw new NIllegalArgumentException(NMsg.ofC("argument file does not exist %s", path));
             } else {
-                /**
-                 * N illegal argument exception.
-                 *
-                 * @param path) path)
-                 * @return n illegal argument exception result
-                 */
                 throw new NIllegalArgumentException(NMsg.ofC("argument file is not a valid regular file %s", path));
             }
         }
@@ -1795,12 +1318,6 @@ public class DefaultNCmdLine implements NCmdLine {
      * @return is at complete position result
      */
     private boolean isAtCompletePosition() {
-        /**
-         * Checks if is complete mode.
-         *
-         * @param completePosition().wordIndex( complete position().word index(
-         * @return is complete mode result
-         */
         return isCompleteMode() && wordIndex() == completePosition().wordIndex();
     }
 
@@ -1869,14 +1386,6 @@ public class DefaultNCmdLine implements NCmdLine {
      * @return parse default list result
      */
     public static NOptional<String[]> parseDefaultList(String commandLineString) {
-        /**
-         * Parse default list.
-         *
-         * @param commandLineString command line string
-         * @param null null
-         * @param HashSet<>() hash set<>()
-         * @return parse default list result
-         */
         return parseDefaultList(commandLineString, null, new HashSet<>());
     }
 
@@ -2067,11 +1576,6 @@ public class DefaultNCmdLine implements NCmdLine {
     public NCmdLine addAll(List<String> arguments) {
         if (arguments != null) {
             for (String argument : arguments) {
-              /**
-               * Adds add.
-               *
-               * @param argument argument
-               */
                 add(argument);
             }
         }
@@ -2080,11 +1584,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean isBlank() {
-        /**
-         * Checks if is empty.
-         *
-         * @return is empty result
-         */
         return isEmpty();
     }
 
@@ -2128,66 +1627,5 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         return this;
     }
-
-    //    private class MyNCmdLineArgProcessor implements NCmdLineArgProcessor {
-//        private final boolean finalAcceptable;
-//        private final String[] names;
-//
-//        public MyNCmdLineArgProcessor(boolean finalAcceptable, String... names) {
-//            this.finalAcceptable = finalAcceptable;
-//            this.names = names;
-//        }
-//
-//        public boolean isAcceptable() {
-//            return finalAcceptable;
-//        }
-//
-//        @Override
-//        public boolean nextFlag(Consumer<NArg> consumer) {
-//            if (!finalAcceptable) {
-//                return false;
-//            }
-//            NOptional<NArg> v = next(NArgType.FLAG, names);
-//            if (v.isPresent()) {
-//                NArg a = v.get();
-//                if (a.isUncommented()) {
-//                    consumer.accept(a);
-//                    return true;
-//                }
-//                return true;
-//            }
-//            return false;
-//        }
-//
-//        @Override
-//        public boolean nextEntry(Consumer<NArg> consumer) {
-//            if (!finalAcceptable) {
-//                return false;
-//            }
-//            NOptional<NArg> v = next(NArgType.ENTRY, names);
-//            if (v.isPresent()) {
-//                NArg a = v.get();
-//                if (a.isUncommented()) {
-//                    consumer.accept(a);
-//                    return true;
-//                }
-//                return true;
-//            }
-//            return false;
-//        }
-//
-//
-//        @Override
-//        public boolean nextTrueFlag(Consumer<NArg> consumer) {
-//            if (!finalAcceptable) {
-//                return false;
-//            }
-//            return nextFlag((value) -> {
-//                if (value.getBooleanValue().isPresent() && value.booleanValue()) {
-//                    consumer.accept(value);
-//                }
-//            });
-//        }
-//    }
 
 }
