@@ -918,6 +918,9 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 this.logFileLevel = logConfig.logFileLevel();
             }
             this.dependencySolver = options.dependencySolver().orNull();
+            if (options.expireTime().isPresent()) {
+                this.expireTime(options.expireTime().orNull());
+            }
         }
         return this;
     }
@@ -944,6 +947,9 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 this.logFileLevel = logConfig.logFileLevel();
             }
             this.dependencySolver = options.dependencySolver().orNull();
+            if (options.expireTime().isPresent()) {
+                this.expireTime(options.expireTime().orNull());
+            }
         }
         return this;
     }

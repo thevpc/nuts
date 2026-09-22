@@ -17,6 +17,8 @@ import net.thevpc.nuts.core.NRunAs;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExec;
 import net.thevpc.nuts.security.NSecurityManager;
@@ -29,6 +31,8 @@ import java.util.*;
  * @author thevpc
  */
 public class DefaultNArtifactExecutable extends AbstractNExecutableInformationExt {
+
+    private static final java.util.Set<net.thevpc.nuts.artifact.NId> REFRESHED = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
 
     NDefinition def;
     String commandName;
@@ -98,7 +102,9 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
                     false, execCommand.in(), execCommand.out(), execCommand.err(), executionType, runAs);
             return NExecutionException.SUCCESS;
         }
-        NInstallStatus installStatus = def.installInformation().get().installStatus();
+        NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
+        NInstallInformation installInfo = installedRepository.getInstallInformation(id());
+        NInstallStatus installStatus = installInfo.installStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
                 NInstall ii = NInstall.of(def.id());
@@ -113,11 +119,27 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
             } else {
                 throw new NUnexpectedException(NMsg.ofC("you must install %s to be able to run it", def.id()));
             }
-        } else if (installStatus.isObsolete()) {
+        } else if (installStatus.isObsolete() && session.expireTime().isPresent()) {
+            NPrintStream out = session.out();
             if (autoInstall) {
-                NInstall.of(def.id())
-                        .configure(true, "--reinstall")
-                        .run();
+                boolean refreshed;
+                synchronized (REFRESHED) {
+                    refreshed = !REFRESHED.add(id());
+                    if (!refreshed) {
+                        out.println(NMsg.ofC("[expire] installed artifact %s is stale (deployed before %s), reinstalling...", def.id().longName(), installInfo.lastModifiedInstant()));
+                        NInstall.of(def.id())
+                                .configure(true, "--reinstall")
+                                .run();
+                    }
+                }
+                // re-resolve the definition so that the refreshed (reinstalled) content is actually executed,
+                // even when a nested exec already performed the refresh (guarded above)
+                def = NFetch.of(id())
+                        .repositoryFilter(NRepositoryFilter.ofInstalledRepo())
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .getResultDefinition();
+            } else if (!REFRESHED.contains(id())) {
+                out.println(NMsg.ofC("[expire] installed artifact %s is stale (deployed before %s), consider reinstalling ('nuts reinstall %s')", def.id().longName(), installInfo.lastModifiedInstant(), def.id().longName()));
             }
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();

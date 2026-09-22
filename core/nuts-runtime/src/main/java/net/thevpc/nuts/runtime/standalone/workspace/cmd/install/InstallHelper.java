@@ -450,8 +450,13 @@ public class InstallHelper {
             if (reinstall) {
                 if (!info.flags.require) {
                     if (def.installInformation().get().installStatus().isInstalled()) {
-                        info.cacheItem.revalidate(false);
+                        // refetch the target content from the repository chain (not from the previously deployed
+                        // local copy which is removed by the un-install just below), so that a same-version
+                        // reinstall always redeploys the freshest content available in the repositories.
+                        info.cacheItem.revalidate(true);
                         uninstallImpl(info, resolveInstaller, true, false, false, executionContext);
+                        def = info.cacheItem.getDefinition();
+                        executionContext = createExecutionContext(def, args);
                     }
                 }
             }

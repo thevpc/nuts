@@ -1160,7 +1160,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         if (isApiVersionOrAfter(V080)) {
             fillOption("--expire", "-N",
                     options.expireTime().map(Object::toString).orNull(),
-                    arguments, false);
+                    arguments, true);
             if (options.outLinePrefix().isPresent()
                     && Objects.equals(options.outLinePrefix(), options.errLinePrefix())
                     && options.outLinePrefix().get().length() > 0) {

@@ -871,7 +871,7 @@ public class DefaultNCp implements NCp {
         } catch (IOException ex) {
             _LOG()
 
-                    .log(NMsg.ofC("error % %s to %s : %s", m, _source2.source, loggedTarget, ex)
+                    .log(NMsg.ofC("error %s %s to %s : %s", m, _source2.source, loggedTarget, ex)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL)
                             .withDurationMillis(chrono.durationMs())
                     );

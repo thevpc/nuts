@@ -449,7 +449,7 @@ public class NBootWorkspaceCmdLineFormatter {
         if (isApiVersionOrAfter(V080)) {
             fillOption("--expire", "-N",
                     options.expireTime() == null ? null : options.expireTime().toString(),
-                    arguments, false);
+                    arguments, true);
             if (options.outLinePrefix() != null
                     && Objects.equals(options.outLinePrefix(), options.errLinePrefix())
                     && options.outLinePrefix().length() > 0) {
