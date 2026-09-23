@@ -32,6 +32,8 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
 
     private NElementType type;
     private String image;
+    private int quotedFenceLength;
+    private boolean quotedUnterminated;
 
     public DefaultNPrimitiveElementBuilder() {
         this.type = NElementType.NULL;
@@ -610,7 +612,7 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                     break;
                 }
             }
-            return DefaultNStringElement.ofNoLines(type, (String) value, image, affixes(), diagnostics(), metadata());
+            return DefaultNStringElement.ofNoLines(type, (String) value, image, quotedFenceLength, quotedUnterminated, affixes(), diagnostics(), metadata());
         }
         return new DefaultNPrimitiveElement(type, value, affixes(), diagnostics(), metadata());
     }
@@ -649,6 +651,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
             this.numberLayout = b.numberLayout();
             this.numberSuffix = b.numberSuffix();
             this.image = b.image();
+            if (b instanceof DefaultNPrimitiveElementBuilder) {
+                DefaultNPrimitiveElementBuilder d = (DefaultNPrimitiveElementBuilder) b;
+                this.quotedFenceLength = d.quotedFenceLength;
+                this.quotedUnterminated = d.quotedUnterminated;
+            }
         }
         return this;
     }
@@ -683,6 +690,11 @@ public class DefaultNPrimitiveElementBuilder extends AbstractNElementBuilder imp
                     }
                     default: {
                         this.value = nfrom.stringValue();
+                        if (nfrom instanceof DefaultNStringElement) {
+                            DefaultNStringElement d = (DefaultNStringElement) nfrom;
+                            this.quotedFenceLength = d.quotedFenceLength();
+                            this.quotedUnterminated = d.quotedUnterminated();
+                        }
                     }
                 }
             }

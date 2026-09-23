@@ -298,23 +298,10 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     reader.read();
                     return new NElementTokenImpl(">", NElementTokenType.OPERATOR_SYMBOL, ">", 0, line, column, pos, NOperatorSymbol.GT, null);
                 }
-                case '"': {
-                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        return readTripleQuoted('"', NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
-                    }
-                    return readQuoted('\"', NElementTokenType.DOUBLE_QUOTED_STRING, NElementType.DOUBLE_QUOTED_STRING);
-                }
-                case '\'': {
-                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        return readTripleQuoted('\'', NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, NElementType.TRIPLE_SINGLE_QUOTED_STRING);
-                    }
-                    return readQuoted('\'', NElementTokenType.SINGLE_QUOTED_STRING, NElementType.SINGLE_QUOTED_STRING);
-                }
+                case '"':
+                case '\'':
                 case '`': {
-                    if (reader.canRead(2) && reader.peekAt(1) == c && reader.peekAt(2) == c) {
-                        return readTripleQuoted('`', NElementTokenType.TRIPLE_BACKTICK_STRING, NElementType.TRIPLE_BACKTICK_STRING);
-                    }
-                    return readQuoted('`', NElementTokenType.BACKTICK_STRING, NElementType.BACKTICK_STRING);
+                    return readFencedString(c, line, column, pos);
                 }
                 case ' ': {
                     StringBuilder sb = new StringBuilder();
@@ -687,111 +674,252 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         return asChar(c, t1);
     }
 
-    public NElementTokenImpl readQuoted(char c0, NElementTokenType elementTokenType, NElementType elementType) {
-        int a = reader.read(); // third
-        if (a != c0) {
-            throw new NUnexpectedException(NMsg.ofC("expected %s", c0, c0, c0));
+    /**
+     * Reads a fenced (quoted) string whose opening fence is the maximal run of
+     * quote characters at the current position.
+     * <ul>
+     * <li>run of 1 → N=1 (simple quoted string)</li>
+     * <li>run of exactly 2 → empty string (open + immediately closed, both
+     * quotes consumed). N=2 is not a valid fence length.</li>
+     * <li>run of 3+ → N = run length (arbitrary fenced string)</li>
+     * </ul>
+     */
+    public NElementTokenImpl readFencedString(int c, int line, int column, long pos) {
+        char c0 = (char) c;
+        int len = 0;
+        while (reader.peekAt(len) == c0) {
+            len++;
         }
+        NElementTokenType tt;
+        NElementType et;
+        switch (c) {
+            case '"': {
+                tt = NElementTokenType.DOUBLE_QUOTED_STRING;
+                et = NElementType.DOUBLE_QUOTED_STRING;
+                break;
+            }
+            case '\'': {
+                tt = NElementTokenType.SINGLE_QUOTED_STRING;
+                et = NElementType.SINGLE_QUOTED_STRING;
+                break;
+            }
+            default: {
+                tt = NElementTokenType.BACKTICK_STRING;
+                et = NElementType.BACKTICK_STRING;
+                break;
+            }
+        }
+        if (len == 2) {
+            // A run of exactly 2 quote chars is an empty string (open, immediately
+            // closed, empty content), not an N=2 fence.
+            reader.read(2);
+            String image = new String(new char[]{c0, c0});
+            return new NElementTokenImpl(image, tt, image, 0, line, column, pos, "", null, 1);
+        }
+        if (len < 2) {
+            return readFenced(c0, 1, tt, et, line, column, pos);
+        }
+        switch (c) {
+            case '"': {
+                return readFenced(c0, len, NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, NElementType.TRIPLE_DOUBLE_QUOTED_STRING, line, column, pos);
+            }
+            case '\'': {
+                return readFenced(c0, len, NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, NElementType.TRIPLE_SINGLE_QUOTED_STRING, line, column, pos);
+            }
+            default: {
+                return readFenced(c0, len, NElementTokenType.TRIPLE_BACKTICK_STRING, NElementType.TRIPLE_BACKTICK_STRING, line, column, pos);
+            }
+        }
+    }
 
-        StringBuilder image = new StringBuilder().append(c0);
+    /**
+     * Reads a fenced (quoted) string with fence length N using the generalized
+     * P-run counting rule:
+     * <pre>
+     * P &lt; N : all P quotes are literal content, string stays open
+     * P == N : the string terminates here
+     * P &gt; N : P-1 literal quotes, 1 discarded (escape signal), string stays open
+     * </pre>
+     * Reaching EOF while the string is still open produces an error token
+     * (unterminated fenced string); the reader is left at EOF and the token
+     * image is the raw, undosed text.
+     */
+    public NElementTokenImpl readFenced(char c0, int N, NElementTokenType tokenType, NElementType elementType, int line, int column, long pos) {
+        // consume the opening fence (N identical quote chars)
+        for (int i = 0; i < N; i++) {
+            int a = reader.read();
+            if (a != c0) {
+                throw new NUnexpectedException(NMsg.ofC("expected %s", String.valueOf(c0)));
+            }
+        }
+        StringBuilder image = new StringBuilder();
         StringBuilder value = new StringBuilder();
         NMsg error = null;
-        while (true) {
-            int c = reader.read();
+        boolean closed = false;
+        while (!closed) {
+            int c = reader.peek();
             if (c == -1) {
-                // EOF without closing "
-                error = NMsg.ofC("EOF without closing %s", c0);
+                // EOF without closing fence
+                error = NMsg.ofC("EOF without closing %s", String.valueOf(c0));
                 break;
             }
             if (c == c0) {
-                if (reader.peek() == c0) {
-                    // Found closing "
-                    reader.read(); // consume both
-                    value.append(c0);
-                    image.append(c0).append(c0);
+                // count the maximal run P of delimiter characters at this position
+                int run = 0;
+                while (reader.peekAt(run) == c0) {
+                    run++;
+                }
+                if (run == N) {
+                    reader.read(N);
+                    image.append(repeatChar(c0, N));
+                    closed = true;
+                } else if (run < N) {
+                    reader.read(run);
+                    value.append(repeatChar(c0, run));
+                    image.append(repeatChar(c0, run));
                 } else {
-                    image.append(c0);
-                    break;
+                    // run > N : P-1 literal quotes, 1 discarded, string stays open
+                    reader.read(run);
+                    value.append(repeatChar(c0, run - 1));
+                    image.append(repeatChar(c0, run));
                 }
             } else {
-                image.append((char) c);
-                value.append((char) c);
+                int c2 = reader.read();
+                value.append((char) c2);
+                image.append((char) c2);
             }
         }
+        // apply the boundary-space rule to the decoded value whether or not the
+        // string was terminated, so that decoding followed by encoding is an
+        // exact inverse in both cases
+        trimBoundarySpaces(value, c0);
         return new NElementTokenImpl(
-                image.toString(),
-                elementTokenType,
+                repeatChar(c0, N) + image.toString(),
+                tokenType,
                 String.valueOf(c0),
                 0,
                 reader.line(),
                 reader.column(),
                 reader.pos(),
                 value.toString(),
-                error
+                error,
+                N
         );
     }
 
+    public NElementTokenImpl readQuoted(char c0, NElementTokenType elementTokenType, NElementType elementType) {
+        int line = reader.line();
+        int column = reader.column();
+        long pos = reader.pos();
+        return readFenced(c0, 1, elementTokenType, elementType, line, column, pos);
+    }
+
     public NElementTokenImpl readTripleQuoted(char c0, NElementTokenType tokenType, NElementType elementType) {
-        StringBuilder image = new StringBuilder().append(c0).append(c0).append(c0);
-        StringBuilder value = new StringBuilder();
-        int a1 = reader.read(); // consume first "
-        int a2 = reader.read(); // second
-        int a3 = reader.read(); // third
-        if (a1 != a2 || a2 != a3 || a3 != c0) {
-            throw new NUnexpectedException(NMsg.ofC("expected %s%s%s", c0, c0, c0));
+        int line = reader.line();
+        int column = reader.column();
+        long pos = reader.pos();
+        return readFenced(c0, 3, tokenType, elementType, line, column, pos);
+    }
+
+    /**
+     * Boundary space trimming (U+0020 only, start/end of content only): at the
+     * very start of content, if the maximal leading run of spaces is followed
+     * by the delimiter character, exactly one space is discarded (sacrificial)
+     * and the remaining ones are literal. The mirror rule applies at the very
+     * end of content. Spaces adjacent to non-delimiter characters are never
+     * trimmed.
+     */
+    private static void trimBoundarySpaces(StringBuilder value, char c0) {
+        int len = value.length();
+        // leading
+        int lead = 0;
+        while (lead < len && value.charAt(lead) == ' ') {
+            lead++;
         }
-        while (true) {
-            // End delimiter """
-            if (reader.canRead(3)
-                    && reader.peekAt(0) == c0
-                    && reader.peekAt(1) == c0
-                    && reader.peekAt(2) == c0) {
+        if (lead > 0 && lead < len && value.charAt(lead) == c0) {
+            value.deleteCharAt(0);
+        }
+        // trailing
+        int vlen = value.length();
+        int trail = 0;
+        while (trail < vlen && value.charAt(vlen - 1 - trail) == ' ') {
+            trail++;
+        }
+        if (trail > 0 && trail < vlen && value.charAt(vlen - 1 - trail) == c0) {
+            value.deleteCharAt(vlen - 1);
+        }
+    }
 
-                reader.read();
-                reader.read();
-                reader.read();
-                image.append(c0).append(c0).append(c0);
+    private static String repeatChar(char c, int n) {
+        if (n <= 0) {
+            return "";
+        }
+        char[] buf = new char[n];
+        Arrays.fill(buf, c);
+        return new String(buf);
+    }
 
-                if (reader.canRead(1)
-                        && reader.peek() == c0) {
-                    //add the last 3 quotes
-                    value.append(c0).append(c0).append(c0);
-                    //drop this
-                    reader.read();
-                    image.append(c0);
-                    //drop add the rest
-                    while (reader.peek() == c0) {
-                        reader.read();
-                        image.append(c0);
-                        value.append(c0);
-                    }
+    /**
+     * Serializes a string value using fence length N (encoding section 2.1 +
+     * boundary space trimming): internal delimiter runs of length k &lt; N are
+     * written as-is, runs of length k &gt;= N are written as k+1 quotes, and a
+     * single sacrificial space is added at the very start/end of content when
+     * the content starts/ends with a delimiter character (so the literal quote
+     * cannot merge into the fence). When {@code unterminated} is true, no
+     * closing fence is written.
+     */
+    public static String toFencedString(String value, char c, int N, boolean unterminated) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(repeatChar(c, N));
+        if (hasQuoteBoundary(value, c, true)) {
+            sb.append(' ');
+        }
+        sb.append(encodeStringContent(value, c, N));
+        if (hasQuoteBoundary(value, c, false)) {
+            sb.append(' ');
+        }
+        if (!unterminated) {
+            sb.append(repeatChar(c, N));
+        }
+        return sb.toString();
+    }
 
-                } else {
-                    image.append(c0).append(c0).append(c0);
-                    break;
+    /**
+     * Encodes the interior of a fenced string (encoding section 2.1): internal
+     * maximal delimiter runs of length k are written as k quotes when
+     * k &lt; N, and as k+1 quotes when k &gt;= N (the extra quote prevents an
+     * internal run from being mistaken for the closing fence). Every other
+     * character is written verbatim.
+     */
+    public static String encodeStringContent(String value, char c, int N) {
+        StringBuilder sb = new StringBuilder();
+        int len = value.length();
+        int i = 0;
+        while (i < len) {
+            char ch = value.charAt(i);
+            if (ch == c) {
+                int run = 0;
+                while (i + run < len && value.charAt(i + run) == c) {
+                    run++;
                 }
+                sb.append(repeatChar(c, run < N ? run : run + 1));
+                i += run;
             } else {
-                // Regular character (verbatim)
-                int c = reader.read();
-                if (c == -1) break;
-
-                char ch = (char) c;
-                image.append(ch);
-                value.append(ch);
+                sb.append(ch);
+                i++;
             }
         }
+        return sb.toString();
+    }
 
-        return new NElementTokenImpl(
-                image.toString(),
-                tokenType,
-                new String(new char[]{c0, c0, c0}),
-                0,
-                reader.line(),
-                reader.column(),
-                reader.pos(),
-                value.toString(),
-                null
-        );
+    private static boolean hasQuoteBoundary(String value, char c, boolean leading) {
+        int i = leading ? 0 : value.length() - 1;
+        int step = leading ? 1 : -1;
+        int len = value.length();
+        while (i >= 0 && i < len && value.charAt(i) == ' ') {
+            i += step;
+        }
+        return i >= 0 && i < len && value.charAt(i) == c;
     }
 
     public NElementTokenImpl readLineString() {

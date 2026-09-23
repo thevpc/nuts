@@ -361,42 +361,70 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
 
     public NText[] parseRawString(StringReaderExt chars) {
         List<NText> all = new ArrayList<>();
-        for (String border : new String[]{
-                "\"\"\"",
-                "'''",
-                "```",
-                "\"",
-                "'",
-                "`",
-        }) {
-            if (chars.readString(border)) {
-                all.add(NText.ofStyled(border, NTextStyle.string()));
-                StringBuilder sb = new StringBuilder();
-                while (chars.hasNext()) {
-                    if (chars.readString("\\" + border)) {
-                        if (sb.length() > 0) {
-                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
-                            sb.setLength(0);
-                        }
-                        all.add(NText.ofStyled("\\" + border, NTextStyle.separator()));
-                    } else if (chars.readString(border)) {
-                        if (sb.length() > 0) {
-                            all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
-                            sb.setLength(0);
-                        }
-                        all.add(NText.ofStyled(border, NTextStyle.string()));
-                        break;
-                    } else {
-                        sb.append(chars.readChar());
+        char c0 = chars.peekChar();
+        String look = chars.peekChars(1024);
+        int n = 0;
+        while (n < look.length() && look.charAt(n) == c0) {
+            n++;
+        }
+        if (n == 2) {
+            // exactly two quotes = empty string (open + immediately closed)
+            all.add(NText.ofStyled(String.valueOf(c0) + String.valueOf(c0), NTextStyle.string()));
+            chars.readChar();
+            chars.readChar();
+            return all.toArray(new NText[0]);
+        }
+        int N = n == 1 ? 1 : n; // n==1 -> N=1 ; n>=3 -> N=n
+        StringBuilder fence = new StringBuilder();
+        for (int i = 0; i < N; i++) {
+            fence.append((char) chars.readChar());
+        }
+        all.add(NText.ofStyled(fence.toString(), NTextStyle.string()));
+        StringBuilder content = new StringBuilder();
+        while (chars.hasNext()) {
+            if (chars.peekChar() == c0) {
+                String run = chars.peekChars(1024);
+                int p = 0;
+                while (p < run.length() && run.charAt(p) == c0) {
+                    p++;
+                }
+                if (p == N) {
+                    // closing fence
+                    if (content.length() > 0) {
+                        all.add(NText.ofStyled(content.toString(), NTextStyle.string()));
+                        content.setLength(0);
                     }
+                    StringBuilder close = new StringBuilder();
+                    for (int i = 0; i < N; i++) {
+                        close.append((char) chars.readChar());
+                    }
+                    all.add(NText.ofStyled(close.toString(), NTextStyle.string()));
+                    return all.toArray(new NText[0]);
+                } else if (p < N) {
+                    // literal string content
+                    for (int i = 0; i < p; i++) {
+                        content.append((char) chars.readChar());
+                    }
+                } else {
+                    // p > N : P-1 quotes are literal content, the last one is the
+                    // discarded escape signal; string stays open
+                    for (int i = 0; i < p - 1; i++) {
+                        content.append((char) chars.readChar());
+                    }
+                    if (content.length() > 0) {
+                        all.add(NText.ofStyled(content.toString(), NTextStyle.string()));
+                        content.setLength(0);
+                    }
+                    all.add(NText.ofStyled(String.valueOf((char) chars.readChar()), NTextStyle.separator()));
                 }
-                if (sb.length() > 0) {
-                    all.add(NText.ofStyled(sb.toString(), NTextStyle.string()));
-                    sb.setLength(0);
-                }
-                return all.toArray(new NText[0]);
+            } else {
+                content.append((char) chars.readChar());
             }
         }
-        return new NText[0];
+        if (content.length() > 0) {
+            all.add(NText.ofStyled(content.toString(), NTextStyle.string()));
+            content.setLength(0);
+        }
+        return all.toArray(new NText[0]);
     }
 }

@@ -14,8 +14,13 @@ public class NElementTokenImpl implements NElementToken {
     private final long pos;
     private final Object value;
     private final NMsg errorMessage;
+    private final int fenceLength;
 
     public NElementTokenImpl(String image, NElementTokenType type, String variant, int level, int line, int col, long pos, Object value, NMsg errorMessage) {
+        this(image, type, variant, level, line, col, pos, value, errorMessage, 0);
+    }
+
+    public NElementTokenImpl(String image, NElementTokenType type, String variant, int level, int line, int col, long pos, Object value, NMsg errorMessage, int fenceLength) {
         this.type = type;
         this.image = image;
         this.variant = variant;
@@ -25,6 +30,7 @@ public class NElementTokenImpl implements NElementToken {
         this.pos = pos;
         this.value = value;
         this.errorMessage = errorMessage;
+        this.fenceLength = fenceLength;
     }
 
     public boolean isError() {
@@ -33,6 +39,18 @@ public class NElementTokenImpl implements NElementToken {
 
     public NMsg errorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * length of the opening/closing quote run (fence length N) of a fenced
+     * (quoted) string token. 0 means "not a fenced string token / derive from
+     * token type".
+     *
+     * @return fence length N (1 for simple quoted strings, &gt;=3 for
+     * arbitrary fenced strings, 0 if undefined)
+     */
+    public int fenceLength() {
+        return fenceLength;
     }
 
     public NElementTokenType type() {

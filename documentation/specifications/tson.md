@@ -1,6 +1,10 @@
-# 📄 TSON Specification (v2.0)
+# 📄 TSON Specification (v2.1)
 **Author:** [thevpc](https://github.com/thevpc)  
 **Last Updated:** 2026-02-11
+
+**Change List**
+- v2.1 (2026-09-23): introduced arbitrary fence length strings
+- v2.0 (2026-02-11): introduced ordered/unordered lists
 
 **TSON** (Type Safe Object Notation) is an open, human-readable, whitespace-flexible configuration and DSL format that combines the simplicity of outlines with the expressiveness of structured data. Its primary rationale is to provide a **type-safe** alternative to JSON/YAML, ensuring that data structures are strictly typed and easily validated. It supports **primitives**, **strings**, **structured literals**, **streams**, **annotations**, and **lists** — all while preserving every token for round-tripping, tooling, and diagnostics.
 **TSON** is a Strongly Typed configuration format. Unlike "Stringly-Typed" formats (like JSON or YAML) that require the application to guess or cast data types, **TSON** guarantees Type Fidelity at the parser level.
@@ -256,22 +260,25 @@ café.menu
 
 **Guideline**: Use the simplest form that doesn't require escaping.
 
-| Syntax      | Best For                                        | Escaping                                            |
-|:------------|:------------------------------------------------|:----------------------------------------------------|
-| "..."       | Standard strings and JSON-like properties       | double Terminal quote only "", can include newlines |
-| '...'       | Short identifiers or strings containing "       | Terminal quote only '', can include newlines        |
-| `...`       | Command-line snippets or Shell scripts          | Terminal quote only ``, can include newlines        |
-| """..."""   | SQL queries or formatted text blocks            | Terminal quote only """""", can include newlines    |
-| '''...'''   | Multi-line regex or nested single-quote strings | Terminal quote only '''''', can include newlines    |
-| ```...```   | Embedded Markdown or code blocks                | Terminal quote only `````` , can include newlines   |
-| ¶ text      | Inline annotations and quick metadata           | None (ends at newline)                              |
-| ¶¶ text     | Header-level documentation or changelogs        | None (consecutive lines)                            |
-| ^id{...^id} | Serialized data (XML/JSON) or complex macros    | None (custom delimiter)                             |
+| Syntax         | Name                    | Best For                                         | Escaping                                            |
+|:---------------|:------------------------|:-------------------------------------------------|:----------------------------------------------------|
+| "..."          | Double Quotes           | Standard strings and JSON-like properties        | double Terminal quote only "", can include newlines |
+| '...'          | Simple Quotes           | Short identifiers or strings containing "        | Terminal quote only '', can include newlines        |
+| `...`          | Back Ticks              | Command-line snippets or Shell scripts           | Terminal quote only ``, can include newlines        |
+| """..."""      | Arbitrary Double Quotes | SQL queries or formatted text blocks             | Terminal quote only """""", can include newlines    |
+| '''...'''      | Arbitrary Simple Quotes | Multi-line regex or nested single-quote strings  | Terminal quote only '''''', can include newlines    |
+| ```...```      | Arbitrary Back Ticks    | Embedded Markdown or code blocks                 | Terminal quote only `````` , can include newlines   |
+| """""..."""""  | Arbitrary Double Quotes | Embedding other source text blocks               | Terminal quote only """""", can include newlines    |
+| '''''...'''''  | Arbitrary Simple Quotes | Embedding other source text blocks               | Terminal quote only '''''', can include newlines    |
+| `````...`````  | Arbitrary Back Ticks    | Embedding other source text blocks               | Terminal quote only `````` , can include newlines   |
+| ¶ text         |                         | Inline annotations and quick metadata            | None (ends at newline)                              |
+| ¶¶ text        |                         | Header-level documentation or changelogs         | None (consecutive lines)                            |
+| ^id{...^id}    |                         | Serialized data (XML/JSON) or complex macros     | None (custom delimiter)                             |
 
 ### 3.1 Quoted Strings & The "Literal-First" Rule
 All quoted strings are multi-line by design and follow the Literal-First principle.
 - No Magic Backslashes: The backslash \ is treated as a literal character. Standard sequences like \n, \t, or \r are not converted into control characters by the parser.
-- Escaping: Only the terminal quote can be escaped (e.g., \" inside a "" string).
+- Escaping: Quote characters inside content are escaped **by quote run counting** (see "The escaping rules" below) — never by a backslash. A literal `\` never escapes anything.
 - Result: What you see is exactly what the application receives.
 
 ````tson
@@ -281,10 +288,10 @@ multiline: "Line 1
 Line 2"                  // Result: Actual newline preserved
 ````
 
-### 3.2 Quoted Strings
+#### Quoted String Types
 - **Quoted Strings**: Support single (`'`), double (`"`), and backtick (`` ` ``) quotes. All quoted strings are **multi-line by design**.
-- **Triple Quotes**: Support `'''`, `"""`, and ` ``` `.
-- **Escaping**: Quoted strings only support escaping the **terminal quote** character with a backslash (e.g., `\"` in a double-quoted string, `\'''` in a triple-single-quoted string).
+- **N Quotes**: Support `'''`, `"""`, and ` ``` ` etc. — in fact any fence length `N ∈ {1, 3, 4, 5, ...}`.
+- **Escaping**: There is **no backslash escaping** in quoted strings. A literal quote run inside content is handled purely by the fence-length counting rule ("The escaping rules" below), and every other character — including `\`, newlines, tabs — is literal.
     - A backslash `\` by itself is treated as a literal character.
     - Standard escape sequences like `\n`, `\r`, or `\t` are **not interpreted** by the parser; they are preserved as literal text to be interpreted at use-time.
 
@@ -294,8 +301,8 @@ Line 2"                  // Result: Actual newline preserved
 `backticks`
 "multi-line
 quoted string"
-"escaped \"quote\""
 "literal \n (not a newline)"
+"a literal "" inside content"
 
 // Triple Quotes
 """Triple double quotes"""
@@ -308,7 +315,77 @@ triple double quotes
 """
 ````
 
-### 3.3 Single-line Strings (`¶`)
+#### The escaping rules
+
+##### Fence length (N) determination
+
+When the lexer encounters an opening quote character, it greedily counts the run of consecutive identical quote characters to determine `N`:
+
+- A run of `1` → opens an `N=1` (simple) quoted string.
+- A run of exactly `2` → this is an **empty string**, not an `N=2` fence. `N=2` is **not a valid** fence length — a run of 2 is already fully consumed as "open, immediately closed, empty content."
+- A run of `3` or more → opens a fence of exactly that length (`N=3`, `N=4`, `N=5`, ...).
+
+So valid fence lengths are `N ∈ {1, 3, 4, 5, 6, ...}` — every positive integer **except** `2`.
+
+##### Quote escaping (content, mid-string)
+
+Once inside a fence of length `N`, let P be the length of each maximal run of consecutive quote characters encountered while scanning content:
+
+- `P < N` — no escaping needed. All P quotes are consumed as literal content; parsing continues (string stays open).
+Example: `N=4` (`""""`), content this is `"""` → `P=3`, consumed as-is.
+- `P = N` — the string terminates here, exactly.
+- `P > N` — the string does not terminate. All P quotes are consumed and interpreted as `P−1` literal quotes — the one extra quote is the escape signal itself, contributing nothing to content.
+Example: `N=3` (`"""`), content ends in `""""` → `P=4`, consumed as `3` literal quotes, string stays open.
+
+Newlines and every other character need no escaping — always literal. Quote-counting is the only escape mechanism, and it's identical for every valid N, including N=1.
+
+###### The P-run table (verbatim, N=4)
+
+For a fence of length `N=4` (`""""`), every maximal run `P` of `"` encountered while scanning content behaves as follows:
+
+| P (run of `"` seen) | Effect                  | Content received |
+|:---------------------|:------------------------|:-----------------|
+| 0                    | not a quote run         | — (other chars)  |
+| 1                    | stay open               | `"`              |
+| 2                    | stay open               | `""`             |
+| 3                    | stay open               | `"""`            |
+| 4                    | **string terminates**   | — (closing fence)|
+| 5                    | stay open               | `""""`           |
+| 6                    | stay open               | `"""""`          |
+| 7                    | stay open               | `""""""`         |
+| …                    | stay open               | P−1 quotes       |
+
+Worked example (N=4): `""""a"""""b""""` decodes to `a""""b` — the run of 5 inside content yields 4 literal quotes (5−1), the extra one is the escape signal, and the trailing run of exactly 4 closes the string.
+
+Worked example (N=1): `"hello "" world """ "` decodes to `hello " world ""` — the run of 2 yields 1 literal quote (2−1, escape signal discarded) and the run of 3 yields 2 literal quotes (3−1); the final single `"` is the closing fence.
+
+###### Writing strings (author guidance)
+
+- Prefer the longest delimiter that does **not** occur as an internal run: to embed `a""b` as content, an N=3 fence (`"""a""b"""`) needs no escape at all, while N=1 would require doubling.
+- Internally, a run of `k` delimiter characters writes `k` quotes when `k < N` and `k+1` quotes when `k >= N` (the extra one protects the run from being read as the closing fence).
+- A value that starts or ends with the delimiter character should be written with one sacrificial space at that boundary (see "Boundary space trimming") so the literal quote cannot merge into the fence.
+- Never write a backslash to escape anything inside a quoted string: it is always literal.
+
+###### Migration note (from v2.0)
+
+- The old v2.0 rule doubled every internal quote run (2N quotes for a run of N). Under v2.1 the same written text decodes differently: an internal run written as 2N quotes (e.g. `""""""` inside an N=3 string) now decodes as 2N−1 literal quotes (5, not 6).
+- Text produced by a v2.0 writer must be re-encoded: a literal run of 3 quotes inside an N=3 string was written as 6 quotes in v2.0 and is now written as 4 quotes (`""""`).
+- Conversely, a v2.0 writer that must round-trip v2.1-decoded content should emit `k+1` quotes for internal runs of `k >= N`, exactly as described above.
+
+##### Boundary space trimming (start/end of content only)
+
+A separate rule, needed because a literal quote sitting directly at the very start or end of content would otherwise merge into the opening/closing fence's own quote run.
+
+- At the very start of content: take the maximal leading run of spaces, length S. If the character immediately after that run is a quote, one space is discarded (sacrificial) and the remaining S−1 are literal. If the character after the run is not a quote, all S spaces are literal — nothing discarded.
+- At the very end of content: mirror this. Take the maximal trailing run of spaces, length S. If the character immediately before the run is a quote, one space is discarded and S−1 are literal; otherwise all S are literal.
+
+Example: to end content in a literal " followed by exactly one real trailing space, write two spaces before the closing fence (S=2, preceded by a quote → one discarded, one literal → decodes to ..." with a trailing space). Write just one space (S=1) to get zero trailing spaces after that quote.
+
+Applies to every valid N, including N=1. Independent of the multi-line dedent mechanism (which might trim based on newlines/indentation, not adjacent spaces).
+
+
+### 3.2 Line and Paragrpah Strings (`¶` and `¶¶`)
+#### Single-line Strings (`¶`)
 A single `¶` starts a string that continues until the end of the line. **No escaping sequences** are supported.
 ```tson
 ¶ This is a single-line string.
@@ -318,7 +395,7 @@ A single ¶ starts a string that continues until the end of the line.
 - Escaping: No escaping sequences are supported.
 
 
-### 3.4 Multi-line Strings (`¶¶`)
+#### Multi-line Strings (`¶¶`)
 Multi-line strings use the `¶¶` prefix for consecutive lines. Each element
 stores **two representations**:
 1. **Raw Value**: The literal text as written (preserves all whitespace)
@@ -333,7 +410,7 @@ stores **two representations**:
 // ^ Indentation here is ignored; result starts at "This is..."
 ```
 
-#### Parsing Rules
+#### `¶¶` Parsing Rules
 1. **Line Detection**: A line is part of a multi-line string if `¶¶` is the
    first non-whitespace sequence on that line.
 2. **Prefix Stripping**: The `¶¶` marker and any whitespace **before** it
@@ -348,7 +425,7 @@ stores **two representations**:
    start with `¶¶` (after stripping leading whitespace).
 
 
-Rule: the ¶¶ can start at amy level of a line, and consumes till the line ends and there is no more ¶¶
+Rule: the ¶¶ can start at any level of a line, and consumes till the line ends and there is no more ¶¶
 
 ---
 

@@ -298,10 +298,15 @@ public class TsonCustomParser {
                     affixes.addAll(tokensToAffixes(t.prefixes));
                     boundAffixes.addAll(bindAffixes(affixes, NAffixAnchor.START));
                     boundAffixes.addAll(readPostComments());
+                    if (t.token.isError()) {
+                        diagnostics.add(new DefaultNElementDiagnostic(t.token, t.token.errorMessage()));
+                    }
                     base = DefaultNStringElement.ofNoLines(
                             t.token.type().elementType(),
                             value,
                             t.token.image(),
+                            t.token.fenceLength(),
+                            t.token.isError(),
                             boundAffixes,
                             diagnostics,
                             null

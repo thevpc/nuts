@@ -4,6 +4,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NCharReader;
 import net.thevpc.nuts.io.NStringWriter;
 import net.thevpc.nuts.runtime.standalone.elem.builder.NBoundAffixList;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
+import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
 import net.thevpc.nuts.runtime.standalone.util.NStringBuilderImpl;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -453,47 +455,18 @@ public class DefaultTsonWriter {
 
     private void writeQuotedString(String quotes, NStringElement a) {
         write(a.affixes(), NAffixAnchor.START, acceptablePre);
-        NCharReader sb = new NCharReader(new StringReader(a.stringValue()));
-        int qlength = quotes.length();
-        write(quotes);
-        if (qlength == 1) {
-            char q = quotes.charAt(0);
-            while (true) {
-                int s = sb.peek();
-                if (s < 0) {
-                    break;
-                }
-                if (s == q) {
-                    write(q);
-                    write(sb.read(qlength));
-                } else {
-                    int c = sb.read();
-                    if (c < 0) {
-                        break;
-                    }
-                    write((char) c);
-                }
-            }
-        } else {
-            char q = quotes.charAt(0);
-            while (true) {
-                String s = sb.peek(qlength);
-                if (s == null || s.length() == 0) {
-                    break;
-                }
-                if (s.equals(quotes)) {
-                    write(q);
-                    write(sb.read(qlength));
-                } else {
-                    int c = sb.read();
-                    if (c < 0) {
-                        break;
-                    }
-                    write((char) c);
-                }
-            }
+        char q = quotes.charAt(0);
+        int n = quotes.length();
+        boolean unterminated = false;
+        if (a instanceof DefaultNStringElement) {
+            DefaultNStringElement d = (DefaultNStringElement) a;
+            n = d.quotedFenceLength();
+            unterminated = d.quotedUnterminated();
         }
-        write(quotes);
+        // write with the generalized N+1 encoding; when the element was parsed
+        // from an unterminated fenced string, reproduce it byte-for-byte (no
+        // closing fence is invented)
+        write(TsonCustomLexer.toFencedString(a.stringValue(), q, n, unterminated));
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
     }
 

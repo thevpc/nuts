@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNStringElement;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenImpl;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.NElementTokenType;
 import net.thevpc.nuts.runtime.standalone.format.tson.parser.custom.TsonCustomLexer;
@@ -1178,5 +1179,189 @@ public class TsonParseTest {
         String s2 = parsed.toPrettyString();
         TestUtils.println(s2);
         Assertions.assertEquals("@test(2, 3)(a, 2)", s2);
+    }
+
+    // ------------------------------------------------------------------
+    // TSON v2.1 : Generalized N-Quote Fenced Strings
+    // ------------------------------------------------------------------
+
+    private NElementTokenImpl lexToken(String tson) {
+        TsonCustomLexer lexer = new TsonCustomLexer(new StringReader(tson));
+        return lexer.next();
+    }
+
+    private void assertEcho(String tson) {
+        NElement e = NElementReader.ofTson().read(tson);
+        TestUtils.println("[echoo] " + tson);
+        String s2 = e.toString();
+        TestUtils.println("[echoout] " + s2);
+        Assertions.assertEquals(tson, s2);
+    }
+
+    @Test
+    public void testV21_fence_dispatch_and_fenceLength() {
+        // run of 1 -> N=1
+        NElementTokenImpl t1 = lexToken("\"a\"");
+        Assertions.assertEquals(NElementTokenType.DOUBLE_QUOTED_STRING, t1.type());
+        Assertions.assertEquals(1, t1.fenceLength());
+        Assertions.assertEquals("a", t1.value());
+        // run of exactly 2 -> empty string token (open + immediately closed)
+        NElementTokenImpl t2 = lexToken("\"\"");
+        Assertions.assertEquals(NElementTokenType.DOUBLE_QUOTED_STRING, t2.type());
+        Assertions.assertEquals("", t2.value());
+        Assertions.assertEquals(1, t2.fenceLength());
+        // run of 3+ -> N = run length
+        NElementTokenImpl t3 = lexToken("\"\"\"a\"\"\"");
+        Assertions.assertEquals(NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, t3.type());
+        Assertions.assertEquals(3, t3.fenceLength());
+        NElementTokenImpl t4 = lexToken("\"\"\"\"a\"\"\"\"");
+        Assertions.assertEquals(NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, t4.type());
+        Assertions.assertEquals(4, t4.fenceLength());
+        NElementTokenImpl t5 = lexToken("\"\"\"\"\"a\"\"\"\"\"");
+        Assertions.assertEquals(NElementTokenType.TRIPLE_DOUBLE_QUOTED_STRING, t5.type());
+        Assertions.assertEquals(5, t5.fenceLength());
+        // single/backtick variants
+        Assertions.assertEquals(NElementTokenType.SINGLE_QUOTED_STRING, lexToken("'a'").type());
+        Assertions.assertEquals(NElementTokenType.BACKTICK_STRING, lexToken("`a`").type());
+        Assertions.assertEquals(NElementTokenType.TRIPLE_SINGLE_QUOTED_STRING, lexToken("'''a'''").type());
+        Assertions.assertEquals(NElementTokenType.TRIPLE_BACKTICK_STRING, lexToken("```a```").type());
+    }
+
+    @Test
+    public void testV21_prun_table_lexer() {
+        // P-run rule (per task §2): P<N emit P stay open, P==N close, P>N emit P-1 discard 1
+        // N=1
+        Assertions.assertEquals("a\"b", lexToken("\"a\"\"b\"").value());          // P=2 -> 1 literal
+        Assertions.assertEquals("a\"\"b", lexToken("\"a\"\"\"b\"").value());      // P=3 -> 2 literal
+        Assertions.assertEquals("a\"\"\"b", lexToken("\"a\"\"\"\"b\"").value());  // P=4 -> 3 literal
+        // N=3
+        Assertions.assertEquals("a\"\"b", lexToken("\"\"\"a\"\"b\"\"\"").value());      // P=2 < 3 -> as-is
+        Assertions.assertEquals("a\"\"\"b", lexToken("\"\"\"a\"\"\"\"b\"\"\"").value()); // P=4 -> 3 literal
+        // N=4 (verbatim table): P=5 -> 4 literal
+        Assertions.assertEquals("a\"\"\"\"b", lexToken("\"\"\"\"a\"\"\"\"\"b\"\"\"\"").value());
+        // N=5: P=6 -> 5 literal
+        Assertions.assertEquals("a\"\"\"\"\"b", lexToken("\"\"\"\"\"a\"\"\"\"\"\"b\"\"\"\"\"").value());
+    }
+
+    @Test
+    public void testV21_terminated_roundtrip() {
+        // N=1, N=3, N=4, N=5 terminated strings round-trip byte-identically
+        assertEcho("\"a\"\"b\"");
+        assertEcho("\"\"\"a\"\"\"\"b\"\"\"");
+        assertEcho("\"\"\"\"a\"\"\"\"\"b\"\"\"\"");
+        assertEcho("\"\"\"\"\"a\"\"\"\"\"\"b\"\"\"\"\"");
+        assertEcho("\"hello \"");
+        assertEcho("\" \"");
+        assertEcho("\"\"");
+        // object context
+        assertEcho("(x:\"\"\"a\"\"\"\"b\"\"\", y:\"\"\"\"c\"\"\"\"\"d\"\"\"\")");
+    }
+
+    @Test
+    public void testV21_worked_traces() {
+        // N=1 worked trace: "hello "" world """ "  ->  hello " world ""
+        NElement e1 = NElementReader.ofTson().read("\"hello \"\" world \"\"\" \"");
+        Assertions.assertEquals("hello \" world \"\"", e1.asStringValue().get());
+        Assertions.assertEquals("\"hello \"\" world \"\"\" \"", e1.toString());
+        // N=4 worked trace: """"a"""""b""""  ->  a""""b
+        NElement e4 = NElementReader.ofTson().read("\"\"\"\"a\"\"\"\"\"b\"\"\"\"");
+        Assertions.assertEquals("a\"\"\"\"b", e4.asStringValue().get());
+        Assertions.assertEquals("\"\"\"\"a\"\"\"\"\"b\"\"\"\"", e4.toString());
+    }
+
+    @Test
+    public void testV21_boundary_space_trim() {
+        // leading quote in content requires one sacrificial space; round-trips
+        NElement e1 = NElementReader.ofTson().read("\" \"\"abc\"");
+        Assertions.assertEquals("\"abc", e1.asStringValue().get());
+        // value starting with a space then a quote
+        NElement e2 = NElement.ofString(" \"x", NElementType.DOUBLE_QUOTED_STRING);
+        String s2 = e2.toString();
+        Assertions.assertEquals("\"  \"\"x\"", s2);
+        Assertions.assertEquals(" \"x", NElementReader.ofTson().read(s2).asStringValue().get());
+        // value ending with a quote keeps exactly one space after trimming
+        NElement e3 = NElement.ofString("x\" ", NElementType.DOUBLE_QUOTED_STRING);
+        String s3 = e3.toString();
+        Assertions.assertEquals("\"x\"\"  \"", s3);
+        Assertions.assertEquals("x\" ", NElementReader.ofTson().read(s3).asStringValue().get());
+        // ordinary boundary spaces are untouched
+        NElement e4 = NElementReader.ofTson().read("\" x \"");
+        Assertions.assertEquals(" x ", e4.asStringValue().get());
+    }
+
+    @Test
+    public void testV21_trailing_quote_roundtrip() {
+        // value ending with the delimiter char at N=1
+        NElement e1 = NElement.ofString("x\"", NElementType.DOUBLE_QUOTED_STRING);
+        String s1 = e1.toString();
+        Assertions.assertEquals("\"x\"\" \"", s1);
+        Assertions.assertEquals("x\"", NElementReader.ofTson().read(s1).asStringValue().get());
+        // value ending with the delimiter char at N=3
+        NElement e3 = NElement.ofString("x\"", NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
+        String s3 = e3.toString();
+        Assertions.assertEquals("\"\"\"x\" \"\"\"", s3);
+        Assertions.assertEquals("x\"", NElementReader.ofTson().read(s3).asStringValue().get());
+        // value starting with the delimiter char at N=3
+        NElement e4 = NElement.ofString("\"x", NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
+        String s4 = e4.toString();
+        Assertions.assertEquals("\"\"\" \"x\"\"\"", s4);
+        Assertions.assertEquals("\"x", NElementReader.ofTson().read(s4).asStringValue().get());
+    }
+
+    @Test
+    public void testV21_doubling_regression() {
+        // v2.0 wrote a 3-quote run as 6 quotes; v2.1 writes it as 4. Decoding 6 yields 5.
+        NElement e1 = NElement.ofString("a\"\"\"b", NElementType.TRIPLE_DOUBLE_QUOTED_STRING);
+        String s1 = e1.toString();
+        TestUtils.println("[dbl] " + s1);
+        Assertions.assertEquals("\"\"\"a\"\"\"\"b\"\"\"", s1);
+        Assertions.assertEquals("a\"\"\"b", NElementReader.ofTson().read(s1).asStringValue().get());
+        // 6-run decodes as 5 literal quotes (2N -> 2N-1)
+        NElement e2 = NElementReader.ofTson().read("\"\"\"a\"\"\"\"\"\"b\"\"\"");
+        Assertions.assertEquals("a\"\"\"\"\"b", e2.asStringValue().get());
+    }
+
+    @Test
+    public void testV21_unterminated_roundtrip() {
+        // unterminated fenced strings keep their diagnostics, image and reproduce byte-identically (no auto-close)
+        String[] unterminated = {
+                "\"abc",
+                "\"a\"\"b",
+                "\"\"\"abc",
+                "\"\"\"a\"\"\"\"b",
+                "\"\"\"\"abc",
+                "\"\"\"\"a\"\"\"\"\"b",
+        };
+        for (String tson : unterminated) {
+            NElement e = NElementReader.ofTson().read(tson);
+            TestUtils.println("[unterm] " + tson);
+            Assertions.assertEquals(tson, e.toString(), "unterminated round-trip: " + tson);
+            Assertions.assertTrue(e.isErrorTree(), "errored tree expected for: " + tson);
+            Assertions.assertTrue(!e.diagnostics().isEmpty(), "diagnostic expected for: " + tson);
+        }
+    }
+
+    @Test
+    public void testV21_fence_length_field() {
+        // N>2 parses into the existing triple types, with a field recording the real fence length N
+        NElement e4 = NElementReader.ofTson().read("\"\"\"\"a\"\"\"\"");
+        Assertions.assertEquals(NElementType.TRIPLE_DOUBLE_QUOTED_STRING, e4.type());
+        Assertions.assertTrue(e4 instanceof DefaultNStringElement);
+        DefaultNStringElement d4 = (DefaultNStringElement) e4;
+        Assertions.assertEquals(4, d4.quotedFenceLength());
+        Assertions.assertFalse(d4.quotedUnterminated());
+        Assertions.assertEquals("a", d4.rawValue());
+        // writer reproduces the exact fence length
+        Assertions.assertEquals("\"\"\"\"a\"\"\"\"", e4.toString());
+
+        NElement e5 = NElementReader.ofTson().read("\"\"\"\"\"a\"\"\"\"\"");
+        Assertions.assertEquals(5, ((DefaultNStringElement) e5).quotedFenceLength());
+        Assertions.assertEquals("\"\"\"\"\"a\"\"\"\"\"", e5.toString());
+
+        NElement eu = NElementReader.ofTson().read("\"\"\"\"a");
+        DefaultNStringElement du = (DefaultNStringElement) eu;
+        Assertions.assertEquals(4, du.quotedFenceLength());
+        Assertions.assertTrue(du.quotedUnterminated());
+        Assertions.assertEquals("a", du.rawValue());
     }
 }

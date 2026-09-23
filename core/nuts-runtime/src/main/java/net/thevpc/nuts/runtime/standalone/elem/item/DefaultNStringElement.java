@@ -23,6 +23,48 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     private List<NElementLine> lines;
     private List<NElementLine> lines0;
     private volatile boolean initialized;
+    /**
+     * fence length N of the quoted string (0 = unknown, derive from type:
+     * 1 for simple quoted types, 3 for triple quoted types).
+     */
+    private int quotedFenceLength;
+    /**
+     * true when this fenced string was parsed from text that reached EOF while
+     * the string was still open (no closing fence found).
+     */
+    private boolean quotedUnterminated;
+
+    public int quotedFenceLength() {
+        if (quotedFenceLength > 0) {
+            return quotedFenceLength;
+        }
+        switch (type()) {
+            case TRIPLE_DOUBLE_QUOTED_STRING:
+            case TRIPLE_SINGLE_QUOTED_STRING:
+            case TRIPLE_BACKTICK_STRING:
+                return 3;
+            default:
+                return 1;
+        }
+    }
+
+    public boolean quotedUnterminated() {
+        return quotedUnterminated;
+    }
+
+    /**
+     * Records the fence length N and the unterminated flag of this fenced
+     * string (used when rebuilding parsed elements through builders).
+     *
+     * @param fenceLength fence length N (0 = derive from type)
+     * @param unterminated true when the original text reached EOF while open
+     * @return this
+     */
+    public DefaultNStringElement withQuotedFence(int fenceLength, boolean unterminated) {
+        this.quotedFenceLength = fenceLength;
+        this.quotedUnterminated = unterminated;
+        return this;
+    }
 
     public static DefaultNStringElement ofValue(NElementType type, String value) {
         String image = valueToImage(value, type);
@@ -59,10 +101,19 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     public static DefaultNStringElement ofNoLines(NElementType type, String value,
                                                   String image,
                                                   List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
-        if(image==null){
-            image=valueToImage(value,type);
+        return ofNoLines(type, value, image, 0, false, affixes, diagnostics, metadata);
+    }
+
+    public static DefaultNStringElement ofNoLines(NElementType type, String value,
+                                                  String image, int fenceLength, boolean unterminated,
+                                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        if (image == null) {
+            image = valueToImage(value, type, fenceLength);
         }
-        return new DefaultNStringElement(type, value, image, null, affixes, diagnostics, metadata);
+        DefaultNStringElement e = new DefaultNStringElement(type, value, image, null, affixes, diagnostics, metadata, unterminated);
+        e.quotedFenceLength = fenceLength;
+        e.quotedUnterminated = unterminated;
+        return e;
     }
 
     public DefaultNStringElement(NElementType type, String value) {
@@ -72,6 +123,13 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
     public DefaultNStringElement(NElementType type, String value,
                                  String image, List<NElementLine> lines,
                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata) {
+        this(type, value, image, lines, affixes, diagnostics, metadata, false);
+    }
+
+    private DefaultNStringElement(NElementType type, String value,
+                                  String image, List<NElementLine> lines,
+                                  List<NBoundAffix> affixes, List<NElementDiagnostic> diagnostics, NElementMetadata metadata,
+                                  boolean skipImageSuffixChecks) {
         super(type, NAssert.requireNamedNonNull(value, "string value"), affixes, diagnostics, metadata);
         NAssert.requireNamedNonNull(value, "image value");
         switch (type) {
@@ -89,32 +147,44 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
             }
             case DOUBLE_QUOTED_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("\""), "double quoted string");
-                NAssert.requireNamedTrue(image.endsWith("\""), "double quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("\""), "double quoted string");
+                }
                 break;
             }
             case SINGLE_QUOTED_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("'"), "simple quoted string");
-                NAssert.requireNamedTrue(image.endsWith("'"), "simple quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("'"), "simple quoted string");
+                }
                 break;
             }
             case BACKTICK_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("`"), "back quoted string");
-                NAssert.requireNamedTrue(image.endsWith("`"), "back quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("`"), "back quoted string");
+                }
                 break;
             }
             case TRIPLE_DOUBLE_QUOTED_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("\"\"\""), "triple double quoted string");
-                NAssert.requireNamedTrue(image.endsWith("\"\"\""), "triple double quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("\"\"\""), "triple double quoted string");
+                }
                 break;
             }
             case TRIPLE_SINGLE_QUOTED_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("'''"), "triple simple quoted string");
-                NAssert.requireNamedTrue(image.endsWith("'''"), "triple simple quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("'''"), "triple simple quoted string");
+                }
                 break;
             }
             case TRIPLE_BACKTICK_STRING: {
                 NAssert.requireNamedTrue(image.startsWith("```"), "triple back quoted string");
-                NAssert.requireNamedTrue(image.endsWith("```"), "triple back quoted string");
+                if (!skipImageSuffixChecks) {
+                    NAssert.requireNamedTrue(image.endsWith("```"), "triple back quoted string");
+                }
                 break;
             }
         }
@@ -134,27 +204,31 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
 
 
     private static String valueToImage(String any, NElementType type) {
+        return valueToImage(any, type, 0);
+    }
+
+    private static String valueToImage(String any, NElementType type, int fenceLength) {
         switch (type) {
             case NAME: {
                 return any;
             }
             case SINGLE_QUOTED_STRING: {
-                return _escape1(any, '\'');
+                return TsonCustomLexer.toFencedString(any, '\'', fenceLength > 0 ? fenceLength : 1, false);
             }
             case TRIPLE_SINGLE_QUOTED_STRING: {
-                return _escape3(any, '\'');
+                return TsonCustomLexer.toFencedString(any, '\'', fenceLength > 0 ? fenceLength : 3, false);
             }
             case DOUBLE_QUOTED_STRING: {
-                return _escape1(any, '"');
+                return TsonCustomLexer.toFencedString(any, '"', fenceLength > 0 ? fenceLength : 1, false);
             }
             case TRIPLE_DOUBLE_QUOTED_STRING: {
-                return _escape3(any, '"');
+                return TsonCustomLexer.toFencedString(any, '"', fenceLength > 0 ? fenceLength : 3, false);
             }
             case BACKTICK_STRING: {
-                return _escape1(any, '`');
+                return TsonCustomLexer.toFencedString(any, '`', fenceLength > 0 ? fenceLength : 1, false);
             }
             case TRIPLE_BACKTICK_STRING: {
-                return _escape3(any, '`');
+                return TsonCustomLexer.toFencedString(any, '`', fenceLength > 0 ? fenceLength : 3, false);
             }
             case LINE_STRING: {
                 String[] all = any.split("\n");
@@ -173,45 +247,6 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
             }
         }
         return any;
-    }
-
-    private static String _escape3(String any, char c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(c);
-        sb.append(c);
-        sb.append(c);
-        int len = any.length();
-        for (int i = 0; i < len; i++) {
-            char c2 = any.charAt(i);
-            if (c2 == c && i < len - 2 && any.charAt(i + 1) == c && any.charAt(i + 2) == c) {
-                sb.append(c);
-                sb.append(c);
-                sb.append(c);
-                sb.append(c);
-                sb.append(c);
-                i += 2;
-            }
-            sb.append(c);
-        }
-        sb.append(c);
-        sb.append(c);
-        sb.append(c);
-        return sb.toString();
-    }
-
-    private static String _escape1(String any, char c) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(c);
-        int len = any.length();
-        for (int i = 0; i < len; i++) {
-            char c2 = any.charAt(i);
-            if (c2 == c) {
-                sb.append(c);
-            }
-            sb.append(c);
-        }
-        sb.append(c);
-        return sb.toString();
     }
 
     private void _init() {
@@ -366,23 +401,30 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
 
     private TsonCustomLexer.LinesAndContent parseLinesFromImage(String image, NElementType type, String quotes, NElementTokenType tokenType) {
         TsonCustomLexer le = new TsonCustomLexer(new StringReader(image));
-        NElementTokenImpl t;
-        if (quotes.length() == 3) {
-            t = le.readTripleQuoted(quotes.charAt(0), tokenType, type);
-        } else {
-            t = le.readQuoted(quotes.charAt(0), tokenType, type);
+        char c0 = quotes.charAt(0);
+        // determine the actual fence length N from the raw image (it may be > 3)
+        int n = 0;
+        while (n < image.length() && image.charAt(n) == c0) {
+            n++;
         }
+        if (n <= 0) {
+            n = quotes.length();
+        }
+        NElementTokenImpl t = le.readFenced(c0, n, tokenType, type, 0, 0, 0);
         expectNothing(le);
+        char[] fenceChars = new char[n];
+        Arrays.fill(fenceChars, c0);
+        String fenceText = new String(fenceChars);
         List<NLine> nLines = NLine.parseList((String) t.value());
         List<NElementLine> result = new ArrayList<>();
         for (int i = 0; i < nLines.size(); i++) {
             NLine nLine = nLines.get(i);
             result.add(new NElementLineImpl(
                     "",
-                    i == 0 ? quotes : ""
+                    i == 0 ? fenceText : ""
                     , "", nLine.content(),
                     "",
-                    (i == nLines.size() - 1) ? quotes : "",
+                    (i == nLines.size() - 1) ? fenceText : "",
                     nLine.newLine()
             ));
         }
@@ -393,37 +435,15 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         List<NElementLine> result = new ArrayList<>();
         List<NLine> nLines = NLine.parseList(userValue);
         char c0 = quotes.charAt(0);
-        boolean isTriple = quotes.length() == 3;
+        int fenceLength = quotes.length();
         for (int i = 0; i < nLines.size(); i++) {
             NLine nLine = nLines.get(i);
             String c = nLine.content();
-            StringBuilder newContent = new StringBuilder();
-            if (!isTriple) {
-                for (int j = 0; j < c.length(); j++) {
-                    char cj = c.charAt(j);
-                    newContent.append(cj);
-                    if (cj == c0) {
-                        newContent.append(c0);
-                    }
-                }
-            } else {
-                for (int j = 0; j < c.length(); j++) {
-                    char cj = c.charAt(j);
-                    if (cj == c0 && (j + 2 < c.length()) &&
-                            c.charAt(j + 1) == c0 && c.charAt(j + 2) == c0) {
-                        for (int k = 0; k < 6; k++) {
-                            newContent.append(c0);
-                        }
-                        j += 2; // Skip the two extra quotes we just processed
-                    } else {
-                        newContent.append(cj);
-                    }
-                }
-            }
+            String escaped = TsonCustomLexer.encodeStringContent(c, c0, fenceLength);
             result.add(new NElementLineImpl(
                     "",
                     i == 0 ? quotes : ""
-                    , "", newContent.toString(),
+                    , "", escaped,
                     "",
                     (i == nLines.size() - 1) ? quotes : "",
                     nLine.newLine()
@@ -479,11 +499,19 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
             case SINGLE_QUOTED_STRING:
             case DOUBLE_QUOTED_STRING:
             case BACKTICK_STRING:
+                if (quotedUnterminated) {
+                    return image.substring(1);
+                }
                 return image.substring(1, image.length() - 1);
             case TRIPLE_DOUBLE_QUOTED_STRING:
             case TRIPLE_SINGLE_QUOTED_STRING:
-            case TRIPLE_BACKTICK_STRING:
-                return image.substring(3, image.length() - 3);
+            case TRIPLE_BACKTICK_STRING: {
+                int n = quotedFenceLength();
+                if (quotedUnterminated) {
+                    return image.substring(n);
+                }
+                return image.substring(n, image.length() - n);
+            }
             case LINE_STRING:{
                 return image.substring(1);
             }
