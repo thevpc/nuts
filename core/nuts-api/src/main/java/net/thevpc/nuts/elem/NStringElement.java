@@ -95,4 +95,6 @@ public interface NStringElement extends NPrimitiveElement {
      * @return with newline suffix result
      */
     NStringElement withNewlineSuffix(NNewLineMode nNewLineMode);
+
+    int quotedFenceLength();
 }

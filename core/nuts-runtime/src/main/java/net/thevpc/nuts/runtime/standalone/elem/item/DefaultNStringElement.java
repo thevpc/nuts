@@ -544,11 +544,12 @@ public class DefaultNStringElement extends DefaultNPrimitiveElement implements N
         return
                 Objects.equals(value(), that.value())
                 && Objects.equals(type(), that.type())
+                && Objects.equals(quotedFenceLength(), that.quotedFenceLength())
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), value(), type());
+        return Objects.hash(super.hashCode(), value(), type(),quotedFenceLength());
     }
 }

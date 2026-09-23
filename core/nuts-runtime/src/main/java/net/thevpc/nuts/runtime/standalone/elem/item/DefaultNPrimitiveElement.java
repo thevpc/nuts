@@ -109,7 +109,7 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(value,type());
     }
 
     @Override
