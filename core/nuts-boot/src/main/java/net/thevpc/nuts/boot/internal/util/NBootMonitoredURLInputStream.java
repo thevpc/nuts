@@ -37,7 +37,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             c = url.openConnection();
         } catch (IOException ex) {
             if (log != null) {
-                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s", url));
+                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : open connection leads to %s", url,ex));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
@@ -56,7 +56,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             return new NBootMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength);
         } catch (IOException ex) {
             if (log!=null) {
-                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s", url));
+                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : %s", url,ex));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
