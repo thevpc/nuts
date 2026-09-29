@@ -133,7 +133,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyToOutputStream(OutputStream other, NPathOption... options) {
-        try (InputStream reader = inputStream()) {
+        try (InputStream reader = getInputStream(options)) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
             while ((count = reader.read(buffer)) > 0) {
@@ -146,7 +146,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyFromInputStream(InputStream other, NPathOption... options) {
-        try (OutputStream out = outputStream()) {
+        try (OutputStream out = getOutputStream(options)) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int count;
             while ((count = other.read(buffer)) > 0) {
@@ -174,7 +174,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public void copyFromReader(Reader other, NPathOption... options) {
-        try (Writer writer = getWriter()) {
+        try (Writer writer = getWriter(options)) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
             while ((count = other.read(buffer)) > 0) {
@@ -209,9 +209,15 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         copyToWriter(other, null, options);
     }
 
+    public Reader asReader(Charset cs, NPathOption... options) {
+        CharsetDecoder decoder = nonNullCharset(cs).newDecoder();
+        Reader reader = new InputStreamReader(getInputStream(options), decoder);
+        return new BufferedReader(reader);
+    }
+
     @Override
     public void copyToWriter(Writer other, Charset cs, NPathOption... options) {
-        try (Reader reader = asReader(cs)) {
+        try (Reader reader = asReader(cs, options)) {
             char[] buffer = new char[BUFFER_SIZE];
             int count;
             while ((count = reader.read(buffer)) > 0) {
@@ -415,7 +421,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public Reader getReader(NPathOption... options) {
-        return asReader(null);
+        return asReader(null,options);
     }
 
     @Override
@@ -453,7 +459,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public NPath writeString(String string, Charset cs, NPathOption... options) {
-        return writeBytes(string == null ? new byte[0] : string.getBytes(nonNullCharset(cs)));
+        return writeBytes(string == null ? new byte[0] : string.getBytes(nonNullCharset(cs)), options);
     }
 
     @Override
