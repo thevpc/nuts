@@ -168,6 +168,20 @@ public interface NBootOptions {
     NOptional<Boolean> initJava();
 
     /**
+     * whether the local maven repository ({@code ~/.m2/repository}, as declared
+     * by the maven {@code localRepository} setting) may be used to resolve
+     * artifacts. Defaults to {@code true} when not specified.
+     * <br>
+     * When {@code false}, the {@code maven-local} sub-repository of the
+     * {@code maven} repository is skipped, both when bootstrapping the workspace
+     * runtime and when resolving dependencies.
+     *
+     * @return local maven
+     * @since 1.0.0
+     */
+    NOptional<Boolean> localMaven();
+
+    /**
      * nuts api version to boot.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child

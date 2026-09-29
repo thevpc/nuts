@@ -462,7 +462,7 @@ public class NReservedMavenUtilsBoot {
             descType = "NUTS";
         }
 
-        Set<String> urls = expandRepoUrls(repoUrl2);
+        Set<String> urls = expandRepoUrls(repoUrl2, isLocalMavenExcluded(options));
         boolean found = false;
         NBootVersion bestVersion = null;
         String bestPath = null;
@@ -735,7 +735,7 @@ public class NReservedMavenUtilsBoot {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         NBootLog log = NBootContext.log();
 
-        for (String repository : expandRepoUrls(repository0)) {
+        for (String repository : expandRepoUrls(repository0, isLocalMavenExcluded(bOptions))) {
             //we know exactly the file path, so we will trim "htmlfs+" protocol
             if (repository.startsWith("htmlfs+")) {
                 repository = repository.substring("htmlfs+".length());
@@ -839,6 +839,38 @@ public class NReservedMavenUtilsBoot {
     }
 
     private static Set<String> expandRepoUrls(NBootRepositoryLocation repoUrl2) {
+        return expandRepoUrls(repoUrl2, false);
+    }
+
+    /**
+     * Whether the local maven repository ({@code maven-local}) must be skipped
+     * while resolving boot artifacts. This is requested either by
+     * {@code --local-maven=false} or by an explicit {@code --repos=-maven-local}
+     * selection. Only the local repository is dropped: central and the settings
+     * repositories remain usable, so excluding the sub-repository never makes
+     * the runtime unloadable.
+     *
+     * @param options current boot options
+     * @return true if the local maven repository must not be consulted
+     */
+    private static boolean isLocalMavenExcluded(NBootOptionsInfo options) {
+        if (options == null) {
+            return false;
+        }
+        Boolean localMaven = options.localMaven();
+        if (localMaven != null && !localMaven) {
+            return true;
+        }
+        List<String> repositories = options.repositories();
+        if (repositories == null || repositories.isEmpty()) {
+            return false;
+        }
+        return NBootRepositorySelectorList
+                .of(repositories, NBootRepositoryDB.of())
+                .explicitlyExcludes(NBootRepositoryLocation.ofName("maven-local"));
+    }
+
+    private static Set<String> expandRepoUrls(NBootRepositoryLocation repoUrl2, boolean excludeLocalMaven) {
         Function<String, Object> mappingFunction = new Function<String, Object>() {
             @Override
             public Object apply(String repo) {
@@ -907,7 +939,7 @@ public class NReservedMavenUtilsBoot {
                         }
                     }
                     if (local == null) {
-                        local = true;
+                        local = !excludeLocalMaven;
                     }
                     if (central == null) {
                         central = true;
@@ -922,7 +954,7 @@ public class NReservedMavenUtilsBoot {
                 return urls;
             }
         };
-        return (Set<String>) NBootContext.cache().get((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2), mappingFunction);
+        return (Set<String>) NBootContext.cache().get((NMavenSettingsBoot.class.getName() + "::expandRepoUrls::" + repoUrl2 + "::noLocal=" + excludeLocalMaven), mappingFunction);
     }
 
 

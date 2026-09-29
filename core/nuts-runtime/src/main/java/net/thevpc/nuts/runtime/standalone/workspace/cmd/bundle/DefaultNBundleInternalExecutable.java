@@ -394,7 +394,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     .printlnComment("resolve workspace options")
                     .printlnSetVar("NS_WS_OPTIONS", "--repo==$NS_SCRIPT_DIR/.nuts-bundle/lib -w=$NS_SCRIPT_DIR/.nuts-bundle/ws")
                     .printlnComment("add workspace isolation options")
-                    .printlnSetVar("NS_WS_OPTIONS", "$NS_WS_OPTIONS ---m2=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions")
+                    .printlnSetVar("NS_WS_OPTIONS", "$NS_WS_OPTIONS --local-maven=false --desktop-launcher=unsupported --menu-launcher=unsupported --user-launcher=unsupported --!switch --!init-platforms --!init-scripts --!init-launchers --!install-companions")
                     .printlnComment("add other options like --verbose")
                     .printlnComment("--verbose : for more logging")
                     .printlnComment("-Zy      : to reset the whole workspace")

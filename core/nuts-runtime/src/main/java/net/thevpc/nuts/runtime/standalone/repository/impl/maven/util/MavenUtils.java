@@ -73,6 +73,25 @@ import java.util.stream.Collectors;
  */
 public class MavenUtils {
 
+    /**
+     * name of the maven settings sub-repository pointing to the local maven
+     * repository (the maven {@code localRepository} setting, {@code ~/.m2/repository}
+     * by default). This is the name to use in {@code --repos} selectors.
+     */
+    public static final String LOCAL_MAVEN_REPO_NAME = "maven-local";
+
+    /**
+     * name of the maven settings sub-repository pointing to the remote maven
+     * repository (the maven {@code remoteRepository} setting, maven central by default).
+     */
+    public static final String CENTRAL_MAVEN_REPO_NAME = "maven-central";
+
+    /**
+     * prefix of the maven settings sub-repository names coming from maven
+     * {@code profiles} and {@code mirrors} entries.
+     */
+    public static final String EXTRA_MAVEN_REPO_NAME = "maven-extra";
+
 
     private MavenUtils() {
     }

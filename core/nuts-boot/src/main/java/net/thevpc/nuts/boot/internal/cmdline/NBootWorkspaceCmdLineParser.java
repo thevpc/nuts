@@ -1499,6 +1499,17 @@ public final class NBootWorkspaceCmdLineParser {
                             return (Collections.singletonList(a));
                         }
                     }
+                    case "--local-maven": {
+                        a = cmdLine.nextFlag();
+                        if (active) {
+                            if (options != null) {
+                                options.localMaven(a.booleanValue());
+                            }
+                            return (Collections.singletonList(a));
+                        } else {
+                            return (Collections.singletonList(a));
+                        }
+                    }
                     case "--init-launchers": {
                         a = cmdLine.nextFlag();
                         if (active) {

@@ -432,6 +432,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     private Boolean initScripts;
     private Boolean initPlatforms;
     private Boolean initJava;
+    private Boolean localMaven;
     private NIsolationLevel isolationLevel;
     private NSupportMode desktopLauncher;
     private NSupportMode menuLauncher;
@@ -488,7 +489,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
                 name().orNull(), installCompanions().orNull(), skipWelcome().orNull(), skipBoot().orNull(),
                 system().orNull(), gui().orNull(), dry().orNull(), force().orNull(), showStacktrace().orNull(), recover().orNull(), reset().orNull(), resetHard().orNull(), commandVersion().orNull(), commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(), cached().orNull(), transitive().orNull(), bot().orNull(),
                 isolationLevel().orNull(), initLaunchers().orNull(), initScripts().orNull(), initPlatforms().orNull(),
-                initJava().orNull(), excludedExtensions().orNull(), repositories().orNull(), userName().orNull(),
+                initJava().orNull(), localMaven().orNull(), excludedExtensions().orNull(), repositories().orNull(), userName().orNull(),
                 credential().orNull(), terminalMode().orNull(), readOnly().orNull(), trace().orNull(), progressOptions().orNull(),
                 dependencySolver().orNull(), logConfig().orNull(), confirm().orNull(), outputFormat().orNull(),
                 applicationArguments().orNull(), openMode().orNull(), creationTime().orNull(),
@@ -580,6 +581,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
         this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         this.initScripts(other.initScripts().orNull());
         this.initPlatforms(other.initPlatforms().orNull());
         this.desktopLauncher(other.desktopLauncher().orNull());
@@ -666,6 +668,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
         this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         this.initScripts(other.initScripts().orNull());
         this.initPlatforms(other.initPlatforms().orNull());
         this.desktopLauncher(other.desktopLauncher().orNull());
@@ -757,6 +760,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
         this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         this.initScripts(other.initScripts().orNull());
         this.initPlatforms(other.initPlatforms().orNull());
         this.desktopLauncher(other.desktopLauncher().orNull());
@@ -1042,6 +1046,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         }
         if (other.initJava().isPresent()) {
             this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         }
         if (other.initScripts().isPresent()) {
             this.initScripts(other.initScripts().orNull());
@@ -1273,6 +1278,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         }
         if (other.initJava().isPresent()) {
             this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         }
         if (other.initScripts().isPresent()) {
             this.initScripts(other.initScripts().orNull());
@@ -1424,6 +1430,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.isolationLevel(this.isolationLevel().map(x -> x.id()).orNull());
         r.initLaunchers(this.initLaunchers().orNull());
         r.initJava(this.initJava().orNull());
+        r.localMaven(this.localMaven().orNull());
         r.initScripts(this.initScripts().orNull());
         r.initPlatforms(this.initPlatforms().orNull());
         r.desktopLauncher(this.desktopLauncher().map(x -> x.id()).orNull());
@@ -1473,6 +1480,12 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     @Override
     public NBootOptionsBuilder initJava(Boolean initJava) {
         this.initJava = initJava;
+        return this;
+    }
+
+    @Override
+    public NBootOptionsBuilder localMaven(Boolean localMaven) {
+        this.localMaven = localMaven;
         return this;
     }
 
@@ -2604,6 +2617,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.isolationLevel(NIsolationLevel.parse(other.isolationLevel()).orNull());
         this.initLaunchers(other.initLaunchers());
         this.initJava(other.initJava());
+        this.localMaven(other.localMaven());
         this.initScripts(other.initScripts());
         this.initPlatforms(other.initPlatforms());
         this.desktopLauncher(NSupportMode.parse(other.desktopLauncher()).orNull());
@@ -2801,6 +2815,11 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     @Override
+    public NOptional<Boolean> localMaven() {
+        return NOptional.ofNamed(localMaven, "localMaven");
+    }
+
+    @Override
     public NBootOptionsBuilder unsetRuntimeOptions() {
         commandHelp(null);
         commandVersion(null);
@@ -2870,6 +2889,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         initPlatforms(null);
         initScripts(null);
         initJava(null);
+        localMaven(null);
         desktopLauncher(null);
         menuLauncher(null);
         userLauncher(null);

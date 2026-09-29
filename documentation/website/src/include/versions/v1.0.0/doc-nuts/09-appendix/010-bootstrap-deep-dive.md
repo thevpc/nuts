@@ -17,7 +17,7 @@ When you execute `nuts` (or `java -jar nuts.jar`), `NBootWorkspaceImpl` executes
 1. **Inherited System Properties**: Reads options from system env (`NUTS_BOOT_ARGS`) and propertu (`nuts.args`) (unless `--skip-inherited` is specified).
 2. **Command Line Arguments**: Tokenizes CLI options using `NBootWorkspaceCmdLineParser`.
 3. **Custom Boot Options**:
-   - `---m2`: Enables or disables local Maven repository (`~/.m2/repository`) integration.
+   - `--local-maven`: Enables or disables local Maven repository (`~/.m2/repository`) integration.
    - `---connection-timeout`: Sets network timeout thresholds for remote repository checks.
 4. **Bot / Automation Mode**: If launched for shell completion or with `--bot`, interactive prompts are disabled (`confirm=ERROR` or `confirm=NO`).
 

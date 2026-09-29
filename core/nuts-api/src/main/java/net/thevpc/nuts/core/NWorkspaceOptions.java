@@ -129,6 +129,14 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<Boolean> initJava();
 
     /**
+     * whether the local maven repository may be used to resolve artifacts.
+     *
+     * @return local maven
+     * @since 1.0.0
+     */
+    NOptional<Boolean> localMaven();
+
+    /**
      * nuts api version to boot.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child

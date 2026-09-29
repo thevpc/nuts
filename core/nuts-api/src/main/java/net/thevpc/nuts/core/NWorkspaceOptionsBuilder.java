@@ -119,6 +119,15 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
     NWorkspaceOptionsBuilder initJava(Boolean initJava);
 
     /**
+     * whether the local maven repository may be used to resolve artifacts.
+     *
+     * @param localMaven local maven
+     * @return local maven result
+     * @since 1.0.0
+     */
+    NWorkspaceOptionsBuilder localMaven(Boolean localMaven);
+
+    /**
      * Checks if isolation level.
      *
      * @param isolationLevel isolation level
@@ -907,6 +916,14 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
      * @since 0.8.4
      */
     NOptional<Boolean> initJava();
+
+    /**
+     * whether the local maven repository may be used to resolve artifacts.
+     *
+     * @return local maven
+     * @since 1.0.0
+     */
+    NOptional<Boolean> localMaven();
 
     /**
      * nuts api version to boot.

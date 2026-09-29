@@ -34,14 +34,21 @@ import net.thevpc.nuts.core.NRepositorySpec;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.core.NRepositoryLocation;
+import net.thevpc.nuts.core.NWorkspace;
+import net.thevpc.nuts.spi.NRepositorySelectorList;
+import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vpc on 1/15/17.
@@ -56,13 +63,89 @@ public class MavenSettingsRepository extends NRepositoryList {
         LOG = NLog.of(MavenSettingsRepository.class);
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
+        Set<String> usedNames = new HashSet<>();
 
-        base.add(createChild(options, "maven-local", name()+"-local", settings.getLocalRepository()));
-        base.add(createChild(options, "maven-central", name()+"-central", settings.getRemoteRepository()));
+        addChild(base, options, usedNames, MavenUtils.LOCAL_MAVEN_REPO_NAME,
+                MavenUtils.LOCAL_MAVEN_REPO_NAME, settings.getLocalRepository());
+        addChild(base, options, usedNames, MavenUtils.CENTRAL_MAVEN_REPO_NAME,
+                MavenUtils.CENTRAL_MAVEN_REPO_NAME, settings.getRemoteRepository());
         for (NRepositoryLocation activeRepository : settings.getActiveRepositories()) {
-            base.add(createChild(options, "maven-extra", name()+"-" + activeRepository.name(), activeRepository.path()));
+            String id = activeRepository.name();
+            if (NBlankable.isBlank(id)) {
+                continue;
+            }
+            addChild(base, options, usedNames, MavenUtils.EXTRA_MAVEN_REPO_NAME,
+                    name() + "-" + id.trim(), activeRepository.path());
         }
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
+    }
+
+    /**
+     * Creates a settings sub-repository unless an explicit {@code -} selector
+     * rejects it, as in {@code --repos=-maven-local}.
+     *
+     * @param base      collected sub-repositories
+     * @param options   parent repository options
+     * @param usedNames names already taken, updated with the new name
+     * @param type      sub-repository type
+     * @param childName desired sub-repository name
+     * @param path      sub-repository path
+     */
+    private void addChild(List<NRepository> base, NRepositorySpec options, Set<String> usedNames,
+                          String type, String childName, String path) {
+        String unique = uniqueName(name(), childName, usedNames);
+        if (isExcluded(unique)) {
+            return;
+        }
+        base.add(createChild(options, type, unique, path));
+    }
+
+    /**
+     * Whether a settings sub-repository is rejected by an explicit {@code -}
+     * selector, such as {@code --repos=-maven-local}.
+     *
+     * @param childName sub-repository name
+     * @return true if the sub-repository must not be created
+     */
+    private boolean isExcluded(String childName) {
+        NRepositorySelectorList selectors = NRepositoryUtils
+                .createRepositorySelectorList(
+                        NCollections.nonNullList(NWorkspace.of().bootOptions().repositories().orElseGet(java.util.Collections::emptyList)))
+                .orNull();
+        if (selectors == null) {
+            return false;
+        }
+        boolean excluded = selectors.explicitlyExcludes(
+                new NRepositorySpec().name(childName).sourceLocation(NRepositoryLocation.ofName(childName)));
+        if (excluded) {
+            LOG.log(NMsg.ofC("maven sub-repository %s excluded by %s", childName, selectors).asFine());
+        }
+        return excluded;
+    }
+
+    /**
+     * Guarantees that every settings sub-repository gets a unique name. Maven
+     * {@code settings.xml} files routinely reuse ids (including the reserved
+     * {@code local} and {@code central}), and a duplicate name would make the
+     * repository unreachable by {@code --repos} selection and would share its
+     * store folder with the first definition.
+     *
+     * @param parent    parent repository name, such as {@code maven}
+     * @param candidate desired child name
+     * @param usedNames names already taken
+     * @return a name not present in {@code usedNames}
+     */
+    private String uniqueName(String parent, String candidate, Set<String> usedNames) {
+        String name = candidate;
+        int i = 2;
+        while (!usedNames.add(name)) {
+            name = parent + "-" + candidate + "-" + i;
+            i++;
+        }
+        if (!candidate.equals(name)) {
+            LOG.log(NMsg.ofC("duplicate maven repository name %s, using %s instead", candidate, name).asWarning());
+        }
+        return name;
     }
 
     private MavenFolderRepository createChild(NRepositorySpec options0, String type, String id, String url) {
@@ -83,7 +166,7 @@ public class MavenSettingsRepository extends NRepositoryList {
             //non traversable!
             case "http":
             case "https": {
-                if("maven-extra".equals(type)){
+                if(MavenUtils.EXTRA_MAVEN_REPO_NAME.equals(type)){
                     NPath nr = NPath.of(url).resolve(".nuts-repository");
                     LOG.log(NMsg.ofC("check repository metadata at %s",nr).asDebug());
                     NChronometer c = NChronometer.of();

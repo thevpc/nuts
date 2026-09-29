@@ -261,6 +261,28 @@ public class NBootRepositorySelectorList {
         return includeOthers;
     }
 
+    /**
+     * Whether a repository is explicitly rejected by one of the <code>-</code>
+     * selectors, ignoring inclusion and exact-match selectors. This lets the boot
+     * phase react to a sub-repository selection such as
+     * <code>--repos=-maven-local</code> without letting a <code>+</code> or
+     * <code>=</code> selector drop the whole <code>maven</code> repository.
+     *
+     * @param location location
+     * @return true if an EXCLUDE selector matches the location
+     */
+    public boolean explicitlyExcludes(NBootRepositoryLocation location) {
+        if (location == null) {
+            return false;
+        }
+        for (NBootRepositorySelector s : selectors) {
+            if ("EXCLUDE".equals(s.op()) && s.matches(location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public NBootRepositorySelector[] toArray() {
         return selectors.toArray(new NBootRepositorySelector[0]);
     }

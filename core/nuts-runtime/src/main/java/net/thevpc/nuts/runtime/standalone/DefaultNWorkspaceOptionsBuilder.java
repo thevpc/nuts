@@ -438,6 +438,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean initScripts;
     private Boolean initPlatforms;
     private Boolean initJava;
+    private Boolean localMaven;
     private NIsolationLevel isolationLevel;
     private NSupportMode desktopLauncher;
     private NSupportMode menuLauncher;
@@ -520,6 +521,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         initScripts = null;
         initPlatforms = null;
         initJava = null;
+        localMaven = null;
         isolationLevel = null;
         desktopLauncher = null;
         menuLauncher = null;
@@ -561,6 +563,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
+    public NWorkspaceOptionsBuilder localMaven(Boolean localMaven) {
+        this.localMaven = localMaven;
+        return this;
+    }
+
     public NWorkspaceOptionsBuilder initJava(Boolean initJava) {
         this.initJava = initJava;
         return this;
@@ -1668,6 +1675,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
         this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         this.initScripts(other.initScripts().orNull());
         this.initPlatforms(other.initPlatforms().orNull());
         this.desktopLauncher(other.desktopLauncher().orNull());
@@ -1755,6 +1763,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.isolationLevel(other.isolationLevel().orNull());
         this.initLaunchers(other.initLaunchers().orNull());
         this.initJava(other.initJava().orNull());
+        this.localMaven(other.localMaven().orNull());
         this.initScripts(other.initScripts().orNull());
         this.initPlatforms(other.initPlatforms().orNull());
         this.desktopLauncher(other.desktopLauncher().orNull());
@@ -1882,6 +1891,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.isolationLevel(NIsolationLevel.parse(other.isolationLevel()).orNull());
         this.initLaunchers(other.initLaunchers());
         this.initJava(other.initJava());
+        this.localMaven(other.localMaven());
         this.initScripts(other.initScripts());
         this.initPlatforms(other.initPlatforms());
         this.desktopLauncher(NSupportMode.parse(other.desktopLauncher()).orNull());
@@ -1966,6 +1976,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             assignmentPolicy.applyOptionalValue(this::isolationLevel, other::isolationLevel, this::isolationLevel);
             assignmentPolicy.applyOptionalValue(this::initLaunchers, other::initLaunchers, this::initLaunchers);
             assignmentPolicy.applyOptionalValue(this::initJava, other::initJava, this::initJava);
+            assignmentPolicy.applyOptionalValue(this::localMaven, other::localMaven, this::localMaven);
             assignmentPolicy.applyOptionalValue(this::initScripts, other::initScripts, this::initScripts);
             assignmentPolicy.applyOptionalValue(this::initLaunchers, other::initLaunchers, this::initLaunchers);
             assignmentPolicy.applyOptionalValue(this::desktopLauncher, other::desktopLauncher, this::desktopLauncher);
@@ -2114,7 +2125,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 commandHelp().orNull(), commandHelp().orNull(), switchWorkspace().orNull(), cached().orNull(),
                 indexed().orNull(), transitive().orNull(), bot().orNull(), skipErrors().orNull(),
                 isolationLevel().orNull(), initLaunchers().orNull(), initScripts().orNull(), initPlatforms().orNull(),
-                initJava().orNull(), stdin().orNull(), stdout().orNull(), stdout().orNull(), executorService().orNull(),
+                initJava().orNull(), localMaven().orNull(), stdin().orNull(), stdout().orNull(), stdout().orNull(), executorService().orNull(),
                 classLoaderSupplier().orNull(), applicationArguments().orNull(), outputFormatOptions().orNull(),
                 customOptions().orNull(), excludedExtensions().orNull(), repositories().orNull(), bootRepositories().orNull(),
                 executorOptions().orNull(), errors().orNull(), storeLocations().orNull(), homeLocations().orNull(),
@@ -2160,6 +2171,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
+    public NOptional<Boolean> localMaven() {
+        return NOptional.ofNamed(localMaven, "localMaven");
+    }
+
     public NOptional<Boolean> initJava() {
         return NOptional.ofNamed(initJava, "initJava");
     }

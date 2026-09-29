@@ -68,7 +68,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             null, null,
             null,
             null, null, null,
-            null, null, null, null, null,null, null);
+            null, null, null, null, null,null, null,null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -428,6 +428,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean initScripts;
     private final Boolean initPlatforms;
     private final Boolean initJava;
+    private final Boolean localMaven;
     private final Boolean sharedInstance;
     private final NIsolationLevel isolationLevel;
     private final NSupportMode desktopLauncher;
@@ -447,7 +448,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     Boolean trace, Boolean dry, Boolean force, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion,
                                     Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
                                     Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
-                                    NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
+                                    NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, Boolean localMaven, InputStream stdin, PrintStream stdout, PrintStream stderr,
                                     ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
                                     List<String> applicationArguments, List<String> outputFormatOptions,
                                     List<String> customOptions, List<String> excludedExtensions, List<String> repositories, List<String> bootRepositories,
@@ -530,6 +531,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.initScripts = initScripts;
         this.initPlatforms = initPlatforms;
         this.initJava = initJava;
+        this.localMaven = localMaven;
         this.desktopLauncher = desktopLauncher;
         this.menuLauncher = menuLauncher;
         this.userLauncher = userLauncher;
@@ -646,6 +648,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.isolationLevel(this.isolationLevel().map(x -> x.id()).orNull());
         r.initLaunchers(this.initLaunchers().orNull());
         r.initJava(this.initJava().orNull());
+        r.localMaven(this.localMaven().orNull());
         r.initScripts(this.initScripts().orNull());
         r.initPlatforms(this.initPlatforms().orNull());
         r.desktopLauncher(this.desktopLauncher().map(x -> x.id()).orNull());
@@ -703,6 +706,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     @Override
     public NOptional<Boolean> initJava() {
         return NOptional.ofNamed(initJava, "initJava");
+    }
+
+    @Override
+    public NOptional<Boolean> localMaven() {
+        return NOptional.ofNamed(localMaven, "localMaven");
     }
 
     @Override

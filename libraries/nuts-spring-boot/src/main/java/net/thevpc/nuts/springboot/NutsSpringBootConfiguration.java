@@ -18,6 +18,8 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.text.NMsg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
@@ -33,6 +35,7 @@ import java.util.*;
 @Configuration
 @ConditionalOnClass(Nuts.class)
 public class NutsSpringBootConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(NutsSpringBootConfiguration.class);
     @Autowired
     private ApplicationContext sac;
     @Autowired
@@ -115,9 +118,9 @@ public class NutsSpringBootConfiguration {
             } else {
                 validApp = NApplicationHandler.createApplicationInstanceFromAnnotatedInstance(validAppBean);
             }
-        }catch (Exception e) {
-            NLog.of(NApplicationHandler.class).info(NMsg.ofC("Error configuring the application : %s",e));
-            validApp=new NApplicationHandler() {
+        } catch (Exception e) {
+            NLog.of(NApplicationHandler.class).info(NMsg.ofC("Error configuring the application : %s", e));
+            validApp = new NApplicationHandler() {
                 @Override
                 public void run() {
                     // do nothing
@@ -139,6 +142,7 @@ public class NutsSpringBootConfiguration {
         if (SpringNApplicationResolverSPI.globalApplicationContext == null) {
             SpringNApplicationResolverSPI.globalApplicationContext = sac;
         }
+        log.debug(NMsg.ofC("[SPRING-NUTS] applicationArguments %s", Arrays.asList(applicationArguments.getSourceArgs())).toString());
         NWorkspace workspace = Nuts.openWorkspace(
                 NBootArguments.of(resolveNutsArgs())
                         .appArgs(applicationArguments.getSourceArgs())
@@ -157,13 +161,16 @@ public class NutsSpringBootConfiguration {
     }
 
     private String[] resolveNutsArgs() {
-        List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(env.getProperty(NConstants.SysProps.NUTS_ARGS))));
+        String property = env.getProperty(NConstants.SysProps.NUTS_ARGS);
+        log.debug(NMsg.ofC("[SPRING-NUTS] read env %s, found %s", NConstants.SysProps.NUTS_ARGS, property).toString());
+        List<String> args = new ArrayList<>(Arrays.asList(NBootCmdLine.parseDefault(property)));
         //always enable main instance in spring apps
         if (args.isEmpty()) {
             args.add("--sandbox");
         }
         args.add("--shared-instance=true");
         args.add("--yes");
+        log.debug(NMsg.ofC("[SPRING-NUTS] full options %s", args).toString());
         return args.toArray(new String[0]);
     }
 

@@ -114,6 +114,28 @@ public class NRepositorySelectorList {
     }
 
     /**
+     * Whether an already known repository is explicitly rejected by one of the
+     * {@code -} selectors. Unlike {@link #acceptExisting(NRepositorySpec)} this
+     * ignores inclusion and exact-match selectors, so it can be used to filter
+     * sub-repositories of an accepted repository without letting a {@code +} or
+     * {@code =} selector drop the whole parent.
+     *
+     * @param location location
+     * @return true if an EXCLUDE selector matches the location
+     */
+    public boolean explicitlyExcludes(NRepositorySpec location) {
+        if (location == null || location.sourceLocation() == null) {
+            return false;
+        }
+        for (NRepositorySelector s : selectors) {
+            if (s.op() == NSelectorOp.EXCLUDE && s.matches(location.sourceLocation())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Converts to array.
      *
      * @return to array result
