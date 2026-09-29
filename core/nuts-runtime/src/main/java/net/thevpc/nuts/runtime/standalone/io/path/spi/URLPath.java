@@ -8,6 +8,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.net.NHttpClient;
+import net.thevpc.nuts.net.NHttpResponse;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
@@ -401,7 +402,12 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NHttpClient best = NExtensions.of().createSupported(NHttpClient.class, url).get();
-            return best.GET().uri(url.toString()).run().content().inputStream();
+            NHttpResponse rr = best.GET().uri(url.toString()).run();
+            if(rr.isOk()) {
+                return rr.content().inputStream();
+            }
+            NMsg m = rr.statusMessage();
+            throw new NIOException(NMsg.ofC("%s", NBlankable.isBlank(m)?"Error":m));
         }
         try {
             return DefaultNHttpClient.prepareGlobalOpenStream(url);
