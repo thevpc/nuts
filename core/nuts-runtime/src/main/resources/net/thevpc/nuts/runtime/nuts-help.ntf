@@ -753,6 +753,9 @@ will search for it), aliases (a commodity mechanism to extend internal commands)
  ```sh -e [<-options>]... [command] <args>...```
       run command with the given executor options ( it will be considered an option if it
       starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.
+      the java to run with is selected using ```sh --java-version``` which accepts, besides a version
+      such as ```kw 17```, the ```kw current``` keyword (the java home of the running ```sh nuts``` process,
+      never provisioning a new jdk) or the name of a java installation registered in the workspace.
       for more details, type : ```sh nuts``` help exec
 
  ```sh which [<-options>]... [command] ...```

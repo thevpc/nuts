@@ -66,6 +66,19 @@ execute a command
     ```sh --java-version=<version>```
         specify required Java version (e.g. 11, 17, 21)
 
+        besides a version, two other values are accepted :
+        ```kw current```  use the ##:_:current## java home, that is the java home of the running
+        ```sh nuts``` process. no other jdk is searched for and no new jdk is ever provisioned.
+        ```kw <name>```  the name of a java installation registered in the workspace
+        (see ```sh nuts settings add java``` and ```sh nuts info``` to list them).
+
+        a value that is neither a version nor the name of a registered java installation is rejected.
+
+        when a plain version is used and no such java is available, ```sh nuts``` searches the system for a
+        matching installation and, failing that, proposes to download and install a new one. In both cases the
+        ##:_:maximum## of the requested version and the version required by the artifact is used. This does not
+        apply to ```kw current``` and to registered java names which are always honored as is.
+
     ```sh --java-home=<path>```
         specify explicit Java installation path
 
@@ -108,6 +121,13 @@ execute a command
     ```sh nuts exec my-nuts```
         executes the latest version of my-nuts-group:my-nuts supposing that my-nuts-group
         is added as imported group using config import my-nuts-group
+
+    ```sh nuts exec --java-version=current my-nuts-group:my-nuts```
+        executes my-nuts using the java of the currently running ```sh nuts``` process, without
+        ever downloading or installing another jdk
+
+    ```sh nuts exec --java-version=jdk-Temurin-21.0.2+13 my-nuts-group:my-nuts```
+        executes my-nuts using the registered java installation named ```kw jdk-Temurin-21.0.2+13```
 
     ```sh nuts -ZSby -w test ./build-website.nsh ```
         run sh file
