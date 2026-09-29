@@ -284,7 +284,132 @@ public class NJavaSdkUtils {
         return hostVm;
     }
 
+    /**
+     * Effective java home of the currently running JVM. On legacy layouts (java 8 and below) the
+     * {@code java.home} system property points to the nested {@code jre} folder, so the enclosing
+     * folder is used whenever the executable is not found in the direct child.
+     *
+     * @return java home of the currently running JVM
+     * @since 1.0.0
+     */
+    public static NPath currentJavaHome() {
+        String appSuffix = NEnv.of().osFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        NPath home = NPath.of(System.getProperty("java.home"));
+        if (home != null) {
+            if (home.resolve("bin").resolve("java" + appSuffix).isRegularFile()) {
+                return home;
+            }
+            NPath parent = home.parent();
+            if (parent != null && parent.resolve("bin").resolve("java" + appSuffix).isRegularFile()) {
+                return parent;
+            }
+        }
+        return home;
+    }
+
+    /**
+     * Checks whether the given java version spec is a plain version (such as {@code 11}, {@code 1.8.0_452}
+     * or {@code 21+35}) rather than an alias such as {@code current} or a registered java installation name.
+     *
+     * @param javaVersion java version spec
+     * @return true if the spec starts with a number and hence can be resolved as a version
+     * @since 1.0.0
+     */
+    public static boolean isJavaVersionSpec(String javaVersion) {
+        if (NBlankable.isBlank(javaVersion)) {
+            return true;
+        }
+        String s = NStringUtils.strip(javaVersion);
+        int i = 0;
+        while (i < s.length() && Character.isDigit(s.charAt(i))) {
+            i++;
+        }
+        return i > 0;
+    }
+
+    /**
+     * Checks whether the given java version spec denotes the currently running JVM.
+     *
+     * @param javaVersion java version spec
+     * @return true if the spec is {@code current}
+     * @since 1.0.0
+     */
+    public static boolean isCurrentJavaSpec(String javaVersion) {
+        return !NBlankable.isBlank(javaVersion)
+                && NNameFormat.equalsIgnoreFormat(javaVersion, NRuntimeDistribution.JAVA_VERSION_CURRENT);
+    }
+
+    /**
+     * Finds a registered java installation by its name.
+     *
+     * @param name java installation name
+     * @return the matching java installation or an empty optional if no java is registered with that name
+     * @since 1.0.0
+     */
+    public NOptional<NRuntimeDistribution> findJavaDistributionByName(String name) {
+        NRuntimeDistributionManager manager = NRuntimeDistributionManager.of();
+        NOptional<NRuntimeDistribution> r = manager.findRuntimeDistributionByName(NRuntimeDistributionFamily.JAVA, name);
+        if (r.isPresent()) {
+            return r;
+        }
+        return manager.findRuntimeDistribution(
+                NRuntimeDistributionFamily.JAVA,
+                x -> NNameFormat.equalsIgnoreFormat(x.name(), name)
+        );
+    }
+
+    /**
+     * Resolves a java version spec that is not a plain version. Two aliases are supported :
+     * <ul>
+     *     <li>{@code current} : the java home of the currently running JVM</li>
+     *     <li>the name of a registered java installation (see {@link NRuntimeDistribution} of family java)</li>
+     * </ul>
+     * Such a spec is honored as is : no other java version is searched for and no new jdk is ever provisioned.
+     *
+     * @param javaVersion java version spec
+     * @return the resolved java installation, an empty optional if the spec is a plain version (and hence
+     * should be resolved the standard way), or an error optional if the spec is neither a version nor a
+     * valid alias
+     * @since 1.0.0
+     */
+    public NOptional<NRuntimeDistribution> resolveJavaDistribution(String javaVersion) {
+        if (NBlankable.isBlank(javaVersion)) {
+            return NOptional.ofEmpty(NMsg.ofC("java version"));
+        }
+        String spec = NStringUtils.strip(javaVersion);
+        if (isCurrentJavaSpec(spec)) {
+            NRuntimeDistribution host = getHostJvm();
+            if (host == null || NBlankable.isBlank(host.path())) {
+                return NOptional.ofNamedError(NMsg.ofC("current java home '%s'", System.getProperty("java.home")));
+            }
+            NPath home = currentJavaHome();
+            if (home != null && !home.toString().equals(host.path())) {
+                host = new NRuntimeDistributionImpl(
+                        host.id(), host.vendor(), host.product(), host.variant(),
+                        host.name(), home.toString(), host.version(), host.packaging(), host.priority()
+                );
+            }
+            return NOptional.of(host);
+        }
+        NOptional<NRuntimeDistribution> byName = findJavaDistributionByName(spec);
+        if (byName.isPresent()) {
+            return byName;
+        }
+        if (isJavaVersionSpec(spec)) {
+            return NOptional.ofEmpty(NMsg.ofC("java version %s", spec));
+        }
+        return NOptional.ofNamedError(NMsg.ofC("'%s' is neither a java version nor a registered java installation name. use '%s' to run with the current jvm",
+                spec, NRuntimeDistribution.JAVA_VERSION_CURRENT
+        ));
+    }
+
     public NOptional<NRuntimeDistribution> resolveJdkLocation(String javaVersion, boolean jdk, boolean ifNotFoundSearchLocally, boolean ifNotFoundSearchRemotely, String remoteVendor) {
+        // [0] honor explicit java specs that are not versions: 'current' or a registered java name.
+        // No other java is searched for and no jdk is provisioned in this case.
+        NOptional<NRuntimeDistribution> explicitJava = resolveJavaDistribution(javaVersion);
+        if (explicitJava.isPresent() || explicitJava.isError()) {
+            return explicitJava;
+        }
         // [1] look if locally this version is installed (1.8)
         // [2] look if host JVM 1.8
         // [3] look if locally this version could be installed (1.8 after confirmation)

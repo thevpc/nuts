@@ -87,7 +87,7 @@ public final class JavaExecutorOptions {
 
         cmdLine.matcher()
                 .when("--java-version","-java-version").asEntry((v) -> javaVersion = v.stringValue())
-                .when("--java-home","-java-home").asEntry((v) -> javaCommand = v.stringValue())
+                .when("--java-home","-java-home","--java","-java").asEntry((v) -> javaCommand = v.stringValue())
                 .when("--class-path","-class-path","--classpath","-classpath","--cp","-cp").asEntry((v) -> addCp(currentCP, v.stringValue()))
                 .when("--nuts-path","-nuts-path","--nutspath","-nutspath","--np","-np").asEntry((v) -> addNp(currentCP, v.stringValue()))
                 .when("--main-class","-main-class","--class","-class").asEntry((v) -> mainClass = v.stringValue())
@@ -561,13 +561,24 @@ public final class JavaExecutorOptions {
     }
 
     private void resolveJavaSdk(NDefinition def, Path path, NVersion explicitJavaVersion, List<String> args) {
-        if (path != null) {
-            NVersion binJavaVersion = JavaJarUtils.parseJarClassVersion(
-                    NPath.of(path)
-            );
-            if (!NBlankable.isBlank(binJavaVersion) && (NBlankable.isBlank(javaVersion) || binJavaVersion.compareTo(javaVersion) > 0)) {
-                javaVersion = binJavaVersion.toString();
+        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
+        String javaVersionSpec = javaVersion;
+        NRuntimeDistribution requestedJava = null;
+        if (!NBlankable.isBlank(javaVersion)) {
+            // '--java-version' may denote the current jvm or a registered java installation.
+            // Such an explicit request is honored as is: no version is upgraded and no jdk is provisioned.
+            NOptional<NRuntimeDistribution> explicitJava = nJavaSdkUtils.resolveJavaDistribution(javaVersion);
+            if (explicitJava.isPresent()) {
+                requestedJava = explicitJava.get();
+                javaVersion = requestedJava.version();
+            } else if (explicitJava.isError()) {
+                //the spec is neither a version nor a valid alias : propagate the actual reason
+                throw new NExecutionException(explicitJava.message().get(), NExecutionException.ERROR_1);
             }
+        }
+        NVersion binJavaVersion = null;
+        if (path != null) {
+            binJavaVersion = JavaJarUtils.parseJarClassVersion(NPath.of(path));
         }
         if (explicitJavaVersion == null) {
             explicitJavaVersion = def.descriptor().condition().platform().stream().map(x -> NId.get(x).get())
@@ -576,13 +587,38 @@ public final class JavaExecutorOptions {
                     .min(Comparator.naturalOrder())
                     .orElse(null);
         }
-        if (!NBlankable.isBlank(explicitJavaVersion) && (NBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
-            javaVersion = explicitJavaVersion.toString();
+        NVersion requiredJavaVersion = null;
+        if (!NBlankable.isBlank(binJavaVersion)) {
+            requiredJavaVersion = binJavaVersion;
         }
-        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of();
-        NOptional<NRuntimeDistribution> nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true,null);
-        if (!nutsPlatformLocation.isPresent()) {
-            throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.strip(getJavaVersion())), NExecutionException.ERROR_1);
+        if (!NBlankable.isBlank(explicitJavaVersion)
+                && (requiredJavaVersion == null || explicitJavaVersion.compareTo(requiredJavaVersion) > 0)) {
+            requiredJavaVersion = explicitJavaVersion;
+        }
+        NOptional<NRuntimeDistribution> nutsPlatformLocation;
+        if (requestedJava != null) {
+            if (requiredJavaVersion != null && requiredJavaVersion.compareTo(requestedJava.version()) > 0) {
+                if (NOut.isPlain() && NSession.of().isPlainTrace()) {
+                    NSession.of().terminal().err().println(NMsg.ofC(
+                            "warning: java %s is required but java version '%s' was requested. using %s at %s",
+                            requiredJavaVersion, javaVersionSpec, requestedJava.name(), requestedJava.path()
+                    ));
+                }
+            }
+            nutsPlatformLocation = NOptional.of(requestedJava);
+        } else {
+            if (requiredJavaVersion != null
+                    && (NBlankable.isBlank(javaVersion) || requiredJavaVersion.compareTo(javaVersion) > 0)) {
+                javaVersion = requiredJavaVersion.toString();
+            }
+            nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion(), false, true, true, null);
+            if (nutsPlatformLocation.isError()) {
+                //the spec could not be resolved to any java : propagate the actual reason
+                throw new NExecutionException(nutsPlatformLocation.message().get(), NExecutionException.ERROR_1);
+            }
+            if (!nutsPlatformLocation.isPresent()) {
+                throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.strip(getJavaVersion())), NExecutionException.ERROR_1);
+            }
         }
         javaEffVersion = nutsPlatformLocation.get().version();
         javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation.get(), javaw).orNull();

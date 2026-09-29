@@ -19,6 +19,13 @@ public interface NRuntimeDistribution extends Serializable, Cloneable {
     String JAVA_VENDOR_ZULU = "zulu";
     String JAVA_VARIANT_NONE = "";
 
+    /**
+     * Special java version spec meaning 'use the java home of the currently running JVM'.
+     * Contrary to a plain version, no other java version is searched for and no new jdk is ever
+     * provisioned for this value.
+     */
+    String JAVA_VERSION_CURRENT = "current";
+
     // ── PYTHON ──
     // No jdk/jre-style product split; CPython/PyPy/etc is an implementation
     // difference, so — per your correction — it belongs under vendor, same
