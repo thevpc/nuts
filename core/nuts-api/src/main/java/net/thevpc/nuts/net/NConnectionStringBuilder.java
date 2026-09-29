@@ -33,12 +33,6 @@ public interface NConnectionStringBuilder extends NComponent {
      * @return of result
      */
     static NConnectionStringBuilder of(String expression) {
-        /**
-         * Returns the get.
-         *
-         * @param expression).get( expression).get(
-         * @return get result
-         */
         return get(expression).get();
     }
 

@@ -60,13 +60,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named empty result
      */
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param %s" %s"
-         * @param "value")) "value"))
-         * @return of empty result
-         */
         return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
@@ -77,12 +70,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named empty result
      */
     static <T> NOptional<T> ofNamedEmpty(NMsg name) {
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param name) name)
-         * @return of empty result
-         */
         return ofEmpty(NMsg.ofC("missing %s", name == null ? "value" : name));
     }
 
@@ -93,13 +80,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named error result
      */
     static <T> NOptional<T> ofNamedError(NMsg name) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param %s" %s"
-         * @param name name
-         * @return of error result
-         */
         return ofError(name == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> name);
     }
 
@@ -111,13 +91,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named error result
      */
     static <T> NOptional<T> ofNamedError(NMsg name, Throwable throwable) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param %s" %s"
-         * @param throwable throwable
-         * @return of error result
-         */
         return ofError(name == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> name, throwable);
     }
 
@@ -128,13 +101,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named error result
      */
     static <T> NOptional<T> ofNamedError(String name) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param %s" %s"
-         * @param "value")) "value"))
-         * @return of error result
-         */
         return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
@@ -146,13 +112,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named error result
      */
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param %s" %s"
-         * @param throwable throwable
-         * @return of error result
-         */
         return ofError(() -> NMsg.ofC("error evaluating %s", name), throwable);
     }
 
@@ -162,12 +121,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of empty result
      */
     static <T> NOptional<T> ofEmpty() {
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param null null
-         * @return of empty result
-         */
         return ofEmpty((Supplier<NMsg>) null);
     }
 
@@ -198,13 +151,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of error result
      */
     static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param errorMessage error message
-         * @param null null
-         * @return of error result
-         */
         return ofError(errorMessage, null);
     }
 
@@ -215,12 +161,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of error result
      */
     static <T> NOptional<T> ofError(NMsg errorMessage) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param null null
-         * @return of error result
-         */
         return ofError(errorMessage == null ? null : () -> errorMessage, null);
     }
 
@@ -232,12 +172,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of error result
      */
     static <T> NOptional<T> ofError(NMsg errorMessage, Throwable throwable) {
-        /**
-         * Creates a new instance of error.
-         *
-         * @param throwable throwable
-         * @return of error result
-         */
         return ofError(errorMessage == null ? null : () -> errorMessage, throwable);
     }
 
@@ -269,13 +203,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of result
      */
     static <T> NOptional<T> of(T value) {
-        /**
-         * Creates a new instance.
-         *
-         * @param value value
-         * @param null null
-         * @return of result
-         */
         return of(value, (Supplier<NMsg>) null);
     }
 
@@ -286,13 +213,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of nullable result
      */
     static <T> NOptional<T> ofNullable(T value) {
-        /**
-         * Creates a new instance of nullable.
-         *
-         * @param value value
-         * @param null null
-         * @return of nullable result
-         */
         return ofNullable(value, (Supplier<NMsg>) null);
     }
 
@@ -337,14 +257,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named result
      */
     static <T> NOptional<T> ofNamed(T value, String name) {
-        /**
-         * Creates a new instance.
-         *
-         * @param value value
-         * @param %s" %s"
-         * @param "value")) "value"))
-         * @return of result
-         */
         return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
@@ -356,14 +268,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named result
      */
     static <T> NOptional<T> ofNamed(T value, NMsg name) {
-        /**
-         * Creates a new instance.
-         *
-         * @param value value
-         * @param %s" %s"
-         * @param name) name)
-         * @return of result
-         */
         return of(value, () -> NMsg.ofC("missing %s", name == null ? "value" : name));
     }
 
@@ -376,21 +280,8 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> of(T value, Supplier<NMsg> emptyMessage) {
         if (value == null) {
-            /**
-             * Creates a new instance of empty.
-             *
-             * @param emptyMessage empty message
-             * @return of empty result
-             */
             return ofEmpty(emptyMessage);
         }
-        /**
-         * Creates a new instance of nullable.
-         *
-         * @param value value
-         * @param emptyMessage empty message
-         * @return of nullable result
-         */
         return ofNullable(value, emptyMessage);
     }
 
@@ -403,21 +294,8 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> of(T value, NMsg emptyMessage) {
         if (value == null) {
-            /**
-             * Creates a new instance of empty.
-             *
-             * @param emptyMessage empty message
-             * @return of empty result
-             */
             return ofEmpty(emptyMessage);
         }
-        /**
-         * Creates a new instance of nullable.
-         *
-         * @param value value
-         * @param emptyMessage empty message
-         * @return of nullable result
-         */
         return ofNullable(value, emptyMessage == null ? null : () -> emptyMessage);
     }
 
@@ -427,12 +305,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of null result
      */
     static <T> NOptional<T> ofNull() {
-        /**
-         * Creates a new instance of nullable.
-         *
-         * @param null null
-         * @return of nullable result
-         */
         return ofNullable(null);
     }
 
@@ -444,14 +316,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of named optional result
      */
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        /**
-         * Creates a new instance of optional.
-         *
-         * @param optional optional
-         * @param %s" %s"
-         * @param "value")) "value"))
-         * @return of optional result
-         */
         return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlankStripped(name, "value")));
     }
 
@@ -463,13 +327,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return of optional result
      */
     static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg errorMessage) {
-        /**
-         * Creates a new instance of optional.
-         *
-         * @param optional optional
-         * @param errorMessage error message
-         * @return of optional result
-         */
         return ofOptional(optional, errorMessage == null ? null : () -> errorMessage);
     }
 
@@ -482,21 +339,8 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofOptional(Optional<T> optional, Supplier<NMsg> errorMessage) {
         if (optional.isPresent()) {
-            /**
-             * Creates a new instance.
-             *
-             * @param optional.get() optional.get()
-             * @param errorMessage error message
-             * @return of result
-             */
             return of(optional.get(), errorMessage);
         }
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param errorMessage error message
-         * @return of empty result
-         */
         return ofEmpty(errorMessage);
     }
 
@@ -521,14 +365,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return NOptional with the single element, or empty/error based on collection size
      */
     static <T> NOptional<T> ofSingleton(Collection<T> collection) {
-        /**
-         * Creates a new instance of singleton.
-         *
-         * @param collection collection
-         * @param null null
-         * @param null null
-         * @return of singleton result
-         */
         return ofSingleton(collection, null, null);
     }
 
@@ -556,14 +392,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofNamedSingleton(Collection<T> collection, String name) {
         if (name == null) {
-            /**
-             * Creates a new instance of singleton.
-             *
-             * @param collection collection
-             * @param null null
-             * @param null null
-             * @return of singleton result
-             */
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
@@ -594,42 +422,17 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     static <T> NOptional<T> ofSingleton(Collection<T> collection, Supplier<NMsg> emptyMessage, Supplier<NMsg> errorMessage) {
         if (collection == null || collection.isEmpty()) {
-            /**
-             * Creates a new instance of empty.
-             *
-             * @param emptyMessage empty message
-             * @return of empty result
-             */
             return ofEmpty(emptyMessage);
         }
         if (collection.size() > 1) {
             if (errorMessage == null) {
                 errorMessage = () -> NMsg.ofC("too many elements %s>1", collection.size());
             }
-            /**
-             * Creates a new instance of error.
-             *
-             * @param errorMessage error message
-             * @return of error result
-             */
             return ofError(errorMessage);
         }
         for (T t : collection) {
-            /**
-             * Creates a new instance.
-             *
-             * @param t t
-             * @param emptyMessage empty message
-             * @return of result
-             */
             return of(t, emptyMessage);
         }
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param errorMessage error message
-         * @return of empty result
-         */
         return ofEmpty(errorMessage);
     }
 
@@ -679,13 +482,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      * @return NOptional with the first element, or empty if collection is empty
      */
     static <T> NOptional<T> ofFirst(Collection<T> collection) {
-        /**
-         * Creates a new instance of first.
-         *
-         * @param collection collection
-         * @param null null
-         * @return of first result
-         */
         return ofFirst(collection, null);
     }
 
@@ -714,30 +510,11 @@ public interface NOptional<T> extends NBlankable, NDescribable {
             emptyMessage = () -> NMsg.ofP("missing element");
         }
         if (collection == null || collection.isEmpty()) {
-            /**
-             * Creates a new instance of empty.
-             *
-             * @param emptyMessage empty message
-             * @return of empty result
-             */
             return ofEmpty(emptyMessage);
         }
         for (T t : collection) {
-            /**
-             * Creates a new instance.
-             *
-             * @param t t
-             * @param emptyMessage empty message
-             * @return of result
-             */
             return of(t, emptyMessage);
         }
-        /**
-         * Creates a new instance of empty.
-         *
-         * @param emptyMessage empty message
-         * @return of empty result
-         */
         return ofEmpty(emptyMessage);
     }
 
@@ -766,9 +543,6 @@ public interface NOptional<T> extends NBlankable, NDescribable {
      */
     default NOptional<T> ifErrorThrow() {
         if (isError()) {
-          /**
-           * Returns the get.
-           */
             get();
         }
         return this;

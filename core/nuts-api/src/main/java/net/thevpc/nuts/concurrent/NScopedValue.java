@@ -67,11 +67,6 @@ public class NScopedValue<T> {
      * Values must then be provided explicitly or via {@link #computeIfAbsent(Supplier)}.
      */
     public NScopedValue() {
-      /**
-       * This.
-       *
-       * @param null null
-       */
         this(null);
     }
 

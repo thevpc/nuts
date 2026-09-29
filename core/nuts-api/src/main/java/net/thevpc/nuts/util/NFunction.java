@@ -19,13 +19,6 @@ public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunctio
      * @return of result
      */
     static <T, V> NFunction<T, V> of(Function<T, V> o) {
-        /**
-         * Creates a new instance.
-         *
-         * @param o o
-         * @param null null
-         * @return of result
-         */
         return of(o, null);
     }
 

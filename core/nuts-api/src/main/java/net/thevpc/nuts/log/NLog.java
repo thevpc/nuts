@@ -110,12 +110,6 @@ public interface NLog extends NLogger{
      * @return new instance of {@link NLog}
      */
     static NLog of(Class<?> clazz) {
-        /**
-         * Creates a new instance.
-         *
-         * @param "class").getName() "class").get name()
-         * @return of result
-         */
         return of(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
@@ -145,12 +139,6 @@ public interface NLog extends NLogger{
      * @return of scoped result
      */
     static NLog ofScoped(Class<?> clazz) {
-        /**
-         * Creates a new instance of scoped.
-         *
-         * @param "class").getName() "class").get name()
-         * @return of scoped result
-         */
         return ofScoped(NAssert.requireNamedNonBlank(clazz, "class").getName());
     }
 
@@ -192,12 +180,6 @@ public interface NLog extends NLogger{
      * @return of scoped result
      */
     static NLog ofScoped(String name) {
-        /**
-         * Creates a new instance.
-         *
-         * @param name).scoped( name).scoped(
-         * @return of result
-         */
         return of(name).scoped();
     }
 
@@ -231,11 +213,6 @@ public interface NLog extends NLogger{
      * @param msg msg
      */
     default void info(NMsg msg) {
-      /**
-       * Log.
-       *
-       * @param msg.asInfo() msg.as info()
-       */
         log(msg.asInfo());
     }
 
@@ -245,11 +222,6 @@ public interface NLog extends NLogger{
      * @param msg msg
      */
     default void debug(NMsg msg) {
-      /**
-       * Log.
-       *
-       * @param msg.asDebug() msg.as debug()
-       */
         log(msg.asDebug());
     }
 
@@ -259,11 +231,6 @@ public interface NLog extends NLogger{
      * @param msg msg
      */
     default void warn(NMsg msg) {
-      /**
-       * Log.
-       *
-       * @param msg.asWarningAlert() msg.as warning alert()
-       */
         log(msg.asWarningAlert());
     }
 
@@ -273,11 +240,6 @@ public interface NLog extends NLogger{
      * @param msg msg
      */
     default void error(NMsg msg) {
-      /**
-       * Log.
-       *
-       * @param msg.asError() msg.as error()
-       */
         log(msg.asError());
     }
 

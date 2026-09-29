@@ -77,12 +77,6 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @return of result
      */
     static NVersion of(String version) {
-        /**
-         * Returns the get.
-         *
-         * @param version).get( version).get(
-         * @return get result
-         */
         return get(version).get();
     }
 

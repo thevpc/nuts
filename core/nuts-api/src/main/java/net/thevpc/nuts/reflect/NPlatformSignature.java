@@ -17,13 +17,6 @@ public interface NPlatformSignature extends NSignature<Type, NPlatformSignature>
      * @return of result
      */
     static NPlatformSignature of(Type... types) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param types types
-         * @return of result
-         */
         return of(null, types);
     }
 
@@ -34,13 +27,6 @@ public interface NPlatformSignature extends NSignature<Type, NPlatformSignature>
      * @return of var args result
      */
     static NPlatformSignature ofVarArgs(Type... types) {
-        /**
-         * Creates a new instance of var args.
-         *
-         * @param null null
-         * @param types types
-         * @return of var args result
-         */
         return ofVarArgs(null, types);
     }
 

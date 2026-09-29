@@ -17,13 +17,6 @@ public class NTimeUtils {
      * @return to start of day result
      */
     public static Instant toStartOfDay(Instant instant) {
-        /**
-         * Converts to start of day.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of day result
-         */
         return toStartOfDay(instant, null);
     }
 
@@ -34,13 +27,6 @@ public class NTimeUtils {
      * @return to end of day result
      */
     public static Instant toEndOfDay(Instant instant) {
-        /**
-         * Converts to end of day.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of day result
-         */
         return toEndOfDay(instant, null);
     }
 
@@ -52,13 +38,6 @@ public class NTimeUtils {
      * @return to start of week result
      */
     public static Instant toStartOfWeek(Instant instant) {
-        /**
-         * Converts to start of week.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of week result
-         */
         return toStartOfWeek(instant, null);
     }
 
@@ -69,13 +48,6 @@ public class NTimeUtils {
      * @return to end of week result
      */
     public static Instant toEndOfWeek(Instant instant) {
-        /**
-         * Converts to end of week.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of week result
-         */
         return toEndOfWeek(instant, null);
     }
 
@@ -86,13 +58,6 @@ public class NTimeUtils {
      * @return to start of month result
      */
     public static Instant toStartOfMonth(Instant instant) {
-        /**
-         * Converts to start of month.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of month result
-         */
         return toStartOfMonth(instant, null);
     }
 
@@ -103,13 +68,6 @@ public class NTimeUtils {
      * @return to end of month result
      */
     public static Instant toEndOfMonth(Instant instant) {
-        /**
-         * Converts to end of month.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of month result
-         */
         return toEndOfMonth(instant, null);
     }
 
@@ -120,13 +78,6 @@ public class NTimeUtils {
      * @return to start of year result
      */
     public static Instant toStartOfYear(Instant instant) {
-        /**
-         * Converts to start of year.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of year result
-         */
         return toStartOfYear(instant, null);
     }
 
@@ -137,13 +88,6 @@ public class NTimeUtils {
      * @return to end of year result
      */
     public static Instant toEndOfYear(Instant instant) {
-        /**
-         * Converts to end of year.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of year result
-         */
         return toEndOfYear(instant, null);
     }
 
@@ -154,13 +98,6 @@ public class NTimeUtils {
      * @return to start of semester result
      */
     public static Instant toStartOfSemester(Instant instant) {
-        /**
-         * Converts to start of semester.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of semester result
-         */
         return toStartOfSemester(instant, null);
     }
 
@@ -171,13 +108,6 @@ public class NTimeUtils {
      * @return to end of semester result
      */
     public static Instant toEndOfSemester(Instant instant) {
-        /**
-         * Converts to end of semester.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of semester result
-         */
         return toEndOfSemester(instant, null);
     }
 
@@ -188,13 +118,6 @@ public class NTimeUtils {
      * @return to start of quarter result
      */
     public static Instant toStartOfQuarter(Instant instant) {
-        /**
-         * Converts to start of quarter.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to start of quarter result
-         */
         return toStartOfQuarter(instant, null);
     }
 
@@ -205,13 +128,6 @@ public class NTimeUtils {
      * @return to end of quarter result
      */
     public static Instant toEndOfQuarter(Instant instant) {
-        /**
-         * Converts to end of quarter.
-         *
-         * @param instant instant
-         * @param null null
-         * @return to end of quarter result
-         */
         return toEndOfQuarter(instant, null);
     }
 

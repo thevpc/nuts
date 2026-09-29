@@ -55,13 +55,6 @@ public final class NElementUtils {
      */
     public static boolean isValidElementNameChar(char c, boolean start, NContentType contentType) {
         if (contentType == null) {
-            /**
-             * Checks if is valid element name char.
-             *
-             * @param c c
-             * @param start start
-             * @return is valid element name char result
-             */
             return isValidElementNameChar(c, start);
         }
         switch (contentType) {
@@ -154,12 +147,6 @@ public final class NElementUtils {
      */
     public static boolean isElementName(String name, NContentType contentType) {
         if (contentType == null) {
-            /**
-             * Checks if is element name.
-             *
-             * @param name name
-             * @return is element name result
-             */
             return isElementName(name);
         }
         if (name == null) {

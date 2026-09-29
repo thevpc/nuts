@@ -43,12 +43,6 @@ public interface NBeanContainer {
      * @return get result
      */
     default <T> NOptional<T> get(String ref) {
-        /**
-         * Returns the get.
-         *
-         * @param NBeanRef.of(ref) n bean ref.of(ref)
-         * @return get result
-         */
         return get(NBeanRef.of(ref));
     }
 
@@ -60,12 +54,6 @@ public interface NBeanContainer {
      * @return get result
      */
     default <T> NOptional<T> get(String ref, NElement variant) {
-        /**
-         * Returns the get.
-         *
-         * @param variant) variant)
-         * @return get result
-         */
         return get(NBeanRef.of(ref, variant));
     }
 

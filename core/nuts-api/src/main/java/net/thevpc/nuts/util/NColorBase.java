@@ -68,12 +68,6 @@ abstract class NColorBase implements NColor {
         name = normalizeName(name);
         canonicalName = normalizeName(canonicalName);
         if (_ALL_BY_NAME.containsKey(name)) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param name name
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("invalid duplicate name " + name);
         }
         _ALL_REGISTERED.add(color);
@@ -107,13 +101,6 @@ abstract class NColorBase implements NColor {
      * @return _reg result
      */
     static NColor _reg(String name, String canonicalName, int rgb) {
-        /**
-         * _reg2.
-         *
-         * @param canonicalName canonical name
-         * @param name) name)
-         * @return _reg2 result
-         */
         return _reg2(canonicalName, NColor.of32(rgb, name));
     }
     /**
@@ -127,13 +114,6 @@ abstract class NColorBase implements NColor {
      * @return _reg result
      */
     static NColor _reg(String name, String canonicalName, int r, int g, int b) {
-        /**
-         * _reg2.
-         *
-         * @param canonicalName canonical name
-         * @param name) name)
-         * @return _reg2 result
-         */
         return _reg2(canonicalName, NColor.of32(r, g, b, name));
     }
 
@@ -145,13 +125,6 @@ abstract class NColorBase implements NColor {
      */
     static NColor _regGray(int percent) {
         int v = Math.round(percent * 255 / 100f);
-        /**
-         * _reg2.
-         *
-         * @param "Gray" " gray"
-         * @param percent) percent)
-         * @return _reg2 result
-         */
         return _reg2("Gray", NColor.of32(v, v, v, "Gray" + percent));
     }
 
@@ -214,12 +187,6 @@ abstract class NColorBase implements NColor {
      */
     public static NColor ansiToColor(int index) {
         if (index < 0 || index > 255) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param 255" 255"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("ANSI color index must be between 0 and 255");
         }
 
@@ -257,12 +224,6 @@ abstract class NColorBase implements NColor {
     public static NColor of4(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of4.
-             *
-             * @param color color
-             * @return of4 result
-             */
             return of4(color);
         }
         return new NColorBase.NColor4Named(color, name);
@@ -288,12 +249,6 @@ abstract class NColorBase implements NColor {
     public static NColor of8(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of8.
-             *
-             * @param color color
-             * @return of8 result
-             */
             return of8(color);
         }
         return new NColorBase.NColor8Named(color, name);
@@ -319,12 +274,6 @@ abstract class NColorBase implements NColor {
     public static NColor of16(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of16.
-             *
-             * @param color color
-             * @return of16 result
-             */
             return of16(color);
         }
         return new NColorBase.NColor16Named(color, name);
@@ -340,12 +289,6 @@ abstract class NColorBase implements NColor {
     public static NColor of24(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of24.
-             *
-             * @param color color
-             * @return of24 result
-             */
             return of24(color);
         }
         return new NColorBase.NColor24Named(color, name);
@@ -373,14 +316,6 @@ abstract class NColorBase implements NColor {
     public static NColor of32(int r, int g, int b, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of32.
-             *
-             * @param r r
-             * @param g g
-             * @param b b
-             * @return of32 result
-             */
             return of32(r, g, b);
         }
         return new NColorBase.NColor32Named(r, g, b, name);
@@ -424,15 +359,6 @@ abstract class NColorBase implements NColor {
     public static NColor of32(int r, int g, int b, int a, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of32.
-             *
-             * @param r r
-             * @param g g
-             * @param b b
-             * @param a a
-             * @return of32 result
-             */
             return of32(r, g, b, a);
         }
         return new NColorBase.NColor32Named(r, g, b, a, name);
@@ -458,12 +384,6 @@ abstract class NColorBase implements NColor {
     public static NColor of32(int color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of32.
-             *
-             * @param color color
-             * @return of32 result
-             */
             return of32(color);
         }
         return new NColorBase.NColor32Named(color,name);
@@ -489,12 +409,6 @@ abstract class NColorBase implements NColor {
     public static NColor of64(long color, String name) {
         name = NStringUtils.stripToNull(name);
         if (name == null) {
-            /**
-             * Creates a new instance of64.
-             *
-             * @param color color
-             * @return of64 result
-             */
             return of64(color);
         }
         return new NColorBase.NColor64Named(color, name);
@@ -578,12 +492,6 @@ abstract class NColorBase implements NColor {
 
         @Override
         public int rgb() {
-            /**
-             * Converts to color32.
-             *
-             * @param ).rgb( ).rgb(
-             * @return to color32 result
-             */
             return toColor32().rgb();
         }
 
@@ -677,12 +585,6 @@ abstract class NColorBase implements NColor {
 
         @Override
         public int rgb() {
-            /**
-             * Converts to color32.
-             *
-             * @param ).rgb( ).rgb(
-             * @return to color32 result
-             */
             return toColor32().rgb();
         }
 
@@ -770,12 +672,6 @@ abstract class NColorBase implements NColor {
 
         @Override
         public int rgb() {
-            /**
-             * Converts to color32.
-             *
-             * @param ).rgb( ).rgb(
-             * @return to color32 result
-             */
             return toColor32().rgb();
         }
 
@@ -869,12 +765,6 @@ abstract class NColorBase implements NColor {
 
         @Override
         public int rgb() {
-            /**
-             * Converts to color32.
-             *
-             * @param ).rgb( ).rgb(
-             * @return to color32 result
-             */
             return toColor32().rgb();
         }
 
@@ -1127,11 +1017,6 @@ abstract class NColorBase implements NColor {
         @Override
         public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
-          /**
-           * Return.
-           *
-           * @param 0xFFFFFF 0x ffffff
-           */
             return (255 << 24) | (color & 0xFFFFFF);
         }
 
@@ -1221,11 +1106,6 @@ abstract class NColorBase implements NColor {
         @Override
         public int rgb() {
             // We take the 24-bit color and OR it with 255 shifted to the Alpha position
-          /**
-           * Return.
-           *
-           * @param 0xFFFFFF 0x ffffff
-           */
             return (255 << 24) | (color & 0xFFFFFF);
         }
 

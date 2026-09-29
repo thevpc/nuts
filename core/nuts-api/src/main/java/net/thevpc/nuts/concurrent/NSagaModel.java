@@ -113,11 +113,6 @@ public class NSagaModel implements Serializable, Cloneable, NCopiable {
 
     @Override
     public NSagaModel copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

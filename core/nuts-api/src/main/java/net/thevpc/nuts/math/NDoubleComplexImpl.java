@@ -26,12 +26,6 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
      * @since 0.8.6
      */
     public static NDoubleComplex of(String any) {
-        /**
-         * Parse.
-         *
-         * @param any).get( any).get(
-         * @return parse result
-         */
         return parse(any).get();
     }
 
@@ -136,31 +130,16 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
 
     @Override
     public int intValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (int) doubleValue();
     }
 
     @Override
     public long longValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (long) doubleValue();
     }
 
     @Override
     public float floatValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (float) doubleValue();
     }
 
@@ -179,37 +158,13 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
     @Override
     public String toString() {
         if (imag == 0) {
-            /**
-             * Real to string.
-             *
-             * @param real real
-             * @return real to string result
-             */
             return realToString(real);
         } else if (real == 0) {
-            /**
-             * Imag to string.
-             *
-             * @param imag imag
-             * @return imag to string result
-             */
             return imagToString(imag);
         } else {
             if (imag < 0) {
-                /**
-                 * Real to string.
-                 *
-                 * @param imagToString(imag imag to string(imag
-                 * @return real to string result
-                 */
                 return realToString(real) + imagToString(imag);
             }
-            /**
-             * Real to string.
-             *
-             * @param imagToString(imag imag to string(imag
-             * @return real to string result
-             */
             return realToString(real) + "+" + imagToString(imag);
         }
     }

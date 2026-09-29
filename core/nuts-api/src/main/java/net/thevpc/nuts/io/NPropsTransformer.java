@@ -32,15 +32,6 @@ public class NPropsTransformer {
      * @return encode key result
      */
     public static String encodeKey(String theString) {
-        /**
-         * Encode string.
-         *
-         * @param theString the string
-         * @param true true
-         * @param true true
-         * @param false false
-         * @return encode string result
-         */
         return encodeString(theString, true, true, false);
     }
 
@@ -51,15 +42,6 @@ public class NPropsTransformer {
      * @return encode value result
      */
     public static String encodeValue(String theString) {
-        /**
-         * Encode string.
-         *
-         * @param theString the string
-         * @param false false
-         * @param false false
-         * @param false false
-         * @return encode string result
-         */
         return encodeString(theString, false, false, false);
     }
 
@@ -156,13 +138,6 @@ public class NPropsTransformer {
      * @param sort sort
      */
     public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
-      /**
-       * Store properties.
-       *
-       * @param props props
-       * @param OutputStreamWriter(out) output stream writer(out)
-       * @param sort sort
-       */
         storeProperties(props, new OutputStreamWriter(out), sort);
     }
 
@@ -189,12 +164,6 @@ public class NPropsTransformer {
             }
             w.flush();
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -300,11 +269,6 @@ public class NPropsTransformer {
      * @return replace result
      */
     public NPropsTransformer replace(String varName, String replacement) {
-      /**
-       * Validate key name.
-       *
-       * @param varName var name
-       */
         validateKeyName(varName);
         if (replacement == null) {
             replacements.put(varName, null);
@@ -333,11 +297,6 @@ public class NPropsTransformer {
      * @return replace result
      */
     public NPropsTransformer replace(String varName, Function<String, String> replacement) {
-      /**
-       * Validate key name.
-       *
-       * @param varName var name
-       */
         validateKeyName(varName);
         if (replacement == null) {
             replacements.put(varName, null);
@@ -356,30 +315,12 @@ public class NPropsTransformer {
     private static void validateKeyName(String varName) {
         for (char c : varName.toCharArray()) {
             if (Character.isWhitespace(c)) {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param varName var name
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
             if (c == '=') {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param varName var name
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
             if (c == ':') {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param varName var name
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("invalid variable name " + varName);
             }
         }
@@ -689,12 +630,6 @@ public class NPropsTransformer {
                         } else if (c >= 'a' && c <= 'f') {
                             nc = (nc << 4) + 10 + c - 97;
                         } else {
-                            /**
-                             * Illegal argument exception.
-                             *
-                             * @param encoding" encoding"
-                             * @return illegal argument exception result
-                             */
                             throw new IllegalArgumentException("Invalid \\uxxxx encoding");
                         }
                     }

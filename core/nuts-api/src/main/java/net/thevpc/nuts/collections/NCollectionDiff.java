@@ -15,14 +15,6 @@ public interface NCollectionDiff<T> extends Iterable<NCollectionDiffChange<T>> {
      * @return diff list result
      */
     static <T> NCollectionDiff<T> diffList(List<T> oldItems, List<T> newItems) {
-        /**
-         * Diff list.
-         *
-         * @param oldItems old items
-         * @param newItems new items
-         * @param x x
-         * @return diff list result
-         */
         return diffList(oldItems, newItems, x -> x);
     }
 
@@ -34,14 +26,6 @@ public interface NCollectionDiff<T> extends Iterable<NCollectionDiffChange<T>> {
      * @return diff map entries result
      */
     static <K, V> NCollectionDiff<Map.Entry<K, V>> diffMapEntries(Map<K, V> oldItems, Map<K, V> newItems) {
-        /**
-         * Diff list.
-         *
-         * @param oldItems.entrySet() old items.entry set()
-         * @param newItems.entrySet() new items.entry set()
-         * @param Map.Entry::getKey map. entry::get key
-         * @return diff list result
-         */
         return diffList(oldItems.entrySet(), newItems.entrySet(), Map.Entry::getKey);
     }
 
@@ -53,13 +37,6 @@ public interface NCollectionDiff<T> extends Iterable<NCollectionDiffChange<T>> {
      * @return diff map values result
      */
     static <K, V> NCollectionDiff<V> diffMapValues(Map<K, V> oldItems, Map<K, V> newItems) {
-        /**
-         * Diff map entries.
-         *
-         * @param oldItems old items
-         * @param newItems).map(Map.Entry::getValue new items).map( map. entry::get value
-         * @return diff map entries result
-         */
         return diffMapEntries(oldItems, newItems).map(Map.Entry::getValue);
     }
 
@@ -71,13 +48,6 @@ public interface NCollectionDiff<T> extends Iterable<NCollectionDiffChange<T>> {
      * @return diff map keys result
      */
     static <K, V> NCollectionDiff<K> diffMapKeys(Map<K, V> oldItems, Map<K, V> newItems) {
-        /**
-         * Diff map entries.
-         *
-         * @param oldItems old items
-         * @param newItems).map(Map.Entry::getKey new items).map( map. entry::get key
-         * @return diff map entries result
-         */
         return diffMapEntries(oldItems, newItems).map(Map.Entry::getKey);
     }
 

@@ -62,12 +62,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return of result
      */
     static NSession of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

@@ -19,12 +19,6 @@ public class NDetachedErrorOptionalException extends RuntimeException implements
      * @return n detached error optional exception result
      */
     public NDetachedErrorOptionalException(NMsg formattedMessage, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       * @param cause cause
-       */
         super(formattedMessage == null ? "error optional" : formattedMessage.toString(),cause);
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("error") : formattedMessage;
     }

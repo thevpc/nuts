@@ -171,11 +171,6 @@ public class NRepositorySpec implements Serializable, Cloneable {
      * @return a new instance of {@code NAddRepositoryOptions} that is a copy of this object
      */
     public NRepositorySpec copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -469,71 +464,31 @@ public class NRepositorySpec implements Serializable, Cloneable {
         }
         if (config.env()!=null) {
             if(env()==null){
-              /**
-               * Env.
-               *
-               * @param HashMap<>(config.env()) hash map<>(config.env())
-               */
                 env(new HashMap<>(config.env()));
             }else{
-              /**
-               * Env.
-               *
-               * @param ).putAll(config.env() ).put all(config.env()
-               */
                 env().putAll(config.env());
             }
         }
         if (config.tags()!=null) {
             if(tags()==null){
-              /**
-               * Tags.
-               *
-               * @param String[0]) string[0])
-               */
                 tags(new LinkedHashSet<>(Arrays.asList(config.tags())).toArray(new String[0]));
             }else{
                 LinkedHashSet<String> a = new LinkedHashSet<>(Arrays.asList(this.tags()));
                 a.addAll(Arrays.asList(config.tags()));
-              /**
-               * Tags.
-               *
-               * @param String[0]) string[0])
-               */
                 tags(a.toArray(new String[0]));
             }
         }
         if (config.storeLocations()!=null) {
             if(storeLocations()==null){
-              /**
-               * Store locations.
-               *
-               * @param HashMap<>(config.storeLocations()) hash map<>(config.store locations())
-               */
                 storeLocations(new HashMap<>(config.storeLocations()));
             }else{
-              /**
-               * Store locations.
-               *
-               * @param ).putAll(config.storeLocations() ).put all(config.store locations()
-               */
                 storeLocations().putAll(config.storeLocations());
             }
         }
         if (config.mirrors()!=null) {
             if(mirrors()==null){
-              /**
-               * Mirrors.
-               *
-               * @param ArrayList<>(config.mirrors()) array list<>(config.mirrors())
-               */
                 mirrors(new ArrayList<>(config.mirrors()));
             }else{
-              /**
-               * Mirrors.
-               *
-               * @param ).addAll(config.mirrors() ).add all(config.mirrors()
-               */
                 mirrors().addAll(config.mirrors());
             }
         }

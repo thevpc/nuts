@@ -20,12 +20,6 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
      * @since 0.8.9
      */
     static NElementComment of(String text) {
-        /**
-         * Creates a new instance of bloc comment.
-         *
-         * @param text text
-         * @return of bloc comment result
-         */
         return ofBlocComment(text);
     }
 

@@ -343,12 +343,6 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * @return of expr builder result
      */
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NFixity fixity, NElement first, NElement second) {
-        /**
-         * Creates a new instance of expr builder.
-         *
-         * @param ).operator(op).fixity(fixity).first(first).second(second ).operator(op).fixity(fixity).first(first).second(second
-         * @return of expr builder result
-         */
         return ofExprBuilder().operator(op).fixity(fixity).first(first).second(second);
     }
 
@@ -361,15 +355,6 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * @return of expr builder result
      */
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first, NElement second) {
-        /**
-         * Creates a new instance of expr builder.
-         *
-         * @param op op
-         * @param null null
-         * @param first first
-         * @param second second
-         * @return of expr builder result
-         */
         return ofExprBuilder(op, null, first, second);
     }
 
@@ -381,15 +366,6 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * @return of expr builder result
      */
     static NOperatorElementBuilder ofExprBuilder(NOperatorSymbol op, NElement first) {
-        /**
-         * Creates a new instance of expr builder.
-         *
-         * @param op op
-         * @param null null
-         * @param first first
-         * @param null null
-         * @return of expr builder result
-         */
         return ofExprBuilder(op, null, first, null);
     }
 

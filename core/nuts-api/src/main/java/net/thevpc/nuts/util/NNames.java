@@ -34,17 +34,7 @@ public class NNames {
             }
             while (found.hasMoreElements()) {
                 URL u = found.nextElement();
-              /**
-               * Try.
-               *
-               * @param u.openStream() u.open stream()
-               */
                 try (InputStream is = u.openStream()) {
-                  /**
-                   * Try.
-                   *
-                   * @param InputStreamReader(is)) input stream reader(is))
-                   */
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                         String line = null;
                         while ((line = br.readLine()) != null) {
@@ -127,12 +117,6 @@ public class NNames {
                     return format.format(selected);
                 }
             }
-            /**
-             * Illegal argument exception.
-             *
-             * @param happen" happen"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("should never happen");
         } else if (wordsCount == 2) {
             int usecase = ihash(hash, 3);
@@ -155,12 +139,6 @@ public class NNames {
                     return format.format(selected);
                 }
             }
-            /**
-             * Illegal argument exception.
-             *
-             * @param happen" happen"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("should never happen");
         } else if (wordsCount == 3) {
             int usecase = ihash(hash, 3);
@@ -190,12 +168,6 @@ public class NNames {
                     return format.format(aa.toArray(new String[0]));
                 }
             }
-            /**
-             * Illegal argument exception.
-             *
-             * @param happen" happen"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("should never happen");
         } else {
             // a adjectives

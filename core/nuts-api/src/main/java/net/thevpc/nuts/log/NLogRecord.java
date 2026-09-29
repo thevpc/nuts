@@ -37,28 +37,12 @@ public class NLogRecord extends LogRecord implements NSessionProvider {
      * @return n log record result
      */
     public NLogRecord(NSession session, Level level, NMsgIntent verb, NMsg msg, String filteredText, long time, Throwable thrown) {
-      /**
-       * Super.
-       *
-       * @param level level
-       * @param filteredText filtered text
-       */
         super(level, filteredText);
         this.nmsg = msg;
         this.verb = verb;
         this.session = session;
         this.time = time;
-      /**
-       * Sets the parameters.
-       *
-       * @param msg.params() msg.params()
-       */
         setParameters(msg.params());
-      /**
-       * Sets the thrown.
-       *
-       * @param thrown thrown
-       */
         setThrown(thrown);
     }
 

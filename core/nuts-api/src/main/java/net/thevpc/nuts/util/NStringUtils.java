@@ -177,12 +177,6 @@ public class NStringUtils {
             return "";
         }
         if (value instanceof String) {
-            /**
-             * Strip.
-             *
-             * @param value.toString() value.to string()
-             * @return strip result
-             */
             return strip(value.toString());
         }
         int len0 = value.length();
@@ -194,12 +188,6 @@ public class NStringUtils {
         while ((st < len) && Character.isWhitespace(value.charAt(len - 1))) {
             len--;
         }
-        /**
-         * Return.
-         *
-         * @param value.subSequence(st value.sub sequence(st
-         * @param value.toString(value.to string(
-         */
         return ((st > 0) || (len < len0)) ? value.subSequence(st, len) : value.toString();
     }
 
@@ -382,12 +370,6 @@ public class NStringUtils {
      * @return first non null result
      */
     public static String firstNonNull(String... values) {
-        /**
-         * First non null.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non null result
-         */
         return firstNonNull(values == null ? null : Arrays.asList(values));
     }
 
@@ -425,12 +407,6 @@ public class NStringUtils {
      * @return first non empty result
      */
     public static String firstNonEmpty(String... values) {
-        /**
-         * First non empty.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non empty result
-         */
         return firstNonEmpty(values == null ? null : Arrays.asList(values));
     }
 
@@ -460,21 +436,9 @@ public class NStringUtils {
      */
     public static String firstNonBlankStrippedToNull(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            /**
-             * Strip to null.
-             *
-             * @param a a
-             * @return strip to null result
-             */
             return stripToNull(a);
         }
         if (!NBlankable.isBlank(b)) {
-            /**
-             * Strip to null.
-             *
-             * @param b b
-             * @return strip to null result
-             */
             return stripToNull(b);
         }
         return null;
@@ -489,21 +453,9 @@ public class NStringUtils {
      */
     public static String firstNonBlankStripped(String a, String b) {
         if (!NBlankable.isBlank(a)) {
-            /**
-             * Strip.
-             *
-             * @param a a
-             * @return strip result
-             */
             return strip(a);
         }
         if (!NBlankable.isBlank(b)) {
-            /**
-             * Strip.
-             *
-             * @param b b
-             * @return strip result
-             */
             return strip(b);
         }
         return "";
@@ -533,12 +485,6 @@ public class NStringUtils {
      * @return first non blank result
      */
     public static String firstNonBlank(String... values) {
-        /**
-         * First non blank.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non blank result
-         */
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 
@@ -549,12 +495,6 @@ public class NStringUtils {
      * @return first non blank stripped result
      */
     public static String firstNonBlankStripped(String... values) {
-        /**
-         * First non blank stripped.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non blank stripped result
-         */
         return firstNonBlankStripped(values == null ? null : Arrays.asList(values));
     }
 
@@ -565,12 +505,6 @@ public class NStringUtils {
      * @return first non blank stripped to null result
      */
     public static String firstNonBlankStrippedToNull(String... values) {
-        /**
-         * First non blank stripped to null.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non blank stripped to null result
-         */
         return firstNonBlankStrippedToNull(values == null ? null : Arrays.asList(values));
     }
 
@@ -584,12 +518,6 @@ public class NStringUtils {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    /**
-                     * Strip to null.
-                     *
-                     * @param value value
-                     * @return strip to null result
-                     */
                     return stripToNull(value);
                 }
             }
@@ -607,12 +535,6 @@ public class NStringUtils {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
-                    /**
-                     * Strip.
-                     *
-                     * @param value value
-                     * @return strip result
-                     */
                     return strip(value);
                 }
             }
@@ -694,13 +616,6 @@ public class NStringUtils {
      * @return format string literal result
      */
     public static String formatStringLiteral(String text) {
-        /**
-         * Format string literal.
-         *
-         * @param text text
-         * @param NElementType.DOUBLE_QUOTED_STRING n element type.double_quoted_string
-         * @return format string literal result
-         */
         return formatStringLiteral(text, NElementType.DOUBLE_QUOTED_STRING);
     }
 
@@ -712,14 +627,6 @@ public class NStringUtils {
      * @return format string literal result
      */
     public static String formatStringLiteral(String text, NElementType quoteType) {
-        /**
-         * Format string literal.
-         *
-         * @param text text
-         * @param quoteType quote type
-         * @param NSupportMode.ALWAYS n support mode.always
-         * @return format string literal result
-         */
         return formatStringLiteral(text, quoteType, NSupportMode.ALWAYS);
     }
 
@@ -732,16 +639,6 @@ public class NStringUtils {
      * @return format string literal result
      */
     public static String formatStringLiteral(String text, NElementType quoteType, NSupportMode condition) {
-        /**
-         * Format string literal.
-         *
-         * @param text text
-         * @param quoteType quote type
-         * @param condition condition
-         * @param false false
-         * @param "" ""
-         * @return format string literal result
-         */
         return formatStringLiteral(text, quoteType, condition, false, "");
     }
 
@@ -815,15 +712,6 @@ public class NStringUtils {
      * @return split result
      */
     public static List<String> split(String value, String chars) {
-        /**
-         * Split.
-         *
-         * @param value value
-         * @param chars chars
-         * @param true true
-         * @param false false
-         * @return split result
-         */
         return split(value, chars, true, false);
     }
 
@@ -849,12 +737,6 @@ public class NStringUtils {
      */
     public static String repeat(String str, int count) {
         if (count < 0) {
-            /**
-             * Array index out of bounds exception.
-             *
-             * @param count count
-             * @return array index out of bounds exception result
-             */
             throw new ArrayIndexOutOfBoundsException(count);
         }
         switch (count) {
@@ -969,15 +851,6 @@ public class NStringUtils {
      * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, Function<String, String> mapper) {
-        /**
-         * Replace placeholder.
-         *
-         * @param text text
-         * @param Pattern.compile(regexp) pattern.compile(regexp)
-         * @param null null
-         * @param mapper mapper
-         * @return replace placeholder result
-         */
         return replacePlaceholder(text, Pattern.compile(regexp), null, mapper);
     }
 
@@ -1000,15 +873,6 @@ public class NStringUtils {
      * <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, String varName, Function<String, String> mapper) {
-        /**
-         * Replace placeholder.
-         *
-         * @param text text
-         * @param Pattern.compile(regexp) pattern.compile(regexp)
-         * @param varName var name
-         * @param mapper mapper
-         * @return replace placeholder result
-         */
         return replacePlaceholder(text, Pattern.compile(regexp), varName, mapper);
     }
 
@@ -1067,12 +931,6 @@ public class NStringUtils {
         }
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_VAR_STR = NToken.typeString(NToken.TT_VAR);
-        /**
-         * Iter to stream.
-         *
-         * @param Iterator<NToken>( iterator<n token>(
-         * @return iter to stream result
-         */
         return iterToStream(new Iterator<NToken>() {
             final String vn;
             final Matcher matcher;
@@ -1088,11 +946,6 @@ public class NStringUtils {
                 matcher = pattern.matcher(text);
             }
 
-            /**
-             * Ready.
-             *
-             * @return ready result
-             */
             private boolean ready() {
                 return !buffer.isEmpty();
             }
@@ -1119,11 +972,6 @@ public class NStringUtils {
                     buffer.add(NToken.of(NToken.TT_DEFAULT, t, 0, 0, t, TT_DEFAULT_STR));
                     last = text.length();
                 }
-                /**
-                 * Ready.
-                 *
-                 * @return ready result
-                 */
                 return ready();
             }
 
@@ -1172,12 +1020,6 @@ public class NStringUtils {
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_DOLLAR_BRACE);
         final String TT_DOLLAR_STR = NToken.typeString(NToken.TT_DOLLAR);
-        /**
-         * Iter to stream.
-         *
-         * @param Iterator<NToken>( iterator<n token>(
-         * @return iter to stream result
-         */
         return iterToStream(new Iterator<NToken>() {
             final char[] t = (text == null ? new char[0] : text.toCharArray());
             int p = 0;
@@ -1187,11 +1029,6 @@ public class NStringUtils {
             final StringBuilder ni = new StringBuilder(length);
             final List<NToken> buffer = new ArrayList<>(2);
 
-            /**
-             * Ready.
-             *
-             * @return ready result
-             */
             private boolean ready() {
                 return !buffer.isEmpty();
             }
@@ -1202,9 +1039,6 @@ public class NStringUtils {
                     return true;
                 }
                 while (p < length) {
-                    /**
-                     * Fill once.
-                     */
                     fillOnce();
                     if (ready()) {
                         return true;
@@ -1214,19 +1048,9 @@ public class NStringUtils {
                     buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
                     sb.setLength(0);
                 }
-                /**
-                 * Ready.
-                 *
-                 * @return ready result
-                 */
                 return ready();
             }
 
-            /**
-             * Fill once.
-             *
-             * @return fill once result
-             */
             private void fillOnce() {
                 char c = t[p];
                 if (c == '$' && p + 1 < length && t[p + 1] == '{') {
@@ -1322,12 +1146,6 @@ public class NStringUtils {
     public static Stream<NToken> parseMoustachePlaceHolder(String text) {
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_MOUSTACHE_START);
-        /**
-         * Iter to stream.
-         *
-         * @param Iterator<NToken>( iterator<n token>(
-         * @return iter to stream result
-         */
         return iterToStream(new Iterator<NToken>() {
             final char[] t = (text == null ? new char[0] : text.toCharArray());
             int p = 0;
@@ -1337,11 +1155,6 @@ public class NStringUtils {
             final StringBuilder ni = new StringBuilder(length);
             final List<NToken> buffer = new ArrayList<>(2);
 
-            /**
-             * Ready.
-             *
-             * @return ready result
-             */
             private boolean ready() {
                 return !buffer.isEmpty();
             }
@@ -1352,9 +1165,6 @@ public class NStringUtils {
                     return true;
                 }
                 while (p < length) {
-                    /**
-                     * Fill once.
-                     */
                     fillOnce();
                     if (ready()) {
                         return true;
@@ -1364,19 +1174,9 @@ public class NStringUtils {
                     buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
                     sb.setLength(0);
                 }
-                /**
-                 * Ready.
-                 *
-                 * @return ready result
-                 */
                 return ready();
             }
 
-            /**
-             * Fill once.
-             *
-             * @return fill once result
-             */
             private void fillOnce() {
                 char c = t[p];
                 if (c == '{' && p + 1 < length && t[p + 1] == '{') {
@@ -1505,11 +1305,6 @@ public class NStringUtils {
     public static String[] stacktraceArray(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-            /**
-             * Try.
-             *
-             * @param PrintWriter(sw) print writer(sw)
-             */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -1535,11 +1330,6 @@ public class NStringUtils {
     public static String stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-            /**
-             * Try.
-             *
-             * @param PrintWriter(sw) print writer(sw)
-             */
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
@@ -1685,12 +1475,6 @@ public class NStringUtils {
         if (data == null) {
             return new ArrayList<>();
         }
-        /**
-         * Read lines.
-         *
-         * @param StringBuilder(data) string builder(data)
-         * @return read lines result
-         */
         return readLines(new StringBuilder(data));
     }
 
@@ -1805,14 +1589,6 @@ public class NStringUtils {
      * @return truncate result
      */
     public static String truncate(String s, int maxLength) {
-        /**
-         * Truncate.
-         *
-         * @param s s
-         * @param maxLength max length
-         * @param null null
-         * @return truncate result
-         */
         return truncate(s, maxLength, null);
     }
 
@@ -1887,17 +1663,7 @@ public class NStringUtils {
      * @return strip result
      */
     public static StringBuilder strip(StringBuilder sb) {
-        /**
-         * Strip left.
-         *
-         * @param sb sb
-         */
         stripLeft(sb);
-        /**
-         * Strip right.
-         *
-         * @param sb sb
-         */
         stripRight(sb);
         return sb;
     }
@@ -1929,50 +1695,20 @@ public class NStringUtils {
     public static String escapeChar(char c) {
         switch (c) {
             case '\b':
-                /**
-                 * Return.
-                 *
-                 * @param "\\b" "\\b"
-                 */
                 return ("\\b");
             case '\t':
                 return "\\t";
             case '\n':
-                /**
-                 * Return.
-                 *
-                 * @param "\\n" "\\n"
-                 */
                 return ("\\n");
             case '\f':
-                /**
-                 * Return.
-                 *
-                 * @param "\\f" "\\f"
-                 */
                 return ("\\f");
             case '\r':
-                /**
-                 * Return.
-                 *
-                 * @param "\\r" "\\r"
-                 */
                 return ("\\r");
             case '\\':
-                /**
-                 * Return.
-                 *
-                 * @param "\\\\" "\\\\"
-                 */
                 return ("\\\\");
             default: {
                 if (c < 0x20 || c > 0x7e) {
                     String s = "0000" + Integer.toString(c, 16);
-                    /**
-                     * Return.
-                     *
-                     * @param 4) 4)
-                     */
                     return ("\\u" + s.substring(s.length() - 4));
                 } else {
                     return String.valueOf(c);
@@ -2005,13 +1741,6 @@ public class NStringUtils {
      * @return common prefix result
      */
     public static String commonPrefix(List<String> all) {
-        /**
-         * Common prefix.
-         *
-         * @param all all
-         * @param null null
-         * @return common prefix result
-         */
         return commonPrefix(all, null);
     }
 
@@ -2103,13 +1832,6 @@ public class NStringUtils {
      * @return common whitespace prefix result
      */
     public static String commonWhitespacePrefix(List<String> all) {
-        /**
-         * Common prefix.
-         *
-         * @param all all
-         * @param Character.isWhitespace(c) character.is whitespace(c)
-         * @return common prefix result
-         */
         return commonPrefix(all, (b, c) -> Character.isWhitespace(c));
     }
 
@@ -2127,13 +1849,6 @@ public class NStringUtils {
         try {
             byteBuffer = encoder.encode(charBuffer);
         } catch (CharacterCodingException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param sequence" sequence"
-             * @param e e
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
         }
         byte[] bytes = new byte[byteBuffer.remaining()];
@@ -2156,13 +1871,6 @@ public class NStringUtils {
         try {
             charBuffer = decoder.decode(byteBuffer);
         } catch (CharacterCodingException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param sequence" sequence"
-             * @param e e
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("Invalid UTF-8 sequence", e);
         }
         char[] chars = new char[charBuffer.remaining()];

@@ -46,11 +46,6 @@ public class NEvaluationException extends NException {
      *                later retrieval by the {@link #message()} method.
      */
     public NEvaluationException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -70,12 +65,6 @@ public class NEvaluationException extends NException {
      *                unknown.)
      */
     public NEvaluationException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 
@@ -93,14 +82,6 @@ public class NEvaluationException extends NException {
      *                           be writable
      */
     public NEvaluationException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

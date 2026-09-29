@@ -127,12 +127,6 @@ public class NInstallStatus {
      * @return is installed or required result
      */
     public boolean isInstalledOrRequired() {
-        /**
-         * Checks if is installed.
-         *
-         * @param isRequired( is required(
-         * @return is installed result
-         */
         return isInstalled() || isRequired();
     }
 
@@ -188,16 +182,6 @@ public class NInstallStatus {
      * @return with installed result
      */
     public NInstallStatus withInstalled(boolean installed) {
-        /**
-         * Creates a new instance.
-         *
-         * @param deployed deployed
-         * @param installed installed
-         * @param required required
-         * @param obsolete obsolete
-         * @param defaultVersion default version
-         * @return of result
-         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
     /**
@@ -207,16 +191,6 @@ public class NInstallStatus {
      * @return with deployed result
      */
     public NInstallStatus withDeployed(boolean deployed) {
-        /**
-         * Creates a new instance.
-         *
-         * @param deployed deployed
-         * @param installed installed
-         * @param required required
-         * @param obsolete obsolete
-         * @param defaultVersion default version
-         * @return of result
-         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
@@ -227,16 +201,6 @@ public class NInstallStatus {
      * @return with required result
      */
     public NInstallStatus withRequired(boolean required) {
-        /**
-         * Creates a new instance.
-         *
-         * @param deployed deployed
-         * @param installed installed
-         * @param required required
-         * @param obsolete obsolete
-         * @param defaultVersion default version
-         * @return of result
-         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
@@ -247,16 +211,6 @@ public class NInstallStatus {
      * @return with obsolete result
      */
     public NInstallStatus withObsolete(boolean obsolete) {
-        /**
-         * Creates a new instance.
-         *
-         * @param deployed deployed
-         * @param installed installed
-         * @param required required
-         * @param obsolete obsolete
-         * @param defaultVersion default version
-         * @return of result
-         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 
@@ -267,16 +221,6 @@ public class NInstallStatus {
      * @return with default version result
      */
     public NInstallStatus withDefaultVersion(boolean defaultVersion) {
-        /**
-         * Creates a new instance.
-         *
-         * @param deployed deployed
-         * @param installed installed
-         * @param required required
-         * @param obsolete obsolete
-         * @param defaultVersion default version
-         * @return of result
-         */
         return of(deployed,installed, required, obsolete, defaultVersion);
     }
 

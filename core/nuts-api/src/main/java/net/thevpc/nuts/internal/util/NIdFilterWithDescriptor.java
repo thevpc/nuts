@@ -27,9 +27,6 @@ public class NIdFilterWithDescriptor extends NIdFilterDelegate {
      * @return n id filter with descriptor result
      */
     public NIdFilterWithDescriptor(NIdFilter base, Supplier<NElement> description) {
-      /**
-       * Super.
-       */
         super();
         this.base = base;
         this.description = description;

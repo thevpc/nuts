@@ -35,54 +35,24 @@ public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
 
     @Override
     public NSystemTerminalBase resetLine() {
-      /**
-       * Run.
-       *
-       * @param NTerminalCmd.CLEAR_LINE n terminal cmd.clear_line
-       * @param out() out()
-       */
         run(NTerminalCmd.CLEAR_LINE, out());
-      /**
-       * Run.
-       *
-       * @param NTerminalCmd.MOVE_LINE_START n terminal cmd.move_line_start
-       * @param out() out()
-       */
         run(NTerminalCmd.MOVE_LINE_START, out());
         return this;
     }
 
     @Override
     public NSystemTerminalBase clearScreen() {
-      /**
-       * Run.
-       *
-       * @param NTerminalCmd.CLEAR_SCREEN n terminal cmd.clear_screen
-       * @param out() out()
-       */
         run(NTerminalCmd.CLEAR_SCREEN, out());
         return this;
     }
 
     @Override
     public Cursor terminalCursor() {
-      /**
-       * Return.
-       *
-       * @param run(NTerminalCmd.GET_CURSOR run(n terminal cmd.get_cursor
-       * @param out() out()
-       */
         return (Cursor) run(NTerminalCmd.GET_CURSOR, out());
     }
 
     @Override
     public Size terminalSize() {
-      /**
-       * Return.
-       *
-       * @param run(NTerminalCmd.GET_SIZE run(n terminal cmd.get_size
-       * @param out() out()
-       */
         return (Size) run(NTerminalCmd.GET_SIZE, out());
     }
 }

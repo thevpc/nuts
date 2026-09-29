@@ -32,12 +32,6 @@ public interface NConnectionString  {
      * @return of result
      */
     static NConnectionString of(String expression) {
-        /**
-         * Returns the get.
-         *
-         * @param expression).get( expression).get(
-         * @return get result
-         */
         return get(expression).get();
     }
 

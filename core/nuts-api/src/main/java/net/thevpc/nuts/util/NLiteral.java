@@ -39,12 +39,6 @@ public interface NLiteral extends NBlankable {
      * @return of object result
      */
     static NOptional<Object> ofObject(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asObject( any).as object(
-         * @return of result
-         */
         return of(any).asObject();
     }
 
@@ -55,12 +49,6 @@ public interface NLiteral extends NBlankable {
      * @return of instant result
      */
     static NOptional<Instant> ofInstant(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asInstant( any).as instant(
-         * @return of result
-         */
         return of(any).asInstant();
     }
 
@@ -71,12 +59,6 @@ public interface NLiteral extends NBlankable {
      * @return of local date result
      */
     static NOptional<LocalDate> ofLocalDate(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asLocalDate( any).as local date(
-         * @return of result
-         */
         return of(any).asLocalDate();
     }
 
@@ -87,12 +69,6 @@ public interface NLiteral extends NBlankable {
      * @return of local date time result
      */
     static NOptional<LocalDateTime> ofLocalDateTime(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asLocalDateTime( any).as local date time(
-         * @return of result
-         */
         return of(any).asLocalDateTime();
     }
 
@@ -103,12 +79,6 @@ public interface NLiteral extends NBlankable {
      * @return of local time result
      */
     static NOptional<LocalTime> ofLocalTime(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asLocalTime( any).as local time(
-         * @return of result
-         */
         return of(any).asLocalTime();
     }
 
@@ -119,12 +89,6 @@ public interface NLiteral extends NBlankable {
      * @return of big complex result
      */
     static NOptional<NBigComplex> ofBigComplex(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asBigComplex( any).as big complex(
-         * @return of result
-         */
         return of(any).asBigComplex();
     }
 
@@ -135,12 +99,6 @@ public interface NLiteral extends NBlankable {
      * @return of double complex result
      */
     static NOptional<NDoubleComplex> ofDoubleComplex(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asDoubleComplex( any).as double complex(
-         * @return of result
-         */
         return of(any).asDoubleComplex();
     }
 
@@ -151,12 +109,6 @@ public interface NLiteral extends NBlankable {
      * @return of float complex result
      */
     static NOptional<NFloatComplex> ofFloatComplex(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asFloatComplex( any).as float complex(
-         * @return of result
-         */
         return of(any).asFloatComplex();
     }
 
@@ -167,12 +119,6 @@ public interface NLiteral extends NBlankable {
      * @return of number result
      */
     static NOptional<Number> ofNumber(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asNumber( any).as number(
-         * @return of result
-         */
         return of(any).asNumber();
     }
 
@@ -183,12 +129,6 @@ public interface NLiteral extends NBlankable {
      * @return of boolean result
      */
     static NOptional<Boolean> ofBoolean(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asBoolean( any).as boolean(
-         * @return of result
-         */
         return of(any).asBoolean();
     }
 
@@ -199,12 +139,6 @@ public interface NLiteral extends NBlankable {
      * @return of long result
      */
     static NOptional<Long> ofLong(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asLong( any).as long(
-         * @return of result
-         */
         return of(any).asLong();
     }
 
@@ -215,12 +149,6 @@ public interface NLiteral extends NBlankable {
      * @return of double result
      */
     static NOptional<Double> ofDouble(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asDouble( any).as double(
-         * @return of result
-         */
         return of(any).asDouble();
     }
 
@@ -231,12 +159,6 @@ public interface NLiteral extends NBlankable {
      * @return of float result
      */
     static NOptional<Float> ofFloat(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asFloat( any).as float(
-         * @return of result
-         */
         return of(any).asFloat();
     }
 
@@ -247,12 +169,6 @@ public interface NLiteral extends NBlankable {
      * @return of byte result
      */
     static NOptional<Byte> ofByte(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asByte( any).as byte(
-         * @return of result
-         */
         return of(any).asByte();
     }
 
@@ -263,12 +179,6 @@ public interface NLiteral extends NBlankable {
      * @return of short result
      */
     static NOptional<Short> ofShort(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asShort( any).as short(
-         * @return of result
-         */
         return of(any).asShort();
     }
 
@@ -279,12 +189,6 @@ public interface NLiteral extends NBlankable {
      * @return of char result
      */
     static NOptional<Character> ofChar(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asChar( any).as char(
-         * @return of result
-         */
         return of(any).asChar();
     }
 
@@ -295,12 +199,6 @@ public interface NLiteral extends NBlankable {
      * @return of int result
      */
     static NOptional<Integer> ofInt(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asInt( any).as int(
-         * @return of result
-         */
         return of(any).asInt();
     }
 
@@ -311,12 +209,6 @@ public interface NLiteral extends NBlankable {
      * @return of string result
      */
     static NOptional<String> ofString(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asString( any).as string(
-         * @return of result
-         */
         return of(any).asString();
     }
 
@@ -327,12 +219,6 @@ public interface NLiteral extends NBlankable {
      * @return of big int result
      */
     static NOptional<BigInteger> ofBigInt(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asBigInt( any).as big int(
-         * @return of result
-         */
         return of(any).asBigInt();
     }
 
@@ -343,12 +229,6 @@ public interface NLiteral extends NBlankable {
      * @return of big decimal result
      */
     static NOptional<BigDecimal> ofBigDecimal(Object any) {
-        /**
-         * Creates a new instance.
-         *
-         * @param any).asBigDecimal( any).as big decimal(
-         * @return of result
-         */
         return of(any).asBigDecimal();
     }
 

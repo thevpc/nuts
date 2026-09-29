@@ -70,12 +70,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of new line result
      */
     static NText ofNewLine() {
-        /**
-         * Creates a new instance of plain.
-         *
-         * @param "\n" "\n"
-         * @return of plain result
-         */
         return ofPlain("\n");
     }
 
@@ -391,13 +385,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled success result
      */
     static NText ofStyledSuccess(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.success() n text style.success()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.success());
     }
 
@@ -408,13 +395,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled warn result
      */
     static NText ofStyledWarn(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.warn() n text style.warn()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.warn());
     }
 
@@ -425,13 +405,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary1 result
      */
     static NText ofStyledPrimary1(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary1() n text style.primary1()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary1());
     }
 
@@ -442,13 +415,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary2 result
      */
     static NText ofStyledPrimary2(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary2() n text style.primary2()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary2());
     }
 
@@ -459,13 +425,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary3 result
      */
     static NText ofStyledPrimary3(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary3() n text style.primary3()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary3());
     }
 
@@ -476,13 +435,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary4 result
      */
     static NText ofStyledPrimary4(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary4() n text style.primary4()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary4());
     }
 
@@ -493,13 +445,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary5 result
      */
     static NText ofStyledPrimary5(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary5() n text style.primary5()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary5());
     }
 
@@ -510,13 +455,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary6 result
      */
     static NText ofStyledPrimary6(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary6() n text style.primary6()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary6());
     }
 
@@ -527,13 +465,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary7 result
      */
     static NText ofStyledPrimary7(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary7() n text style.primary7()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary7());
     }
 
@@ -544,13 +475,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary8 result
      */
     static NText ofStyledPrimary8(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary8() n text style.primary8()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary8());
     }
 
@@ -561,13 +485,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of styled primary9 result
      */
     static NText ofStyledPrimary9(String value) {
-        /**
-         * Creates a new instance of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary9() n text style.primary9()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary9());
     }
 
@@ -577,12 +494,6 @@ public interface NText extends NBlankable, NElementSimple {
      * @return of space result
      */
     static NText ofSpace() {
-        /**
-         * Creates a new instance of plain.
-         *
-         * @param " "
-         * @return of plain result
-         */
         return ofPlain(" ");
     }
 
@@ -594,19 +505,8 @@ public interface NText extends NBlankable, NElementSimple {
      */
     static NText ofSpaces(int columns) {
         if (columns <= 0) {
-            /**
-             * Creates a new instance of blank.
-             *
-             * @return of blank result
-             */
             return ofBlank();
         }
-        /**
-         * Creates a new instance of plain.
-         *
-         * @param columns) columns)
-         * @return of plain result
-         */
         return ofPlain(NStringUtils.repeat(' ', columns));
     }
 

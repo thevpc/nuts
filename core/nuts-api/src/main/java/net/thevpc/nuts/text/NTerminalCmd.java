@@ -62,12 +62,6 @@ public final class NTerminalCmd {
      * @return n terminal cmd result
      */
     public NTerminalCmd(String name) {
-      /**
-       * This.
-       *
-       * @param name name
-       * @param Collections.emptyList() collections.empty list()
-       */
         this(name, Collections.emptyList());
     }
 
@@ -141,13 +135,6 @@ public final class NTerminalCmd {
      * @return of result
      */
     public static NTerminalCmd of(String name) {
-        /**
-         * Creates a new instance.
-         *
-         * @param name name
-         * @param "" ""
-         * @return of result
-         */
         return of(name, "");
     }
 
@@ -206,36 +193,12 @@ public final class NTerminalCmd {
             case Ids.CLEAR_LINE_FROM_CURSOR:
                 return CLEAR_LINE_FROM_CURSOR;
             case Ids.MOVE_UP:
-                /**
-                 * Move_up.
-                 *
-                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
-                 * @return move_up result
-                 */
                 return MOVE_UP(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_DOWN:
-                /**
-                 * Move_down.
-                 *
-                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
-                 * @return move_down result
-                 */
                 return MOVE_DOWN(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_LEFT:
-                /**
-                 * Move_left.
-                 *
-                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
-                 * @return move_left result
-                 */
                 return MOVE_LEFT(NLiteral.of(args[0]).asInt().orElse(1));
             case Ids.MOVE_RIGHT:
-                /**
-                 * Move_right.
-                 *
-                 * @param NLiteral.of(args[0]).asInt().orElse(1) n literal.of(args[0]).as int().or else(1)
-                 * @return move_right result
-                 */
                 return MOVE_RIGHT(NLiteral.of(args[0]).asInt().orElse(1));
         }
 

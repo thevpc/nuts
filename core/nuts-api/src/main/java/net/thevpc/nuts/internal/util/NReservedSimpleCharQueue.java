@@ -51,12 +51,6 @@ public final class NReservedSimpleCharQueue {
         if (index < content.length) {
             return content[index];
         }
-        /**
-         * Unchecked io exception.
-         *
-         * @param EOFException() eof exception()
-         * @return unchecked io exception result
-         */
         throw new UncheckedIOException(new EOFException());
     }
 
@@ -115,12 +109,6 @@ public final class NReservedSimpleCharQueue {
         if (index < content.length) {
             return content[index++];
         }
-        /**
-         * Unchecked io exception.
-         *
-         * @param EOFException() eof exception()
-         * @return unchecked io exception result
-         */
         throw new UncheckedIOException(new EOFException());
     }
 
@@ -134,12 +122,6 @@ public final class NReservedSimpleCharQueue {
         if (index >= 0 && index < length()) {
             return content[this.index + index];
         }
-        /**
-         * Index out of bounds exception.
-         *
-         * @param index index
-         * @return index out of bounds exception result
-         */
         throw new IndexOutOfBoundsException("invalid index " + index);
     }
 

@@ -26,12 +26,6 @@ public interface NPageStore extends AutoCloseable {
      * @return of in memory result
      */
     static NPageStore ofInMemory() {
-        /**
-         * Creates a new instance of in memory.
-         *
-         * @param -1 -1
-         * @return of in memory result
-         */
         return ofInMemory(-1); // will pick default size
     }
 
@@ -53,13 +47,6 @@ public interface NPageStore extends AutoCloseable {
      * @return of file result
      */
     static NPageStore ofFile(NPath path) {
-        /**
-         * Creates a new instance of file.
-         *
-         * @param path path
-         * @param -1 -1
-         * @return of file result
-         */
         return ofFile(path, -1); // will pick default size
     }
 

@@ -29,11 +29,6 @@ public class NByteRef extends NObjectRef<Byte> {
      * @return n byte ref result
      */
     public NByteRef(Byte value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -43,12 +38,6 @@ public class NByteRef extends NObjectRef<Byte> {
      * @return inc result
      */
     public NByteRef inc() {
-        /**
-         * Inc.
-         *
-         * @param 1 1
-         * @return inc result
-         */
         return inc((byte) 1);
     }
 
@@ -59,12 +48,6 @@ public class NByteRef extends NObjectRef<Byte> {
      * @return inc result
      */
     public NByteRef inc(byte value) {
-        /**
-         * Adds add.
-         *
-         * @param value value
-         * @return add result
-         */
         return add(value);
     }
 
@@ -77,18 +60,8 @@ public class NByteRef extends NObjectRef<Byte> {
     public NByteRef add(byte value) {
         final Byte o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param o) o)
-           */
             set((byte) (value + o));
         }
         return this;
@@ -103,18 +76,8 @@ public class NByteRef extends NObjectRef<Byte> {
     public NByteRef mul(byte value) {
         final Byte o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value) value)
-           */
             set((byte) (o * value));
         }
         return this;
@@ -129,18 +92,8 @@ public class NByteRef extends NObjectRef<Byte> {
     public NByteRef div(byte value) {
         final Byte o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value) value)
-           */
             set((byte) (o / value));
         }
         return this;
@@ -152,12 +105,6 @@ public class NByteRef extends NObjectRef<Byte> {
      * @return dec result
      */
     public NByteRef dec() {
-        /**
-         * Adds add.
-         *
-         * @param -1 -1
-         * @return add result
-         */
         return add((byte) -1);
     }
 
@@ -168,12 +115,6 @@ public class NByteRef extends NObjectRef<Byte> {
      * @return dec result
      */
     public NByteRef dec(byte value) {
-        /**
-         * Adds add.
-         *
-         * @param (-value) (-value)
-         * @return add result
-         */
         return add((byte) (-value));
     }
 

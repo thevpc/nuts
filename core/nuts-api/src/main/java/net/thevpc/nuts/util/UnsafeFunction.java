@@ -29,11 +29,6 @@ public interface UnsafeFunction<T, V> {
      */
     default <V2> UnsafeFunction<V2, V> compose(Function<? super V2, ? extends T> before) {
         NAssert.requireNamedNonNull(before);
-      /**
-       * Return.
-       *
-       * @param apply(before.apply(v) apply(before.apply(v)
-       */
         return (V2 v) -> apply(before.apply(v));
     }
 
@@ -45,11 +40,6 @@ public interface UnsafeFunction<T, V> {
      */
     default <V2> UnsafeFunction<T, V2> andThen(Function<? super V, ? extends V2> after) {
         NAssert.requireNamedNonNull(after);
-      /**
-       * Return.
-       *
-       * @param after.apply(apply(t) after.apply(apply(t)
-       */
         return (T t) -> after.apply(apply(t));
     }
 

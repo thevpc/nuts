@@ -19,14 +19,6 @@ public interface NDecisionFilter<T> {
      * @return of result
      */
     static <T> NDecisionFilter<T> of(Class<T> type) {
-        /**
-         * Creates a new instance.
-         *
-         * @param type type
-         * @param null null
-         * @param null null
-         * @return of result
-         */
         return of(type, null, null);
     }
 

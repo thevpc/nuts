@@ -73,12 +73,6 @@ public enum NNumberLayout implements NEnum {
             case HEXADECIMAL:
                 return 16;
         }
-        /**
-         * Illegal argument exception.
-         *
-         * @param NNumberLayout" n number layout"
-         * @return illegal argument exception result
-         */
         throw new IllegalArgumentException("unexpected NNumberLayout");
     }
 

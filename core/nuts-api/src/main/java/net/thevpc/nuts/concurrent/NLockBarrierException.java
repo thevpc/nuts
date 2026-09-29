@@ -41,13 +41,6 @@ public class NLockBarrierException extends NLockException {
      * @param lockObject   lock Object
      */
     public NLockBarrierException(Object lockedObject, Object lockObject) {
-      /**
-       * This.
-       *
-       * @param null null
-       * @param lockedObject locked object
-       * @param lockObject lock object
-       */
         this(null, lockedObject, lockObject);
     }
 

@@ -76,13 +76,6 @@ public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T
      * @return of non blank result
      */
     static <T> NPredicate<T> ofNonBlank() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NBlankable::isNonBlank n blankable::is non blank
-         * @param NElement.ofName("nonNull") n element.of name("non null")
-         * @return of result
-         */
         return of(NBlankable::isNonBlank, NElement.ofName("nonNull"));
     }
 
@@ -109,13 +102,6 @@ public interface NPredicate<T> extends Predicate<T>, NRedescribable<NPredicate<T
      * @return of result
      */
     static <T> NPredicate<T> of(Predicate<T> o) {
-        /**
-         * Creates a new instance.
-         *
-         * @param o o
-         * @param null null
-         * @return of result
-         */
         return of(o, null);
     }
 

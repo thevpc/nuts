@@ -192,12 +192,6 @@ public class NCommandFactoryConfig extends NConfigItem implements Cloneable {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
     }

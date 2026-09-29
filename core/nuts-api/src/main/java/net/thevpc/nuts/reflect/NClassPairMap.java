@@ -21,15 +21,6 @@ public interface NClassPairMap<A,B,V> {
      * @return of result
      */
     static <A,B,V> NClassPairMap<A,B,V> of(Class<V> clazz) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param null null
-         * @param clazz clazz
-         * @param false false
-         * @return of result
-         */
         return of(null, null, clazz, false);
     }
 

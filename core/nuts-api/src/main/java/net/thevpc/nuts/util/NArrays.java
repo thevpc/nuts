@@ -1164,12 +1164,6 @@ public class NArrays {
     public static double rangeAt(double min, double max, double step, int index) {
         if (step >= 0) {
             if (max < min) {
-                /**
-                 * Array index out of bounds exception.
-                 *
-                 * @param index index
-                 * @return array index out of bounds exception result
-                 */
                 throw new ArrayIndexOutOfBoundsException(index);
             }
             return min + index * step;
@@ -1337,12 +1331,6 @@ public class NArrays {
      */
     public static int[] linear(int min, int max, int count, int maxCount, NIndexSelectionStrategy strategy) {
         if (count > maxCount) {
-            /**
-             * N illegal argument exception.
-             *
-             * @param limit)") limit)")
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("Count cannot exceed maxCount (Resolution limit)"));
         }
         return sample(linear(min, max, maxCount), count, strategy);
@@ -1553,14 +1541,6 @@ public class NArrays {
      */
     public static int[] range(int min, int max, int step, IntPredicate filter) {
         if (filter == null) {
-            /**
-             * Range.
-             *
-             * @param min min
-             * @param max max
-             * @param step step
-             * @return range result
-             */
             return range(min, max, step);
         }
         if (max < min) {
@@ -1611,45 +1591,16 @@ public class NArrays {
                     "fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
         if (fromIndex < 0) {
-            /**
-             * Array index out of bounds exception.
-             *
-             * @param fromIndex from index
-             * @return array index out of bounds exception result
-             */
             throw new ArrayIndexOutOfBoundsException(fromIndex);
         }
         if (toIndex > arrayLength) {
-            /**
-             * Array index out of bounds exception.
-             *
-             * @param toIndex to index
-             * @return array index out of bounds exception result
-             */
             throw new ArrayIndexOutOfBoundsException(toIndex);
         }
     }
 
     public static <K> int binarySearch(K[] a, int fromIndex, int toIndex,
                                        Object key, Comparator<K> comparator) {
-        /**
-         * Range check.
-         *
-         * @param a.length a.length
-         * @param fromIndex from index
-         * @param toIndex to index
-         */
         rangeCheck(a.length, fromIndex, toIndex);
-        /**
-         * Binary search0.
-         *
-         * @param a a
-         * @param fromIndex from index
-         * @param toIndex to index
-         * @param key key
-         * @param comparator comparator
-         * @return binary search0 result
-         */
         return binarySearch0(a, fromIndex, toIndex, key, comparator);
     }
 

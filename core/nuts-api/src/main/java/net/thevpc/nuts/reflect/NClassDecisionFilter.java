@@ -20,13 +20,6 @@ public interface NClassDecisionFilter<T> {
      * @return of result
      */
     static <T> NClassDecisionFilter<T> of(Class<T> type) {
-        /**
-         * Creates a new instance.
-         *
-         * @param type type
-         * @param NDecision.ACCEPT n decision.accept
-         * @return of result
-         */
         return of(type, NDecision.ACCEPT);
     }
 

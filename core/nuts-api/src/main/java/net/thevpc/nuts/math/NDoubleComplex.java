@@ -21,12 +21,6 @@ public interface NDoubleComplex extends Serializable, NNumber {
      * @since 0.8.6
      */
     static NDoubleComplex of(String any) {
-        /**
-         * Parse.
-         *
-         * @param any).get( any).get(
-         * @return parse result
-         */
         return parse(any).get();
     }
 

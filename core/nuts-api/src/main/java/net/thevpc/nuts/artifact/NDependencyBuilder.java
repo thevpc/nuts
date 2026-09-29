@@ -54,12 +54,6 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      * @return of result
      */
     static NDependencyBuilder of(String groupId, String artifactId) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
-         * @return of result
-         */
         return of().groupId(groupId).artifactId(artifactId);
     }
 

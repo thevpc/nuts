@@ -74,11 +74,6 @@ public interface NClassMap<K,V> {
      * @return of class result
      */
     static <K,V> NClassMap<K,V> ofClass() {
-      /**
-       * Return.
-       *
-       * @param NUtilsRPI.of().createClassClassMap( n utils rpi.of().create class class map(
-       */
         return (NClassMap) NUtilsRPI.of().createClassClassMap();
     }
 

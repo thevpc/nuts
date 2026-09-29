@@ -117,11 +117,6 @@ public abstract class NStringMatchResult{
          * @return yes pattern result
          */
         public YesPattern(NMatchType mode, Matcher value) {
-          /**
-           * Super.
-           *
-           * @param mode mode
-           */
             super(mode);
             this.value = value;
         }
@@ -149,11 +144,6 @@ public abstract class NStringMatchResult{
          * @return yes string result
          */
         public YesString(NMatchType mode, String value) {
-          /**
-           * Super.
-           *
-           * @param mode mode
-           */
             super(mode);
             this.value = value;
         }
@@ -177,11 +167,6 @@ public abstract class NStringMatchResult{
          * @return n string match result as no match result
          */
         public NStringMatchResultAsNoMatch() {
-          /**
-           * Super.
-           *
-           * @param NMatchType.NO_MATCH n match type.no_match
-           */
             super(NMatchType.NO_MATCH);
         }
 
@@ -211,11 +196,6 @@ public abstract class NStringMatchResult{
          * @return n string match result as partial result
          */
         public NStringMatchResultAsPartial(String value) {
-          /**
-           * Super.
-           *
-           * @param NMatchType.PARTIAL_MATCH n match type.partial_match
-           */
             super(NMatchType.PARTIAL_MATCH);
             this.value = value;
         }

@@ -68,11 +68,6 @@ public class NRepositoryConfig extends NConfigItem implements Serializable,Clone
      * @return copy result
      */
     public NRepositoryConfig copy(){
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

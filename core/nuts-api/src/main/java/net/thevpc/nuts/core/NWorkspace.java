@@ -67,12 +67,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
      * @return of result
      */
     static NWorkspace of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

@@ -53,12 +53,6 @@ public class NArtifactNotFoundException extends NException {
      * @param id artifact id
      */
     public NArtifactNotFoundException(NId id) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param null null
-       */
         this(id, (NMsg) null);
     }
 
@@ -69,14 +63,6 @@ public class NArtifactNotFoundException extends NException {
      * @param cause cause
      */
     public NArtifactNotFoundException(NId id, Throwable cause) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param null null
-       * @param null null
-       * @param cause cause
-       */
         this(id, null, null, cause);
     }
 
@@ -90,12 +76,6 @@ public class NArtifactNotFoundException extends NException {
      * @param cause        cause
      */
     public NArtifactNotFoundException(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param cause) cause)
-       * @param cause cause
-       */
         super(prepareMessage(id, dependencies, locations, cause), cause);
         this.id = id;
         if (locations != null) {
@@ -114,12 +94,6 @@ public class NArtifactNotFoundException extends NException {
      * @param cause   cause
      */
     public NArtifactNotFoundException(NId id, NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param cause) cause)
-       * @param cause cause
-       */
         super(prepareMessage(id, message, cause),cause);
         this.id = id;
     }
@@ -166,13 +140,6 @@ public class NArtifactNotFoundException extends NException {
      * @param message message
      */
     public NArtifactNotFoundException(NId id, NMsg message) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param message message
-       * @param null null
-       */
         this(id, message, null);
     }
 

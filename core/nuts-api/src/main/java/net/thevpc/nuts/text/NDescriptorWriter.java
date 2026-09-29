@@ -44,12 +44,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of ntf result
      */
     static NDescriptorWriter ofNtf() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(true ).ntf(true
-         * @return of result
-         */
         return of().ntf(true);
     }
 
@@ -59,12 +53,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of plain result
      */
     static NDescriptorWriter ofPlain() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(false ).ntf(false
-         * @return of result
-         */
         return of().ntf(false);
     }
 
@@ -83,12 +71,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of ntf maven result
      */
     static NDescriptorWriter ofNtfMaven() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(true).descriptor style(n descriptor style.maven
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
@@ -98,12 +80,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of maven result
      */
     static NDescriptorWriter ofMaven() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(false).descriptor style(n descriptor style.maven
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
@@ -113,12 +89,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of ntf nuts result
      */
     static NDescriptorWriter ofNtfNuts() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.NUTS ).ntf(true).descriptor style(n descriptor style.nuts
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
@@ -128,12 +98,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of nuts result
      */
     static NDescriptorWriter ofNuts() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.NUTS ).ntf(false).descriptor style(n descriptor style.nuts
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
@@ -143,12 +107,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of ntf manifest result
      */
     static NDescriptorWriter ofNtfManifest() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(true).descriptor style(n descriptor style.manifest
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
@@ -158,12 +116,6 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
      * @return of manifest result
      */
     static NDescriptorWriter ofManifest() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(false).descriptor style(n descriptor style.manifest
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 

@@ -54,11 +54,6 @@ public class NMissingSessionException extends NNoSessionException {
      * @return n missing session exception result
      */
     public NMissingSessionException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -70,12 +65,6 @@ public class NMissingSessionException extends NNoSessionException {
      * @return n missing session exception result
      */
     public NMissingSessionException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 }

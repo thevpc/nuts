@@ -56,19 +56,8 @@ public class NDescriptorEffectiveConfig implements Cloneable {
     @Override
     public NDescriptorEffectiveConfig clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NDescriptorEffectiveConfig) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }

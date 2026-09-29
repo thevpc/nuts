@@ -177,9 +177,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(boolean x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -187,9 +184,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(char x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -197,9 +191,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(NMsg b) {
         sb.append(b);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -207,9 +198,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(NText b) {
         sb.append(b);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -217,9 +205,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(int x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -227,9 +212,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(long x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -237,9 +219,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(float x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -247,9 +226,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(double x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -257,9 +233,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(char[] x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -267,9 +240,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(String x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -277,9 +247,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream println(Object x) {
         sb.append(x);
-        /**
-         * Println.
-         */
         println();
         return this;
     }
@@ -408,133 +375,56 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NPrintStream print(Boolean b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream print(Number b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream print(Temporal b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream print(Date b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream println(Number b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream println(Temporal b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 
     @Override
     public NPrintStream println(Date b) {
         if (b == null) {
-            /**
-             * Print null.
-             *
-             * @return print null result
-             */
             return printNull();
         }
-        /**
-         * Print.
-         *
-         * @param String.valueOf(b) string.value of(b)
-         * @return print result
-         */
         return print(String.valueOf(b));
     }
 

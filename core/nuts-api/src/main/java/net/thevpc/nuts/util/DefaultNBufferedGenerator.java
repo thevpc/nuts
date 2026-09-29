@@ -19,12 +19,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return default n buffered generator result
      */
     public DefaultNBufferedGenerator(NGenerator<T> reader) {
-      /**
-       * This.
-       *
-       * @param reader reader
-       * @param 1024 1024
-       */
         this(reader, 1024);
     }
 

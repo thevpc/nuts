@@ -27,12 +27,6 @@ public class NErr {
      * @return flush result
      */
     public static NPrintStream flush(){
-        /**
-         * Err.
-         *
-         * @param ).flush( ).flush(
-         * @return err result
-         */
         return err().flush();
     }
 
@@ -43,17 +37,7 @@ public class NErr {
      * @return close result
      */
     public static NPrintStream close(){
-      /**
-       * Err.
-       *
-       * @param ).close( ).close(
-       */
         err().close();
-        /**
-         * Err.
-         *
-         * @return err result
-         */
         return err();
     }
 
@@ -66,14 +50,6 @@ public class NErr {
      * @return write raw result
      */
     public static NPrintStream writeRaw(byte[] buf, int off, int len){
-        /**
-         * Err.
-         *
-         * @param ).writeRaw(buf ).write raw(buf
-         * @param off off
-         * @param len len
-         * @return err result
-         */
         return err().writeRaw(buf, off, len);
     }
 
@@ -86,14 +62,6 @@ public class NErr {
      * @return write result
      */
     public static NPrintStream write(byte[] buf, int off, int len){
-        /**
-         * Err.
-         *
-         * @param ).write(buf ).write(buf
-         * @param off off
-         * @param len len
-         * @return err result
-         */
         return err().write(buf, off, len);
     }
 
@@ -106,14 +74,6 @@ public class NErr {
      * @return write result
      */
     public static NPrintStream write(char[] buf, int off, int len){
-        /**
-         * Err.
-         *
-         * @param ).write(buf ).write(buf
-         * @param off off
-         * @param len len
-         * @return err result
-         */
         return err().write(buf, off, len);
     }
 
@@ -126,14 +86,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(byte[] buf, int off, int len){
-        /**
-         * Err.
-         *
-         * @param ).print(buf ).print(buf
-         * @param off off
-         * @param len len
-         * @return err result
-         */
         return err().print(buf, off, len);
     }
 
@@ -146,14 +98,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(char[] buf, int off, int len){
-        /**
-         * Err.
-         *
-         * @param ).print(buf ).print(buf
-         * @param off off
-         * @param len len
-         * @return err result
-         */
         return err().print(buf, off, len);
     }
 
@@ -164,12 +108,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(byte[] b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -180,12 +118,6 @@ public class NErr {
      * @return write result
      */
     public static NPrintStream write(int b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -196,12 +128,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(NMsg b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -212,12 +138,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(NText b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -228,12 +148,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Boolean b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -244,12 +158,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(boolean b){
-        /**
-         * Err.
-         *
-         * @param ).print(b ).print(b
-         * @return err result
-         */
         return err().print(b);
     }
 
@@ -260,12 +168,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(char c){
-        /**
-         * Err.
-         *
-         * @param ).print(c ).print(c
-         * @return err result
-         */
         return err().print(c);
     }
 
@@ -276,12 +178,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(int i){
-        /**
-         * Err.
-         *
-         * @param ).print(i ).print(i
-         * @return err result
-         */
         return err().print(i);
     }
 
@@ -292,12 +188,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(long l){
-        /**
-         * Err.
-         *
-         * @param ).print(l ).print(l
-         * @return err result
-         */
         return err().print(l);
     }
 
@@ -308,12 +198,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(float f){
-        /**
-         * Err.
-         *
-         * @param ).print(f ).print(f
-         * @return err result
-         */
         return err().print(f);
     }
 
@@ -324,12 +208,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(double d){
-        /**
-         * Err.
-         *
-         * @param ).print(d ).print(d
-         * @return err result
-         */
         return err().print(d);
     }
 
@@ -340,12 +218,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(char[] s){
-        /**
-         * Err.
-         *
-         * @param ).print(s ).print(s
-         * @return err result
-         */
         return err().print(s);
     }
 
@@ -356,12 +228,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Number d){
-        /**
-         * Err.
-         *
-         * @param ).print(d ).print(d
-         * @return err result
-         */
         return err().print(d);
     }
 
@@ -372,12 +238,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Temporal d){
-        /**
-         * Err.
-         *
-         * @param ).print(d ).print(d
-         * @return err result
-         */
         return err().print(d);
     }
 
@@ -388,12 +248,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Date d){
-        /**
-         * Err.
-         *
-         * @param ).print(d ).print(d
-         * @return err result
-         */
         return err().print(d);
     }
 
@@ -404,12 +258,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(String s){
-        /**
-         * Err.
-         *
-         * @param ).print(s ).print(s
-         * @return err result
-         */
         return err().print(s);
     }
 
@@ -420,12 +268,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Object obj){
-        /**
-         * Err.
-         *
-         * @param ).print(obj ).print(obj
-         * @return err result
-         */
         return err().print(obj);
     }
 
@@ -435,12 +277,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(){
-        /**
-         * Err.
-         *
-         * @param ).println( ).println(
-         * @return err result
-         */
         return err().println();
     }
 
@@ -451,12 +287,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(Number d){
-        /**
-         * Err.
-         *
-         * @param ).println(d ).println(d
-         * @return err result
-         */
         return err().println(d);
     }
 
@@ -467,12 +297,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(Temporal d){
-        /**
-         * Err.
-         *
-         * @param ).println(d ).println(d
-         * @return err result
-         */
         return err().println(d);
     }
 
@@ -483,12 +307,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(Date d){
-        /**
-         * Err.
-         *
-         * @param ).println(d ).println(d
-         * @return err result
-         */
         return err().println(d);
     }
 
@@ -499,12 +317,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(boolean x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -515,12 +327,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(char x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -531,12 +337,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(NMsg b){
-        /**
-         * Err.
-         *
-         * @param ).println(b ).println(b
-         * @return err result
-         */
         return err().println(b);
     }
 
@@ -547,12 +347,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(NText b){
-        /**
-         * Err.
-         *
-         * @param ).println(b ).println(b
-         * @return err result
-         */
         return err().println(b);
     }
 
@@ -563,12 +357,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(int x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -579,12 +367,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(long x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -595,12 +377,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(float x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -611,12 +387,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(double x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -627,12 +397,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(char[] x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -643,12 +407,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(String x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -659,12 +417,6 @@ public class NErr {
      * @return println result
      */
     public static NPrintStream println(Object x){
-        /**
-         * Err.
-         *
-         * @param ).println(x ).println(x
-         * @return err result
-         */
         return err().println(x);
     }
 
@@ -676,13 +428,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Object text, NTextStyle style){
-        /**
-         * Err.
-         *
-         * @param ).print(text ).print(text
-         * @param style style
-         * @return err result
-         */
         return err().print(text, style);
     }
 
@@ -694,13 +439,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(Object text, NTextStyles styles){
-        /**
-         * Err.
-         *
-         * @param ).print(text ).print(text
-         * @param styles styles
-         * @return err result
-         */
         return err().print(text, styles);
     }
 
@@ -710,12 +448,6 @@ public class NErr {
      * @return reset line result
      */
     public static NPrintStream resetLine(){
-        /**
-         * Err.
-         *
-         * @param ).resetLine( ).reset line(
-         * @return err result
-         */
         return err().resetLine();
     }
 
@@ -726,12 +458,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(CharSequence csq){
-        /**
-         * Err.
-         *
-         * @param ).print(csq ).print(csq
-         * @return err result
-         */
         return err().print(csq);
     }
 
@@ -744,14 +470,6 @@ public class NErr {
      * @return print result
      */
     public static NPrintStream print(CharSequence csq, int start, int end){
-        /**
-         * Err.
-         *
-         * @param ).print(csq ).print(csq
-         * @param start start
-         * @param end end
-         * @return err result
-         */
         return err().print(csq, start, end);
     }
 
@@ -761,12 +479,6 @@ public class NErr {
      * @return terminal mode result
      */
     public static NTerminalMode terminalMode(){
-        /**
-         * Err.
-         *
-         * @param ).terminalMode( ).terminal mode(
-         * @return err result
-         */
         return err().terminalMode();
     }
 
@@ -776,12 +488,6 @@ public class NErr {
      * @return is auto flash result
      */
     public static boolean isAutoFlash(){
-        /**
-         * Err.
-         *
-         * @param ).isAutoFlash( ).is auto flash(
-         * @return err result
-         */
         return err().isAutoFlash();
     }
 
@@ -792,12 +498,6 @@ public class NErr {
      * @return terminal mode result
      */
     public static NPrintStream terminalMode(NTerminalMode other){
-        /**
-         * Err.
-         *
-         * @param ).terminalMode(other ).terminal mode(other
-         * @return err result
-         */
         return err().terminalMode(other);
     }
 
@@ -808,12 +508,6 @@ public class NErr {
      * @return run result
      */
     public static NPrintStream run(NTerminalCmd command){
-        /**
-         * Err.
-         *
-         * @param ).run(command ).run(command
-         * @return err result
-         */
         return err().run(command);
     }
 
@@ -823,12 +517,6 @@ public class NErr {
      * @return as output stream result
      */
     public static OutputStream asOutputStream(){
-        /**
-         * Err.
-         *
-         * @param ).asOutputStream( ).as output stream(
-         * @return err result
-         */
         return err().asOutputStream();
     }
 
@@ -838,12 +526,6 @@ public class NErr {
      * @return as print stream result
      */
     public static PrintStream asPrintStream(){
-        /**
-         * Err.
-         *
-         * @param ).asPrintStream( ).as print stream(
-         * @return err result
-         */
         return err().asPrintStream();
     }
 
@@ -853,12 +535,6 @@ public class NErr {
      * @return as writer result
      */
     public static Writer asWriter(){
-        /**
-         * Err.
-         *
-         * @param ).asWriter( ).as writer(
-         * @return err result
-         */
         return err().asWriter();
     }
 
@@ -868,12 +544,6 @@ public class NErr {
      * @return is ntf result
      */
     public static boolean isNtf(){
-        /**
-         * Err.
-         *
-         * @param ).isNtf( ).is ntf(
-         * @return err result
-         */
         return err().isNtf();
     }
 
@@ -883,12 +553,6 @@ public class NErr {
      * @return terminal result
      */
     public static NSystemTerminalBase terminal(){
-        /**
-         * Err.
-         *
-         * @param ).terminal( ).terminal(
-         * @return err result
-         */
         return err().terminal();
     }
 

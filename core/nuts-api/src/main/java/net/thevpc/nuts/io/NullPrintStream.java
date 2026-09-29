@@ -18,11 +18,6 @@ public class NullPrintStream extends PrintStream {
      * @return null print stream result
      */
     private NullPrintStream() {
-      /**
-       * Super.
-       *
-       * @param NullOutputStream.INSTANCE null output stream.instance
-       */
         super(NullOutputStream.INSTANCE);
     }
 

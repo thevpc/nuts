@@ -115,11 +115,6 @@ public final class NMsgIntent {
     public static NMsgIntent of(String name) {
         NMsgIntent t = cached.get(name);
         if (t == null) {
-          /**
-           * Synchronized.
-           *
-           * @param cached cached
-           */
             synchronized (cached) {
                 t = cached.get(name);
                 if (t == null) {

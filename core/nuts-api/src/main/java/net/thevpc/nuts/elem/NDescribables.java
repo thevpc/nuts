@@ -58,11 +58,6 @@ public final class NDescribables {
      * @return of late to string result
      */
     public static Supplier<NElement> ofLateToString(Object any) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofString(String.valueOf(any) n element.of string( string.value of(any)
-       */
         return () -> NElement.ofString(String.valueOf(any));
     }
 
@@ -136,12 +131,6 @@ public final class NDescribables {
                 }
             }
         }
-        /**
-         * Creates a new instance of desc.
-         *
-         * @param "invalid").get( "invalid").get(
-         * @return of desc result
-         */
         return ofDesc("invalid").get();
     }
 
@@ -152,13 +141,6 @@ public final class NDescribables {
      * @return describe resolve or to string result
      */
     public static NElement describeResolveOrToString(Object o) {
-        /**
-         * Describe resolve or.
-         *
-         * @param o o
-         * @param NElement.ofString(o.toString()) n element.of string(o.to string())
-         * @return describe resolve or result
-         */
         return describeResolveOr(o, () -> NElement.ofString(o.toString()));
     }
 
@@ -240,11 +222,6 @@ public final class NDescribables {
             return (NElement) o;
         }
         if (o instanceof NDescribable) {
-          /**
-           * Return.
-           *
-           * @param o).describe( o).describe(
-           */
             return ((NDescribable) o).describe();
         }
         if (o instanceof Collection) {

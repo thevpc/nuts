@@ -74,12 +74,6 @@ public class NScopedWorkspace {
      * @param runnable runnable
      */
     public static void runWith(Runnable runnable) {
-      /**
-       * Run with.
-       *
-       * @param currentWorkspace().get() current workspace().get()
-       * @param runnable runnable
-       */
         runWith(currentWorkspace().get(), runnable);
     }
 
@@ -90,13 +84,6 @@ public class NScopedWorkspace {
      * @return call with result
      */
     public static <T> T callWith(NCallable<T> callable) {
-        /**
-         * Call with.
-         *
-         * @param currentWorkspace().get() current workspace().get()
-         * @param callable callable
-         * @return call with result
-         */
         return callWith(currentWorkspace().get(), callable);
     }
 

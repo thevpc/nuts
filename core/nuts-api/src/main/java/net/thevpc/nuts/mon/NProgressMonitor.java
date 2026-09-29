@@ -33,11 +33,6 @@ public interface NProgressMonitor {
         if (m.isPresent()) {
             return m.get();
         }
-        /**
-         * Creates a new instance of silent.
-         *
-         * @return of silent result
-         */
         return ofSilent();
     }
 

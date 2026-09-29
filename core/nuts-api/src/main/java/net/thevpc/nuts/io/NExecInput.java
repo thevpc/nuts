@@ -101,38 +101,15 @@ public class NExecInput {
      */
     public static NExecInput ofPath(NPath file, NPathOption... options) {
         if (file == null) {
-            /**
-             * Creates a new instance of inherit.
-             *
-             * @return of inherit result
-             */
             return ofInherit();
         }
         if (options == null || options.length == 0) {
-            /**
-             * Creates a new instance of path.
-             *
-             * @param file file
-             * @return of path result
-             */
             return ofPath(file);
         }
         options = Arrays.stream(options).filter(Objects::nonNull).toArray(NPathOption[]::new);
         if (options.length == 0) {
-            /**
-             * Creates a new instance of path.
-             *
-             * @param file file
-             * @return of path result
-             */
             return ofPath(file);
         }
-        /**
-         * Creates a new instance of stream.
-         *
-         * @param file.getInputStream(options) file.get input stream(options)
-         * @return of stream result
-         */
         return ofStream(file.getInputStream(options));
     }
 

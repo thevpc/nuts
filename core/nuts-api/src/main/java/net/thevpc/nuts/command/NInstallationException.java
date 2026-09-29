@@ -51,12 +51,6 @@ public abstract class NInstallationException extends NException {
      * @param ex  exception
      */
     public NInstallationException(NId id, NMsg msg, Throwable ex) {
-      /**
-       * Super.
-       *
-       * @param msg msg
-       * @param ex ex
-       */
         super(msg == null ? NMsg.ofC("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
         this.id = id;
     }

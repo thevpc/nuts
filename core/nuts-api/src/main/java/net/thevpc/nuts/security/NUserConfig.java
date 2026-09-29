@@ -64,17 +64,7 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
     public NUserConfig(NUserConfig other) {
         this.userName = other.userName();
         this.credential = other.credential();
-      /**
-       * Groups.
-       *
-       * @param other.groups() other.groups()
-       */
         groups(other.groups());
-      /**
-       * Permissions.
-       *
-       * @param other.permissions() other.permissions()
-       */
         permissions(other.permissions());
     }
 
@@ -90,17 +80,7 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
     public NUserConfig(String userName, String credential, List<String> groups, List<String> permissions) {
         this.userName = (userName);
         this.credential = (credential);
-      /**
-       * Groups.
-       *
-       * @param groups groups
-       */
         groups(groups);
-      /**
-       * Permissions.
-       *
-       * @param permissions permissions
-       */
         permissions(permissions);
     }
 
@@ -110,11 +90,6 @@ public final class NUserConfig extends NConfigItem implements Cloneable {
      * @return copy result
      */
     public NUserConfig copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

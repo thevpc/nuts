@@ -146,12 +146,6 @@ public class NMemoryFormat {
      */
     public String format(NMemorySize memorySize) {
         NMemoryPrintStream sb = NPrintStream.ofMem(NTerminalMode.FILTERED);
-      /**
-       * Print.
-       *
-       * @param memorySize memory size
-       * @param sb sb
-       */
         print(memorySize, sb);
         return sb.toString();
     }
@@ -173,14 +167,6 @@ public class NMemoryFormat {
             values[i] = values0[values.length - i - 1];
         }
         for (NMemoryUnit chronoUnit : values) {
-          /**
-           * Format unit.
-           *
-           * @param memorySize memory size
-           * @param chronoUnit chrono unit
-           * @param processed processed
-           * @param out out
-           */
             formatUnit(memorySize, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
@@ -273,12 +259,6 @@ public class NMemoryFormat {
     public NMemoryFormat iec(Boolean iec) {
         if (Objects.equals(this.iec, iec)) {
             if (frozen) {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param updated" updated"
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");
             }
             this.iec = iec;
@@ -295,12 +275,6 @@ public class NMemoryFormat {
     public NMemoryFormat fixed(Boolean fixed) {
         if (this.fixed != fixed) {
             if (frozen) {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param updated" updated"
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("This instance is immutable and cannot be updated");
             }
             this.fixed = fixed;
@@ -318,18 +292,8 @@ public class NMemoryFormat {
     public String unitString(NMemoryUnit unit, boolean iec) {
         switch (unit) {
             case BIT:
-              /**
-               * Return.
-               *
-               * @param "bits" "bits"
-               */
                 return ("bits");
             case BYTE:
-              /**
-               * Return.
-               *
-               * @param "B" "b"
-               */
                 return ("B");
             case KILO_BYTE:
                 return iec ? "KiB" : "KB";

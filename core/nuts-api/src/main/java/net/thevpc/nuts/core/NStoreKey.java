@@ -28,12 +28,6 @@ public class NStoreKey {
      * @return of workspace result
      */
     public static NStoreKey ofWorkspace() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.WORKSPACE n store scope.workspace
-         * @return of result
-         */
         return of(NStoreScope.WORKSPACE);
     }
 
@@ -43,12 +37,6 @@ public class NStoreKey {
      * @return of system result
      */
     public static NStoreKey ofSystem() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.SYSTEM n store scope.system
-         * @return of result
-         */
         return of(NStoreScope.SYSTEM);
     }
 
@@ -58,12 +46,6 @@ public class NStoreKey {
      * @return of user result
      */
     public static NStoreKey ofUser() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.USER n store scope.user
-         * @return of result
-         */
         return of(NStoreScope.USER);
     }
 
@@ -74,12 +56,6 @@ public class NStoreKey {
      * @return of shared workspace result
      */
     public static NStoreKey ofSharedWorkspace(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.WORKSPACE).sharedId(id n store scope.workspace).shared id(id
-         * @return of result
-         */
         return of(NStoreScope.WORKSPACE).sharedId(id);
     }
 
@@ -90,12 +66,6 @@ public class NStoreKey {
      * @return of shared user result
      */
     public static NStoreKey ofSharedUser(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.USER).sharedId(id n store scope.user).shared id(id
-         * @return of result
-         */
         return of(NStoreScope.USER).sharedId(id);
     }
 
@@ -106,12 +76,6 @@ public class NStoreKey {
      * @return of shared system result
      */
     public static NStoreKey ofSharedSystem(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.SYSTEM).sharedId(id n store scope.system).shared id(id
-         * @return of result
-         */
         return of(NStoreScope.SYSTEM).sharedId(id);
     }
 
@@ -122,12 +86,6 @@ public class NStoreKey {
      * @return of workspace result
      */
     public static NStoreKey ofWorkspace(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.WORKSPACE).id(id n store scope.workspace).id(id
-         * @return of result
-         */
         return of(NStoreScope.WORKSPACE).id(id);
     }
 
@@ -138,12 +96,6 @@ public class NStoreKey {
      * @return of system result
      */
     public static NStoreKey ofSystem(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.SYSTEM).id(id n store scope.system).id(id
-         * @return of result
-         */
         return of(NStoreScope.SYSTEM).id(id);
     }
 
@@ -154,12 +106,6 @@ public class NStoreKey {
      * @return of user result
      */
     public static NStoreKey ofUser(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.USER).id(id n store scope.user).id(id
-         * @return of result
-         */
         return of(NStoreScope.USER).id(id);
     }
 
@@ -170,12 +116,6 @@ public class NStoreKey {
      * @return of user result
      */
     public static NStoreKey ofUser(NStoreType storeType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.USER).type(storeType n store scope.user).type(store type
-         * @return of result
-         */
         return of(NStoreScope.USER).type(storeType);
     }
 
@@ -186,12 +126,6 @@ public class NStoreKey {
      * @return of system result
      */
     public static NStoreKey ofSystem(NStoreType storeType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.SYSTEM).type(storeType n store scope.system).type(store type
-         * @return of result
-         */
         return of(NStoreScope.SYSTEM).type(storeType);
     }
 
@@ -202,12 +136,6 @@ public class NStoreKey {
      * @return of base result
      */
     public static NStoreKey ofBase(NStoreType storeType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.BASE).type(storeType n store scope.base).type(store type
-         * @return of result
-         */
         return of(NStoreScope.BASE).type(storeType);
     }
 
@@ -218,12 +146,6 @@ public class NStoreKey {
      * @return of workspace result
      */
     public static NStoreKey ofWorkspace(NStoreType storeType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreScope.WORKSPACE).type(storeType n store scope.workspace).type(store type
-         * @return of result
-         */
         return of(NStoreScope.WORKSPACE).type(storeType);
     }
 
@@ -243,12 +165,6 @@ public class NStoreKey {
      * @return of conf result
      */
     public static NStoreKey ofConf() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.CONF n store type.conf
-         * @return of result
-         */
         return of(NStoreType.CONF);
     }
 
@@ -258,12 +174,6 @@ public class NStoreKey {
      * @return of bin result
      */
     public static NStoreKey ofBin() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.BIN n store type.bin
-         * @return of result
-         */
         return of(NStoreType.BIN);
     }
 
@@ -273,12 +183,6 @@ public class NStoreKey {
      * @return of cache result
      */
     public static NStoreKey ofCache() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.CACHE n store type.cache
-         * @return of result
-         */
         return of(NStoreType.CACHE);
     }
 
@@ -288,12 +192,6 @@ public class NStoreKey {
      * @return of var result
      */
     public static NStoreKey ofVar() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.VAR n store type.var
-         * @return of result
-         */
         return of(NStoreType.VAR);
     }
 
@@ -303,12 +201,6 @@ public class NStoreKey {
      * @return of log result
      */
     public static NStoreKey ofLog() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.LOG n store type.log
-         * @return of result
-         */
         return of(NStoreType.LOG);
     }
 
@@ -318,12 +210,6 @@ public class NStoreKey {
      * @return of run result
      */
     public static NStoreKey ofRun() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.RUN n store type.run
-         * @return of result
-         */
         return of(NStoreType.RUN);
     }
 
@@ -333,12 +219,6 @@ public class NStoreKey {
      * @return of temp result
      */
     public static NStoreKey ofTemp() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.TEMP n store type.temp
-         * @return of result
-         */
         return of(NStoreType.TEMP);
     }
 
@@ -348,12 +228,6 @@ public class NStoreKey {
      * @return of lib result
      */
     public static NStoreKey ofLib() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.LIB n store type.lib
-         * @return of result
-         */
         return of(NStoreType.LIB);
     }
 
@@ -364,12 +238,6 @@ public class NStoreKey {
      * @return of conf result
      */
     public static NStoreKey ofConf(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.CONF).id(id n store type.conf).id(id
-         * @return of result
-         */
         return of(NStoreType.CONF).id(id);
     }
 
@@ -380,12 +248,6 @@ public class NStoreKey {
      * @return of bin result
      */
     public static NStoreKey ofBin(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.BIN).id(id n store type.bin).id(id
-         * @return of result
-         */
         return of(NStoreType.BIN).id(id);
     }
 
@@ -396,12 +258,6 @@ public class NStoreKey {
      * @return of cache result
      */
     public static NStoreKey ofCache(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.CACHE).id(id n store type.cache).id(id
-         * @return of result
-         */
         return of(NStoreType.CACHE).id(id);
     }
 
@@ -412,12 +268,6 @@ public class NStoreKey {
      * @return of var result
      */
     public static NStoreKey ofVar(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.VAR).id(id n store type.var).id(id
-         * @return of result
-         */
         return of(NStoreType.VAR).id(id);
     }
 
@@ -428,12 +278,6 @@ public class NStoreKey {
      * @return of log result
      */
     public static NStoreKey ofLog(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.LOG).id(id n store type.log).id(id
-         * @return of result
-         */
         return of(NStoreType.LOG).id(id);
     }
 
@@ -444,12 +288,6 @@ public class NStoreKey {
      * @return of run result
      */
     public static NStoreKey ofRun(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.RUN).id(id n store type.run).id(id
-         * @return of result
-         */
         return of(NStoreType.RUN).id(id);
     }
 
@@ -460,12 +298,6 @@ public class NStoreKey {
      * @return of temp result
      */
     public static NStoreKey ofTemp(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.TEMP).id(id n store type.temp).id(id
-         * @return of result
-         */
         return of(NStoreType.TEMP).id(id);
     }
 
@@ -476,12 +308,6 @@ public class NStoreKey {
      * @return of lib result
      */
     public static NStoreKey ofLib(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param NStoreType.LIB).id(id n store type.lib).id(id
-         * @return of result
-         */
         return of(NStoreType.LIB).id(id);
     }
 
@@ -574,15 +400,6 @@ public class NStoreKey {
      * @return of cache faced result
      */
     public static NStoreKey ofCacheFaced(NId id, String repoUuid, String faceName) {
-        /**
-         * Creates a new instance of faced.
-         *
-         * @param NStoreType.CACHE n store type.cache
-         * @param id id
-         * @param repoUuid repo uuid
-         * @param faceName face name
-         * @return of faced result
-         */
         return ofFaced(NStoreType.CACHE, id, repoUuid, faceName);
     }
 
@@ -620,15 +437,6 @@ public class NStoreKey {
      * @return of conf faced result
      */
     public static NStoreKey ofConfFaced(NId id, String repoUuid, String faceName) {
-        /**
-         * Creates a new instance of faced.
-         *
-         * @param NStoreType.CONF n store type.conf
-         * @param id id
-         * @param repoUuid repo uuid
-         * @param faceName face name
-         * @return of faced result
-         */
         return ofFaced(NStoreType.CONF, id, repoUuid, faceName);
     }
 
@@ -718,12 +526,6 @@ public class NStoreKey {
      * @return system result
      */
     public NStoreKey system() {
-        /**
-         * Scope.
-         *
-         * @param NStoreScope.SYSTEM n store scope.system
-         * @return scope result
-         */
         return scope(NStoreScope.SYSTEM);
     }
 
@@ -733,12 +535,6 @@ public class NStoreKey {
      * @return user result
      */
     public NStoreKey user() {
-        /**
-         * Scope.
-         *
-         * @param NStoreScope.USER n store scope.user
-         * @return scope result
-         */
         return scope(NStoreScope.USER);
     }
 
@@ -748,12 +544,6 @@ public class NStoreKey {
      * @return workspace result
      */
     public NStoreKey workspace() {
-        /**
-         * Scope.
-         *
-         * @param NStoreScope.WORKSPACE n store scope.workspace
-         * @return scope result
-         */
         return scope(NStoreScope.WORKSPACE);
     }
 
@@ -783,12 +573,6 @@ public class NStoreKey {
      * @return lib result
      */
     public NStoreKey lib() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.LIB n store type.lib
-         * @return type result
-         */
         return type(NStoreType.LIB);
     }
 
@@ -798,12 +582,6 @@ public class NStoreKey {
      * @return bin result
      */
     public NStoreKey bin() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.BIN n store type.bin
-         * @return type result
-         */
         return type(NStoreType.BIN);
     }
 
@@ -813,12 +591,6 @@ public class NStoreKey {
      * @return run result
      */
     public NStoreKey run() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.RUN n store type.run
-         * @return type result
-         */
         return type(NStoreType.RUN);
     }
 
@@ -828,12 +600,6 @@ public class NStoreKey {
      * @return conf result
      */
     public NStoreKey conf() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.CONF n store type.conf
-         * @return type result
-         */
         return type(NStoreType.CONF);
     }
 
@@ -843,12 +609,6 @@ public class NStoreKey {
      * @return log result
      */
     public NStoreKey log() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.LOG n store type.log
-         * @return type result
-         */
         return type(NStoreType.LOG);
     }
 
@@ -858,12 +618,6 @@ public class NStoreKey {
      * @return cache result
      */
     public NStoreKey cache() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.CACHE n store type.cache
-         * @return type result
-         */
         return type(NStoreType.CACHE);
     }
 
@@ -873,12 +627,6 @@ public class NStoreKey {
      * @return temp result
      */
     public NStoreKey temp() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.TEMP n store type.temp
-         * @return type result
-         */
         return type(NStoreType.TEMP);
     }
 
@@ -888,12 +636,6 @@ public class NStoreKey {
      * @return var result
      */
     public NStoreKey var() {
-        /**
-         * Type.
-         *
-         * @param NStoreType.VAR n store type.var
-         * @return type result
-         */
         return type(NStoreType.VAR);
     }
 

@@ -101,21 +101,9 @@ public enum NShellFamily implements NEnum {
             }
             case LINUX:
             case UNIX: {
-                /**
-                 * Parse.
-                 *
-                 * @param System.getenv("SHELL")).orElse(BASH system.getenv("shell")).or else(bash
-                 * @return parse result
-                 */
                 return parse(System.getenv("SHELL")).orElse(BASH);
             }
             case MACOS: {
-                /**
-                 * Parse.
-                 *
-                 * @param System.getenv("SHELL")).orElse(ZSH system.getenv("shell")).or else(zsh
-                 * @return parse result
-                 */
                 return parse(System.getenv("SHELL")).orElse(ZSH);
             }
         }

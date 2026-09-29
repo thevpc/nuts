@@ -49,13 +49,6 @@ public class NPushException extends NException {
      * @param id artifact id
      */
     public NPushException(NId id) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param null null
-       * @param null null
-       */
         this(id, null, null);
     }
 
@@ -66,13 +59,6 @@ public class NPushException extends NException {
      * @param message message
      */
     public NPushException(NId id, NMsg message) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param message message
-       * @param null null
-       */
         this(id, message, null);
     }
 
@@ -84,12 +70,6 @@ public class NPushException extends NException {
      * @param cause   cause
      */
     public NPushException(NId id, NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message == null ? NMsg.ofC("unable to push %s", id == null ? "<null>" : id) : message, cause);
         this.id = id;
     }

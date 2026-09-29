@@ -69,11 +69,6 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
         this.remoteUserName = other.remoteUserName();
         this.remoteCredential = other.remoteCredential();
         this.remoteAuthType = other.remoteAuthType();
-      /**
-       * Permissions.
-       *
-       * @param other.permissions() other.permissions()
-       */
         permissions(other.permissions());
     }
 
@@ -94,11 +89,6 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
         this.remoteUserName = remoteUserName;
         this.remoteCredential = remoteCredential;
         this.remoteAuthType = remoteAuthType;
-      /**
-       * Permissions.
-       *
-       * @param permissions permissions
-       */
         permissions(permissions);
     }
 
@@ -208,11 +198,6 @@ public final class NRepositoryAccessConfig extends NConfigItem implements Clonea
      * @return copy result
      */
     public NRepositoryAccessConfig copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

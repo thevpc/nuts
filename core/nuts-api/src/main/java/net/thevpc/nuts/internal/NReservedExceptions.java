@@ -140,13 +140,6 @@ public class NReservedExceptions {
      * @return of safe assert exception result
      */
     public static RuntimeException ofSafeAssertException(NMsg msg) {
-        /**
-         * Creates a new instance of safe assert exception.
-         *
-         * @param msg msg
-         * @param null null
-         * @return of safe assert exception result
-         */
         return ofSafeAssertException(msg, null);
     }
 
@@ -177,13 +170,6 @@ public class NReservedExceptions {
      * @return of safe cmd line exception result
      */
     public static RuntimeException ofSafeCmdLineException(NMsg msg) {
-        /**
-         * Creates a new instance of safe cmd line exception.
-         *
-         * @param msg msg
-         * @param null null
-         * @return of safe cmd line exception result
-         */
         return ofSafeCmdLineException(msg, null);
     }
 
@@ -273,12 +259,6 @@ public class NReservedExceptions {
      * @return resolve exit code result
      */
     public static NOptional<Integer> resolveExitCode(Throwable th) {
-        /**
-         * Resolve with exit code exception base.
-         *
-         * @param th).map(NExceptionWithExitCodeBase::exitCode th).map(n exception with exit code base::exit code
-         * @return resolve with exit code exception base result
-         */
         return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::exitCode);
     }
 
@@ -289,13 +269,6 @@ public class NReservedExceptions {
      * @return get error message result
      */
     public static String getErrorMessage(Throwable ex) {
-        /**
-         * Returns the error message.
-         *
-         * @param ex ex
-         * @param 128 128
-         * @return get error message result
-         */
         return getErrorMessage(ex, 128);
     }
 

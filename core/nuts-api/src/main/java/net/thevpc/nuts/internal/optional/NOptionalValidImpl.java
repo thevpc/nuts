@@ -22,11 +22,6 @@ public abstract class NOptionalValidImpl<T> extends NOptionalImpl<T> implements 
      * @return n reserved optional valid result
      */
     public NOptionalValidImpl(Supplier<NMsg> message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -51,11 +46,6 @@ public abstract class NOptionalValidImpl<T> extends NOptionalImpl<T> implements 
 
     @Override
     public T get(Supplier<NMsg> message) {
-        /**
-         * Returns the get.
-         *
-         * @return get result
-         */
         return get();
     }
 
@@ -113,21 +103,11 @@ public abstract class NOptionalValidImpl<T> extends NOptionalImpl<T> implements 
 
     @Override
     public T orDefault() {
-        /**
-         * Returns the get.
-         *
-         * @return get result
-         */
         return get();
     }
 
     @Override
     public T orDefault(Class<T> defaultType) {
-        /**
-         * Returns the get.
-         *
-         * @return get result
-         */
         return get();
     }
 

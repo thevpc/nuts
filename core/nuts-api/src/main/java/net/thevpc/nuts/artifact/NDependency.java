@@ -72,12 +72,6 @@ public interface NDependency extends Serializable, NBlankable {
      * @return of result
      */
     static NDependency of(String value) {
-        /**
-         * Returns the get.
-         *
-         * @param value).get( value).get(
-         * @return get result
-         */
         return get(value).get();
     }
 
@@ -88,12 +82,6 @@ public interface NDependency extends Serializable, NBlankable {
      * @return of result
      */
     static NDependency of(NId value) {
-        /**
-         * Returns the get.
-         *
-         * @param value).get( value).get(
-         * @return get result
-         */
         return get(value).get();
     }
 

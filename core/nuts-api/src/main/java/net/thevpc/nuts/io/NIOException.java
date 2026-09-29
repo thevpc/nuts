@@ -42,11 +42,6 @@ public class NIOException extends NException {
      * @param message message
      */
     public NIOException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -57,12 +52,6 @@ public class NIOException extends NException {
      * @param cause   cause
      */
     public NIOException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 

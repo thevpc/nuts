@@ -281,12 +281,6 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
                     return new PrefixFormat(quoteType, linePrefix, lineSuffix,
                             condition, charEscapeSet);
                 default:
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param mode mode
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("Unknown mode: " + mode);
             }
         }
@@ -314,12 +308,6 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
             case TRIPLE_SINGLE_QUOTED_STRING: return "'''"    + body + "'''";
             case TRIPLE_BACKTICK_STRING:      return "```"    + body + "```";
             default:
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param quoteType quote type
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("Unsupported quote type for wrap: " + quoteType);
         }
     }
@@ -347,14 +335,6 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet,
                 NCharEscape    boundaryEscape) {
-          /**
-           * Super.
-           *
-           * @param quoteType quote type
-           * @param condition condition
-           * @param boundaryEscape boundary escape
-           * @param charEscapeSet char escape set
-           */
             super(quoteType, condition, boundaryEscape, charEscapeSet);
         }
 
@@ -425,14 +405,6 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet,
                 NCharEscape    boundaryEscape) {
-          /**
-           * Super.
-           *
-           * @param resolveType(quoteChar) resolve type(quote char)
-           * @param condition condition
-           * @param boundaryEscape boundary escape
-           * @param charEscapeSet char escape set
-           */
             super(resolveType(quoteChar), condition, boundaryEscape, charEscapeSet);
             this.qc = quoteChar;
         }
@@ -516,14 +488,6 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
                 NSupportMode   condition,
                 NCharEscapeSet charEscapeSet) {
             // PREFIX has no boundary escape concept — pass null
-          /**
-           * Super.
-           *
-           * @param quoteType quote type
-           * @param condition condition
-           * @param null null
-           * @param charEscapeSet char escape set
-           */
             super(quoteType, condition, null, charEscapeSet);
             this.linePrefix = (linePrefix != null) ? linePrefix : "";
             this.lineSuffix = (lineSuffix != null) ? lineSuffix : "";

@@ -115,12 +115,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance with the specified command
      */
     static NExec of(String... cmd) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).command(cmd ).command(cmd
-         * @return of result
-         */
         return of().command(cmd);
     }
 
@@ -133,12 +127,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return a new {@code NExec} instance configured for system execution
      */
     static NExec ofSystem(String... cmd) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).command(cmd).system( ).command(cmd).system(
-         * @return of result
-         */
         return of().command(cmd).system();
     }
 
@@ -149,12 +137,6 @@ public interface NExec extends NWorkspaceCmd, NConnectionStringAware {
      * @return of open file result
      */
     static NExec ofOpenFile(NPath path) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).command(path).open( ).command(path).open(
-         * @return of result
-         */
         return of().command(path).open();
     }
 

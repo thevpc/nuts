@@ -30,11 +30,6 @@ public class NFloatRef extends NObjectRef<Float> {
      * @return n float ref result
      */
     public NFloatRef(Float value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -44,12 +39,6 @@ public class NFloatRef extends NObjectRef<Float> {
      * @return inc result
      */
     public NFloatRef inc() {
-        /**
-         * Inc.
-         *
-         * @param 1 1
-         * @return inc result
-         */
         return inc(1);
     }
 
@@ -60,12 +49,6 @@ public class NFloatRef extends NObjectRef<Float> {
      * @return inc result
      */
     public NFloatRef inc(float value) {
-        /**
-         * Adds add.
-         *
-         * @param value value
-         * @return add result
-         */
         return add(value);
     }
 
@@ -78,18 +61,8 @@ public class NFloatRef extends NObjectRef<Float> {
     public NFloatRef add(float value) {
         final Float o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param o o
-           */
             set(value + o);
         }
         return this;
@@ -104,18 +77,8 @@ public class NFloatRef extends NObjectRef<Float> {
     public NFloatRef mul(float value) {
         final Float o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o * value);
         }
         return this;
@@ -130,18 +93,8 @@ public class NFloatRef extends NObjectRef<Float> {
     public NFloatRef div(float value) {
         final Float o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o / value);
         }
         return this;
@@ -153,12 +106,6 @@ public class NFloatRef extends NObjectRef<Float> {
      * @return dec result
      */
     public NFloatRef dec() {
-        /**
-         * Adds add.
-         *
-         * @param -1 -1
-         * @return add result
-         */
         return add(-1);
     }
 
@@ -169,12 +116,6 @@ public class NFloatRef extends NObjectRef<Float> {
      * @return dec result
      */
     public NFloatRef dec(float value) {
-        /**
-         * Adds add.
-         *
-         * @param -value -value
-         * @return add result
-         */
         return add(-value);
     }
 

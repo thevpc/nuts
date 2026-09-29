@@ -46,33 +46,16 @@ public abstract class NIdFilterBase extends NFilterBase implements NIdFilter, NS
      * @return abstract id filter result
      */
     public NIdFilterBase(NFilterOp op) {
-      /**
-       * Super.
-       *
-       * @param op op
-       */
         super(op);
     }
 
     @Override
     public NIdFilter or(NIdFilter other) {
-        /**
-         * Or.
-         *
-         * @param other).to(NIdFilter.class other).to(n id filter.class
-         * @return or result
-         */
         return or((NFilter) other).to(NIdFilter.class);
     }
 
     @Override
     public NIdFilter and(NIdFilter other) {
-        /**
-         * And.
-         *
-         * @param other).to(NIdFilter.class other).to(n id filter.class
-         * @return and result
-         */
         return and((NFilter) other).to(NIdFilter.class);
     }
 

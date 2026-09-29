@@ -39,11 +39,6 @@ public interface NArgValueComplete {
      * @return of simple candidates list supplier result
      */
     static NArgValueComplete ofSimpleCandidatesListSupplier(Supplier<? extends Collection<String>> candidates) {
-      /**
-       * Return.
-       *
-       * @param candidates.get() candidates.get()
-       */
         return (ctx) -> ctx.filterValues(candidates == null ? null : candidates.get());
     }
 
@@ -54,11 +49,6 @@ public interface NArgValueComplete {
      * @return of simple candidates stream supplier result
      */
     static NArgValueComplete ofSimpleCandidatesStreamSupplier(Supplier<Stream<String>> candidates) {
-      /**
-       * Return.
-       *
-       * @param candidates.get() candidates.get()
-       */
         return (ctx) -> ctx.filterValues(candidates == null ? null : candidates.get());
     }
 
@@ -69,11 +59,6 @@ public interface NArgValueComplete {
      * @return of simple candidates list result
      */
     static NArgValueComplete ofSimpleCandidatesList(Collection<String> candidates) {
-      /**
-       * Return.
-       *
-       * @param ctx.filterValues(candidates ctx.filter values(candidates
-       */
         return (ctx) -> ctx.filterValues(candidates);
     }
     /**
@@ -83,11 +68,6 @@ public interface NArgValueComplete {
      * @return of simple candidates list result
      */
     static NArgValueComplete ofSimpleCandidatesList(String... candidates) {
-      /**
-       * Return.
-       *
-       * @param Arrays.asList(candidates) arrays.as list(candidates)
-       */
         return (ctx) -> ctx.filterValues(candidates == null ? null : Arrays.asList(candidates));
     }
 
@@ -98,11 +78,6 @@ public interface NArgValueComplete {
      * @return of candidates list result
      */
     static NArgValueComplete ofCandidatesList(Collection<NArgCompleteCandidate> candidates) {
-      /**
-       * Return.
-       *
-       * @param ctx.filterCandidates(candidates ctx.filter candidates(candidates
-       */
         return (ctx) -> ctx.filterCandidates(candidates);
     }
 
@@ -113,11 +88,6 @@ public interface NArgValueComplete {
      * @return of candidates list result
      */
     static NArgValueComplete ofCandidatesList(NArgCompleteCandidate... candidates) {
-      /**
-       * Return.
-       *
-       * @param Arrays.asList(candidates) arrays.as list(candidates)
-       */
         return (ctx) -> ctx.filterCandidates(candidates == null ? null : Arrays.asList(candidates));
     }
 

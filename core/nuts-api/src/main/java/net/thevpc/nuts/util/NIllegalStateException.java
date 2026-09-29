@@ -43,11 +43,6 @@ public class NIllegalStateException extends NException {
      * @param message message
      */
     public NIllegalStateException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -58,12 +53,6 @@ public class NIllegalStateException extends NException {
      * @param cause   cause
      */
     public NIllegalStateException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 
@@ -78,14 +67,6 @@ public class NIllegalStateException extends NException {
      *                           writable
      */
     public NIllegalStateException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

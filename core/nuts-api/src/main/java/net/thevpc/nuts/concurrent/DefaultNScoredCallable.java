@@ -36,20 +36,8 @@ public class DefaultNScoredCallable<T> implements NScoredCallable<T> {
     public DefaultNScoredCallable(Supplier<T> value, int score, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && score > 0) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param support") support")
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(NI18n.of("null callable requires invalid support"));
         } else if (this.value != null && score <= 0) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param support") support")
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(NI18n.of("non null callable requires valid support"));
         }
         this.score = score;

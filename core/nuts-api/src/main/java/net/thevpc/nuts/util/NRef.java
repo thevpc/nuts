@@ -79,12 +79,6 @@ public interface NRef<T> extends Supplier<T> {
      * @return of null result
      */
     static <T> NRef<T> ofNull() {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @return of result
-         */
         return of(null);
     }
 

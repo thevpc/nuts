@@ -96,12 +96,6 @@ public abstract class NFilterBase implements NFilter {
 
     @Override
     public <T extends NFilter> NFilter simplify(Class<T> type) {
-        /**
-         * Simplify.
-         *
-         * @param ).to(type ).to(type
-         * @return simplify result
-         */
         return simplify().to(type);
     }
 

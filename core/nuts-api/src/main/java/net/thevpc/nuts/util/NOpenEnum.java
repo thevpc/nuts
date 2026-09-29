@@ -50,12 +50,6 @@ public abstract class NOpenEnum implements NEnum{
         this.name = NNameFormat.CONST_NAME.format(id);  // mirrors Java enum name() convention
         Map<String, NOpenEnum> byId = ID_REGISTRY.computeIfAbsent(getClass(), k -> new LinkedHashMap<>());
         if (byId.containsKey(id)) {
-            /**
-             * N illegal argument exception.
-             *
-             * @param %s",id,getClass().getSimpleName()) %s",id,get class().get simple name())
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("duplicate id '%s' in %s",id,getClass().getSimpleName()));
         }
         List<NOpenEnum> valuesList = VALUES_REGISTRY.computeIfAbsent(getClass(), k -> new ArrayList<>());

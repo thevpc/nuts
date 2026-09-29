@@ -41,11 +41,6 @@ public class NCancelException extends NExecutionException {
      * Constructs a new NutsUserCancelException exception
      */
     public NCancelException() {
-      /**
-       * This.
-       *
-       * @param null null
-       */
         this(null);
     }
 
@@ -55,12 +50,6 @@ public class NCancelException extends NExecutionException {
      * @param message message
      */
     public NCancelException(NMsg message) {
-      /**
-       * This.
-       *
-       * @param message message
-       * @param INTERRUPT interrupt
-       */
         this(message, INTERRUPT);
     }
 
@@ -71,12 +60,6 @@ public class NCancelException extends NExecutionException {
      * @param exitCode exit code
      */
     public NCancelException(NMsg message, int exitCode) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param exitCode exit code
-       */
         super((message == null) ? NMsg.ofP(NI18n.of("operation cancelled")) : message, exitCode);
     }
 }

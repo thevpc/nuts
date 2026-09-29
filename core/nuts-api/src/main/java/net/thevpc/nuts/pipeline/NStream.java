@@ -63,11 +63,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of int array result
      */
     static <T> NStream<T> ofIntArray(int... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofIntArray(items) n element.of int array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofIntArray(items));
     }
 
@@ -78,11 +73,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of long array result
      */
     static <T> NStream<T> ofLongArray(long... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofLongArray(items) n element.of long array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofLongArray(items));
     }
 
@@ -93,11 +83,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of boolean array result
      */
     static <T> NStream<T> ofBooleanArray(boolean... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofBooleanArray(items) n element.of boolean array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofBooleanArray(items));
     }
 
@@ -108,11 +93,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of byte array result
      */
     static <T> NStream<T> ofByteArray(byte... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofByteArray(items) n element.of byte array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofByteArray(items));
     }
 
@@ -124,11 +104,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of char array result
      */
     static <T> NStream<T> ofCharArray(char... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofCharArray(items) n element.of char array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofCharArray(items));
     }
 
@@ -139,11 +114,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of short array result
      */
     static <T> NStream<T> ofShortArray(short... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofShortArray(items) n element.of short array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofShortArray(items));
     }
 
@@ -154,11 +124,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of float array result
      */
     static <T> NStream<T> ofFloatArray(float... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofFloatArray(items) n element.of float array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofFloatArray(items));
     }
 
@@ -169,11 +134,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of double array result
      */
     static <T> NStream<T> ofDoubleArray(double... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofDoubleArray(items) n element.of double array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofDoubleArray(items));
     }
 
@@ -243,12 +203,6 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
      * @return of singleton result
      */
     static <T> NStream<T> ofSingleton(T element) {
-        /**
-         * Creates a new instance of iterable.
-         *
-         * @param Arrays.asList(element) arrays.as list(element)
-         * @return of iterable result
-         */
         return ofIterable(Arrays.asList(element));
     }
 

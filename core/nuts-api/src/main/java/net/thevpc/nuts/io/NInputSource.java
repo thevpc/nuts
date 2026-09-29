@@ -182,13 +182,6 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
      * @return of result
      */
     static NInputSource of(NInputStreamProvider other) {
-        /**
-         * Creates a new instance.
-         *
-         * @param other other
-         * @param null null
-         * @return of result
-         */
         return of(other, null);
     }
 
@@ -212,13 +205,6 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
      * @return of result
      */
     static NInputSource of(NReaderProvider other) {
-        /**
-         * Creates a new instance.
-         *
-         * @param other other
-         * @param null null
-         * @return of result
-         */
         return of(other, null);
     }
 

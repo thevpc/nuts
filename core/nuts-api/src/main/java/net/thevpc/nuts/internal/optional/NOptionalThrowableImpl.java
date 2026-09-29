@@ -30,11 +30,6 @@ public abstract class NOptionalThrowableImpl<T> extends NOptionalImpl<T> impleme
      * @return n reserved optional throwable result
      */
     public NOptionalThrowableImpl(Supplier<NMsg> message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -138,11 +133,6 @@ public abstract class NOptionalThrowableImpl<T> extends NOptionalImpl<T> impleme
     @Override
     protected NOptional<T> clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NOptional<T>) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);

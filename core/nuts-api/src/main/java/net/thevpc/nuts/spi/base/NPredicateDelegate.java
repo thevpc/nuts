@@ -22,23 +22,11 @@ public abstract class NPredicateDelegate<T> extends NPredicateBase<T> {
 
     @Override
     public boolean test(T t) {
-        /**
-         * Base predicate.
-         *
-         * @param ).test(t ).test(t
-         * @return base predicate result
-         */
         return basePredicate().test(t);
     }
 
     @Override
     public NElement describe() {
-        /**
-         * Base predicate.
-         *
-         * @param ).describe( ).describe(
-         * @return base predicate result
-         */
         return basePredicate().describe();
     }
 

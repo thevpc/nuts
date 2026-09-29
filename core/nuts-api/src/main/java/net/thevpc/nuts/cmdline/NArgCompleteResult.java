@@ -29,13 +29,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of flags result
      */
     static NArgCompleteResult ofFlags(NArgCompleteFlag... flags) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param Arrays.asList(flags) arrays.as list(flags)
-         * @return of result
-         */
         return of(null, flags == null ? null : Arrays.asList(flags));
     }
 
@@ -46,13 +39,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of flags result
      */
     static NArgCompleteResult ofFlags(Collection<NArgCompleteFlag> flags) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param flags flags
-         * @return of result
-         */
         return of(null, flags);
     }
 
@@ -63,13 +49,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of candidates result
      */
     static NArgCompleteResult ofCandidates(NArgCompleteCandidate... candidates) {
-        /**
-         * Creates a new instance.
-         *
-         * @param Arrays.asList(candidates) arrays.as list(candidates)
-         * @param null null
-         * @return of result
-         */
         return of(candidates == null ? null : Arrays.asList(candidates), null);
     }
 
@@ -80,13 +59,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of simple candidates result
      */
     static NArgCompleteResult ofSimpleCandidates(String... candidates) {
-        /**
-         * Creates a new instance.
-         *
-         * @param Arrays.stream(candidates).filter(Objects::nonNull).map(NArgCompleteCandidate::of).collect(Collectors.toList()) arrays.stream(candidates).filter( objects::non null).map(n arg complete candidate::of).collect( collectors.to list())
-         * @param null null
-         * @return of result
-         */
         return of(candidates == null ? null : Arrays.stream(candidates).filter(Objects::nonNull).map(NArgCompleteCandidate::of).collect(Collectors.toList()), null);
     }
 
@@ -97,13 +69,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of simple candidates result
      */
     static NArgCompleteResult ofSimpleCandidates(Collection<String> candidates) {
-        /**
-         * Creates a new instance.
-         *
-         * @param candidates.stream().filter(Objects::nonNull).map(NArgCompleteCandidate::of).collect(Collectors.toList()) candidates.stream().filter( objects::non null).map(n arg complete candidate::of).collect( collectors.to list())
-         * @param null null
-         * @return of result
-         */
         return of(candidates == null ? null : candidates.stream().filter(Objects::nonNull).map(NArgCompleteCandidate::of).collect(Collectors.toList()), null);
     }
 
@@ -123,13 +88,6 @@ public interface NArgCompleteResult extends NBlankable {
      * @return of candidates result
      */
     static NArgCompleteResult ofCandidates(Collection<NArgCompleteCandidate> candidates) {
-        /**
-         * Creates a new instance.
-         *
-         * @param candidates candidates
-         * @param null null
-         * @return of result
-         */
         return of(candidates, null);
     }
 

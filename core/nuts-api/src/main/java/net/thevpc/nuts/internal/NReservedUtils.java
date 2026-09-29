@@ -201,21 +201,9 @@ public final class NReservedUtils {
     public static String coalesce(Object... all) {
         for (Object object : all) {
             if (object != null) {
-                /**
-                 * Desc.
-                 *
-                 * @param object object
-                 * @return desc result
-                 */
                 return desc(object);
             }
         }
-        /**
-         * Desc.
-         *
-         * @param null null
-         * @return desc result
-         */
         return desc(null);
     }
 
@@ -563,12 +551,6 @@ public final class NReservedUtils {
             try {
                 fileContent = new String(Files.readAllBytes(filePath));
             } catch (IOException ex) {
-                /**
-                 * Unchecked io exception.
-                 *
-                 * @param ex ex
-                 * @return unchecked io exception result
-                 */
                 throw new UncheckedIOException(ex);
             }
             String[] fileRows = fileContent.split("\n");
@@ -612,12 +594,6 @@ public final class NReservedUtils {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             } catch (IOException ex) {
-                /**
-                 * Unchecked io exception.
-                 *
-                 * @param ex ex
-                 * @return unchecked io exception result
-                 */
                 throw new UncheckedIOException(ex);
             }
         }

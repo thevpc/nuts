@@ -43,13 +43,6 @@ public class NInstallException extends NInstallationException {
      * @param id nuts id
      */
     public NInstallException(NId id) {
-      /**
-       * This.
-       *
-       * @param id id
-       * @param null null
-       * @param null null
-       */
         this(id, null, null);
     }
 
@@ -62,13 +55,6 @@ public class NInstallException extends NInstallationException {
      * @param ex  exception
      */
     public NInstallException(NId id, NMsg msg, Throwable ex) {
-      /**
-       * Super.
-       *
-       * @param id id
-       * @param msg msg
-       * @param ex ex
-       */
         super(id, msg == null ? NMsg.ofC("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 

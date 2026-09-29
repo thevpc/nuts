@@ -678,11 +678,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write object result
      */
     default NPath writeObject(Object any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
@@ -697,11 +692,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write msg result
      */
     default NPath writeMsg(NMsg any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
@@ -716,11 +706,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write text result
      */
     default NPath writeText(NText any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }

@@ -174,38 +174,18 @@ public class NPathNameParts {
                 s -> {
                     switch (NStringUtils.strip(s).toLowerCase()) {
                         case "name":
-                            /**
-                             * Converts to name.
-                             *
-                             * @return to name result
-                             */
                             return toName();
                         case "base":
                         case "basename":
                         case "base-name":
-                            /**
-                             * Base name.
-                             *
-                             * @return base name result
-                             */
                             return baseName();
                         case "ext":
                         case "extension":
-                            /**
-                             * Extension.
-                             *
-                             * @return extension result
-                             */
                             return extension();
                         case "fullext":
                         case "full-ext":
                         case "full-extension":
                         case "fullextension":
-                            /**
-                             * Full extension.
-                             *
-                             * @return full extension result
-                             */
                             return fullExtension();
                     }
                     return null;

@@ -24,11 +24,6 @@ public class NByteArrayQueue {
      * @return n byte array queue result
      */
     public NByteArrayQueue() {
-      /**
-       * This.
-       *
-       * @param 256 256
-       */
         this(256);
     }
 
@@ -39,12 +34,6 @@ public class NByteArrayQueue {
      * @return n byte array queue result
      */
     public NByteArrayQueue(int initial) {
-      /**
-       * This.
-       *
-       * @param initial initial
-       * @param 256) 256)
-       */
         this(initial, Math.min(initial, 256));
     }
 
@@ -73,22 +62,9 @@ public class NByteArrayQueue {
         try {
             count = inputStream.read(all);
         } catch (IOException e) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param e e
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(e);
         }
         if (count > 0) {
-          /**
-           * Write.
-           *
-           * @param all all
-           * @param 0 0
-           * @param count count
-           */
             write(all, 0, count);
         }
         return count;
@@ -102,13 +78,6 @@ public class NByteArrayQueue {
      * @return write result
      */
     public synchronized void write(byte[] c) {
-      /**
-       * Write.
-       *
-       * @param c c
-       * @param 0 0
-       * @param c.length c.length
-       */
         write(c, 0, c.length);
     }
 
@@ -121,11 +90,6 @@ public class NByteArrayQueue {
      * @return write result
      */
     public synchronized void write(byte[] c, int offset, int len) {
-      /**
-       * Ensure available.
-       *
-       * @param len len
-       */
         ensureAvailable(len);
         try {
             System.arraycopy(c, offset, content, to, len);
@@ -142,11 +106,6 @@ public class NByteArrayQueue {
      * @return write result
      */
     public synchronized void write(byte c) {
-      /**
-       * Ensure available.
-       *
-       * @param 1 1
-       */
         ensureAvailable(1);
         content[to++] = c;
     }
@@ -169,12 +128,6 @@ public class NByteArrayQueue {
         if (to > from) {
             return content[from];
         }
-        /**
-         * Unchecked io exception.
-         *
-         * @param EOFException() eof exception()
-         * @return unchecked io exception result
-         */
         throw new UncheckedIOException(new EOFException());
     }
 
@@ -219,14 +172,6 @@ public class NByteArrayQueue {
      * @return read result
      */
     public int read(byte[] buffer) {
-        /**
-         * Read.
-         *
-         * @param buffer buffer
-         * @param 0 0
-         * @param buffer.length buffer.length
-         * @return read result
-         */
         return read(buffer, 0, buffer.length);
     }
 
@@ -304,12 +249,6 @@ public class NByteArrayQueue {
         if (canRead()) {
             return content[from++];
         }
-        /**
-         * Unchecked io exception.
-         *
-         * @param EOFException() eof exception()
-         * @return unchecked io exception result
-         */
         throw new UncheckedIOException(new EOFException());
     }
 
@@ -359,12 +298,6 @@ public class NByteArrayQueue {
         if (index >= 0 && index < length()) {
             return content[from + index];
         }
-        /**
-         * Index out of bounds exception.
-         *
-         * @param index index
-         * @return index out of bounds exception result
-         */
         throw new IndexOutOfBoundsException("invalid index " + index);
     }
 

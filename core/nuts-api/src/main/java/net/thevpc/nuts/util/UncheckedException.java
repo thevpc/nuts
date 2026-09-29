@@ -22,11 +22,6 @@ public class UncheckedException extends RuntimeException{
      * @return unchecked exception result
      */
     public UncheckedException(String message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -38,12 +33,6 @@ public class UncheckedException extends RuntimeException{
      * @return unchecked exception result
      */
     public UncheckedException(String message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 
@@ -54,11 +43,6 @@ public class UncheckedException extends RuntimeException{
      * @return unchecked exception result
      */
     public UncheckedException(Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param cause cause
-       */
         super(cause);
     }
 
@@ -72,14 +56,6 @@ public class UncheckedException extends RuntimeException{
      * @return unchecked exception result
      */
     public UncheckedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

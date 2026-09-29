@@ -99,12 +99,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logFileLevel(Level logFileLevel) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileLevel = logFileLevel;
@@ -129,12 +123,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logTermLevel(Level logTermLevel) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logTermLevel = logTermLevel;
@@ -159,12 +147,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logFileSize(int logFileSize) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileSize = logFileSize;
@@ -189,12 +171,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logFileCount(int logFileCount) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileCount = logFileCount;
@@ -219,12 +195,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logFileName(String logFileName) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileName = logFileName;
@@ -249,12 +219,6 @@ public class NLogConfig implements Serializable, Cloneable {
      */
     public NLogConfig logFileBase(String logFileBase) {
         if(readOnly){
-            /**
-             * Illegal argument exception.
-             *
-             * @param only" only"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("read only");
         }
         this.logFileBase = logFileBase;

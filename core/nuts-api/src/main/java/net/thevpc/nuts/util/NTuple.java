@@ -42,24 +42,9 @@ public interface NTuple<T> extends Iterable<T> {
     static <T> NTuple<T> of(T... a) {
         switch (a.length) {
             case 2:{
-                /**
-                 * Creates a new instance.
-                 *
-                 * @param a[0] a[0]
-                 * @param a[1] a[1]
-                 * @return of result
-                 */
                 return of(a[0],a[1]);
             }
             case 3:{
-                /**
-                 * Creates a new instance.
-                 *
-                 * @param a[0] a[0]
-                 * @param a[1] a[1]
-                 * @param a[3] a[3]
-                 * @return of result
-                 */
                 return of(a[0],a[1],a[3]);
             }
         }

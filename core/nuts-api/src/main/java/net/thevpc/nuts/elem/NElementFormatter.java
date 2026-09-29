@@ -25,12 +25,6 @@ public interface NElementFormatter extends NElementTransform {
      * @return of pretty result
      */
     static NElementFormatter ofPretty() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NElementFormatterStyle.PRETTY n element formatter style.pretty
-         * @return of result
-         */
         return of(NElementFormatterStyle.PRETTY);
     }
 
@@ -50,12 +44,6 @@ public interface NElementFormatter extends NElementTransform {
      * @return of compact result
      */
     static NElementFormatter ofCompact() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NElementFormatterStyle.COMPACT n element formatter style.compact
-         * @return of result
-         */
         return of(NElementFormatterStyle.COMPACT);
     }
 
@@ -65,12 +53,6 @@ public interface NElementFormatter extends NElementTransform {
      * @return of stable result
      */
     static NElementFormatter ofStable() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NElementFormatterStyle.STABLE n element formatter style.stable
-         * @return of result
-         */
         return of(NElementFormatterStyle.STABLE);
     }
 
@@ -80,12 +62,6 @@ public interface NElementFormatter extends NElementTransform {
      * @return of verbatim result
      */
     static NElementFormatter ofVerbatim() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NElementFormatterStyle.VERBATIM n element formatter style.verbatim
-         * @return of result
-         */
         return of(NElementFormatterStyle.VERBATIM);
     }
 
@@ -95,12 +71,6 @@ public interface NElementFormatter extends NElementTransform {
      * @return of simple result
      */
     static NElementFormatter ofSimple() {
-        /**
-         * Creates a new instance.
-         *
-         * @param NElementFormatterStyle.SIMPLE n element formatter style.simple
-         * @return of result
-         */
         return of(NElementFormatterStyle.SIMPLE);
     }
 

@@ -34,12 +34,6 @@ public enum NExprCommonOp implements NEnum {
                 u.add(NStringUtils.strip(alias.toLowerCase()));
             }
             for (String s : u) {
-              /**
-               * Register.
-               *
-               * @param s s
-               * @param value value
-               */
                 register(s, value);
             }
         }
@@ -54,12 +48,6 @@ public enum NExprCommonOp implements NEnum {
      */
     private static void register(String id, NExprCommonOp value) {
         if (byImage.containsKey(id)) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param value.name() value.name()
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("duplicate image: " + value.name());
         } else {
             byImage.put(id, value);

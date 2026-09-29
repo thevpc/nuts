@@ -21,11 +21,6 @@ public class NonClosablePrintStream extends PrintStream implements OutputStreamD
      * @return non closable print stream result
      */
     public NonClosablePrintStream(OutputStream out) {
-      /**
-       * Super.
-       *
-       * @param asNNonClosableOutputStream(out) as n non closable output stream(out)
-       */
         super(asNNonClosableOutputStream(out));
         this.delegated = out;
     }
@@ -38,12 +33,6 @@ public class NonClosablePrintStream extends PrintStream implements OutputStreamD
      * @return non closable print stream result
      */
     public NonClosablePrintStream(OutputStream out, boolean autoFlush) {
-      /**
-       * Super.
-       *
-       * @param asNNonClosableOutputStream(out) as n non closable output stream(out)
-       * @param autoFlush auto flush
-       */
         super(asNNonClosableOutputStream(out), autoFlush);
         this.delegated = out;
     }
@@ -58,13 +47,6 @@ public class NonClosablePrintStream extends PrintStream implements OutputStreamD
      * @throws UnsupportedEncodingException if execution fails
      */
     public NonClosablePrintStream(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
-      /**
-       * Super.
-       *
-       * @param asNNonClosableOutputStream(out) as n non closable output stream(out)
-       * @param autoFlush auto flush
-       * @param encoding encoding
-       */
         super(asNNonClosableOutputStream(out), autoFlush, encoding);
         this.delegated = out;
     }
@@ -93,9 +75,6 @@ public class NonClosablePrintStream extends PrintStream implements OutputStreamD
     @Override
     public void close() {
         //never close!!
-      /**
-       * Flush.
-       */
         flush();
     }
 }

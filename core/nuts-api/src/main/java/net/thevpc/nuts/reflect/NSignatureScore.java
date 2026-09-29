@@ -25,21 +25,9 @@ public final class NSignatureScore implements Comparable<NSignatureScore> {
      */
     public static NSignatureScore of(int nameDistance, int typeDistance) {
         if (nameDistance < 0) {
-            /**
-             * N illegal argument exception.
-             *
-             * @param nameDistance) name distance)
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("invalid score %s", nameDistance));
         }
         if (typeDistance < 0) {
-            /**
-             * N illegal argument exception.
-             *
-             * @param typeDistance) type distance)
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("invalid score %s", typeDistance));
         }
         if (nameDistance == Integer.MAX_VALUE && typeDistance == Integer.MAX_VALUE) {

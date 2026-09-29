@@ -311,12 +311,6 @@ public enum NDependencyScopePattern implements NEnum {
                 v.add(NDependencyScope.OTHER);
             }
             default: {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param this this
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("unsupported scope pattern " + this);
             }
         }

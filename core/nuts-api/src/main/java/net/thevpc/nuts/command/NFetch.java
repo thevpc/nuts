@@ -68,12 +68,6 @@ public interface NFetch extends NWorkspaceCmd {
      * @return of result
      */
     static NFetch of(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).id(id ).id(id
-         * @return of result
-         */
         return of().id(id);
     }
 
@@ -84,12 +78,6 @@ public interface NFetch extends NWorkspaceCmd {
      * @return of result
      */
     static NFetch of(String id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).id(id ).id(id
-         * @return of result
-         */
         return of().id(id);
     }
 
@@ -99,12 +87,6 @@ public interface NFetch extends NWorkspaceCmd {
      * @return of nuts api result
      */
     static NFetch ofNutsApi() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).id(NWorkspace.of().apiId() ).id(n workspace.of().api id()
-         * @return of result
-         */
         return of().id(NWorkspace.of().apiId());
     }
 
@@ -114,12 +96,6 @@ public interface NFetch extends NWorkspaceCmd {
      * @return of nuts app result
      */
     static NFetch ofNutsApp() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).id(NWorkspace.of().appId() ).id(n workspace.of().app id()
-         * @return of result
-         */
         return of().id(NWorkspace.of().appId());
     }
 
@@ -129,12 +105,6 @@ public interface NFetch extends NWorkspaceCmd {
      * @return of nuts runtime result
      */
     static NFetch ofNutsRuntime() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).id(NWorkspace.of().runtimeId() ).id(n workspace.of().runtime id()
-         * @return of result
-         */
         return of().id(NWorkspace.of().runtimeId());
     }
 

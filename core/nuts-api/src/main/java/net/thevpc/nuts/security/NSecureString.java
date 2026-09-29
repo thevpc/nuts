@@ -77,9 +77,6 @@ public interface NSecureString extends AutoCloseable{
 
     @Override
     default void close(){
-      /**
-       * Destroy.
-       */
         destroy();
     }
 

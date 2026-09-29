@@ -132,12 +132,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return of result
      */
     static NCmdLine of(String[] args) {
-        /**
-         * Creates a new instance of args.
-         *
-         * @param args args
-         * @return of args result
-         */
         return ofArgs(args);
     }
 
@@ -148,12 +142,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return of result
      */
     static NCmdLine of(List<String> args) {
-        /**
-         * Creates a new instance of args.
-         *
-         * @param String[0]) string[0])
-         * @return of args result
-         */
         return ofArgs(args == null ? null : args.toArray(new String[0]));
     }
 
@@ -174,14 +162,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return parse result
      */
     static NOptional<NCmdLine> parse(String line) {
-        /**
-         * Parse.
-         *
-         * @param line line
-         * @param NShellFamily.BASH n shell family.bash
-         * @param false false
-         * @return parse result
-         */
         return parse(line, NShellFamily.BASH, false);
     }
 
@@ -193,14 +173,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return parse result
      */
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
-        /**
-         * Parse.
-         *
-         * @param line line
-         * @param shellFamily shell family
-         * @param false false
-         * @return parse result
-         */
         return parse(line, shellFamily, false);
     }
 
@@ -214,12 +186,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      */
     static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, boolean lenient) {
         if (NWorkspace.get().isNotPresent()) {
-            /**
-             * Parse default.
-             *
-             * @param line line
-             * @return parse default result
-             */
             return parseDefault(line);
         }
         return NCmdLineRPI.of()
@@ -234,13 +200,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return new command line instance
      */
     static NCmdLine of(String line, NShellFamily shellFamily) {
-        /**
-         * Parse.
-         *
-         * @param line line
-         * @param shellFamily).get( shell family).get(
-         * @return parse result
-         */
         return parse(line, shellFamily).get();
     }
 
@@ -251,12 +210,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return
      */
     static NCmdLine of(String line) {
-        /**
-         * Parse.
-         *
-         * @param line).get( line).get(
-         * @return parse result
-         */
         return parse(line).get();
     }
 
@@ -267,12 +220,6 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
      * @return
      */
     static NCmdLine ofDefault(String line) {
-        /**
-         * Parse default.
-         *
-         * @param line).get( line).get(
-         * @return parse default result
-         */
         return parseDefault(line).get();
     }
 

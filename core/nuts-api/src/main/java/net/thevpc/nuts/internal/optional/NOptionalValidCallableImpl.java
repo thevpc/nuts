@@ -30,11 +30,6 @@ public class NOptionalValidCallableImpl<T> extends NOptionalValidImpl<T> impleme
      * @return n reserved optional valid callable result
      */
     public NOptionalValidCallableImpl(NCallable<NOptional<T>> value, Supplier<NMsg> msg) {
-      /**
-       * Super.
-       *
-       * @param msg msg
-       */
         super(msg);
         NAssert.requireNamedNonNull(value, "callable");
         this.value = value;
@@ -107,11 +102,6 @@ public class NOptionalValidCallableImpl<T> extends NOptionalValidImpl<T> impleme
                         return NOptional.ofError(message(), ex);
                     }
                 } else {
-                  /**
-                   * Return.
-                   *
-                   * @param result.withMessage(message() result.with message(message()
-                   */
                     return (NOptional<V>) result.withMessage(message());
                 }
             } else {

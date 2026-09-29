@@ -14,13 +14,6 @@ public interface NReflectSignature extends NSignature<NReflectType, NReflectSign
      * @return of result
      */
     static NReflectSignature of(NReflectType... types) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param types types
-         * @return of result
-         */
         return of(null, types);
     }
 
@@ -31,13 +24,6 @@ public interface NReflectSignature extends NSignature<NReflectType, NReflectSign
      * @return of var args result
      */
     static NReflectSignature ofVarArgs(NReflectType... types) {
-        /**
-         * Creates a new instance of var args.
-         *
-         * @param null null
-         * @param types types
-         * @return of var args result
-         */
         return ofVarArgs(null, types);
     }
 

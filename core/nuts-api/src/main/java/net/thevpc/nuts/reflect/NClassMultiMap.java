@@ -19,13 +19,6 @@ public interface NClassMultiMap<K, V> {
      * @return of result
      */
     static <V> NClassMultiMap<Object, V> of(Class<V> valueType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param null null
-         * @param valueType value type
-         * @return of result
-         */
         return of(null, valueType);
     }
 

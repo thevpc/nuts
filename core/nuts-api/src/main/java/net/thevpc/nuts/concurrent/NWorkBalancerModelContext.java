@@ -58,11 +58,6 @@ public class NWorkBalancerModelContext implements NCopiable, Cloneable {
      */
     @Override
     public NWorkBalancerModelContext copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

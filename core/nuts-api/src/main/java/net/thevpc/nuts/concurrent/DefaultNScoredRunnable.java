@@ -35,20 +35,8 @@ public class DefaultNScoredRunnable<T> implements NScoredRunnable<T> {
     public DefaultNScoredRunnable(Runnable value, int score, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && score > 0) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param score") score")
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(NI18n.of("null runnable requires invalid score"));
         } else if (this.value != null && score <= 0) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param score") score")
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(NI18n.of("non null runnable requires valid score"));
         }
         this.score = score;

@@ -18,11 +18,6 @@ public class NDetachedEmptyOptionalException extends RuntimeException implements
      * @return n detached empty optional exception result
      */
     public NDetachedEmptyOptionalException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       */
         super(formattedMessage == null ? "empty optional" : formattedMessage.toString());
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("empty") : formattedMessage;
     }

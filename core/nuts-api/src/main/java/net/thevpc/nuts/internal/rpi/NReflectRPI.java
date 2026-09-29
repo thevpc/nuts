@@ -25,12 +25,6 @@ public interface NReflectRPI extends NComponent {
      * @return of result
      */
     static NReflectRPI of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

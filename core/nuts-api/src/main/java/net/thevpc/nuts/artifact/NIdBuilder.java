@@ -50,12 +50,6 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return of result
      */
     static NIdBuilder of(NId id) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).copyFrom(id ).copy from(id
-         * @return of result
-         */
         return of().copyFrom(id);
     }
     /**
@@ -66,12 +60,6 @@ public interface NIdBuilder extends NBlankable, NComponent, Serializable {
      * @return of result
      */
     static NIdBuilder of(String groupId, String artifactId) {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
-         * @return of result
-         */
         return of().groupId(groupId).artifactId(artifactId);
     }
 

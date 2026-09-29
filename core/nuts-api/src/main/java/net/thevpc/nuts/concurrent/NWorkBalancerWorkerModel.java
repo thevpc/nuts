@@ -136,11 +136,6 @@ public class NWorkBalancerWorkerModel implements Serializable, Cloneable, NCopia
 
     @Override
     public NWorkBalancerWorkerModel copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

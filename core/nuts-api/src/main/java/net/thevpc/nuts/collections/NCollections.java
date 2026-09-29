@@ -78,12 +78,6 @@ public class NCollections {
      * @return list result
      */
     public static <T> List<T> list(Iterable<T> it) {
-        /**
-         * List.
-         *
-         * @param it.iterator() it.iterator()
-         * @return list result
-         */
         return list(it.iterator());
     }
 
@@ -219,13 +213,6 @@ public class NCollections {
      * @return unmodifiable non null list result
      */
     public static <T> List<T> unmodifiableNonNullList(Collection<T> other) {
-        /**
-         * Unmodifiable list.
-         *
-         * @param other other
-         * @param Objects::nonNull objects::non null
-         * @return unmodifiable list result
-         */
         return unmodifiableList(other, Objects::nonNull);
     }
 
@@ -257,13 +244,6 @@ public class NCollections {
      * @return unmodifiable non null set result
      */
     public static <T> Set<T> unmodifiableNonNullSet(Collection<T> other) {
-        /**
-         * Unmodifiable set.
-         *
-         * @param other other
-         * @param Objects::nonNull objects::non null
-         * @return unmodifiable set result
-         */
         return unmodifiableSet(other, Objects::nonNull);
     }
 
@@ -357,12 +337,6 @@ public class NCollections {
      * @return non null list from array result
      */
     public static <T> List<T> nonNullListFromArray(T[] other) {
-        /**
-         * Non null list.
-         *
-         * @param Arrays.asList(other) arrays.as list(other)
-         * @return non null list result
-         */
         return nonNullList(Arrays.asList(other));
     }
 
@@ -373,13 +347,6 @@ public class NCollections {
      * @return finite stream result
      */
     public static <T> Stream<T> finiteStream(Supplier<T> supplier) {
-        /**
-         * Stream.
-         *
-         * @param supplier supplier
-         * @param null null
-         * @return stream result
-         */
         return stream(supplier, null);
     }
 
@@ -395,12 +362,6 @@ public class NCollections {
             stopCondition = Objects::isNull;
         }
         Predicate<T> finalStopCondition = stopCondition;
-        /**
-         * Stream.
-         *
-         * @param Iterator<T>( iterator<t>(
-         * @return stream result
-         */
         return stream(new Iterator<T>() {
             T value;
 
@@ -581,12 +542,6 @@ public class NCollections {
      */
     public static <T> Collection<T> retainAll(Collection<T> values, Predicate<T> filter) {
         if (filter == null) {
-            /**
-             * Null pointer exception.
-             *
-             * @param null" null"
-             * @return null pointer exception result
-             */
             throw new NullPointerException("Filter could not be null");
         }
         for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
@@ -607,12 +562,6 @@ public class NCollections {
      */
     public static <T> Collection<T> removeAll(Collection<T> values, Predicate<T> filter) {
         if (filter == null) {
-            /**
-             * Null pointer exception.
-             *
-             * @param null" null"
-             * @return null pointer exception result
-             */
             throw new NullPointerException("Filter could not be null");
         }
         for (Iterator<T> i = values.iterator(); i.hasNext(); ) {
@@ -635,12 +584,6 @@ public class NCollections {
      */
     public <F, T> List<T> convertList(final List<F> from, final Function<F, T> converter) {
         if (converter == null) {
-            /**
-             * Null pointer exception.
-             *
-             * @param converter" converter"
-             * @return null pointer exception result
-             */
             throw new NullPointerException("Null converter");
         }
         return new AbstractList<T>() {

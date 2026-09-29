@@ -46,12 +46,6 @@ public interface NCmdLineWriter extends NObjectWriter {
      * @return of plain result
      */
     static NCmdLineWriter ofPlain() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).ntf(false ).ntf(false
-         * @return of result
-         */
         return of().ntf(false);
     }
 

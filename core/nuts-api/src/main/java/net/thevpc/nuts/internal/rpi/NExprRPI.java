@@ -23,12 +23,6 @@ public interface NExprRPI extends NComponent {
      * @return of result
      */
     static NExprRPI of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

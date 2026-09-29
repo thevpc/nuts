@@ -35,12 +35,6 @@ public interface NElementReader extends NComponent {
      * @return of json result
      */
     static NElementReader ofJson() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).json( ).json(
-         * @return of result
-         */
         return of().json();
     }
 
@@ -50,12 +44,6 @@ public interface NElementReader extends NComponent {
      * @return of tson result
      */
     static NElementReader ofTson() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).tson( ).tson(
-         * @return of result
-         */
         return of().tson();
     }
 
@@ -65,12 +53,6 @@ public interface NElementReader extends NComponent {
      * @return of yaml result
      */
     static NElementReader ofYaml() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).yaml( ).yaml(
-         * @return of result
-         */
         return of().yaml();
     }
 
@@ -80,12 +62,6 @@ public interface NElementReader extends NComponent {
      * @return of xml result
      */
     static NElementReader ofXml() {
-        /**
-         * Creates a new instance.
-         *
-         * @param ).xml( ).xml(
-         * @return of result
-         */
         return of().xml();
     }
 

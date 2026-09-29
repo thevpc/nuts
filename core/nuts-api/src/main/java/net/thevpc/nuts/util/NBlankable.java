@@ -133,12 +133,6 @@ public interface NBlankable {
      * @return first non blank result
      */
     static <T> T firstNonBlank(T... values) {
-        /**
-         * First non blank.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non blank result
-         */
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 

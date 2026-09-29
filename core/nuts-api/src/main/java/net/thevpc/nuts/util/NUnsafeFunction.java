@@ -44,13 +44,6 @@ public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescriba
      * @return of result
      */
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o) {
-        /**
-         * Creates a new instance.
-         *
-         * @param o o
-         * @param null null
-         * @return of result
-         */
         return of(o, null);
     }
 

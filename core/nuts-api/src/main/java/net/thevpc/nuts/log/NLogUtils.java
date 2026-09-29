@@ -101,12 +101,6 @@ public class NLogUtils {
          * @return custom log level result
          */
         public CustomLogLevel(String name, int value) {
-          /**
-           * Super.
-           *
-           * @param name name
-           * @param value value
-           */
             super(name, value);
         }
     }

@@ -17,14 +17,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of number result
      */
     static NTextFormat<Number> ofNumber() {
-        /**
-         * Creates a new instance.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param null null
-         * @return of result
-         */
         return of("number", Number.class, null);
     }
 
@@ -35,14 +27,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of bytes result
      */
     static NTextFormat<Number> ofBytes(String pattern) {
-        /**
-         * Creates a new instance.
-         *
-         * @param "bytes" "bytes"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("bytes", Number.class, pattern);
     }
 
@@ -53,14 +37,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of frequency result
      */
     static NTextFormat<Number> ofFrequency(String pattern) {
-        /**
-         * Creates a new instance.
-         *
-         * @param "bytes" "bytes"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("bytes", Number.class, pattern);
     }
 
@@ -71,14 +47,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of distance result
      */
     static NTextFormat<Number> ofDistance(String pattern) {
-        /**
-         * Creates a new instance.
-         *
-         * @param "meters" "meters"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("meters", Number.class, pattern);
     }
 
@@ -90,14 +58,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of number result
      */
     static NTextFormat<Number> ofNumber(String type, String pattern) {
-        /**
-         * Creates a new instance.
-         *
-         * @param type type
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of(type, Number.class, pattern);
     }
 
@@ -108,14 +68,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of number result
      */
     static NTextFormat<Number> ofNumber(String format) {
-        /**
-         * Creates a new instance.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param format format
-         * @return of result
-         */
         return of("number", Number.class, format);
     }
 
@@ -125,14 +77,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of percent result
      */
     static NTextFormat<Number> ofPercent() {
-        /**
-         * Creates a new instance.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param "00.00%" "00.00%"
-         * @return of result
-         */
         return of("number", Number.class, "00.00%");
     }
 
@@ -144,14 +88,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of result
      */
     static <T> NTextFormat<T> of(String type, Class<T> expectedType) {
-        /**
-         * Creates a new instance.
-         *
-         * @param type type
-         * @param expectedType expected type
-         * @param null null
-         * @return of result
-         */
         return of(type, expectedType, null);
     }
 
@@ -164,14 +100,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of result
      */
     static <T> NTextFormat<T> of(String type, Class<T> expectedType, String pattern) {
-        /**
-         * Returns the get.
-         *
-         * @param type type
-         * @param expectedType expected type
-         * @param pattern).get( pattern).get(
-         * @return get result
-         */
         return get(type, expectedType, pattern).get();
     }
 
@@ -199,12 +127,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     NText toText(T object);
 
     default String toString(T object) {
-        /**
-         * Converts to text.
-         *
-         * @param object).filteredText( object).filtered text(
-         * @return to text result
-         */
         return toText(object).filteredText();
     }
 }

@@ -101,13 +101,6 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @return of name result
      */
     public static NRepositoryLocation ofName(String name) {
-        /**
-         * Creates a new instance.
-         *
-         * @param name name
-         * @param null null
-         * @return of result
-         */
         return of(name, (String) null);
     }
 
@@ -294,22 +287,12 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @return copy result
      */
     public NRepositoryLocation copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
     @Override
     protected NRepositoryLocation clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NRepositoryLocation) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
