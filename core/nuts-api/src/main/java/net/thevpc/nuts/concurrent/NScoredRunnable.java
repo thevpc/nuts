@@ -53,7 +53,7 @@ public interface NScoredRunnable<T> extends NScorable {
      */
     static <T> NScoredRunnable<T> of(int score, Runnable supplier) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param score score
          * @param supplier supplier

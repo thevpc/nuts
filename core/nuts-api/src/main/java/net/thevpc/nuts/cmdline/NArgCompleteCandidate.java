@@ -8,7 +8,7 @@ package net.thevpc.nuts.cmdline;
  */
 public interface NArgCompleteCandidate {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -18,7 +18,7 @@ public interface NArgCompleteCandidate {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @param display display

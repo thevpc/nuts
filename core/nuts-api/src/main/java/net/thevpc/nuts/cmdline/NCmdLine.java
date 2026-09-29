@@ -104,7 +104,7 @@ import java.util.function.Predicate;
 public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     /**
-     * Creates a new instance of of args.
+     * Creates a new instance of args.
      *
      * @param args args
      * @return of args result
@@ -115,7 +115,7 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of args.
+     * Creates a new instance of args.
      *
      * @param family family
      * @param args args
@@ -126,14 +126,14 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param args args
      * @return of result
      */
     static NCmdLine of(String[] args) {
         /**
-         * Creates a new instance of of args.
+         * Creates a new instance of args.
          *
          * @param args args
          * @return of args result
@@ -142,14 +142,14 @@ public interface NCmdLine extends Iterable<NArg>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param args args
      * @return of result
      */
     static NCmdLine of(List<String> args) {
         /**
-         * Creates a new instance of of args.
+         * Creates a new instance of args.
          *
          * @param String[0]) string[0])
          * @return of args result

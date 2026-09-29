@@ -32,14 +32,14 @@ public class NMsgTemplate {
     ));
 
     /**
-     * Creates a new instance of of c.
+     * Creates a new instance of c.
      *
      * @param message message
      * @return of c result
      */
     public static NMsgTemplate ofC(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.CFORMAT n msg type.cformat
@@ -50,14 +50,14 @@ public class NMsgTemplate {
     }
 
     /**
-     * Creates a new instance of of j.
+     * Creates a new instance of j.
      *
      * @param message message
      * @return of j result
      */
     public static NMsgTemplate ofJ(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.JFORMAT n msg type.jformat
@@ -68,14 +68,14 @@ public class NMsgTemplate {
     }
 
     /**
-     * Creates a new instance of of s.
+     * Creates a new instance of s.
      *
      * @param message message
      * @return of s result
      */
     public static NMsgTemplate ofS(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.SFORMAT n msg type.sformat
@@ -86,14 +86,14 @@ public class NMsgTemplate {
     }
 
     /**
-     * Creates a new instance of of v.
+     * Creates a new instance of v.
      *
      * @param message message
      * @return of v result
      */
     public static NMsgTemplate ofV(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.VFORMAT n msg type.vformat
@@ -104,14 +104,14 @@ public class NMsgTemplate {
     }
 
     /**
-     * Creates a new instance of of m.
+     * Creates a new instance of m.
      *
      * @param message message
      * @return of m result
      */
     public static NMsgTemplate ofM(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.MFORMAT n msg type.mformat
@@ -121,7 +121,7 @@ public class NMsgTemplate {
         return of(message, NMsgType.MFORMAT,null);
     }
     /**
-     * Creates a new instance of of custom.
+     * Creates a new instance of custom.
      *
      * @param messageTypeId message type id
      * @param message message
@@ -129,7 +129,7 @@ public class NMsgTemplate {
      */
     public static NMsgTemplate ofCustom(String messageTypeId,String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param message message
          * @param NMsgType.CUSTOM n msg type.custom
@@ -140,7 +140,7 @@ public class NMsgTemplate {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param message message
      * @param format format

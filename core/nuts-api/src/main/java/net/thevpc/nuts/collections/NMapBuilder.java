@@ -12,7 +12,7 @@ public class NMapBuilder<K, V> {
     private boolean ignoreNulls;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -21,7 +21,7 @@ public class NMapBuilder<K, V> {
     }
 
     /**
-     * Creates a new instance of of linked.
+     * Creates a new instance of linked.
      *
      * @return of linked result
      */
@@ -30,7 +30,7 @@ public class NMapBuilder<K, V> {
     }
 
     /**
-     * Creates a new instance of of sorted.
+     * Creates a new instance of sorted.
      *
      * @return of sorted result
      */
@@ -39,7 +39,7 @@ public class NMapBuilder<K, V> {
     }
 
     /**
-     * Creates a new instance of of sorted.
+     * Creates a new instance of sorted.
      *
      * @param comparator comparator
      * @return of sorted result

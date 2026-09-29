@@ -66,7 +66,7 @@ public interface NDependency extends Serializable, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -82,7 +82,7 @@ public interface NDependency extends Serializable, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

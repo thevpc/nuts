@@ -26,7 +26,7 @@ public class NExecInput {
     private final NPathOption[] options;
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @return of null result
      */
@@ -35,7 +35,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of inherit.
+     * Creates a new instance of inherit.
      *
      * @return of inherit result
      */
@@ -44,7 +44,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of stream.
+     * Creates a new instance of stream.
      *
      * @param stream stream
      * @return of stream result
@@ -54,7 +54,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param bytes bytes
      * @return of bytes result
@@ -64,7 +64,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of string.
+     * Creates a new instance of string.
      *
      * @param string string
      * @return of string result
@@ -74,7 +74,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of pipe.
+     * Creates a new instance of pipe.
      *
      * @return of pipe result
      */
@@ -83,7 +83,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of path.
+     * Creates a new instance of path.
      *
      * @param path path
      * @return of path result
@@ -93,7 +93,7 @@ public class NExecInput {
     }
 
     /**
-     * Creates a new instance of of path.
+     * Creates a new instance of path.
      *
      * @param file file
      * @param options options
@@ -102,7 +102,7 @@ public class NExecInput {
     public static NExecInput ofPath(NPath file, NPathOption... options) {
         if (file == null) {
             /**
-             * Creates a new instance of of inherit.
+             * Creates a new instance of inherit.
              *
              * @return of inherit result
              */
@@ -110,7 +110,7 @@ public class NExecInput {
         }
         if (options == null || options.length == 0) {
             /**
-             * Creates a new instance of of path.
+             * Creates a new instance of path.
              *
              * @param file file
              * @return of path result
@@ -120,7 +120,7 @@ public class NExecInput {
         options = Arrays.stream(options).filter(Objects::nonNull).toArray(NPathOption[]::new);
         if (options.length == 0) {
             /**
-             * Creates a new instance of of path.
+             * Creates a new instance of path.
              *
              * @param file file
              * @return of path result
@@ -128,7 +128,7 @@ public class NExecInput {
             return ofPath(file);
         }
         /**
-         * Creates a new instance of of stream.
+         * Creates a new instance of stream.
          *
          * @param file.getInputStream(options) file.get input stream(options)
          * @return of stream result

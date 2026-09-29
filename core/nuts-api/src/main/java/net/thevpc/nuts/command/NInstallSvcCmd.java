@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface NInstallSvcCmd extends NCmdLineConfigurable, NComponent{
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

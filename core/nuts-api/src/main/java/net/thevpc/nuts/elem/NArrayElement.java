@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  */
 public interface NArrayElement extends NNamedElement, NListContainerElement, NParametrizedContainerElement, NListOrParametrizedContainerElement, Iterable<NElement> {
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */

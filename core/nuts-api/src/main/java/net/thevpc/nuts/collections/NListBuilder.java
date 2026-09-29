@@ -14,7 +14,7 @@ public class NListBuilder<T> {
     private boolean ignoreNulls;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

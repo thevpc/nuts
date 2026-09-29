@@ -42,7 +42,7 @@ public final class NDescribables {
     }
 
     /**
-     * Creates a new instance of of late string.
+     * Creates a new instance of late string.
      *
      * @param name name
      * @return of late string result
@@ -52,7 +52,7 @@ public final class NDescribables {
     }
 
     /**
-     * Creates a new instance of of late to string.
+     * Creates a new instance of late to string.
      *
      * @param any any
      * @return of late to string result
@@ -67,7 +67,7 @@ public final class NDescribables {
     }
 
     /**
-     * Creates a new instance of of desc.
+     * Creates a new instance of desc.
      *
      * @param any any
      * @return of desc result
@@ -86,7 +86,7 @@ public final class NDescribables {
     }
 
     /**
-     * Creates a new instance of of desc.
+     * Creates a new instance of desc.
      *
      * @param name name
      * @return of desc result
@@ -96,7 +96,7 @@ public final class NDescribables {
     }
 
     /**
-     * Creates a new instance of of desc.
+     * Creates a new instance of desc.
      *
      * @param element element
      * @return of desc result
@@ -137,7 +137,7 @@ public final class NDescribables {
             }
         }
         /**
-         * Creates a new instance of of desc.
+         * Creates a new instance of desc.
          *
          * @param "invalid").get( "invalid").get(
          * @return of desc result

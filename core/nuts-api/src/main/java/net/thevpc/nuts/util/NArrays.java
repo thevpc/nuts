@@ -68,9 +68,9 @@ public class NArrays {
     /**
      * Last index of by.
      *
-     * @param a1 a1
+     * @param a1   a1
      * @param from from
-     * @param b1 b1
+     * @param b1   b1
      * @return last index of by result
      */
     public static <A> int lastIndexOfBy(A[] a1, int from, Predicate<A> b1) {
@@ -94,9 +94,9 @@ public class NArrays {
     /**
      * Index of by.
      *
-     * @param a1 a1
+     * @param a1   a1
      * @param from from
-     * @param b1 b1
+     * @param b1   b1
      * @return index of by result
      */
     public static <A> int indexOfBy(A[] a1, int from, Predicate<A> b1) {
@@ -116,13 +116,6 @@ public class NArrays {
      * @return concat result
      */
     public static <A> A[] concat(A[] a1, A b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -203,13 +196,6 @@ public class NArrays {
      * @return concat result
      */
     public static <A> A[] concat(A b1, A[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -236,13 +222,6 @@ public class NArrays {
      * @return concat result
      */
     public static int[] concat(int[] a1, int b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -282,13 +261,6 @@ public class NArrays {
      * @return concat result
      */
     public static int[] concat(int b1, int[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -315,13 +287,6 @@ public class NArrays {
      * @return concat result
      */
     public static long[] concat(long[] a1, long b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -361,13 +326,6 @@ public class NArrays {
      * @return concat result
      */
     public static long[] concat(long b1, long[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -394,13 +352,6 @@ public class NArrays {
      * @return concat result
      */
     public static double[] concat(double[] a1, double b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -440,13 +391,6 @@ public class NArrays {
      * @return concat result
      */
     public static double[] concat(double b1, double[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -473,13 +417,6 @@ public class NArrays {
      * @return concat result
      */
     public static float[] concat(float[] a1, float b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -519,13 +456,6 @@ public class NArrays {
      * @return concat result
      */
     public static float[] concat(float b1, float[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -552,13 +482,6 @@ public class NArrays {
      * @return concat result
      */
     public static byte[] concat(byte[] a1, byte b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -598,13 +521,6 @@ public class NArrays {
      * @return concat result
      */
     public static byte[] concat(byte b1, byte[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -631,13 +547,6 @@ public class NArrays {
      * @return concat result
      */
     public static boolean[] concat(boolean[] a1, boolean b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -677,13 +586,6 @@ public class NArrays {
      * @return concat result
      */
     public static boolean[] concat(boolean b1, boolean[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -710,13 +612,6 @@ public class NArrays {
      * @return concat result
      */
     public static char[] concat(char[] a1, char b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -756,13 +651,6 @@ public class NArrays {
      * @return concat result
      */
     public static char[] concat(char b1, char[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -789,13 +677,6 @@ public class NArrays {
      * @return concat result
      */
     public static short[] concat(short[] a1, short b1) {
-        /**
-         * Append.
-         *
-         * @param a1 a1
-         * @param b1 b1
-         * @return append result
-         */
         return append(a1, b1);
     }
 
@@ -835,13 +716,6 @@ public class NArrays {
      * @return concat result
      */
     public static short[] concat(short b1, short[] a1) {
-        /**
-         * Prepend.
-         *
-         * @param b1 b1
-         * @param a1 a1
-         * @return prepend result
-         */
         return prepend(b1, a1);
     }
 
@@ -957,13 +831,6 @@ public class NArrays {
      * @return concat result
      */
     public static String[] concat(String[]... arrays) {
-        /**
-         * Concat.
-         *
-         * @param String.class string.class
-         * @param arrays arrays
-         * @return concat result
-         */
         return concat(String.class, arrays);
     }
 
@@ -1049,7 +916,7 @@ public class NArrays {
     /**
      * Concat.
      *
-     * @param cls cls
+     * @param cls    cls
      * @param arrays arrays
      * @return concat result
      */
@@ -1076,9 +943,9 @@ public class NArrays {
     /**
      * Filter array.
      *
-     * @param cls cls
+     * @param cls   cls
      * @param array array
-     * @param t t
+     * @param t     t
      * @return filter array result
      */
     public static <T> T[] filterArray(Class<T> cls, T[] array, Predicate<T> t) {
@@ -1094,7 +961,7 @@ public class NArrays {
     /**
      * Removes the specified head.
      *
-     * @param arr arr
+     * @param arr   arr
      * @param count count
      * @return remove head result
      */
@@ -1110,9 +977,9 @@ public class NArrays {
     /**
      * Sub array.
      *
-     * @param source source
+     * @param source     source
      * @param beginIndex begin index
-     * @param endIndex end index
+     * @param endIndex   end index
      * @return sub array result
      */
     public static String[] subArray(String[] source, int beginIndex, int endIndex) {
@@ -1134,20 +1001,14 @@ public class NArrays {
      * Sub array.
      *
      * @param source source
-     * @param begin begin
-     * @param end end
+     * @param begin  begin
+     * @param end    end
      * @return sub array result
      */
     public static <T> T[] subArray(T[] source, int begin, int end) {
         int b = Math.max(0, begin);
         int e = Math.min(source.length, end);
         if (b >= e) {
-          /**
-           * Return.
-           *
-           * @param Array.newInstance(source.getClass().getComponentType() array.new instance(source.get class().get component type()
-           * @param 0 0
-           */
             return (T[]) Array.newInstance(source.getClass().getComponentType(), 0);
         }
         return Arrays.copyOfRange(source, b, e);
@@ -1157,22 +1018,14 @@ public class NArrays {
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
-     * @param count count
+     * @param min    min
+     * @param max    max
+     * @param count  count
      * @param filter filter
      * @return linear result
      */
     public static double[] linear(double min, double max, int count, DoublePredicate filter) {
         if (filter == null) {
-            /**
-             * Linear.
-             *
-             * @param min min
-             * @param max max
-             * @param count count
-             * @return linear result
-             */
             return linear(min, max, count);
         }
         double[] d = new double[count];
@@ -1191,11 +1044,12 @@ public class NArrays {
     }
 
     // old times
+
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
+     * @param min   min
+     * @param max   max
      * @param count count
      * @return linear result
      */
@@ -1217,8 +1071,8 @@ public class NArrays {
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
+     * @param min   min
+     * @param max   max
      * @param count count
      * @return linear result
      */
@@ -1240,8 +1094,8 @@ public class NArrays {
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
+     * @param min   min
+     * @param max   max
      * @param count count
      * @return linear result
      */
@@ -1262,8 +1116,8 @@ public class NArrays {
     /**
      * Range.
      *
-     * @param min min
-     * @param max max
+     * @param min  min
+     * @param max  max
      * @param step step
      * @return range result
      */
@@ -1279,8 +1133,8 @@ public class NArrays {
     /**
      * Range size.
      *
-     * @param min min
-     * @param max max
+     * @param min  min
+     * @param max  max
      * @param step step
      * @return range size result
      */
@@ -1301,9 +1155,9 @@ public class NArrays {
     /**
      * Range at.
      *
-     * @param min min
-     * @param max max
-     * @param step step
+     * @param min   min
+     * @param max   max
+     * @param step  step
      * @param index index
      * @return range at result
      */
@@ -1318,19 +1172,11 @@ public class NArrays {
                  */
                 throw new ArrayIndexOutOfBoundsException(index);
             }
-//            int count = (int) Math.abs((max - min) / step) + 1;
             return min + index * step;
         } else {
             if (min < max) {
-                /**
-                 * Array index out of bounds exception.
-                 *
-                 * @param index index
-                 * @return array index out of bounds exception result
-                 */
                 throw new ArrayIndexOutOfBoundsException(index);
             }
-//            int count = (int) Math.abs((max - min) / step) + 1;
             return min + index * step;
         }
     }
@@ -1343,14 +1189,6 @@ public class NArrays {
      * @return range result
      */
     public static double[] range(double min, double max) {
-        /**
-         * Range.
-         *
-         * @param min min
-         * @param max max
-         * @param 1 1
-         * @return range result
-         */
         return range(min, max, 1);
     }
 
@@ -1358,8 +1196,8 @@ public class NArrays {
     /**
      * Range.
      *
-     * @param min min
-     * @param max max
+     * @param min  min
+     * @param max  max
      * @param step step
      * @return range result
      */
@@ -1410,8 +1248,8 @@ public class NArrays {
      * Sample.
      *
      * @param values values
-     * @param count count
-     * @param sel sel
+     * @param count  count
+     * @param sel    sel
      * @return sample result
      */
     public static double[] sample(double[] values, int count, NIndexSelectionStrategy sel) {
@@ -1435,12 +1273,6 @@ public class NArrays {
                 return xx;
             }
         }
-        /**
-         * N illegal argument exception.
-         *
-         * @param sel) sel)
-         * @return n illegal argument exception result
-         */
         throw new NIllegalArgumentException(NMsg.ofC("unexpected selection type %s", sel));
     }
 
@@ -1448,8 +1280,8 @@ public class NArrays {
      * Sample.
      *
      * @param values values
-     * @param count count
-     * @param sel sel
+     * @param count  count
+     * @param sel    sel
      * @return sample result
      */
     public static int[] sample(int[] values, int count, NIndexSelectionStrategy sel) {
@@ -1473,52 +1305,32 @@ public class NArrays {
                 return xx;
             }
         }
-        /**
-         * N illegal argument exception.
-         *
-         * @param sel) sel)
-         * @return n illegal argument exception result
-         */
         throw new NIllegalArgumentException(NMsg.ofC("unexpected selection type %s", sel));
     }
 
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
-     * @param count count
+     * @param min      min
+     * @param max      max
+     * @param count    count
      * @param maxCount max count
      * @param strategy strategy
      * @return linear result
      */
     public static double[] linear(double min, double max, int count, int maxCount, NIndexSelectionStrategy strategy) {
         if (count > maxCount) {
-            /**
-             * N illegal argument exception.
-             *
-             * @param limit)") limit)")
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("Count cannot exceed maxCount (Resolution limit)"));
         }
-        /**
-         * Sample.
-         *
-         * @param maxCount) max count)
-         * @param count count
-         * @param strategy strategy
-         * @return sample result
-         */
         return sample(linear(min, max, maxCount), count, strategy);
     }
 
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
-     * @param count count
+     * @param min      min
+     * @param max      max
+     * @param count    count
      * @param maxCount max count
      * @param strategy strategy
      * @return linear result
@@ -1533,14 +1345,6 @@ public class NArrays {
              */
             throw new NIllegalArgumentException(NMsg.ofC("Count cannot exceed maxCount (Resolution limit)"));
         }
-        /**
-         * Sample.
-         *
-         * @param maxCount) max count)
-         * @param count count
-         * @param strategy strategy
-         * @return sample result
-         */
         return sample(linear(min, max, maxCount), count, strategy);
     }
 
@@ -1700,8 +1504,8 @@ public class NArrays {
     /**
      * Range.
      *
-     * @param min min
-     * @param max max
+     * @param min  min
+     * @param max  max
      * @param step step
      * @return range result
      */
@@ -1721,8 +1525,8 @@ public class NArrays {
     /**
      * Range.
      *
-     * @param min min
-     * @param max max
+     * @param min  min
+     * @param max  max
      * @param step step
      * @return range result
      */
@@ -1741,9 +1545,9 @@ public class NArrays {
     /**
      * Range.
      *
-     * @param min min
-     * @param max max
-     * @param step step
+     * @param min    min
+     * @param max    max
+     * @param step   step
      * @param filter filter
      * @return range result
      */
@@ -1777,8 +1581,8 @@ public class NArrays {
     /**
      * Linear.
      *
-     * @param min min
-     * @param max max
+     * @param min   min
+     * @param max   max
      * @param count count
      * @return linear result
      */
@@ -1798,8 +1602,8 @@ public class NArrays {
      * Range check.
      *
      * @param arrayLength array length
-     * @param fromIndex from index
-     * @param toIndex to index
+     * @param fromIndex   from index
+     * @param toIndex     to index
      */
     static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
         if (fromIndex > toIndex) {
@@ -1828,13 +1632,13 @@ public class NArrays {
 
     public static <K> int binarySearch(K[] a, int fromIndex, int toIndex,
                                        Object key, Comparator<K> comparator) {
-      /**
-       * Range check.
-       *
-       * @param a.length a.length
-       * @param fromIndex from index
-       * @param toIndex to index
-       */
+        /**
+         * Range check.
+         *
+         * @param a.length a.length
+         * @param fromIndex from index
+         * @param toIndex to index
+         */
         rangeCheck(a.length, fromIndex, toIndex);
         /**
          * Binary search0.
@@ -1846,18 +1650,18 @@ public class NArrays {
          * @param comparator comparator
          * @return binary search0 result
          */
-        return binarySearch0(a, fromIndex, toIndex, key,comparator);
+        return binarySearch0(a, fromIndex, toIndex, key, comparator);
     }
 
     // Like public version, but without range checks.
     private static <K> int binarySearch0(Object[] a, int fromIndex, int toIndex,
-                                     Object key, Comparator<K> comparator) {
+                                         Object key, Comparator<K> comparator) {
         int low = fromIndex;
         int high = toIndex - 1;
 
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            int cmp = NUtils.compareObjects(a[mid],key,comparator);
+            int cmp = NUtils.compareObjects(a[mid], key, comparator);
 
             if (cmp < 0)
                 low = mid + 1;

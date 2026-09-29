@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NExprRPI;
  */
 public interface NExprVar extends NExprVarReader, NExprVarWriter {
     /**
-     * Creates a new instance of of var.
+     * Creates a new instance of var.
      *
      * @param name name
      * @return of var result
@@ -20,7 +20,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
     /**
-     * Creates a new instance of of var.
+     * Creates a new instance of var.
      *
      * @param name name
      * @param value value
@@ -31,7 +31,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
     /**
-     * Creates a new instance of of var.
+     * Creates a new instance of var.
      *
      * @param name name
      * @param reader reader
@@ -43,7 +43,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
     /**
-     * Creates a new instance of of lazy const.
+     * Creates a new instance of lazy const.
      *
      * @param name name
      * @param reader reader
@@ -54,7 +54,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
     /**
-     * Creates a new instance of of const.
+     * Creates a new instance of const.
      *
      * @param name name
      * @param value value
@@ -65,7 +65,7 @@ public interface NExprVar extends NExprVarReader, NExprVarWriter {
     }
 
     /**
-     * Creates a new instance of of read only.
+     * Creates a new instance of read only.
      *
      * @param name name
      * @param reader reader

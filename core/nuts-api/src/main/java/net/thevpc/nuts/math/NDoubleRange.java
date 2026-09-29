@@ -12,7 +12,7 @@ public class NDoubleRange {
     private final boolean finite;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -21,7 +21,7 @@ public class NDoubleRange {
     }
 
     /**
-     * Creates a new instance of of finite.
+     * Creates a new instance of finite.
      *
      * @return of finite result
      */

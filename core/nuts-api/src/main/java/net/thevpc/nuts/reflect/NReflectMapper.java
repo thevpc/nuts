@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
  */
 public interface NReflectMapper {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -24,7 +24,7 @@ public interface NReflectMapper {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param repository repository
      * @return of result

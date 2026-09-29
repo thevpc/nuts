@@ -42,14 +42,14 @@ public class NExceptionHandler {
     private boolean built;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ex ex
      * @return of result
      */
     public static NExceptionHandler of(Throwable ex) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ex ex
          * @param null null
@@ -59,7 +59,7 @@ public class NExceptionHandler {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ex ex
      * @param out out

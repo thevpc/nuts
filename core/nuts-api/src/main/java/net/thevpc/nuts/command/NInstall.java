@@ -49,7 +49,7 @@ import java.util.function.Predicate;
  */
 public interface NInstall extends NWorkspaceCmd {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -58,7 +58,7 @@ public interface NInstall extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ids ids
      * @return of result
@@ -68,7 +68,7 @@ public interface NInstall extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ids ids
      * @return of result

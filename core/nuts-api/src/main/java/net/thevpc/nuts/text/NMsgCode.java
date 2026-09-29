@@ -16,7 +16,7 @@ public class NMsgCode implements NDTO{
     private String message;
 
     /**
-     * Creates a new instance of of code.
+     * Creates a new instance of code.
      *
      * @param code code
      * @param params params
@@ -27,7 +27,7 @@ public class NMsgCode implements NDTO{
     }
 
     /**
-     * Creates a new instance of of message.
+     * Creates a new instance of message.
      *
      * @param message message
      * @param code code

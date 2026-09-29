@@ -13,7 +13,7 @@ public abstract class NStringMatchResult{
     private final NMatchType mode;
 
     /**
-     * Creates a new instance of of no match.
+     * Creates a new instance of no match.
      *
      * @return of no match result
      */
@@ -22,7 +22,7 @@ public abstract class NStringMatchResult{
     }
 
     /**
-     * Creates a new instance of of match.
+     * Creates a new instance of match.
      *
      * @param value value
      * @return of match result
@@ -32,7 +32,7 @@ public abstract class NStringMatchResult{
     }
 
     /**
-     * Creates a new instance of of partial match.
+     * Creates a new instance of partial match.
      *
      * @param value value
      * @return of partial match result
@@ -42,7 +42,7 @@ public abstract class NStringMatchResult{
     }
 
     /**
-     * Creates a new instance of of full match.
+     * Creates a new instance of full match.
      *
      * @param value value
      * @return of full match result
@@ -52,7 +52,7 @@ public abstract class NStringMatchResult{
     }
 
     /**
-     * Creates a new instance of of full match.
+     * Creates a new instance of full match.
      *
      * @param value value
      * @return of full match result

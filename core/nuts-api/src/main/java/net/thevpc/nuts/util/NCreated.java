@@ -25,7 +25,7 @@ public class NCreated<T> {
     }
 
     /**
-     * Creates a new instance of of new.
+     * Creates a new instance of new.
      *
      * @param item item
      * @return of new result
@@ -35,7 +35,7 @@ public class NCreated<T> {
     }
 
     /**
-     * Creates a new instance of of existing.
+     * Creates a new instance of existing.
      *
      * @param item item
      * @return of existing result

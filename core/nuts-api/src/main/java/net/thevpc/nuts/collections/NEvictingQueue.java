@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface NEvictingQueue<T> extends List<T> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param size size
      * @return of result

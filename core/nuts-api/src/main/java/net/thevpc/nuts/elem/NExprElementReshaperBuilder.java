@@ -11,7 +11,7 @@ import net.thevpc.nuts.internal.rpi.NElementRPI;
  */
 public interface NExprElementReshaperBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

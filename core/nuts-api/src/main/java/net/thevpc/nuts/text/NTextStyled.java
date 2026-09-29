@@ -31,7 +31,7 @@ package net.thevpc.nuts.text;
  */
 public interface NTextStyled extends NPrimitiveText {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @param style style
@@ -42,7 +42,7 @@ public interface NTextStyled extends NPrimitiveText {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @param style style
@@ -53,7 +53,7 @@ public interface NTextStyled extends NPrimitiveText {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @param styles styles
@@ -64,7 +64,7 @@ public interface NTextStyled extends NPrimitiveText {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @param styles styles

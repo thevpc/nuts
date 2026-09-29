@@ -10,7 +10,7 @@ import net.thevpc.nuts.text.NText;
  */
 public interface NTerminalFormatter {
     /**
-     * Creates a new instance of of system highlighter.
+     * Creates a new instance of system highlighter.
      *
      * @return of system highlighter result
      */
@@ -19,7 +19,7 @@ public interface NTerminalFormatter {
     }
 
     /**
-     * Creates a new instance of of highlighter.
+     * Creates a new instance of highlighter.
      *
      * @param highlighter highlighter
      * @return of highlighter result

@@ -47,7 +47,7 @@ import java.util.Map;
 public interface NDependencyBuilder extends NComponent, Serializable, NBlankable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param groupId group id
      * @param artifactId artifact id
@@ -55,7 +55,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
      */
     static NDependencyBuilder of(String groupId, String artifactId) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
          * @return of result
@@ -64,7 +64,7 @@ public interface NDependencyBuilder extends NComponent, Serializable, NBlankable
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

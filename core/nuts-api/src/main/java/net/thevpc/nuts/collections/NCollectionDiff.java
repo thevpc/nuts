@@ -94,7 +94,7 @@ public interface NCollectionDiff<T> extends Iterable<NCollectionDiffChange<T>> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param oldItems old items
      * @param newItems new items

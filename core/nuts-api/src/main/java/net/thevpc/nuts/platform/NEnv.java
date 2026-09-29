@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public interface NEnv extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -34,7 +34,7 @@ public interface NEnv extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param connectionString connection string
      * @return of result
@@ -44,7 +44,7 @@ public interface NEnv extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param connectionString connection string
      * @return of result

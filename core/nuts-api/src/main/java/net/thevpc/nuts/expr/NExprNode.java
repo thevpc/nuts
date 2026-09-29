@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface NExprNode {
     /**
-     * Creates a new instance of of word.
+     * Creates a new instance of word.
      *
      * @param name name
      * @return of word result
@@ -23,7 +23,7 @@ public interface NExprNode {
     }
 
     /**
-     * Creates a new instance of of literal.
+     * Creates a new instance of literal.
      *
      * @param name name
      * @return of literal result

@@ -231,7 +231,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of list.
+     * Creates a new instance of list.
      *
      * @param value value
      * @return of list result
@@ -247,7 +247,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of set.
+     * Creates a new instance of set.
      *
      * @param value value
      * @return of set result
@@ -263,7 +263,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param groupId group id
      * @param artifactId artifact id
@@ -281,7 +281,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param groupId group id
      * @param artifactId artifact id
@@ -301,7 +301,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param groupId group id
      * @param artifactId artifact id
@@ -321,7 +321,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of api.
+     * Creates a new instance of api.
      *
      * @param version version
      * @return of api result
@@ -337,7 +337,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of runtime.
+     * Creates a new instance of runtime.
      *
      * @param version version
      * @return of runtime result
@@ -353,7 +353,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of api.
+     * Creates a new instance of api.
      *
      * @param version version
      * @return of api result
@@ -369,7 +369,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of runtime.
+     * Creates a new instance of runtime.
      *
      * @param version version
      * @return of runtime result
@@ -385,7 +385,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -401,7 +401,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of class.
+     * Creates a new instance of class.
      *
      * @param value value
      * @return of class result
@@ -417,7 +417,7 @@ public interface NId extends Comparable<NId>, NBlankable {
     }
 
     /**
-     * Creates a new instance of of path.
+     * Creates a new instance of path.
      *
      * @param value value
      * @return of path result

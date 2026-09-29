@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 public interface NIterable<T> extends Iterable<T>, NRedescribable<NIterable<T>> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result

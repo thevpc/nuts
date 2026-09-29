@@ -40,7 +40,7 @@ import java.io.InputStream;
  */
 public interface NTerminal {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -49,7 +49,7 @@ public interface NTerminal {
     }
 
     /**
-     * Creates a new instance of of system.
+     * Creates a new instance of system.
      *
      * @return of system result
      */
@@ -58,7 +58,7 @@ public interface NTerminal {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param parent parent
      * @return of result
@@ -68,7 +68,7 @@ public interface NTerminal {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param in in
      * @param out out
@@ -80,7 +80,7 @@ public interface NTerminal {
     }
 
     /**
-     * Creates a new instance of of mem.
+     * Creates a new instance of mem.
      *
      * @return of mem result
      */
@@ -89,7 +89,7 @@ public interface NTerminal {
     }
 
     /**
-     * Creates a new instance of of mem.
+     * Creates a new instance of mem.
      *
      * @param mergeError merge error
      * @return of mem result

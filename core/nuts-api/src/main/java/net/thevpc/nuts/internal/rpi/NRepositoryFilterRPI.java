@@ -35,7 +35,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NRepositoryFilterRPI extends NTypedFilters<NRepositoryFilter> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

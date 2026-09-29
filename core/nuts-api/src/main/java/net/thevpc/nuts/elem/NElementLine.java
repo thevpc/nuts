@@ -11,7 +11,7 @@ import net.thevpc.nuts.text.NNewLineMode;
  */
 public interface NElementLine {
     /**
-     * Creates a new instance of of element line.
+     * Creates a new instance of element line.
      *
      * @param prefix prefix
      * @param startMarker start marker
@@ -27,7 +27,7 @@ public interface NElementLine {
     }
 
     /**
-     * Creates a new instance of of element line.
+     * Creates a new instance of element line.
      *
      * @param prefix prefix
      * @param startPadding start padding

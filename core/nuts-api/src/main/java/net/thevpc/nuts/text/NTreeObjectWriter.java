@@ -42,7 +42,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTreeObjectWriter extends NContentTypeWriter {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

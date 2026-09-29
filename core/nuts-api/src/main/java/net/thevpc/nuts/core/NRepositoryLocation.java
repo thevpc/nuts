@@ -95,14 +95,14 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     }
 
     /**
-     * Creates a new instance of of name.
+     * Creates a new instance of name.
      *
      * @param name name
      * @return of name result
      */
     public static NRepositoryLocation ofName(String name) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param name name
          * @param null null

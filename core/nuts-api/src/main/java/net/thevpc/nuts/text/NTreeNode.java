@@ -39,7 +39,7 @@ import java.util.List;
 public interface NTreeNode {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param text text
      * @param children children

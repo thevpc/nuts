@@ -44,7 +44,7 @@ public class NMemoryFormat {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param fixed fixed
      * @param iec iec

@@ -42,7 +42,7 @@ import java.util.List;
 public interface NVersionInterval extends Serializable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param s s
      * @param versionComparator version comparator
@@ -62,7 +62,7 @@ public interface NVersionInterval extends Serializable {
         );
     }
     /**
-     * Creates a new instance of of list.
+     * Creates a new instance of list.
      *
      * @param s s
      * @param versionComparator version comparator

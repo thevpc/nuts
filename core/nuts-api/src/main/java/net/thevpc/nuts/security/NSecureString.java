@@ -12,7 +12,7 @@ import java.util.function.Function;
 public interface NSecureString extends AutoCloseable{
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -21,7 +21,7 @@ public interface NSecureString extends AutoCloseable{
     }
 
     /**
-     * Creates a new instance of of secure.
+     * Creates a new instance of secure.
      *
      * @param value value
      * @return of secure result
@@ -31,7 +31,7 @@ public interface NSecureString extends AutoCloseable{
     }
 
     /**
-     * Creates a new instance of of unsecure.
+     * Creates a new instance of unsecure.
      *
      * @param value value
      * @return of unsecure result

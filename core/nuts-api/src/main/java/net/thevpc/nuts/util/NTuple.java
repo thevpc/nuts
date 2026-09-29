@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface NTuple<T> extends Iterable<T> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param a a
      * @param b b
@@ -22,7 +22,7 @@ public interface NTuple<T> extends Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param a a
      * @param b b
@@ -34,7 +34,7 @@ public interface NTuple<T> extends Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param a a
      * @return of result
@@ -43,7 +43,7 @@ public interface NTuple<T> extends Iterable<T> {
         switch (a.length) {
             case 2:{
                 /**
-                 * Creates a new instance of of.
+                 * Creates a new instance.
                  *
                  * @param a[0] a[0]
                  * @param a[1] a[1]
@@ -53,7 +53,7 @@ public interface NTuple<T> extends Iterable<T> {
             }
             case 3:{
                 /**
-                 * Creates a new instance of of.
+                 * Creates a new instance.
                  *
                  * @param a[0] a[0]
                  * @param a[1] a[1]

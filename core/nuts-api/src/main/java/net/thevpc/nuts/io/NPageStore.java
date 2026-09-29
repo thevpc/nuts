@@ -21,13 +21,13 @@ public interface NPageStore extends AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of in memory.
+     * Creates a new instance of in memory.
      *
      * @return of in memory result
      */
     static NPageStore ofInMemory() {
         /**
-         * Creates a new instance of of in memory.
+         * Creates a new instance of in memory.
          *
          * @param -1 -1
          * @return of in memory result
@@ -47,14 +47,14 @@ public interface NPageStore extends AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of file.
+     * Creates a new instance of file.
      *
      * @param path path
      * @return of file result
      */
     static NPageStore ofFile(NPath path) {
         /**
-         * Creates a new instance of of file.
+         * Creates a new instance of file.
          *
          * @param path path
          * @param -1 -1

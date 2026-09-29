@@ -15,14 +15,14 @@ import java.util.Set;
 public interface NClassPairMap<A,B,V> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param clazz clazz
      * @return of result
      */
     static <A,B,V> NClassPairMap<A,B,V> of(Class<V> clazz) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @param null null
@@ -34,7 +34,7 @@ public interface NClassPairMap<A,B,V> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param key1Type key1 type
      * @param key2Type key2 type

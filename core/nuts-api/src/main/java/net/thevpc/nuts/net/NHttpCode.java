@@ -39,7 +39,7 @@ public class NHttpCode {
     private int code;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param code code
      * @return of result

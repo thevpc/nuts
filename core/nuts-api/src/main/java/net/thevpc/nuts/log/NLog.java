@@ -111,7 +111,7 @@ public interface NLog extends NLogger{
      */
     static NLog of(Class<?> clazz) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "class").getName() "class").get name()
          * @return of result
@@ -120,7 +120,7 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param logger logger
      * @return of result
@@ -130,7 +130,7 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @return of null result
      */
@@ -139,14 +139,14 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of scoped.
+     * Creates a new instance of scoped.
      *
      * @param clazz clazz
      * @return of scoped result
      */
     static NLog ofScoped(Class<?> clazz) {
         /**
-         * Creates a new instance of of scoped.
+         * Creates a new instance of scoped.
          *
          * @param "class").getName() "class").get name()
          * @return of scoped result
@@ -165,7 +165,7 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param spi spi
@@ -176,7 +176,7 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param spi spi
      * @return of result
@@ -186,14 +186,14 @@ public interface NLog extends NLogger{
     }
 
     /**
-     * Creates a new instance of of scoped.
+     * Creates a new instance of scoped.
      *
      * @param name name
      * @return of scoped result
      */
     static NLog ofScoped(String name) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param name).scoped( name).scoped(
          * @return of result

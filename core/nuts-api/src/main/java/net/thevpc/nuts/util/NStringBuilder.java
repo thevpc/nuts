@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public interface NStringBuilder extends CharSequence, NBlankable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

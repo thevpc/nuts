@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NAssert;
  */
 public interface NClasspathEntry {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @return of result
@@ -19,7 +19,7 @@ public interface NClasspathEntry {
         return NReflectRPI.of().createClasspathEntry(id);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param dependency dependency
      * @return of result
@@ -29,7 +29,7 @@ public interface NClasspathEntry {
         return NReflectRPI.of().createClasspathEntry(dependency);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param definition definition
      * @return of result
@@ -39,7 +39,7 @@ public interface NClasspathEntry {
         return NReflectRPI.of().createClasspathEntry(definition);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param path path
      * @return of result

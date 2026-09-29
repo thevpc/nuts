@@ -13,7 +13,7 @@ import java.util.List;
 public interface NIntList {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param initialSize initial size
      * @return of result
@@ -23,7 +23,7 @@ public interface NIntList {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -32,7 +32,7 @@ public interface NIntList {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param values values
      * @param offset offset
@@ -44,7 +44,7 @@ public interface NIntList {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param values values
      * @return of result
@@ -54,7 +54,7 @@ public interface NIntList {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param values values
      * @param size size

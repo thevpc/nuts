@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface NClasspathBuilder extends NComponent, Iterable<NClasspathEntry> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

@@ -93,7 +93,7 @@ public class NInstallStatus {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param deployed deployed
      * @param installed installed
@@ -189,7 +189,7 @@ public class NInstallStatus {
      */
     public NInstallStatus withInstalled(boolean installed) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param deployed deployed
          * @param installed installed
@@ -208,7 +208,7 @@ public class NInstallStatus {
      */
     public NInstallStatus withDeployed(boolean deployed) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param deployed deployed
          * @param installed installed
@@ -228,7 +228,7 @@ public class NInstallStatus {
      */
     public NInstallStatus withRequired(boolean required) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param deployed deployed
          * @param installed installed
@@ -248,7 +248,7 @@ public class NInstallStatus {
      */
     public NInstallStatus withObsolete(boolean obsolete) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param deployed deployed
          * @param installed installed
@@ -268,7 +268,7 @@ public class NInstallStatus {
      */
     public NInstallStatus withDefaultVersion(boolean defaultVersion) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param deployed deployed
          * @param installed installed

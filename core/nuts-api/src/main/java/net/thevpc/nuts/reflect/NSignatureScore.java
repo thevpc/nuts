@@ -17,7 +17,7 @@ public final class NSignatureScore implements Comparable<NSignatureScore> {
     public static final NSignatureScore NO_MATCH = new NSignatureScore(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param nameDistance name distance
      * @param typeDistance type distance

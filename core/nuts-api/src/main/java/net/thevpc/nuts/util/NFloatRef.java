@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NFloatRef extends NObjectRef<Float> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NFloatRef extends NObjectRef<Float> {
         return new NFloatRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

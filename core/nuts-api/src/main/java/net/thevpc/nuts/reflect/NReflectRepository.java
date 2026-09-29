@@ -36,7 +36,7 @@ import java.lang.reflect.Type;
  */
 public interface NReflectRepository extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -45,7 +45,7 @@ public interface NReflectRepository extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param config config
      * @return of result

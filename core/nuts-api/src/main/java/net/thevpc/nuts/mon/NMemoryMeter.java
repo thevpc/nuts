@@ -14,7 +14,7 @@ public class NMemoryMeter implements NTextFormattable {
     private String name;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -23,7 +23,7 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @return of unstarted result
      */

@@ -40,7 +40,7 @@ public interface NDoubleComplex extends Serializable, NNumber {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param x x
      * @param y y
@@ -51,7 +51,7 @@ public interface NDoubleComplex extends Serializable, NNumber {
     }
 
     /**
-     * Creates a new instance of of polar.
+     * Creates a new instance of polar.
      *
      * @param r r
      * @param theta theta

@@ -62,7 +62,7 @@ public class NHomeLocation implements NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param osFamily os family
      * @param storeType store type

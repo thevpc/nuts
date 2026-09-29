@@ -8,7 +8,7 @@ package net.thevpc.nuts.text;
  */
 public class NI18n {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param message message
      * @return of result

@@ -14,7 +14,7 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public interface NAffix extends NBlankable {
     /**
-     * Creates a new instance of of newline.
+     * Creates a new instance of newline.
      *
      * @return of newline result
      */
@@ -23,7 +23,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of newline.
+     * Creates a new instance of newline.
      *
      * @param value value
      * @return of newline result
@@ -33,7 +33,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of space.
+     * Creates a new instance of space.
      *
      * @return of space result
      */
@@ -42,7 +42,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of space.
+     * Creates a new instance of space.
      *
      * @param count count
      * @return of space result
@@ -53,7 +53,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of space.
+     * Creates a new instance of space.
      *
      * @param value value
      * @return of space result
@@ -63,7 +63,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of separator.
+     * Creates a new instance of separator.
      *
      * @param value value
      * @return of separator result
@@ -73,7 +73,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of separator.
+     * Creates a new instance of separator.
      *
      * @return of separator result
      */
@@ -82,7 +82,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of separator.
+     * Creates a new instance of separator.
      *
      * @param value value
      * @return of separator result
@@ -92,7 +92,7 @@ public interface NAffix extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of annotation.
+     * Creates a new instance of annotation.
      *
      * @param name name
      * @return of annotation result
@@ -103,7 +103,7 @@ public interface NAffix extends NBlankable {
 
 
     /**
-     * Creates a new instance of of annotation.
+     * Creates a new instance of annotation.
      *
      * @param name name
      * @param values values

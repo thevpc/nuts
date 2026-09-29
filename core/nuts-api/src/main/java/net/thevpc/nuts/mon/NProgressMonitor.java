@@ -24,7 +24,7 @@ public interface NProgressMonitor {
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -34,7 +34,7 @@ public interface NProgressMonitor {
             return m.get();
         }
         /**
-         * Creates a new instance of of silent.
+         * Creates a new instance of silent.
          *
          * @return of silent result
          */
@@ -52,7 +52,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of silent.
+     * Creates a new instance of silent.
      *
      * @return of silent result
      */
@@ -61,7 +61,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of silent.
+     * Creates a new instance of silent.
      *
      * @param count count
      * @return of silent result
@@ -81,7 +81,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of print stream.
+     * Creates a new instance of print stream.
      *
      * @param printStream print stream
      * @return of print stream result
@@ -91,7 +91,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of print stream.
+     * Creates a new instance of print stream.
      *
      * @param messageFormat message format
      * @param printStream print stream
@@ -102,7 +102,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of print stream.
+     * Creates a new instance of print stream.
      *
      * @param printStream print stream
      * @return of print stream result
@@ -112,7 +112,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of print stream.
+     * Creates a new instance of print stream.
      *
      * @param messageFormat message format
      * @param printStream print stream
@@ -123,7 +123,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param messageFormat message format
      * @param printStream print stream
@@ -134,7 +134,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param messageFormat message format
      * @param printStream print stream
@@ -145,7 +145,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param logger logger
      * @return of logger result
@@ -155,7 +155,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param logger logger
      * @return of logger result
@@ -165,7 +165,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param milliseconds milliseconds
      * @return of logger result
@@ -175,7 +175,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @return of logger result
      */
@@ -184,7 +184,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of out.
+     * Creates a new instance of out.
      *
      * @param messageFormat message format
      * @return of out result
@@ -194,7 +194,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of sys out.
+     * Creates a new instance of sys out.
      *
      * @return of sys out result
      */
@@ -203,7 +203,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of sys err.
+     * Creates a new instance of sys err.
      *
      * @return of sys err result
      */
@@ -212,7 +212,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of sys err.
+     * Creates a new instance of sys err.
      *
      * @param messageFormat message format
      * @return of sys err result
@@ -222,7 +222,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of out.
+     * Creates a new instance of out.
      *
      * @return of out result
      */
@@ -231,7 +231,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of err.
+     * Creates a new instance of err.
      *
      * @return of err result
      */
@@ -240,7 +240,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of err.
+     * Creates a new instance of err.
      *
      * @param messageFormat message format
      * @return of err result
@@ -250,7 +250,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param message message
      * @param freq freq
@@ -261,7 +261,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param message message
      * @param freq freq
@@ -273,7 +273,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of logger.
+     * Creates a new instance of logger.
      *
      * @param message message
      * @param freq freq
@@ -285,7 +285,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of out.
+     * Creates a new instance of out.
      *
      * @param freq freq
      * @return of out result
@@ -295,7 +295,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of out.
+     * Creates a new instance of out.
      *
      * @param message message
      * @param freq freq
@@ -306,7 +306,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of out.
+     * Creates a new instance of out.
      *
      * @param message message
      * @param freq freq
@@ -318,7 +318,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param monitor monitor
      * @return of result
@@ -328,7 +328,7 @@ public interface NProgressMonitor {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param monitor monitor
      * @return of result

@@ -15,7 +15,7 @@ public class NMsgParam {
     private Supplier<?> value;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param value value

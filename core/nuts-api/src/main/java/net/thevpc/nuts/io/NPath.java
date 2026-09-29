@@ -399,7 +399,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
 
     /**
-     * Creates a new instance of of origin.
+     * Creates a new instance of origin.
      *
      * @param clazz clazz
      * @return of origin result
@@ -409,7 +409,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     }
 
     /**
-     * Creates a new instance of of origins.
+     * Creates a new instance of origins.
      *
      * @param clazz clazz
      * @return of origins result

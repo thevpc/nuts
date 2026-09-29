@@ -31,7 +31,7 @@ public class NPlatformHome {
 
 
     /**
-     * Creates a new instance of of system.
+     * Creates a new instance of system.
      *
      * @param platformOsFamily platform os family
      * @param env env
@@ -43,7 +43,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @param env env
@@ -55,7 +55,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of system.
+     * Creates a new instance of system.
      *
      * @param platformOsFamily platform os family
      * @return of system result
@@ -65,7 +65,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @return of result
@@ -75,7 +75,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @param system system
@@ -86,7 +86,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param system system
      * @return of result
@@ -96,7 +96,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param userName user name
@@ -104,7 +104,7 @@ public class NPlatformHome {
      */
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, String userName) {
         /**
-         * Creates a new instance of of portable.
+         * Creates a new instance of portable.
          *
          * @param platformOsFamily platform os family
          * @param false false
@@ -115,7 +115,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable system.
+     * Creates a new instance of portable system.
      *
      * @param platformOsFamily platform os family
      * @param userName user name
@@ -123,7 +123,7 @@ public class NPlatformHome {
      */
     public static NPlatformHome ofPortableSystem(NOsFamily platformOsFamily, String userName) {
         /**
-         * Creates a new instance of of portable.
+         * Creates a new instance of portable.
          *
          * @param platformOsFamily platform os family
          * @param true true
@@ -134,7 +134,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param system system
@@ -153,7 +153,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param system system

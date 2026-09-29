@@ -40,7 +40,7 @@ import java.util.List;
  */
 public interface NDependencySolverRPI extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

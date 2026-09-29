@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NLongRef extends NObjectRef<Long> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NLongRef extends NObjectRef<Long> {
         return new NLongRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

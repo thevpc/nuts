@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  */
 public interface NArgValueComplete {
     /**
-     * Creates a new instance of of flags.
+     * Creates a new instance of flags.
      *
      * @param flags flags
      * @return of flags result
@@ -23,7 +23,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of flags.
+     * Creates a new instance of flags.
      *
      * @param flags flags
      * @return of flags result
@@ -33,7 +33,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of simple candidates list supplier.
+     * Creates a new instance of simple candidates list supplier.
      *
      * @param candidates candidates
      * @return of simple candidates list supplier result
@@ -48,7 +48,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of simple candidates stream supplier.
+     * Creates a new instance of simple candidates stream supplier.
      *
      * @param candidates candidates
      * @return of simple candidates stream supplier result
@@ -63,7 +63,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of simple candidates list.
+     * Creates a new instance of simple candidates list.
      *
      * @param candidates candidates
      * @return of simple candidates list result
@@ -77,7 +77,7 @@ public interface NArgValueComplete {
         return (ctx) -> ctx.filterValues(candidates);
     }
     /**
-     * Creates a new instance of of simple candidates list.
+     * Creates a new instance of simple candidates list.
      *
      * @param candidates candidates
      * @return of simple candidates list result
@@ -92,7 +92,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of candidates list.
+     * Creates a new instance of candidates list.
      *
      * @param candidates candidates
      * @return of candidates list result
@@ -107,7 +107,7 @@ public interface NArgValueComplete {
     }
 
     /**
-     * Creates a new instance of of candidates list.
+     * Creates a new instance of candidates list.
      *
      * @param candidates candidates
      * @return of candidates list result

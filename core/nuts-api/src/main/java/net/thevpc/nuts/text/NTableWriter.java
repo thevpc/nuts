@@ -35,7 +35,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTableWriter extends NContentTypeWriter {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

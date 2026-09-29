@@ -27,7 +27,7 @@ public interface NConnectionStringBuilder extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result
@@ -43,7 +43,7 @@ public interface NConnectionStringBuilder extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

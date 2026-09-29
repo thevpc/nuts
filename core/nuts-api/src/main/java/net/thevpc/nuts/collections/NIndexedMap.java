@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public interface NIndexedMap<K, V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

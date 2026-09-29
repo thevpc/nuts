@@ -17,7 +17,7 @@ public interface NAssignmentPolicy {
     NAssignmentPolicy SOURCE_NON_BLANK = NAssignmentPolicySimple.SOURCE_NON_BLANK;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param source source
      * @param target target

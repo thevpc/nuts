@@ -42,7 +42,7 @@ import java.util.Map;
 public interface NObjectObjectWriter extends NContentTypeWriter {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

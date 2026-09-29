@@ -51,14 +51,14 @@ public class NTextStyle implements NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param style style
      * @return of result
      */
     public static NTextStyle of(NTextStyleType style) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param style style
          * @param 0 0
@@ -68,7 +68,7 @@ public class NTextStyle implements NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param style style
      * @param variant variant
@@ -221,7 +221,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle primary(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PRIMARY n text style type.primary
          * @param variant variant
@@ -238,7 +238,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle fail(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FAIL n text style type.fail
          * @param variant variant
@@ -254,7 +254,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle fail() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FAIL n text style type.fail
          * @return of result
@@ -270,7 +270,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle danger(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.DANGER n text style type.danger
          * @param variant variant
@@ -286,7 +286,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle danger() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.DANGER n text style type.danger
          * @return of result
@@ -302,7 +302,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle title(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.TITLE n text style type.title
          * @param variant variant
@@ -454,7 +454,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle secondary(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.SECONDARY n text style type.secondary
          * @param variant variant
@@ -605,7 +605,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle error() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ERROR n text style type.error
          * @return of result
@@ -621,7 +621,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle error(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ERROR n text style type.error
          * @param variant variant
@@ -637,7 +637,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle option() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.OPTION n text style type.option
          * @return of result
@@ -653,7 +653,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle option(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.OPTION n text style type.option
          * @param variant variant
@@ -669,7 +669,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle separator() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.SEPARATOR n text style type.separator
          * @return of result
@@ -685,7 +685,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle separator(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.SEPARATOR n text style type.separator
          * @param variant variant
@@ -701,7 +701,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle version() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.VERSION n text style type.version
          * @return of result
@@ -717,7 +717,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle version(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.VERSION n text style type.version
          * @param variant variant
@@ -733,7 +733,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle keyword() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.KEYWORD n text style type.keyword
          * @return of result
@@ -749,7 +749,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle keyword(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.KEYWORD n text style type.keyword
          * @param variant variant
@@ -765,7 +765,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle entity() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ENTITY n text style type.entity
          * @return of result
@@ -780,7 +780,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle action() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ACTION n text style type.action
          * @return of result
@@ -795,7 +795,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle annotation() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ANNOTATION n text style type.annotation
          * @return of result
@@ -810,7 +810,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle entity(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ENTITY n text style type.entity
          * @param variant variant
@@ -826,7 +826,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle action(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ACTION n text style type.action
          * @param variant variant
@@ -842,7 +842,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle annotation(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ANNOTATION n text style type.annotation
          * @param variant variant
@@ -858,7 +858,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle reversed() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.REVERSED n text style type.reversed
          * @return of result
@@ -874,7 +874,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle reversed(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.REVERSED n text style type.reversed
          * @param variant variant
@@ -890,7 +890,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle underlined() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.UNDERLINED n text style type.underlined
          * @return of result
@@ -921,7 +921,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle striked(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.STRIKED n text style type.striked
          * @param variant variant
@@ -937,7 +937,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle italic() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ITALIC n text style type.italic
          * @return of result
@@ -953,7 +953,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle italic(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.ITALIC n text style type.italic
          * @param variant variant
@@ -969,7 +969,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle bold() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BOLD n text style type.bold
          * @return of result
@@ -984,7 +984,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle bool() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BOOLEAN n text style type.boolean
          * @return of result
@@ -1000,7 +1000,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle bool(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BOOLEAN n text style type.boolean
          * @param variant variant
@@ -1016,7 +1016,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle blink() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BLINK n text style type.blink
          * @return of result
@@ -1031,7 +1031,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle pale() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PALE n text style type.pale
          * @return of result
@@ -1047,7 +1047,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle pale(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PALE n text style type.pale
          * @param variant variant
@@ -1063,7 +1063,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle success() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.SUCCESS n text style type.success
          * @return of result
@@ -1079,7 +1079,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle success(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.SUCCESS n text style type.success
          * @param variant variant
@@ -1095,7 +1095,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle path() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PATH n text style type.path
          * @return of result
@@ -1111,7 +1111,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle path(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PATH n text style type.path
          * @param variant variant
@@ -1127,7 +1127,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle warn() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.WARN n text style type.warn
          * @return of result
@@ -1143,7 +1143,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle warn(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.WARN n text style type.warn
          * @param variant variant
@@ -1159,7 +1159,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle config() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.CONFIG n text style type.config
          * @return of result
@@ -1175,7 +1175,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle config(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.CONFIG n text style type.config
          * @param variant variant
@@ -1191,7 +1191,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle info() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.INFO n text style type.info
          * @return of result
@@ -1207,7 +1207,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle info(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.INFO n text style type.info
          * @param variant variant
@@ -1223,7 +1223,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle string() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.STRING n text style type.string
          * @return of result
@@ -1239,7 +1239,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle string(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.STRING n text style type.string
          * @param variant variant
@@ -1255,7 +1255,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle operator() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.OPERATOR n text style type.operator
          * @return of result
@@ -1271,7 +1271,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle operator(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.OPERATOR n text style type.operator
          * @param variant variant
@@ -1287,7 +1287,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle input() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.INPUT n text style type.input
          * @return of result
@@ -1303,7 +1303,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle input(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.INPUT n text style type.input
          * @param variant variant
@@ -1319,7 +1319,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle comments() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.COMMENTS n text style type.comments
          * @return of result
@@ -1335,7 +1335,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle comments(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.COMMENTS n text style type.comments
          * @param variant variant
@@ -1351,7 +1351,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle variable() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.VAR n text style type.var
          * @return of result
@@ -1367,7 +1367,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle variable(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.VAR n text style type.var
          * @param variant variant
@@ -1383,7 +1383,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle number() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.NUMBER n text style type.number
          * @return of result
@@ -1398,7 +1398,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle date() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.DATE n text style type.date
          * @return of result
@@ -1414,7 +1414,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle date(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.DATE n text style type.date
          * @param variant variant
@@ -1431,7 +1431,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle number(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.VAR n text style type.var
          * @param variant variant
@@ -1448,7 +1448,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle foregroundColor(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FORE_COLOR n text style type.fore_color
          * @param variant variant
@@ -1465,7 +1465,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle foregroundTrueColor(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FORE_TRUE_COLOR n text style type.fore_true_color
          * @param variant variant
@@ -1482,7 +1482,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle foregroundTrueColor(NColor variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FORE_TRUE_COLOR n text style type.fore_true_color
          * @param variant.rgb() variant.rgb()
@@ -1499,7 +1499,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle backgroundColor(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BACK_COLOR n text style type.back_color
          * @param variant variant
@@ -1516,7 +1516,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle backgroundTrueColor(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BACK_TRUE_COLOR n text style type.back_true_color
          * @param variant variant
@@ -1533,7 +1533,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle backgroundTrueColor(NColor variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BACK_TRUE_COLOR n text style type.back_true_color
          * @param variant.rgb() variant.rgb()
@@ -1549,7 +1549,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle placeholder() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PLACEHOLDER n text style type.placeholder
          * @return of result
@@ -1565,7 +1565,7 @@ public class NTextStyle implements NEnum {
      */
     public static NTextStyle placeholder(int variant) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.PLACEHOLDER n text style type.placeholder
          * @param variant variant
@@ -1623,7 +1623,7 @@ public class NTextStyle implements NEnum {
             }
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.BACK_TRUE_COLOR n text style type.back_true_color
          * @param variant.rgb() variant.rgb()
@@ -1681,7 +1681,7 @@ public class NTextStyle implements NEnum {
             }
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyleType.FORE_TRUE_COLOR n text style type.fore_true_color
          * @param variant.rgb() variant.rgb()

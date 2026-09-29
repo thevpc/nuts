@@ -38,7 +38,7 @@ import java.util.List;
 public interface NCodeHighlighter extends NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param kind kind
      * @return of result

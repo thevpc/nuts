@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public interface NProperties {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NIntRef extends NObjectRef<Integer> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NIntRef extends NObjectRef<Integer> {
         return new NIntRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

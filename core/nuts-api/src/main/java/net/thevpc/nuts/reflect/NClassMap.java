@@ -36,7 +36,7 @@ import java.util.*;
  */
 public interface NClassMap<K,V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param clazz clazz
      * @return of result
@@ -46,7 +46,7 @@ public interface NClassMap<K,V> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param keyType key type
      * @param valueType value type
@@ -57,7 +57,7 @@ public interface NClassMap<K,V> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param keyType key type
      * @param valueType value type
@@ -69,7 +69,7 @@ public interface NClassMap<K,V> {
     }
 
     /**
-     * Creates a new instance of of class.
+     * Creates a new instance of class.
      *
      * @return of class result
      */

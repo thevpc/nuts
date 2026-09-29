@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  */
 public interface NUtilsRPI extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

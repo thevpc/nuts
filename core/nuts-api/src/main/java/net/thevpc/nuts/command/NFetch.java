@@ -53,7 +53,7 @@ import java.time.Instant;
 public interface NFetch extends NWorkspaceCmd {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -62,14 +62,14 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @return of result
      */
     static NFetch of(NId id) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).id(id ).id(id
          * @return of result
@@ -78,14 +78,14 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @return of result
      */
     static NFetch of(String id) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).id(id ).id(id
          * @return of result
@@ -94,13 +94,13 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of nuts api.
+     * Creates a new instance of nuts api.
      *
      * @return of nuts api result
      */
     static NFetch ofNutsApi() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).id(NWorkspace.of().apiId() ).id(n workspace.of().api id()
          * @return of result
@@ -109,13 +109,13 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of nuts app.
+     * Creates a new instance of nuts app.
      *
      * @return of nuts app result
      */
     static NFetch ofNutsApp() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).id(NWorkspace.of().appId() ).id(n workspace.of().app id()
          * @return of result
@@ -124,13 +124,13 @@ public interface NFetch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of nuts runtime.
+     * Creates a new instance of nuts runtime.
      *
      * @return of nuts runtime result
      */
     static NFetch ofNutsRuntime() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).id(NWorkspace.of().runtimeId() ).id(n workspace.of().runtime id()
          * @return of result

@@ -28,13 +28,13 @@ public class NChronometer implements Serializable {
     private ChronoUnit largestUnit;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
     public static NChronometer of() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @param null null
@@ -44,14 +44,14 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result
      */
     public static NChronometer of(String name) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param name name
          * @param null null
@@ -61,14 +61,14 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param smallestUnit smallest unit
      * @return of result
      */
     public static NChronometer of(ChronoUnit smallestUnit) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @param smallestUnit smallest unit
@@ -78,7 +78,7 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param smallestUnit smallest unit
@@ -89,13 +89,13 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted() {
         /**
-         * Creates a new instance of of unstarted.
+         * Creates a new instance of unstarted.
          *
          * @param null null
          * @param null null
@@ -105,14 +105,14 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param name name
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted(String name) {
         /**
-         * Creates a new instance of of unstarted.
+         * Creates a new instance of unstarted.
          *
          * @param name name
          * @param null null
@@ -122,14 +122,14 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param smallestUnit smallest unit
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted(ChronoUnit smallestUnit) {
         /**
-         * Creates a new instance of of unstarted.
+         * Creates a new instance of unstarted.
          *
          * @param null null
          * @param smallestUnit smallest unit
@@ -139,7 +139,7 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param name name
      * @param smallestUnit smallest unit

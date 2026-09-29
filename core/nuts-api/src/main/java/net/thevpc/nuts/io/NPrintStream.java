@@ -58,7 +58,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of mem.
+     * Creates a new instance of mem.
      *
      * @param mode mode
      * @return of mem result
@@ -68,7 +68,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param out out
      * @return of result
@@ -103,7 +103,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param out out
      * @param mode mode
@@ -114,7 +114,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param out out
      * @return of result
@@ -124,7 +124,7 @@ public interface NPrintStream extends NOutputTarget, AutoCloseable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param path path
      * @return of result

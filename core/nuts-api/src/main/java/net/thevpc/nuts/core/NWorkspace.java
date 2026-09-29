@@ -62,7 +62,7 @@ import java.util.function.Supplier;
  */
 public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

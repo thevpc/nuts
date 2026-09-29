@@ -12,13 +12,13 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NTextFormat<T> extends NStringFormat<T> {
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @return of number result
      */
     static NTextFormat<Number> ofNumber() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "number" "number"
          * @param Number.class number.class
@@ -29,14 +29,14 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param pattern pattern
      * @return of bytes result
      */
     static NTextFormat<Number> ofBytes(String pattern) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "bytes" "bytes"
          * @param Number.class number.class
@@ -47,14 +47,14 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of frequency.
+     * Creates a new instance of frequency.
      *
      * @param pattern pattern
      * @return of frequency result
      */
     static NTextFormat<Number> ofFrequency(String pattern) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "bytes" "bytes"
          * @param Number.class number.class
@@ -65,14 +65,14 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of distance.
+     * Creates a new instance of distance.
      *
      * @param pattern pattern
      * @return of distance result
      */
     static NTextFormat<Number> ofDistance(String pattern) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "meters" "meters"
          * @param Number.class number.class
@@ -83,7 +83,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @param type type
      * @param pattern pattern
@@ -91,7 +91,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      */
     static NTextFormat<Number> ofNumber(String type, String pattern) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param type type
          * @param Number.class number.class
@@ -102,14 +102,14 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @param format format
      * @return of number result
      */
     static NTextFormat<Number> ofNumber(String format) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "number" "number"
          * @param Number.class number.class
@@ -120,13 +120,13 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of percent.
+     * Creates a new instance of percent.
      *
      * @return of percent result
      */
     static NTextFormat<Number> ofPercent() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param "number" "number"
          * @param Number.class number.class
@@ -137,7 +137,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param expectedType expected type
@@ -145,7 +145,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      */
     static <T> NTextFormat<T> of(String type, Class<T> expectedType) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param type type
          * @param expectedType expected type
@@ -156,7 +156,7 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param expectedType expected type

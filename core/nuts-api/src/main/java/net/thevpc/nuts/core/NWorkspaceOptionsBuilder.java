@@ -71,14 +71,14 @@ public interface NWorkspaceOptionsBuilder extends Serializable, NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param options options
      * @return of result
      */
     static NWorkspaceOptionsBuilder of(NWorkspaceOptions options) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).copyFrom(options ).copy from(options
          * @return of result

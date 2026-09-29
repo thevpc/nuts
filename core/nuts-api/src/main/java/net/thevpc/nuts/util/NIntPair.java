@@ -16,7 +16,7 @@ public final class NIntPair implements NPair<Integer, Integer, Integer> {
     private final int b;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param a a
      * @param b b

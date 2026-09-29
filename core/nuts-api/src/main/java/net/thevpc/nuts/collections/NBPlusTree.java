@@ -59,7 +59,7 @@ public interface NBPlusTree<K, V> extends Map<K, V>, AutoCloseable {
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order, boolean allowDuplicates) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param order order
          * @param allowDuplicates allow duplicates
@@ -120,7 +120,7 @@ public interface NBPlusTree<K, V> extends Map<K, V>, AutoCloseable {
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> ofInMemory(int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
         /**
-         * Creates a new instance of of in memory.
+         * Creates a new instance of in memory.
          *
          * @param pageSize page size
          * @param order order

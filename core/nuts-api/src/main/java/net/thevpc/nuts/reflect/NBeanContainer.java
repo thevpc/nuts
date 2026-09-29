@@ -70,7 +70,7 @@ public interface NBeanContainer {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ref ref
      * @return of result
@@ -80,7 +80,7 @@ public interface NBeanContainer {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ref ref
      * @return of result
@@ -90,7 +90,7 @@ public interface NBeanContainer {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ref ref
      * @param variant variant

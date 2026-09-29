@@ -21,7 +21,7 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
      */
     static NElementComment of(String text) {
         /**
-         * Creates a new instance of of bloc comment.
+         * Creates a new instance of bloc comment.
          *
          * @param text text
          * @return of bloc comment result
@@ -52,7 +52,7 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
     }
 
     /**
-     * Creates a new instance of of line comment.
+     * Creates a new instance of line comment.
      *
      * @param text text
      * @return of line comment result
@@ -62,7 +62,7 @@ public interface NElementComment extends /*Comparable<NElementComment>, */NAffix
     }
 
     /**
-     * Creates a new instance of of bloc comment.
+     * Creates a new instance of bloc comment.
      *
      * @param text text
      * @return of bloc comment result

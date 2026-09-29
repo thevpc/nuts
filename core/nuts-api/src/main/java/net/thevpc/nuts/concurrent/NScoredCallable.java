@@ -56,7 +56,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> of(int score, T value) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param score score
          * @param value value
@@ -89,7 +89,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> of(int score, Supplier<T> supplier) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param score score
          * @param supplier supplier
@@ -123,7 +123,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> ofValid(T value) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param DEFAULT_SCORE default_score
          * @param value value
@@ -142,7 +142,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> ofValid(Supplier<T> supplier) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param DEFAULT_SCORE default_score
          * @param supplier supplier
@@ -164,7 +164,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> ofValid(int score, T value) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @return of result
@@ -184,7 +184,7 @@ public interface NScoredCallable<T> extends NScorable {
      */
     static <T> NScoredCallable<T> ofValid(int score, Supplier<T> supplier) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @return of result

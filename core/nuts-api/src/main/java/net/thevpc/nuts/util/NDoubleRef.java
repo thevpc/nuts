@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NDoubleRef extends NObjectRef<Double> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NDoubleRef extends NObjectRef<Double> {
         return new NDoubleRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

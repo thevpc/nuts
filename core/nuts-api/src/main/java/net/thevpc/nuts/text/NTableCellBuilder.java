@@ -34,7 +34,7 @@ import net.thevpc.nuts.internal.rpi.NTextRPI;
  */
 public interface NTableCellBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -43,14 +43,14 @@ public interface NTableCellBuilder {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @return of result
      */
     static NTableCellBuilder of(NText content) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).content(content ).content(content
          * @return of result
@@ -59,7 +59,7 @@ public interface NTableCellBuilder {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @param colspan colspan
@@ -68,7 +68,7 @@ public interface NTableCellBuilder {
      */
     static NTableCellBuilder of(NText content, int colspan, int rowspan) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param ).content(content).colspan(colspan).rowspan(rowspan ).content(content).colspan(colspan).rowspan(rowspan
          * @return of result

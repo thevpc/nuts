@@ -126,19 +126,19 @@
             docker: {
                 script: [
                     '<p class="dl-docker__desc">JDK-agnostic: the bootstrap script uses whatever Java is in the base image. Nuts provisions the correct JDK per app internally.</p>',
-                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre-alpine bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
+                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Override the Nuts version via env var:</p>',
-                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre-alpine bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
+                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Once inside the container:</p>',
                     steps([{ label: 'Install and run any app', code: 'nuts install org.apache.netbeans:netbeans\nnuts netbeans' }]),
-                    '<div class="dl-notice dl-notice--info" style="margin-top:16px"><i class="fas fa-info-circle"></i> We recommend <code>eclipse-temurin:8-jre-alpine</code> (~85MB) over the deprecated <code>openjdk:8</code> (~400MB). Any JDK 8+ image works.</div>'
+                    '<div class="dl-notice dl-notice--info" style="margin-top:16px"><i class="fas fa-info-circle"></i> We recommend <code>eclipse-temurin:8-jre</code> (~85MB) over the deprecated <code>openjdk:8</code> (~400MB). Any JDK 8+ image works.</div>'
                 ].join(''),
 
                 dockerfile: [
                     '<p class="dl-docker__desc">Use the bootstrap script in your Dockerfile — <code>NUTS_VERSION</code> controls which version is installed:</p>',
-                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
+                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<p class="dl-docker__desc" style="margin-top:20px">Or pin the jar directly for reproducible builds:</p>',
-                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
+                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<div class="dl-notice dl-notice--tip" style="margin-top:16px"><i class="fas fa-lightbulb"></i> The base image JDK is just a bootstrap ladder. Nuts provisions the correct JDK for each app it manages.</div>'
                 ].join('')
             }

@@ -26,7 +26,7 @@ public interface NConnectionString  {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result

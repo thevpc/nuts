@@ -11,7 +11,7 @@ import net.thevpc.nuts.internal.rpi.NElementRPI;
 public interface NExprElementReshaper {
 
     /**
-     * Creates a new instance of of default.
+     * Creates a new instance of default.
      *
      * @return of default result
      */
@@ -20,7 +20,7 @@ public interface NExprElementReshaper {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @return of result

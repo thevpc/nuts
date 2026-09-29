@@ -151,7 +151,7 @@ public final class NTypeName<T> implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param args args

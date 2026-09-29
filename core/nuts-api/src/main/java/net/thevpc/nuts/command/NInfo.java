@@ -45,7 +45,7 @@ import java.util.*;
 public interface NInfo extends NWorkspaceCmd {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

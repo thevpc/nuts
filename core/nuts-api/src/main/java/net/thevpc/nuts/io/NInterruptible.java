@@ -13,7 +13,7 @@ import java.io.InputStream;
  */
 public interface NInterruptible<T> {
     /**
-     * Creates a new instance of of input stream.
+     * Creates a new instance of input stream.
      *
      * @param base base
      * @return of input stream result

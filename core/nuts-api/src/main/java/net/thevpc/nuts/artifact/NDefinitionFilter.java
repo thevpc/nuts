@@ -47,7 +47,7 @@ public interface NDefinitionFilter extends NFilter {
     //////// COMMON START
 
     /**
-     * Creates a new instance of of nonnull.
+     * Creates a new instance of nonnull.
      *
      * @param filter filter
      * @return of nonnull result
@@ -57,7 +57,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of always.
+     * Creates a new instance of always.
      *
      * @return of always result
      */
@@ -66,7 +66,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of never.
+     * Creates a new instance of never.
      *
      * @return of never result
      */
@@ -75,7 +75,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of all.
+     * Creates a new instance of all.
      *
      * @param others others
      * @return of all result
@@ -85,7 +85,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of any.
+     * Creates a new instance of any.
      *
      * @param others others
      * @return of any result
@@ -95,7 +95,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of not.
+     * Creates a new instance of not.
      *
      * @param other other
      * @return of not result
@@ -105,7 +105,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of none.
+     * Creates a new instance of none.
      *
      * @param others others
      * @return of none result
@@ -115,7 +115,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of from.
+     * Creates a new instance of from.
      *
      * @param a a
      * @return of from result
@@ -125,7 +125,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of as.
+     * Creates a new instance of as.
      *
      * @param a a
      * @return of as result
@@ -135,7 +135,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result
@@ -189,7 +189,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of os family.
+     * Creates a new instance of os family.
      *
      * @param values values
      * @return of os family result
@@ -199,7 +199,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of arch family.
+     * Creates a new instance of arch family.
      *
      * @param values values
      * @return of arch family result
@@ -277,7 +277,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of desktop environment.
+     * Creates a new instance of desktop environment.
      *
      * @param values values
      * @return of desktop environment result
@@ -287,7 +287,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of desktop environment.
+     * Creates a new instance of desktop environment.
      *
      * @param values values
      * @return of desktop environment result
@@ -324,7 +324,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of name.
+     * Creates a new instance of name.
      *
      * @param values values
      * @return of name result
@@ -334,7 +334,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of env.
+     * Creates a new instance of env.
      *
      * @param values values
      * @return of env result
@@ -344,7 +344,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of packaging.
+     * Creates a new instance of packaging.
      *
      * @param values values
      * @return of packaging result
@@ -354,7 +354,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of os.
+     * Creates a new instance of os.
      *
      * @param values values
      * @return of os result
@@ -364,7 +364,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of platform family.
+     * Creates a new instance of platform family.
      *
      * @param values values
      * @return of platform family result
@@ -374,7 +374,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of platform.
+     * Creates a new instance of platform.
      *
      * @param values values
      * @return of platform result
@@ -384,7 +384,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of os.
+     * Creates a new instance of os.
      *
      * @param values values
      * @return of os result
@@ -395,7 +395,7 @@ public interface NDefinitionFilter extends NFilter {
 
 
     /**
-     * Creates a new instance of of packaging.
+     * Creates a new instance of packaging.
      *
      * @param values values
      * @return of packaging result
@@ -405,7 +405,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of platform.
+     * Creates a new instance of platform.
      *
      * @param values values
      * @return of platform result
@@ -415,7 +415,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of desktop environment.
+     * Creates a new instance of desktop environment.
      *
      * @param values values
      * @return of desktop environment result
@@ -425,7 +425,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of flag.
+     * Creates a new instance of flag.
      *
      * @param values values
      * @return of flag result
@@ -435,7 +435,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of flag.
+     * Creates a new instance of flag.
      *
      * @param values values
      * @return of flag result
@@ -445,7 +445,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of effective flag.
+     * Creates a new instance of effective flag.
      *
      * @param values values
      * @return of effective flag result
@@ -455,7 +455,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of effective flag.
+     * Creates a new instance of effective flag.
      *
      * @param values values
      * @return of effective flag result
@@ -465,7 +465,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of extension.
+     * Creates a new instance of extension.
      *
      * @param value value
      * @return of extension result
@@ -475,7 +475,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of runtime.
+     * Creates a new instance of runtime.
      *
      * @param value value
      * @return of runtime result
@@ -485,7 +485,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of companion.
+     * Creates a new instance of companion.
      *
      * @param value value
      * @return of companion result
@@ -495,7 +495,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of api version.
+     * Creates a new instance of api version.
      *
      * @param value value
      * @return of api version result
@@ -505,7 +505,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of boot version.
+     * Creates a new instance of boot version.
      *
      * @param value value
      * @return of boot version result
@@ -515,7 +515,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of locked ids.
+     * Creates a new instance of locked ids.
      *
      * @param values values
      * @return of locked ids result
@@ -525,7 +525,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of locked ids.
+     * Creates a new instance of locked ids.
      *
      * @param values values
      * @return of locked ids result
@@ -535,7 +535,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of version.
+     * Creates a new instance of version.
      *
      * @param value value
      * @return of version result
@@ -545,7 +545,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of version.
+     * Creates a new instance of version.
      *
      * @param value value
      * @return of version result
@@ -555,7 +555,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of version.
+     * Creates a new instance of version.
      *
      * @param value value
      * @return of version result
@@ -565,7 +565,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of installed.
+     * Creates a new instance of installed.
      *
      * @param value value
      * @return of installed result
@@ -575,7 +575,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of installed or required.
+     * Creates a new instance of installed or required.
      *
      * @param value value
      * @return of installed or required result
@@ -585,7 +585,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of required.
+     * Creates a new instance of required.
      *
      * @param value value
      * @return of required result
@@ -595,7 +595,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of default version.
+     * Creates a new instance of default version.
      *
      * @param value value
      * @return of default version result
@@ -605,7 +605,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of obsolete.
+     * Creates a new instance of obsolete.
      *
      * @param value value
      * @return of obsolete result
@@ -615,7 +615,7 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of deployed.
+     * Creates a new instance of deployed.
      *
      * @param value value
      * @return of deployed result

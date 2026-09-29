@@ -38,7 +38,7 @@ import java.util.List;
 public interface NUserSpec {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param userName user name
      * @return of result

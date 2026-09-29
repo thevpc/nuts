@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NVersionFilterRPI extends NTypedFilters<NVersionFilter> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

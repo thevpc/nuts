@@ -50,7 +50,7 @@ public abstract class NTypeReference<T> implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param args args
@@ -184,7 +184,7 @@ public abstract class NTypeReference<T> implements Serializable {
             return null;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param superclass superclass
          * @return of result

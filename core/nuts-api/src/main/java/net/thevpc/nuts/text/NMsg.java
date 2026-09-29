@@ -73,13 +73,13 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of missing value.
+     * Creates a new instance of missing value.
      *
      * @return of missing value result
      */
     public static NMsg ofMissingValue() {
         /**
-         * Creates a new instance of of missing value.
+         * Creates a new instance of missing value.
          *
          * @param null null
          * @return of missing value result
@@ -88,7 +88,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of missing value.
+     * Creates a new instance of missing value.
      *
      * @param valueName value name
      * @return of missing value result
@@ -101,7 +101,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of missing value.
+     * Creates a new instance of missing value.
      *
      * @param valueName value name
      * @return of missing value result
@@ -114,13 +114,13 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of invalid value.
+     * Creates a new instance of invalid value.
      *
      * @return of invalid value result
      */
     public static NMsg ofInvalidValue() {
         /**
-         * Creates a new instance of of invalid value.
+         * Creates a new instance of invalid value.
          *
          * @param null null
          * @param null null
@@ -130,14 +130,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of invalid value.
+     * Creates a new instance of invalid value.
      *
      * @param throwable throwable
      * @return of invalid value result
      */
     public static NMsg ofInvalidValue(Throwable throwable) {
         /**
-         * Creates a new instance of of invalid value.
+         * Creates a new instance of invalid value.
          *
          * @param throwable throwable
          * @param null null
@@ -147,14 +147,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of invalid value.
+     * Creates a new instance of invalid value.
      *
      * @param valueName value name
      * @return of invalid value result
      */
     public static NMsg ofInvalidValue(String valueName) {
         /**
-         * Creates a new instance of of invalid value.
+         * Creates a new instance of invalid value.
          *
          * @param null null
          * @param valueName value name
@@ -164,7 +164,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of invalid value.
+     * Creates a new instance of invalid value.
      *
      * @param throwable throwable
      * @param valueName value name
@@ -179,7 +179,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         if (NBlankable.isBlank(valueName)) {
             /**
-             * Creates a new instance of of c.
+             * Creates a new instance of c.
              *
              * @param %s" %s"
              * @param NException.getErrorMessage(throwable) n exception.get error message(throwable)
@@ -188,7 +188,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return ofC("invalid value : %s", NException.getErrorMessage(throwable));
         }
         /**
-         * Creates a new instance of of c.
+         * Creates a new instance of c.
          *
          * @param %s" %s"
          * @param valueName value name
@@ -199,7 +199,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of invalid value.
+     * Creates a new instance of invalid value.
      *
      * @param throwable throwable
      * @param valueName value name
@@ -214,7 +214,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         if (NBlankable.isBlank(valueName)) {
             /**
-             * Creates a new instance of of c.
+             * Creates a new instance of c.
              *
              * @param %s" %s"
              * @param NException.getErrorMessage(throwable) n exception.get error message(throwable)
@@ -223,7 +223,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return ofC("invalid value : %s", NException.getErrorMessage(throwable));
         }
         /**
-         * Creates a new instance of of c.
+         * Creates a new instance of c.
          *
          * @param %s" %s"
          * @param valueName value name
@@ -234,7 +234,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param format format
      * @param message message
@@ -314,14 +314,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of ntf.
+     * Creates a new instance of ntf.
      *
      * @param message message
      * @return of ntf result
      */
     public static NMsg ofNtf(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.PLAIN n msg type.plain
          * @param "") "")
@@ -341,7 +341,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code.
+     * Creates a new instance of code.
      *
      * @param lang lang
      * @param text text
@@ -349,7 +349,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofCode(String lang, String text) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CODE n msg type.code
          * @param "") "")
@@ -369,14 +369,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code.
+     * Creates a new instance of code.
      *
      * @param text text
      * @return of code result
      */
     public static NMsg ofCode(String text) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CODE n msg type.code
          * @param "") "")
@@ -396,7 +396,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of string literal.
+     * Creates a new instance of string literal.
      *
      * @param literal literal
      * @return of string literal result
@@ -409,7 +409,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param style style
@@ -417,7 +417,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(String message, NTextStyle style) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param "") "")
@@ -437,7 +437,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param styles styles
@@ -445,7 +445,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(String message, NTextStyles styles) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param "") "")
@@ -465,7 +465,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param style style
@@ -473,7 +473,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(NMsg message, NTextStyle style) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param message message
@@ -493,7 +493,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param styles styles
@@ -501,7 +501,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(NMsg message, NTextStyles styles) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param message message
@@ -521,7 +521,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param style style
@@ -529,7 +529,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(NText message, NTextStyle style) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param message message
@@ -549,7 +549,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param message message
      * @param styles styles
@@ -557,7 +557,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyled(NText message, NTextStyles styles) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.STYLED n msg type.styled
          * @param message message
@@ -577,14 +577,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of ntf.
+     * Creates a new instance of ntf.
      *
      * @param message message
      * @return of ntf result
      */
     public static NMsg ofNtf(NText message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.PLAIN n msg type.plain
          * @param message message
@@ -604,13 +604,13 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of blank.
+     * Creates a new instance of blank.
      *
      * @return of blank result
      */
     public static NMsg ofBlank() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.PLAIN n msg type.plain
          * @param "" ""
@@ -630,14 +630,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of plain.
+     * Creates a new instance of plain.
      *
      * @param message message
      * @return of plain result
      */
     public static NMsg ofP(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.PLAIN n msg type.plain
          * @param "") "")
@@ -657,14 +657,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of c.
+     * Creates a new instance of c.
      *
      * @param message message
      * @return of c result
      */
     public static NMsg ofC(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param "") "")
@@ -684,7 +684,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of c.
+     * Creates a new instance of c.
      *
      * @param message message
      * @param params params
@@ -692,7 +692,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofC(String message, Object... params) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param "") "")
@@ -712,7 +712,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of v.
+     * Creates a new instance of v.
      *
      * @param message message
      * @param params params
@@ -721,7 +721,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofV(String message, NMsgParam... params) {
         if (params == null || params.length == 0) {
             /**
-             * Creates a new instance of of v.
+             * Creates a new instance of v.
              *
              * @param message message
              * @param null null
@@ -730,7 +730,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return ofV(message, s -> null);
         }
         /**
-         * Creates a new instance of of v.
+         * Creates a new instance of v.
          *
          * @param message message
          * @param MapAsSupplier2(params) map as supplier2(params)
@@ -740,7 +740,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of v.
+     * Creates a new instance of v.
      *
      * @param message message
      * @param vars vars
@@ -748,7 +748,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofV(String message, Map<String, ?> vars) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.VFORMAT n msg type.vformat
          * @param "") "")
@@ -768,7 +768,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of v.
+     * Creates a new instance of v.
      *
      * @param message message
      * @param vars vars
@@ -776,7 +776,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofV(String message, Function<String, ?> vars) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.VFORMAT n msg type.vformat
          * @param "") "")
@@ -796,7 +796,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of m.
+     * Creates a new instance of m.
      *
      * @param message message
      * @param params params
@@ -805,7 +805,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofM(String message, NMsgParam... params) {
         if (params == null || params.length == 0) {
             /**
-             * Creates a new instance of of m.
+             * Creates a new instance of m.
              *
              * @param message message
              * @param null null
@@ -814,7 +814,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return ofM(message, s -> null);
         }
         /**
-         * Creates a new instance of of m.
+         * Creates a new instance of m.
          *
          * @param message message
          * @param MapAsSupplier2(params) map as supplier2(params)
@@ -824,7 +824,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of m.
+     * Creates a new instance of m.
      *
      * @param message message
      * @param vars vars
@@ -832,7 +832,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofM(String message, Map<String, ?> vars) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.MFORMAT n msg type.mformat
          * @param "") "")
@@ -852,7 +852,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of m.
+     * Creates a new instance of m.
      *
      * @param message message
      * @param vars vars
@@ -860,7 +860,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofM(String message, Function<String, ?> vars) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.MFORMAT n msg type.mformat
          * @param "") "")
@@ -880,7 +880,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of j.
+     * Creates a new instance of j.
      *
      * @param message message
      * @param params params
@@ -889,7 +889,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofJ(String message, NMsgParam... params) {
         if (params == null) {
             /**
-             * Creates a new instance of of j.
+             * Creates a new instance of j.
              *
              * @param message message
              * @param Object[]{null} object[]{null}
@@ -899,7 +899,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::value).toArray();
         /**
-         * Creates a new instance of of j.
+         * Creates a new instance of j.
          *
          * @param message message
          * @param paramsAsObjects params as objects
@@ -909,7 +909,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of c.
+     * Creates a new instance of c.
      *
      * @param message message
      * @param params params
@@ -918,7 +918,7 @@ public class NMsg implements NBlankable, NElementSimple {
     public static NMsg ofC(String message, NMsgParam... params) {
         if (params == null) {
             /**
-             * Creates a new instance of of c.
+             * Creates a new instance of c.
              *
              * @param message message
              * @param Object[]{null} object[]{null}
@@ -928,7 +928,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::value).toArray();
         /**
-         * Creates a new instance of of c.
+         * Creates a new instance of c.
          *
          * @param message message
          * @param paramsAsObjects params as objects
@@ -945,7 +945,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofJ(String message) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.JFORMAT n msg type.jformat
          * @param "") "")
@@ -965,7 +965,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of j.
+     * Creates a new instance of j.
      *
      * @param message message
      * @param params params
@@ -973,7 +973,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofJ(String message, Object... params) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.JFORMAT n msg type.jformat
          * @param "") "")
@@ -1001,7 +1001,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofS(String sql, Object... params) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.SFORMAT n msg type.sformat
          * @param "") "")
@@ -1041,7 +1041,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofS(String sql, Function<String, ?> namedParams) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.SFORMAT n msg type.sformat
          * @param "") "")
@@ -1069,7 +1069,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofS(String sql, NMsgParam... params) {
         /**
-         * Creates a new instance of of s.
+         * Creates a new instance of s.
          *
          * @param sql sql
          * @param MapAsSupplier2(params) map as supplier2(params)
@@ -1392,7 +1392,7 @@ public class NMsg implements NBlankable, NElementSimple {
 
 
     /**
-     * Creates a new instance of of custom.
+     * Creates a new instance of custom.
      *
      * @param formatId format id
      * @param message message
@@ -1401,7 +1401,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofCustom(String formatId, String message, Object... params) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CUSTOM n msg type.custom
          * @param "") "")
@@ -1421,7 +1421,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of custom.
+     * Creates a new instance of custom.
      *
      * @param formatId format id
      * @param message message
@@ -1434,7 +1434,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of custom.
+     * Creates a new instance of custom.
      *
      * @param formatId format id
      * @param message message
@@ -1443,7 +1443,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofCustom(String formatId, String message, Function<String, ?> namedParams) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CUSTOM n msg type.custom
          * @param "") "")
@@ -1761,7 +1761,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2239,7 +2239,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public NMsg withoutPlaceholders() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2293,7 +2293,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         if (placeholderBindings == null) {
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2319,7 +2319,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2348,7 +2348,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 newMap.put(param.name(), new ConstSupplier<>(param.value()));
             }
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2408,7 +2408,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         if (placeholderBindings == null) {
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2433,7 +2433,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 newMap.put(e.getKey(), new ConstSupplier<>(e.getValue()));
             }
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2462,7 +2462,7 @@ public class NMsg implements NBlankable, NElementSimple {
                 }
             }
             /**
-             * Creates a new instance of of.
+             * Creates a new instance.
              *
              * @param format format
              * @param message message
@@ -2503,7 +2503,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2537,7 +2537,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2568,7 +2568,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2603,7 +2603,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2635,7 +2635,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2665,7 +2665,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2698,7 +2698,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2728,7 +2728,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2808,7 +2808,7 @@ public class NMsg implements NBlankable, NElementSimple {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -2842,7 +2842,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         //this if fast way to inherit level,intent, duration and throwable
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param %s" %s"
@@ -2877,7 +2877,7 @@ public class NMsg implements NBlankable, NElementSimple {
         }
         //this if fast way to inherit level,intent, duration and throwable
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param %s" %s"
@@ -2910,7 +2910,7 @@ public class NMsg implements NBlankable, NElementSimple {
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> prefixSupplier = () -> prefixMessage.apply(this /**/);
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param %s" %s"
@@ -2943,7 +2943,7 @@ public class NMsg implements NBlankable, NElementSimple {
         //this if fast way to inherit level,intent, duration and throwable
         Supplier<NMsg> suffixSupplier = () -> suffixMessage.apply(this /**/);
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NMsgType.CFORMAT n msg type.cformat
          * @param %s" %s"
@@ -2970,7 +2970,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     private NMsg cloneWithoutMeta() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param format format
          * @param message message
@@ -3051,14 +3051,14 @@ public class NMsg implements NBlankable, NElementSimple {
     // STYLING
     // ---------------------------------------------------------------
     /**
-     * Creates a new instance of of styled keyword.
+     * Creates a new instance of styled keyword.
      *
      * @param message message
      * @return of styled keyword result
      */
     public static NMsg ofStyledKeyword(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.keyword() n text style.keyword()
@@ -3068,14 +3068,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled path.
+     * Creates a new instance of styled path.
      *
      * @param message message
      * @return of styled path result
      */
     public static NMsg ofStyledPath(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.path() n text style.path()
@@ -3085,14 +3085,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled pale.
+     * Creates a new instance of styled pale.
      *
      * @param message message
      * @return of styled pale result
      */
     public static NMsg ofStyledPale(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.pale() n text style.pale()
@@ -3102,14 +3102,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled separator.
+     * Creates a new instance of styled separator.
      *
      * @param message message
      * @return of styled separator result
      */
     public static NMsg ofStyledSeparator(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.separator() n text style.separator()
@@ -3119,14 +3119,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled string.
+     * Creates a new instance of styled string.
      *
      * @param message message
      * @return of styled string result
      */
     public static NMsg ofStyledString(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.string() n text style.string()
@@ -3136,14 +3136,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled blink.
+     * Creates a new instance of styled blink.
      *
      * @param message message
      * @return of styled blink result
      */
     public static NMsg ofStyledBlink(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.blink() n text style.blink()
@@ -3153,14 +3153,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled bold.
+     * Creates a new instance of styled bold.
      *
      * @param message message
      * @return of styled bold result
      */
     public static NMsg ofStyledBold(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.bold() n text style.bold()
@@ -3170,14 +3170,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled bool.
+     * Creates a new instance of styled bool.
      *
      * @param message message
      * @return of styled bool result
      */
     public static NMsg ofStyledBool(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.bool() n text style.bool()
@@ -3187,14 +3187,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled comments.
+     * Creates a new instance of styled comments.
      *
      * @param message message
      * @return of styled comments result
      */
     public static NMsg ofStyledComments(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.comments() n text style.comments()
@@ -3204,14 +3204,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled config.
+     * Creates a new instance of styled config.
      *
      * @param message message
      * @return of styled config result
      */
     public static NMsg ofStyledConfig(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.config() n text style.config()
@@ -3221,14 +3221,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled danger.
+     * Creates a new instance of styled danger.
      *
      * @param message message
      * @return of styled danger result
      */
     public static NMsg ofStyledDanger(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.danger() n text style.danger()
@@ -3238,14 +3238,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled date.
+     * Creates a new instance of styled date.
      *
      * @param message message
      * @return of styled date result
      */
     public static NMsg ofStyledDate(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.date() n text style.date()
@@ -3255,14 +3255,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled error.
+     * Creates a new instance of styled error.
      *
      * @param message message
      * @return of styled error result
      */
     public static NMsg ofStyledError(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.error() n text style.error()
@@ -3272,14 +3272,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled fail.
+     * Creates a new instance of styled fail.
      *
      * @param message message
      * @return of styled fail result
      */
     public static NMsg ofStyledFail(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.fail() n text style.fail()
@@ -3289,14 +3289,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled info.
+     * Creates a new instance of styled info.
      *
      * @param message message
      * @return of styled info result
      */
     public static NMsg ofStyledInfo(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.info() n text style.info()
@@ -3306,14 +3306,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled input.
+     * Creates a new instance of styled input.
      *
      * @param message message
      * @return of styled input result
      */
     public static NMsg ofStyledInput(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.input() n text style.input()
@@ -3323,14 +3323,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled italic.
+     * Creates a new instance of styled italic.
      *
      * @param message message
      * @return of styled italic result
      */
     public static NMsg ofStyledItalic(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.italic() n text style.italic()
@@ -3340,14 +3340,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled number.
+     * Creates a new instance of styled number.
      *
      * @param message message
      * @return of styled number result
      */
     public static NMsg ofStyledNumber(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.number() n text style.number()
@@ -3357,14 +3357,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled operator.
+     * Creates a new instance of styled operator.
      *
      * @param message message
      * @return of styled operator result
      */
     public static NMsg ofStyledOperator(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.operator() n text style.operator()
@@ -3374,14 +3374,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled option.
+     * Creates a new instance of styled option.
      *
      * @param message message
      * @return of styled option result
      */
     public static NMsg ofStyledOption(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.option() n text style.option()
@@ -3391,14 +3391,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled placeholder.
+     * Creates a new instance of styled placeholder.
      *
      * @param message message
      * @return of styled placeholder result
      */
     public static NMsg ofStyledPlaceholder(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.placeholder() n text style.placeholder()
@@ -3408,14 +3408,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled entity.
+     * Creates a new instance of styled entity.
      *
      * @param message message
      * @return of styled entity result
      */
     public static NMsg ofStyledEntity(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.entity() n text style.entity()
@@ -3425,14 +3425,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled action.
+     * Creates a new instance of styled action.
      *
      * @param message message
      * @return of styled action result
      */
     public static NMsg ofStyledAction(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.action() n text style.action()
@@ -3442,14 +3442,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled annotation.
+     * Creates a new instance of styled annotation.
      *
      * @param message message
      * @return of styled annotation result
      */
     public static NMsg ofStyledAnnotation(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.annotation() n text style.annotation()
@@ -3459,14 +3459,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary1.
+     * Creates a new instance of styled primary1.
      *
      * @param message message
      * @return of styled primary1 result
      */
     public static NMsg ofStyledPrimary1(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary1() n text style.primary1()
@@ -3476,14 +3476,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary2.
+     * Creates a new instance of styled primary2.
      *
      * @param message message
      * @return of styled primary2 result
      */
     public static NMsg ofStyledPrimary2(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary2() n text style.primary2()
@@ -3493,14 +3493,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary3.
+     * Creates a new instance of styled primary3.
      *
      * @param message message
      * @return of styled primary3 result
      */
     public static NMsg ofStyledPrimary3(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary3() n text style.primary3()
@@ -3510,14 +3510,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary4.
+     * Creates a new instance of styled primary4.
      *
      * @param message message
      * @return of styled primary4 result
      */
     public static NMsg ofStyledPrimary4(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary4() n text style.primary4()
@@ -3527,14 +3527,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary5.
+     * Creates a new instance of styled primary5.
      *
      * @param message message
      * @return of styled primary5 result
      */
     public static NMsg ofStyledPrimary5(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary5() n text style.primary5()
@@ -3544,14 +3544,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary6.
+     * Creates a new instance of styled primary6.
      *
      * @param message message
      * @return of styled primary6 result
      */
     public static NMsg ofStyledPrimary6(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary6() n text style.primary6()
@@ -3561,14 +3561,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary7.
+     * Creates a new instance of styled primary7.
      *
      * @param message message
      * @return of styled primary7 result
      */
     public static NMsg ofStyledPrimary7(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary7() n text style.primary7()
@@ -3578,14 +3578,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary8.
+     * Creates a new instance of styled primary8.
      *
      * @param message message
      * @return of styled primary8 result
      */
     public static NMsg ofStyledPrimary8(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary8() n text style.primary8()
@@ -3595,14 +3595,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary9.
+     * Creates a new instance of styled primary9.
      *
      * @param message message
      * @return of styled primary9 result
      */
     public static NMsg ofStyledPrimary9(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary9() n text style.primary9()
@@ -3612,14 +3612,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary1.
+     * Creates a new instance of styled secondary1.
      *
      * @param message message
      * @return of styled secondary1 result
      */
     public static NMsg ofStyledSecondary1(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary1() n text style.secondary1()
@@ -3629,14 +3629,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary2.
+     * Creates a new instance of styled secondary2.
      *
      * @param message message
      * @return of styled secondary2 result
      */
     public static NMsg ofStyledSecondary2(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary2() n text style.secondary2()
@@ -3646,14 +3646,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary3.
+     * Creates a new instance of styled secondary3.
      *
      * @param message message
      * @return of styled secondary3 result
      */
     public static NMsg ofStyledSecondary3(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary3() n text style.secondary3()
@@ -3663,14 +3663,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary4.
+     * Creates a new instance of styled secondary4.
      *
      * @param message message
      * @return of styled secondary4 result
      */
     public static NMsg ofStyledSecondary4(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary4() n text style.secondary4()
@@ -3680,14 +3680,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary5.
+     * Creates a new instance of styled secondary5.
      *
      * @param message message
      * @return of styled secondary5 result
      */
     public static NMsg ofStyledSecondary5(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary5() n text style.secondary5()
@@ -3697,14 +3697,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary6.
+     * Creates a new instance of styled secondary6.
      *
      * @param message message
      * @return of styled secondary6 result
      */
     public static NMsg ofStyledSecondary6(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary6() n text style.secondary6()
@@ -3714,14 +3714,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary7.
+     * Creates a new instance of styled secondary7.
      *
      * @param message message
      * @return of styled secondary7 result
      */
     public static NMsg ofStyledSecondary7(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary7() n text style.secondary7()
@@ -3731,14 +3731,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary8.
+     * Creates a new instance of styled secondary8.
      *
      * @param message message
      * @return of styled secondary8 result
      */
     public static NMsg ofStyledSecondary8(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary8() n text style.secondary8()
@@ -3748,14 +3748,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary9.
+     * Creates a new instance of styled secondary9.
      *
      * @param message message
      * @return of styled secondary9 result
      */
     public static NMsg ofStyledSecondary9(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary9() n text style.secondary9()
@@ -3765,14 +3765,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title1.
+     * Creates a new instance of styled title1.
      *
      * @param message message
      * @return of styled title1 result
      */
     public static NMsg ofStyledTitle1(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title1() n text style.title1()
@@ -3782,14 +3782,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title2.
+     * Creates a new instance of styled title2.
      *
      * @param message message
      * @return of styled title2 result
      */
     public static NMsg ofStyledTitle2(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title2() n text style.title2()
@@ -3799,14 +3799,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title3.
+     * Creates a new instance of styled title3.
      *
      * @param message message
      * @return of styled title3 result
      */
     public static NMsg ofStyledTitle3(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title3() n text style.title3()
@@ -3816,14 +3816,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title4.
+     * Creates a new instance of styled title4.
      *
      * @param message message
      * @return of styled title4 result
      */
     public static NMsg ofStyledTitle4(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title4() n text style.title4()
@@ -3833,14 +3833,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title5.
+     * Creates a new instance of styled title5.
      *
      * @param message message
      * @return of styled title5 result
      */
     public static NMsg ofStyledTitle5(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title5() n text style.title5()
@@ -3850,14 +3850,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title6.
+     * Creates a new instance of styled title6.
      *
      * @param message message
      * @return of styled title6 result
      */
     public static NMsg ofStyledTitle6(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title6() n text style.title6()
@@ -3867,14 +3867,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title7.
+     * Creates a new instance of styled title7.
      *
      * @param message message
      * @return of styled title7 result
      */
     public static NMsg ofStyledTitle7(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title7() n text style.title7()
@@ -3884,14 +3884,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title8.
+     * Creates a new instance of styled title8.
      *
      * @param message message
      * @return of styled title8 result
      */
     public static NMsg ofStyledTitle8(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title8() n text style.title8()
@@ -3901,14 +3901,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title9.
+     * Creates a new instance of styled title9.
      *
      * @param message message
      * @return of styled title9 result
      */
     public static NMsg ofStyledTitle9(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title9() n text style.title9()
@@ -3918,14 +3918,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled success.
+     * Creates a new instance of styled success.
      *
      * @param message message
      * @return of styled success result
      */
     public static NMsg ofStyledSuccess(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.success() n text style.success()
@@ -3935,14 +3935,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled striked.
+     * Creates a new instance of styled striked.
      *
      * @param message message
      * @return of styled striked result
      */
     public static NMsg ofStyledStriked(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.striked() n text style.striked()
@@ -3952,14 +3952,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled variable.
+     * Creates a new instance of styled variable.
      *
      * @param message message
      * @return of styled variable result
      */
     public static NMsg ofStyledVariable(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.variable() n text style.variable()
@@ -3969,14 +3969,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled warn.
+     * Creates a new instance of styled warn.
      *
      * @param message message
      * @return of styled warn result
      */
     public static NMsg ofStyledWarn(String message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.warn() n text style.warn()
@@ -3986,7 +3986,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground color.
+     * Creates a new instance of styled foreground color.
      *
      * @param message message
      * @param color color
@@ -3994,7 +3994,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundColor(String message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundColor(color) n text style.foreground color(color)
@@ -4004,7 +4004,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground true color.
+     * Creates a new instance of styled foreground true color.
      *
      * @param message message
      * @param color color
@@ -4012,7 +4012,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundTrueColor(String message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundTrueColor(color) n text style.foreground true color(color)
@@ -4022,7 +4022,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background color.
+     * Creates a new instance of styled background color.
      *
      * @param message message
      * @param color color
@@ -4030,7 +4030,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundColor(String message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundColor(color) n text style.background color(color)
@@ -4040,7 +4040,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background true color.
+     * Creates a new instance of styled background true color.
      *
      * @param message message
      * @param color color
@@ -4048,7 +4048,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundTrueColor(String message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundTrueColor(color) n text style.background true color(color)
@@ -4058,7 +4058,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground true color.
+     * Creates a new instance of styled foreground true color.
      *
      * @param message message
      * @param color color
@@ -4066,7 +4066,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundTrueColor(String message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundTrueColor(color) n text style.foreground true color(color)
@@ -4076,7 +4076,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground true color.
+     * Creates a new instance of styled foreground true color.
      *
      * @param message message
      * @param color color
@@ -4084,7 +4084,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundTrueColor(NMsg message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundTrueColor(color) n text style.foreground true color(color)
@@ -4094,7 +4094,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background true color.
+     * Creates a new instance of styled background true color.
      *
      * @param message message
      * @param color color
@@ -4102,7 +4102,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundTrueColor(String message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundTrueColor(color) n text style.background true color(color)
@@ -4112,7 +4112,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background true color.
+     * Creates a new instance of styled background true color.
      *
      * @param message message
      * @param color color
@@ -4120,7 +4120,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundTrueColor(NMsg message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundTrueColor(color) n text style.background true color(color)
@@ -4130,7 +4130,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background color.
+     * Creates a new instance of styled background color.
      *
      * @param message message
      * @param color color
@@ -4138,7 +4138,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundColor(String message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundColor(color) n text style.background color(color)
@@ -4148,7 +4148,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background color.
+     * Creates a new instance of styled background color.
      *
      * @param message message
      * @param color color
@@ -4156,7 +4156,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundColor(NMsg message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundColor(color) n text style.background color(color)
@@ -4166,7 +4166,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground color.
+     * Creates a new instance of styled foreground color.
      *
      * @param message message
      * @param color color
@@ -4174,7 +4174,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundColor(String message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundColor(color) n text style.foreground color(color)
@@ -4184,7 +4184,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground color.
+     * Creates a new instance of styled foreground color.
      *
      * @param message message
      * @param color color
@@ -4192,7 +4192,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundColor(NMsg message, NColor color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundColor(color) n text style.foreground color(color)
@@ -4202,14 +4202,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled keyword.
+     * Creates a new instance of styled keyword.
      *
      * @param message message
      * @return of styled keyword result
      */
     public static NMsg ofStyledKeyword(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.keyword() n text style.keyword()
@@ -4219,14 +4219,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled path.
+     * Creates a new instance of styled path.
      *
      * @param message message
      * @return of styled path result
      */
     public static NMsg ofStyledPath(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.path() n text style.path()
@@ -4236,14 +4236,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled pale.
+     * Creates a new instance of styled pale.
      *
      * @param message message
      * @return of styled pale result
      */
     public static NMsg ofStyledPale(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.pale() n text style.pale()
@@ -4253,14 +4253,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled separator.
+     * Creates a new instance of styled separator.
      *
      * @param message message
      * @return of styled separator result
      */
     public static NMsg ofStyledSeparator(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.separator() n text style.separator()
@@ -4270,14 +4270,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled string.
+     * Creates a new instance of styled string.
      *
      * @param message message
      * @return of styled string result
      */
     public static NMsg ofStyledString(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.string() n text style.string()
@@ -4287,14 +4287,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled blink.
+     * Creates a new instance of styled blink.
      *
      * @param message message
      * @return of styled blink result
      */
     public static NMsg ofStyledBlink(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.blink() n text style.blink()
@@ -4304,14 +4304,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled bold.
+     * Creates a new instance of styled bold.
      *
      * @param message message
      * @return of styled bold result
      */
     public static NMsg ofStyledBold(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.bold() n text style.bold()
@@ -4321,14 +4321,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled bool.
+     * Creates a new instance of styled bool.
      *
      * @param message message
      * @return of styled bool result
      */
     public static NMsg ofStyledBool(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.bool() n text style.bool()
@@ -4338,14 +4338,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled comments.
+     * Creates a new instance of styled comments.
      *
      * @param message message
      * @return of styled comments result
      */
     public static NMsg ofStyledComments(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.comments() n text style.comments()
@@ -4355,14 +4355,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled config.
+     * Creates a new instance of styled config.
      *
      * @param message message
      * @return of styled config result
      */
     public static NMsg ofStyledConfig(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.config() n text style.config()
@@ -4372,14 +4372,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled danger.
+     * Creates a new instance of styled danger.
      *
      * @param message message
      * @return of styled danger result
      */
     public static NMsg ofStyledDanger(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.danger() n text style.danger()
@@ -4389,14 +4389,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled date.
+     * Creates a new instance of styled date.
      *
      * @param message message
      * @return of styled date result
      */
     public static NMsg ofStyledDate(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.date() n text style.date()
@@ -4406,14 +4406,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled error.
+     * Creates a new instance of styled error.
      *
      * @param message message
      * @return of styled error result
      */
     public static NMsg ofStyledError(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.error() n text style.error()
@@ -4423,14 +4423,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled fail.
+     * Creates a new instance of styled fail.
      *
      * @param message message
      * @return of styled fail result
      */
     public static NMsg ofStyledFail(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.fail() n text style.fail()
@@ -4440,14 +4440,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled info.
+     * Creates a new instance of styled info.
      *
      * @param message message
      * @return of styled info result
      */
     public static NMsg ofStyledInfo(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.info() n text style.info()
@@ -4457,14 +4457,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled input.
+     * Creates a new instance of styled input.
      *
      * @param message message
      * @return of styled input result
      */
     public static NMsg ofStyledInput(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.input() n text style.input()
@@ -4474,14 +4474,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled italic.
+     * Creates a new instance of styled italic.
      *
      * @param message message
      * @return of styled italic result
      */
     public static NMsg ofStyledItalic(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.italic() n text style.italic()
@@ -4491,14 +4491,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled number.
+     * Creates a new instance of styled number.
      *
      * @param message message
      * @return of styled number result
      */
     public static NMsg ofStyledNumber(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.number() n text style.number()
@@ -4508,14 +4508,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled operator.
+     * Creates a new instance of styled operator.
      *
      * @param message message
      * @return of styled operator result
      */
     public static NMsg ofStyledOperator(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.operator() n text style.operator()
@@ -4525,14 +4525,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled option.
+     * Creates a new instance of styled option.
      *
      * @param message message
      * @return of styled option result
      */
     public static NMsg ofStyledOption(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.option() n text style.option()
@@ -4542,14 +4542,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled placeholder.
+     * Creates a new instance of styled placeholder.
      *
      * @param message message
      * @return of styled placeholder result
      */
     public static NMsg ofStyledPlaceholder(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.placeholder() n text style.placeholder()
@@ -4559,14 +4559,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled entity.
+     * Creates a new instance of styled entity.
      *
      * @param message message
      * @return of styled entity result
      */
     public static NMsg ofStyledEntity(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.entity() n text style.entity()
@@ -4576,14 +4576,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled action.
+     * Creates a new instance of styled action.
      *
      * @param message message
      * @return of styled action result
      */
     public static NMsg ofStyledAction(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.action() n text style.action()
@@ -4593,14 +4593,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled annotation.
+     * Creates a new instance of styled annotation.
      *
      * @param message message
      * @return of styled annotation result
      */
     public static NMsg ofStyledAnnotation(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.annotation() n text style.annotation()
@@ -4610,14 +4610,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary1.
+     * Creates a new instance of styled primary1.
      *
      * @param message message
      * @return of styled primary1 result
      */
     public static NMsg ofStyledPrimary1(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary1() n text style.primary1()
@@ -4627,14 +4627,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary2.
+     * Creates a new instance of styled primary2.
      *
      * @param message message
      * @return of styled primary2 result
      */
     public static NMsg ofStyledPrimary2(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary2() n text style.primary2()
@@ -4644,14 +4644,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary3.
+     * Creates a new instance of styled primary3.
      *
      * @param message message
      * @return of styled primary3 result
      */
     public static NMsg ofStyledPrimary3(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary3() n text style.primary3()
@@ -4661,14 +4661,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary4.
+     * Creates a new instance of styled primary4.
      *
      * @param message message
      * @return of styled primary4 result
      */
     public static NMsg ofStyledPrimary4(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary4() n text style.primary4()
@@ -4678,14 +4678,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary5.
+     * Creates a new instance of styled primary5.
      *
      * @param message message
      * @return of styled primary5 result
      */
     public static NMsg ofStyledPrimary5(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary5() n text style.primary5()
@@ -4695,14 +4695,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary6.
+     * Creates a new instance of styled primary6.
      *
      * @param message message
      * @return of styled primary6 result
      */
     public static NMsg ofStyledPrimary6(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary6() n text style.primary6()
@@ -4712,14 +4712,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary7.
+     * Creates a new instance of styled primary7.
      *
      * @param message message
      * @return of styled primary7 result
      */
     public static NMsg ofStyledPrimary7(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary7() n text style.primary7()
@@ -4729,14 +4729,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary8.
+     * Creates a new instance of styled primary8.
      *
      * @param message message
      * @return of styled primary8 result
      */
     public static NMsg ofStyledPrimary8(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary8() n text style.primary8()
@@ -4746,14 +4746,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled primary9.
+     * Creates a new instance of styled primary9.
      *
      * @param message message
      * @return of styled primary9 result
      */
     public static NMsg ofStyledPrimary9(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.primary9() n text style.primary9()
@@ -4763,14 +4763,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary1.
+     * Creates a new instance of styled secondary1.
      *
      * @param message message
      * @return of styled secondary1 result
      */
     public static NMsg ofStyledSecondary1(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary1() n text style.secondary1()
@@ -4780,14 +4780,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary2.
+     * Creates a new instance of styled secondary2.
      *
      * @param message message
      * @return of styled secondary2 result
      */
     public static NMsg ofStyledSecondary2(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary2() n text style.secondary2()
@@ -4797,14 +4797,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary3.
+     * Creates a new instance of styled secondary3.
      *
      * @param message message
      * @return of styled secondary3 result
      */
     public static NMsg ofStyledSecondary3(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary3() n text style.secondary3()
@@ -4814,14 +4814,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary4.
+     * Creates a new instance of styled secondary4.
      *
      * @param message message
      * @return of styled secondary4 result
      */
     public static NMsg ofStyledSecondary4(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary4() n text style.secondary4()
@@ -4831,14 +4831,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary5.
+     * Creates a new instance of styled secondary5.
      *
      * @param message message
      * @return of styled secondary5 result
      */
     public static NMsg ofStyledSecondary5(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary5() n text style.secondary5()
@@ -4848,14 +4848,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary6.
+     * Creates a new instance of styled secondary6.
      *
      * @param message message
      * @return of styled secondary6 result
      */
     public static NMsg ofStyledSecondary6(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary6() n text style.secondary6()
@@ -4865,14 +4865,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary7.
+     * Creates a new instance of styled secondary7.
      *
      * @param message message
      * @return of styled secondary7 result
      */
     public static NMsg ofStyledSecondary7(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary7() n text style.secondary7()
@@ -4882,14 +4882,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary8.
+     * Creates a new instance of styled secondary8.
      *
      * @param message message
      * @return of styled secondary8 result
      */
     public static NMsg ofStyledSecondary8(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary8() n text style.secondary8()
@@ -4899,14 +4899,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled secondary9.
+     * Creates a new instance of styled secondary9.
      *
      * @param message message
      * @return of styled secondary9 result
      */
     public static NMsg ofStyledSecondary9(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.secondary9() n text style.secondary9()
@@ -4916,14 +4916,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title1.
+     * Creates a new instance of styled title1.
      *
      * @param message message
      * @return of styled title1 result
      */
     public static NMsg ofStyledTitle1(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title1() n text style.title1()
@@ -4933,14 +4933,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title2.
+     * Creates a new instance of styled title2.
      *
      * @param message message
      * @return of styled title2 result
      */
     public static NMsg ofStyledTitle2(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title2() n text style.title2()
@@ -4950,14 +4950,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title3.
+     * Creates a new instance of styled title3.
      *
      * @param message message
      * @return of styled title3 result
      */
     public static NMsg ofStyledTitle3(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title3() n text style.title3()
@@ -4967,14 +4967,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title4.
+     * Creates a new instance of styled title4.
      *
      * @param message message
      * @return of styled title4 result
      */
     public static NMsg ofStyledTitle4(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title4() n text style.title4()
@@ -4984,14 +4984,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title5.
+     * Creates a new instance of styled title5.
      *
      * @param message message
      * @return of styled title5 result
      */
     public static NMsg ofStyledTitle5(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title5() n text style.title5()
@@ -5001,14 +5001,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title6.
+     * Creates a new instance of styled title6.
      *
      * @param message message
      * @return of styled title6 result
      */
     public static NMsg ofStyledTitle6(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title6() n text style.title6()
@@ -5018,14 +5018,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title7.
+     * Creates a new instance of styled title7.
      *
      * @param message message
      * @return of styled title7 result
      */
     public static NMsg ofStyledTitle7(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title7() n text style.title7()
@@ -5035,14 +5035,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title8.
+     * Creates a new instance of styled title8.
      *
      * @param message message
      * @return of styled title8 result
      */
     public static NMsg ofStyledTitle8(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title8() n text style.title8()
@@ -5052,14 +5052,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled title9.
+     * Creates a new instance of styled title9.
      *
      * @param message message
      * @return of styled title9 result
      */
     public static NMsg ofStyledTitle9(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.title9() n text style.title9()
@@ -5069,14 +5069,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled success.
+     * Creates a new instance of styled success.
      *
      * @param message message
      * @return of styled success result
      */
     public static NMsg ofStyledSuccess(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.success() n text style.success()
@@ -5086,14 +5086,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled striked.
+     * Creates a new instance of styled striked.
      *
      * @param message message
      * @return of styled striked result
      */
     public static NMsg ofStyledStriked(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.striked() n text style.striked()
@@ -5103,14 +5103,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled variable.
+     * Creates a new instance of styled variable.
      *
      * @param message message
      * @return of styled variable result
      */
     public static NMsg ofStyledVariable(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.variable() n text style.variable()
@@ -5120,14 +5120,14 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled warn.
+     * Creates a new instance of styled warn.
      *
      * @param message message
      * @return of styled warn result
      */
     public static NMsg ofStyledWarn(NMsg message) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.warn() n text style.warn()
@@ -5137,7 +5137,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground color.
+     * Creates a new instance of styled foreground color.
      *
      * @param message message
      * @param color color
@@ -5145,7 +5145,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundColor(NMsg message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundColor(color) n text style.foreground color(color)
@@ -5155,7 +5155,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled foreground true color.
+     * Creates a new instance of styled foreground true color.
      *
      * @param message message
      * @param color color
@@ -5163,7 +5163,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledForegroundTrueColor(NMsg message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.foregroundTrueColor(color) n text style.foreground true color(color)
@@ -5173,7 +5173,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background color.
+     * Creates a new instance of styled background color.
      *
      * @param message message
      * @param color color
@@ -5181,7 +5181,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundColor(NMsg message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundColor(color) n text style.background color(color)
@@ -5191,7 +5191,7 @@ public class NMsg implements NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled background true color.
+     * Creates a new instance of styled background true color.
      *
      * @param message message
      * @param color color
@@ -5199,7 +5199,7 @@ public class NMsg implements NBlankable, NElementSimple {
      */
     public static NMsg ofStyledBackgroundTrueColor(NMsg message, int color) {
         /**
-         * Creates a new instance of of styled.
+         * Creates a new instance of styled.
          *
          * @param message message
          * @param NTextStyle.backgroundTrueColor(color) n text style.background true color(color)

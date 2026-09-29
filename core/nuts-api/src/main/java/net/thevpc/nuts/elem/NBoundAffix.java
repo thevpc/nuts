@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NElementRPI;
  */
 public interface NBoundAffix {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param affix affix
      * @param anchor anchor

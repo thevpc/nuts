@@ -47,7 +47,7 @@ import java.util.stream.*;
 public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, AutoCloseable {
 
     /**
-     * Creates a new instance of of array.
+     * Creates a new instance of array.
      *
      * @param str str
      * @return of array result
@@ -57,7 +57,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of int array.
+     * Creates a new instance of int array.
      *
      * @param items items
      * @return of int array result
@@ -72,7 +72,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of long array.
+     * Creates a new instance of long array.
      *
      * @param items items
      * @return of long array result
@@ -87,7 +87,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of boolean array.
+     * Creates a new instance of boolean array.
      *
      * @param items items
      * @return of boolean array result
@@ -102,7 +102,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of byte array.
+     * Creates a new instance of byte array.
      *
      * @param items items
      * @return of byte array result
@@ -118,7 +118,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
 
 
     /**
-     * Creates a new instance of of char array.
+     * Creates a new instance of char array.
      *
      * @param items items
      * @return of char array result
@@ -133,7 +133,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of short array.
+     * Creates a new instance of short array.
      *
      * @param items items
      * @return of short array result
@@ -148,7 +148,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of float array.
+     * Creates a new instance of float array.
      *
      * @param items items
      * @return of float array result
@@ -163,7 +163,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of double array.
+     * Creates a new instance of double array.
      *
      * @param items items
      * @return of double array result
@@ -178,7 +178,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of optional.
+     * Creates a new instance of optional.
      *
      * @param str str
      * @return of optional result
@@ -188,7 +188,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of optional.
+     * Creates a new instance of optional.
      *
      * @param str str
      * @return of optional result
@@ -198,7 +198,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of iterable.
+     * Creates a new instance of iterable.
      *
      * @param str str
      * @return of iterable result
@@ -208,7 +208,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of iterator.
+     * Creates a new instance of iterator.
      *
      * @param str str
      * @return of iterator result
@@ -218,7 +218,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of stream.
+     * Creates a new instance of stream.
      *
      * @param str str
      * @return of stream result
@@ -228,7 +228,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -237,14 +237,14 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of singleton.
+     * Creates a new instance of singleton.
      *
      * @param element element
      * @return of singleton result
      */
     static <T> NStream<T> ofSingleton(T element) {
         /**
-         * Creates a new instance of of iterable.
+         * Creates a new instance of iterable.
          *
          * @param Arrays.asList(element) arrays.as list(element)
          * @return of iterable result

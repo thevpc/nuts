@@ -18,7 +18,7 @@ public class NArgCompletePosition {
     private final int lineCursor;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @return of result
@@ -43,7 +43,7 @@ public class NArgCompletePosition {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param wordIndex word index
      * @param wordOffset word offset
@@ -55,7 +55,7 @@ public class NArgCompletePosition {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param wordIndex word index
      * @param wordOffset word offset

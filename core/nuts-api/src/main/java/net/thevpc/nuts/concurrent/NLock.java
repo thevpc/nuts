@@ -165,7 +165,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of path.
+     * Creates a new instance of path.
      *
      * @param source source
      * @return of path result
@@ -175,7 +175,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of path companion.
+     * Creates a new instance of path companion.
      *
      * @param source source
      * @return of path companion result
@@ -185,7 +185,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of resource.
+     * Creates a new instance of resource.
      *
      * @param resource resource
      * @return of resource result
@@ -195,7 +195,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of id.
+     * Creates a new instance of id.
      *
      * @param id id
      * @return of id result
@@ -209,7 +209,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of id path.
+     * Creates a new instance of id path.
      *
      * @param id id
      * @param storeScope store scope
@@ -220,7 +220,7 @@ public interface NLock extends Lock, NDescribable {
     }
 
     /**
-     * Creates a new instance of of id path.
+     * Creates a new instance of id path.
      *
      * @param id id
      * @param storeScope store scope

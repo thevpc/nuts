@@ -41,7 +41,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NPs extends NComponent, NConnectionStringAware {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

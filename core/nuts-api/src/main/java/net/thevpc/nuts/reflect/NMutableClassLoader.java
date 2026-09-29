@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface NMutableClassLoader extends NClassLoader, NCopiable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -24,7 +24,7 @@ public interface NMutableClassLoader extends NClassLoader, NCopiable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param entries entries
      * @return of result
@@ -34,7 +34,7 @@ public interface NMutableClassLoader extends NClassLoader, NCopiable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param parent parent
@@ -46,7 +46,7 @@ public interface NMutableClassLoader extends NClassLoader, NCopiable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param parent parent
@@ -60,7 +60,7 @@ public interface NMutableClassLoader extends NClassLoader, NCopiable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param parent parent

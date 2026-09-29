@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparator<T>> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result
@@ -53,7 +53,7 @@ public interface NComparator<T> extends Comparator<T>, NRedescribable<NComparato
         return new NComparatorFromJavaComparator<>(o,null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @param desc desc

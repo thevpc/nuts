@@ -16,7 +16,7 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
     private NMapSideStrategy target;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param source source
      * @param target target

@@ -38,7 +38,7 @@ import java.util.Map;
 public interface NVersionWriter extends NObjectWriter, NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

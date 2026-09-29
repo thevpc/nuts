@@ -56,7 +56,7 @@ public interface NBulkheadCall<T>  extends NCallable<T>, NDescribable, AutoClose
      */
     static <T> NBulkheadCall<T> of(NCallable<T> callable) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param null null
          * @param callable callable

@@ -12,7 +12,7 @@ import java.util.*;
  */
 public interface NMultiKeyMap<K, V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

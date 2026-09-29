@@ -42,7 +42,7 @@ import java.util.List;
  */
 public interface NElementAnnotation extends NAffix {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param values values
@@ -53,7 +53,7 @@ public interface NElementAnnotation extends NAffix {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result

@@ -107,7 +107,7 @@ public final class NMsgIntent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result

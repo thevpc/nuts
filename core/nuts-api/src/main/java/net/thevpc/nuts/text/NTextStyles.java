@@ -51,7 +51,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param others others
      * @return of result
@@ -74,7 +74,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @return of result
@@ -149,7 +149,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         all.addAll(Arrays.asList(elements));
         all.addAll(Arrays.asList(others));
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param NTextStyle[0]) n text style[0])
          * @return of result
@@ -171,7 +171,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         System.arraycopy(elements, 0, elements2, 0, elements.length);
         elements2[elements.length] = other;
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param elements2 elements2
          * @return of result
@@ -189,7 +189,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param 1) 1)
          * @return of result
@@ -207,7 +207,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
             return this;
         }
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param elements.length) elements.length)
          * @return of result

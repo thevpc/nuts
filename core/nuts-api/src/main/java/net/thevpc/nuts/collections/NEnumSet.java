@@ -60,7 +60,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @param tt tt
@@ -68,7 +68,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> of(Collection<T> value, Class<T> tt) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param value value
@@ -79,7 +79,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @param tt tt
@@ -87,7 +87,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T[] value, Class<T> tt) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param value value
@@ -98,7 +98,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
@@ -106,7 +106,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(long bits, Class<T> type) {
         /**
-         * Creates a new instance of of type bit set.
+         * Creates a new instance of type bit set.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param bits bits
@@ -117,7 +117,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
@@ -125,7 +125,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(BitSet bits, Class<T> type) {
         /**
-         * Creates a new instance of of type bit set.
+         * Creates a new instance of type bit set.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param bits bits
@@ -136,7 +136,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
@@ -144,7 +144,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(BigInteger bits, Class<T> type) {
         /**
-         * Creates a new instance of of type bit set.
+         * Creates a new instance of type bit set.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param bits bits
@@ -172,14 +172,14 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T value) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param value value
@@ -189,14 +189,14 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T... value) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param value value
@@ -206,14 +206,14 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(Collection<T> value) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param DEFAULT_CTR() default_ctr()
          * @param value value
@@ -261,7 +261,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -280,7 +280,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -299,7 +299,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -318,7 +318,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -337,7 +337,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -373,7 +373,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -390,7 +390,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -407,7 +407,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -469,7 +469,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param valueType value type
@@ -477,7 +477,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> NEnumSet<T> ofType(Class<V> setType, Class<T> valueType) {
         /**
-         * Creates a new instance of of type.
+         * Creates a new instance of type.
          *
          * @param TYPED_CTR(setType) typed_ctr(set type)
          * @param valueType value type
@@ -506,7 +506,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -544,7 +544,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -566,7 +566,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -588,7 +588,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -609,7 +609,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -630,7 +630,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -651,7 +651,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -672,7 +672,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -692,7 +692,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @return of result
@@ -709,7 +709,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
 
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param type type

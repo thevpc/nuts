@@ -11,7 +11,7 @@ import net.thevpc.nuts.text.NNewLineMode;
  */
 public interface NElementNewLine extends NAffix{
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -20,7 +20,7 @@ public interface NElementNewLine extends NAffix{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

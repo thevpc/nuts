@@ -41,7 +41,7 @@ import java.util.function.Consumer;
  */
 public interface NTextParser {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -189,28 +189,28 @@ public interface NTextParser {
     boolean isIncomplete();
 
     /**
-     * Creates a new instance of offer.
+     * Creates a new instance offer.
      *
      * @param c c
      */
     void offer(char c);
 
     /**
-     * Creates a new instance of offer.
+     * Creates a new instance offer.
      *
      * @param c c
      */
     void offer(String c);
 
     /**
-     * Creates a new instance of offer.
+     * Creates a new instance offer.
      *
      * @param c c
      */
     void offer(char[] c);
 
     /**
-     * Creates a new instance of offer.
+     * Creates a new instance offer.
      *
      * @param c c
      * @param offset offset

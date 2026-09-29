@@ -13,7 +13,7 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public interface NElementSpace extends NAffix{
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -22,7 +22,7 @@ public interface NElementSpace extends NAffix{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param count count
      * @return of result
@@ -33,7 +33,7 @@ public interface NElementSpace extends NAffix{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

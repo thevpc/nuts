@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NUtilsRPI;
  */
 public interface NEvictingIntQueue {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param size size
      * @return of result

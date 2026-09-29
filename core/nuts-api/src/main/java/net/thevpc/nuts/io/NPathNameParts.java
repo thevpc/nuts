@@ -21,7 +21,7 @@ public class NPathNameParts {
     private NPathExtensionType type;
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param baseName base name
      * @param extension extension
@@ -33,7 +33,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param baseName base name
      * @param extension extension
@@ -45,7 +45,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of smart.
+     * Creates a new instance of smart.
      *
      * @param baseName base name
      * @param extension extension
@@ -57,7 +57,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param baseName base name
      * @param extension extension
@@ -68,7 +68,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param baseName base name
      * @param extension extension
@@ -79,7 +79,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of smart.
+     * Creates a new instance of smart.
      *
      * @param baseName base name
      * @param extension extension

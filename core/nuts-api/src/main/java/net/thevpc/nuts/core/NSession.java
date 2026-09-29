@@ -57,7 +57,7 @@ import java.util.logging.Level;
  */
 public interface NSession extends NCmdLineConfigurable, Closeable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

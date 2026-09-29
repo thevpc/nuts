@@ -16,7 +16,7 @@ import java.util.logging.Level;
 public class NMsgBuilder {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

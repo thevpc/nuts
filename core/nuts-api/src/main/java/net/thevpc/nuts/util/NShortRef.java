@@ -5,7 +5,7 @@ package net.thevpc.nuts.util;
  */
 public class NShortRef extends NObjectRef<Short> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -13,7 +13,7 @@ public class NShortRef extends NObjectRef<Short> {
         return new NShortRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

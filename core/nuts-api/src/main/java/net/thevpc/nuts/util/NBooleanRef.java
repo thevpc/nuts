@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
 public class NBooleanRef extends NObjectRef<Boolean> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -16,7 +16,7 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -26,13 +26,13 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of false.
+     * Creates a new instance of false.
      *
      * @return of false result
      */
     public static NBooleanRef ofFalse() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param false false
          * @return of result
@@ -41,13 +41,13 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of true.
+     * Creates a new instance of true.
      *
      * @return of true result
      */
     public static NBooleanRef ofTrue() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param true true
          * @return of result
@@ -56,13 +56,13 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @return of null result
      */
     public static NBooleanRef ofNull() {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @return of result
          */
@@ -70,7 +70,7 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

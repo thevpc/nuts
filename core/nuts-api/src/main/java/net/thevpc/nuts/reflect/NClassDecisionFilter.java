@@ -14,14 +14,14 @@ import java.util.Set;
  */
 public interface NClassDecisionFilter<T> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @return of result
      */
     static <T> NClassDecisionFilter<T> of(Class<T> type) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param type type
          * @param NDecision.ACCEPT n decision.accept
@@ -31,7 +31,7 @@ public interface NClassDecisionFilter<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param defaultDecision default decision
