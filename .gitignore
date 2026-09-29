@@ -300,3 +300,7 @@ core/nuts-app-full/target
 /.naru/sessions/snapshot.tson
 /.vscode/settings.json
 /a.txt
+/extensions/target/
+/target/
+/libraries/target/
+/installers/target/site/
