@@ -153,76 +153,78 @@ public class NWorkspaceHelper {
     }
 
     public static void runApplication(NWorkspace workspace, NApplicationHandleMode handleMode) {
-        NApplicationHandleMode.runHandled(() ->
-                workspace.runWith(() -> {
-                    boolean inherited = NWorkspace.of().bootOptions().inherited().orElse(false);
-                    NApplication nApp = NApplication.of();
-                    // Resolve the application class name (explicit or fallback)
-                    String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();
-                    if (appClassName == null) {
-                        appClassName = nApp.source() == null ? null : nApp.source().getClass().getName();
-                    }
-                    NId appId = nApp.id().orNull();
-                    NLog.of(NApplicationHandler.class)
-                            .log(
-                                    NMsg.ofC(
-                                            NI18n.of("running application %s: %s (%s) %s"),
-                                            inherited ? ("(" + NI18n.of("inherited") + ")") : "",
-                                            appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
-                                            appClassName,
-                                            nApp.cmdLine()
-                                    ).asFine().withIntent(NMsgIntent.START)
-                            );
-                    try {
-                        switch (nApp.mode()) {
-                            case RUN: {
-                                if(nApp.handler()!=null) {
-                                    nApp.handler().run();
-                                }
-                                return;
-                            }
-                            case COMPLETE: {
-                                if(nApp.handler()!=null) {
-                                    NSession s = NSession.of();
-                                    s.copy()
-                                            .bot(true)
-                                            .trace(false)
-                                            .logTermLevel(Level.OFF)
-                                            .confirm(NConfirmationMode.NO)
-                                            .runWith(() -> {
-                                                nApp.handler().onCompleteApplication();
-                                            });
-                                }
-                                return;
-                            }
-                            case INSTALL: {
-                                if(nApp.handler()!=null) {
-                                    nApp.handler().onInstallApplication();
-                                }
-                                return;
-                            }
-                            case UPDATE: {
-                                if(nApp.handler()!=null) {
-                                    nApp.handler().onUpdateApplication();
-                                }
-                                return;
-                            }
-                            case UNINSTALL: {
-                                if(nApp.handler()!=null) {
-                                    nApp.handler().onUninstallApplication();
-                                }
-                                return;
-                            }
+        workspace.runWith(() -> {
+            NApplicationHandleMode.runHandled(() -> {
+                        boolean inherited = NWorkspace.of().bootOptions().inherited().orElse(false);
+                        NApplication nApp = NApplication.of();
+                        // Resolve the application class name (explicit or fallback)
+                        String appClassName = nApp.sourceType() == null ? null : nApp.sourceType().getName();
+                        if (appClassName == null) {
+                            appClassName = nApp.source() == null ? null : nApp.source().getClass().getName();
                         }
-                    } catch (NExecutionException e) {
-                        if (e.exitCode() == NExecutionException.SUCCESS) {
-                            return;
+                        NId appId = nApp.id().orNull();
+                        NLog.of(NApplicationHandler.class)
+                                .log(
+                                        NMsg.ofC(
+                                                NI18n.of("running application %s: %s (%s) %s"),
+                                                inherited ? ("(" + NI18n.of("inherited") + ")") : "",
+                                                appId == null ? ("<" + NI18n.of("unresolved-id") + ">") : appId,
+                                                appClassName,
+                                                nApp.cmdLine()
+                                        ).asFine().withIntent(NMsgIntent.START)
+                                );
+                        try {
+                            switch (nApp.mode()) {
+                                case RUN: {
+                                    if (nApp.handler() != null) {
+                                        nApp.handler().run();
+                                    }
+                                    return;
+                                }
+                                case COMPLETE: {
+                                    if (nApp.handler() != null) {
+                                        NSession s = NSession.of();
+                                        s.copy()
+                                                .bot(true)
+                                                .trace(false)
+                                                .logTermLevel(Level.OFF)
+                                                .confirm(NConfirmationMode.NO)
+                                                .runWith(() -> {
+                                                    nApp.handler().onCompleteApplication();
+                                                });
+                                    }
+                                    return;
+                                }
+                                case INSTALL: {
+                                    if (nApp.handler() != null) {
+                                        nApp.handler().onInstallApplication();
+                                    }
+                                    return;
+                                }
+                                case UPDATE: {
+                                    if (nApp.handler() != null) {
+                                        nApp.handler().onUpdateApplication();
+                                    }
+                                    return;
+                                }
+                                case UNINSTALL: {
+                                    if (nApp.handler() != null) {
+                                        nApp.handler().onUninstallApplication();
+                                    }
+                                    return;
+                                }
+                            }
+                        } catch (NExecutionException e) {
+                            if (e.exitCode() == NExecutionException.SUCCESS) {
+                                return;
+                            }
+                            throw e;
                         }
-                        throw e;
+                        throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.mode()), NExecutionException.ERROR_255);
                     }
-                    throw new NExecutionException(NMsg.ofC(NI18n.of("unsupported execution mode %s"), nApp.mode()), NExecutionException.ERROR_255);
-                }), handleMode
-        );
+                    , handleMode
+            );
+        });
     }
 
     protected static String getRunModeString(NBootOptions options) {
