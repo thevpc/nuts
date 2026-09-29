@@ -61,12 +61,12 @@ public class DefaultNPlatformModel {
             list.add(location);
             if (notify) {
                 if (NSession.of().isPlainTrace()) {
-                    NOut.println(NMsg.ofC("%s %s %s %s (%s) %s at %s",
+                    NOut.println(NMsg.ofC("%s %s %s %s %s %s at %s",
                             NText.ofStyledSuccess("install"),
                             location.id().shortName(),
                             location.vendor(),
                             location.product(),
-                            location.variant(),
+                            NBlankable.isBlank(location.variant())?"":NMsg.ofC("(%s)",location.variant()),
                             NVersion.get(location.version()).get(),
                             NPath.of(location.path())
                     ));
