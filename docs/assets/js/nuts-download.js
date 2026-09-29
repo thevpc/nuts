@@ -41,8 +41,7 @@
             { id: 'oneliner', icon: 'fas fa-bolt',       label: 'One-liner',        desc: 'Quick script install. Recommended.' },
             { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl / wget',      desc: 'Download the jar, then run it.' },
             { id: 'offline', icon: 'fas fa-cube',        label: 'Offline bundle',   desc: 'No internet after download. Air-gapped environments.' },
-            { id: 'deb',     icon: 'fab fa-ubuntu',     label: 'DEB package',      desc: 'Debian, Ubuntu, Mint, Pop!_OS.' },
-            { id: 'rpm',     icon: 'fas fa-box',         label: 'RPM package',      desc: 'RedHat, Fedora, OpenSuSE.' }
+            { id: 'packages',icon: 'fab fa-linux',       label: 'DEB / RPM package', desc: 'Debian, Ubuntu, RedHat, Fedora.' }
         ],
         macos: [
             { id: 'oneliner', icon: 'fas fa-bolt',       label: 'One-liner',        desc: 'Quick script install. Recommended.' },
@@ -62,18 +61,20 @@
     };
 
     /* ---- One-liner install steps (mirrors README) ---- */
-    /* ver selects which channel is presented first (the user's selection mode) */
+    /* only the channel matching the version chosen in step 1 is presented */
     function oneLinerSteps(ver, shell) {
-        var latest, stable;
+        var selected;
         if (shell === 'powershell') {
-            latest = { label: 'Latest Release',  code: 'powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"' };
-            stable  = { label: 'Stable Release', code: 'powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"' };
+            selected = (ver === 'stable')
+                ? { label: 'Stable Release',  code: 'powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"' }
+                : { label: 'Latest Release',  code: 'powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"' };
         } else {
-            latest = { label: 'Latest Release (Recommended for Developers)', code: 'curl -s https://thevpc.net/nuts/install-latest.sh | bash' };
-            stable  = { label: 'Stable Release (Production Systems)',        code: 'curl -s https://thevpc.net/nuts/install-stable.sh | bash' };
+            selected = (ver === 'stable')
+                ? { label: 'Stable Release (Production Systems)',        code: 'curl -s https://thevpc.net/nuts/install-stable.sh | bash' }
+                : { label: 'Latest Release (Recommended for Developers)', code: 'curl -s https://thevpc.net/nuts/install-latest.sh | bash' };
         }
         var verify = { label: 'Restart your terminal, then verify', code: 'nuts --version' };
-        return (ver === 'stable') ? [stable, latest, verify] : [latest, stable, verify];
+        return [selected, verify];
     }
 
     /* ---- Install content per (platform, method, version) ---- */
@@ -105,11 +106,8 @@
                     { name: 'Linux x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-bin-with-java-' + v + '.zip', badge: 'JRE included' }
                 ]) + tip.linux,
 
-                deb: dlTable([
-                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' }
-                ]) + tip.linux,
-
-                rpm: dlTable([
+                packages: dlTable([
+                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' },
                     { name: 'RedHat / OpenSuSE RPM', desc: 'RPM with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-rpm-' + v + '.rpm' }
                 ]) + tip.linux
             },
@@ -150,9 +148,13 @@
             docker: {
                 script: [
                     '<p class="dl-docker__desc">JDK-agnostic: the bootstrap script uses whatever Java is in the base image. Nuts provisions the correct JDK per app internally. The one-liner installs <code>curl</code> in the container first, then bootstraps Nuts.</p>',
-                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre bash -c \'apt-get update -qq && apt-get install -y -qq curl >/dev/null && bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
+                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre bash -c \'\n'
+                        + 'apt-get update -qq && apt-get install -y -qq curl >/dev/null &&\n'
+                        + 'bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Override the Nuts version via env var:</p>',
-                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre bash -c \'apt-get update -qq && apt-get install -y -qq curl >/dev/null && bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
+                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre bash -c \'\n'
+                        + 'apt-get update -qq && apt-get install -y -qq curl >/dev/null &&\n'
+                        + 'bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Once inside the container:</p>',
                     steps([{ label: 'Install and run any app', code: 'nuts install org.apache.netbeans:netbeans\nnuts netbeans' }]),
                     '<div class="dl-notice dl-notice--info" style="margin-top:16px"><i class="fas fa-info-circle"></i> We recommend <code>eclipse-temurin:8-jre</code> (~85MB) over the deprecated <code>openjdk:8</code> (~400MB). Any JDK 8+ image works.</div>'

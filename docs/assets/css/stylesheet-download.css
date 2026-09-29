@@ -123,22 +123,25 @@
 .dl-choice-grid {
     display: grid;
     gap: 12px;
+    /* fallback for unexpected card counts: wrap into rows instead of overflowing */
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 }
-.dl-choice-grid--2 { grid-template-columns: repeat(2, 1fr); }
-.dl-choice-grid--3 { grid-template-columns: repeat(3, 1fr); }
-.dl-choice-grid--4 { grid-template-columns: repeat(4, 1fr); }
-.dl-choice-grid--5 { grid-template-columns: repeat(5, 1fr); }
+/* minmax(0, ...) lets a column shrink below its content: no card can ever be clipped */
+.dl-choice-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dl-choice-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dl-choice-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dl-choice-grid--5 { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 
 @media (max-width: 700px) {
     .dl-choice-grid--5,
-    .dl-choice-grid--4 { grid-template-columns: repeat(2, 1fr); }
-    .dl-choice-grid--3 { grid-template-columns: repeat(2, 1fr); }
+    .dl-choice-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dl-choice-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 480px) {
     .dl-choice-grid--2,
     .dl-choice-grid--3,
     .dl-choice-grid--4,
-    .dl-choice-grid--5 { grid-template-columns: 1fr; }
+    .dl-choice-grid--5 { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- Choice button ---- */
@@ -194,6 +197,7 @@
     font-size: 0.92rem;
     font-weight: 700;
     color: #1a1a2e;
+    overflow-wrap: break-word;
 }
 
 .dl-choice__version {
@@ -207,6 +211,7 @@
     font-size: 0.78rem;
     color: #64748b;
     line-height: 1.4;
+    overflow-wrap: break-word;
 }
 
 /* ---- Install content ---- */
