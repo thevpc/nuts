@@ -1,8 +1,7 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.collections;
 
 import net.thevpc.nuts.artifact.NDescriptorProperty;
 import net.thevpc.nuts.artifact.NEnvCondition;
-import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.internal.rpi.NUtilsRPI;
 
 import java.util.List;

@@ -1,9 +1,4 @@
-package net.thevpc.nuts.math;
-
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
+package net.thevpc.nuts.util;
 
 import java.util.function.Function;
 
@@ -15,7 +10,6 @@ public enum NIndexSelectionStrategy implements NEnum {
     FIRST,
     LAST,
     BALANCED
-
     ;
 
     /**

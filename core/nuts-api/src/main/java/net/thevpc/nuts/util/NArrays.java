@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.math.NIndexSelectionStrategy;
 import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Array;

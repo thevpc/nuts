@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.artifact.NIdLocation;
+import net.thevpc.nuts.collections.NProperties;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.internal.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
