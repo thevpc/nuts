@@ -442,6 +442,7 @@ public final class NBootOptionsInfo {
     private Boolean initScripts;
     private Boolean initPlatforms;
     private Boolean initJava;
+    private Boolean localMaven;
     private String isolationLevel;
     private String desktopLauncher;
     private String menuLauncher;
@@ -1580,6 +1581,7 @@ public final class NBootOptionsInfo {
         this.initJava(other.initJava());
         this.initScripts(other.initScripts());
         this.initPlatforms(other.initPlatforms());
+        this.localMaven(other.localMaven());
         this.desktopLauncher(other.desktopLauncher());
         this.menuLauncher(other.menuLauncher());
         this.userLauncher(other.userLauncher());
@@ -1811,6 +1813,9 @@ public final class NBootOptionsInfo {
             if (o.initLaunchers() != null) {
                 this.initLaunchers(o.initLaunchers());
             }
+            if (o.localMaven() != null) {
+                this.localMaven(o.localMaven());
+            }
             if (o.desktopLauncher() != null) {
                 this.desktopLauncher(o.desktopLauncher());
             }
@@ -1959,6 +1964,16 @@ public final class NBootOptionsInfo {
     }
 
 
+    public NBootOptionsInfo localMaven(Boolean localMaven) {
+        this.localMaven = localMaven;
+        return this;
+    }
+
+    public Boolean localMaven() {
+        return localMaven;
+    }
+
+
     public Boolean initScripts() {
         return initScripts;
     }
@@ -2043,6 +2058,7 @@ public final class NBootOptionsInfo {
         initPlatforms(null);
         initScripts(null);
         initJava(null);
+        localMaven(null);
         desktopLauncher(null);
         menuLauncher(null);
         userLauncher(null);

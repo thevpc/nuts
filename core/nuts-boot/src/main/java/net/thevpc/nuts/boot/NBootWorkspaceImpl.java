@@ -332,6 +332,18 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     }
 
     /**
+     * whether the local maven repository ({@code maven-local}) may be used to
+     * resolve the nuts-runtime artifact and its dependencies. Defaults to
+     * {@code true} unless {@code --local-maven=false} was specified.
+     *
+     * @param options current boot options
+     * @return true if the local maven repository may be used
+     */
+    static boolean includeLocalMaven(NBootOptionsInfo options) {
+        return options.localMaven() == null || options.localMaven();
+    }
+
+    /**
      * repositories used to locale nuts-runtime artifact or its dependencies
      *
      * @return repositories
@@ -364,24 +376,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                 }
                 for (String s : repositoryDB.findByAnyTag(tags.toArray(new String[0]))) {
                     if ("maven".equals(s)) {
-                        boolean includeMaven = true;
-                        if (options.customOptions() != null) {
-                            for (String customOption : options.customOptions()) {
-                                NBootArg a = new NBootArg(customOption);
-                                if ("---m2".equals(a.key())) {
-                                    if (a.isActive()) {
-                                        boolean m2 = a.isEnabled()
-                                                ? NBootUtils.parseBoolean(a.value(), true, true)
-                                                : !NBootUtils.parseBoolean(a.value(), true, false);
-                                        if (!m2) {
-                                            includeMaven = false;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        if (!includeMaven) {
+                        if (!includeLocalMaven(options)) {
                             continue;
                         }
                     }

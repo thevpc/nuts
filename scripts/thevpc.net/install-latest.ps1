@@ -7,7 +7,7 @@ $OUT_FILE = "nuts.jar"
 
 # 2. Execute Java, passing through all arguments dynamically
 if ($null -ne $args) {
-    java -jar $OUT_FILE -Ny @args
+    java -jar $OUT_FILE --local-maven=false -Ny @args
 } else {
-    java -jar $OUT_FILE -Ny
+    java -jar $OUT_FILE --local-maven=false -Ny
 }

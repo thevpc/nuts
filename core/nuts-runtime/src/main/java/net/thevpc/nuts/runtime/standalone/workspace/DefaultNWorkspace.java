@@ -283,6 +283,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     _createWorkspaceNonFirstBoot(data);
                 }
                 _postCreateWorkspace(data);
+                applyTransientRepositorySelection();
             });
 
         } catch (NBootWorkspaceNotFoundException | NBootWorkspaceAlreadyExistsException ex) {
@@ -503,6 +504,36 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
         NWorkspaceProfilerImpl.debug();
+    }
+
+    /**
+     * Applies the <code>--repos</code> selection to the repositories of an
+     * already existing workspace. When the workspace is being created the
+     * selection is applied to the default repository list and persisted by the
+     * archetype; for an existing workspace the same selection is transient and
+     * must leave the stored configuration untouched, so it only disables the
+     * matching repositories for the current session.
+     */
+    private void applyTransientRepositorySelection() {
+        List<String> selection = bootOptions().repositories().orElseGet(Collections::emptyList);
+        if (selection.isEmpty()) {
+            return;
+        }
+        NRepositorySelectorList selectors = NRepositoryUtils
+                .createRepositorySelectorList(selection).orNull();
+        if (selectors == null || selectors.selectors().isEmpty()) {
+            return;
+        }
+        for (NRepository repository : new ArrayList<>(repositories())) {
+            NRepositorySpec spec = new NRepositorySpec()
+                    .name(repository.name())
+                    .sourceLocation(NRepositoryLocation.ofName(repository.name()));
+            if (!selectors.acceptExisting(spec)) {
+                repository.enabled(false);
+                wsModel.LOG.log(NMsg.ofC("repository %s excluded by %s for this session",
+                        repository.name(), selectors).asFine());
+            }
+        }
     }
 
     private void _createWorkspaceNonFirstBoot(InitWorkspaceData data) {

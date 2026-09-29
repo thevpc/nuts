@@ -101,6 +101,7 @@ public class NBootOptionRegistry {
         l.add(NBootOptionSpec.freeValue("-X", "--exclude-extension"));
         l.add(NBootOptionSpec.freeValue("--repository", "--repositories", "--repo", "--repos", "-r"));
         l.add(NBootOptionSpec.freeValue("--boot-repository", "--boot-repositories", "--boot-repo", "--boot-repos"));
+        l.add(NBootOptionSpec.optionalValue("--local-maven"));
 
         l.add(NBootOptionSpec.freeValue("--output-format-option", "-T"));
         l.add(NBootOptionSpec.enumValue(new String[]{"-O", "--output-format"},

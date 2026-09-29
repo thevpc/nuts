@@ -450,6 +450,7 @@ public class DefaultNBootOptions implements NBootOptions {
     private final Boolean initScripts;
     private final Boolean initPlatforms;
     private final Boolean initJava;
+    private final Boolean localMaven;
     private final Boolean sharedInstance;
     private final NIsolationLevel isolationLevel;
     private final NSupportMode desktopLauncher;
@@ -460,7 +461,7 @@ public class DefaultNBootOptions implements NBootOptions {
                                NId runtimeId, String javaCommand, String javaOptions, String workspace,
                                String outLinePrefix, String errLinePrefix, String name, Boolean installCompanions,
                                Boolean skipWelcome, Boolean skipBoot, Boolean system, Boolean gui,
-                               Boolean dry, Boolean force, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
+                               Boolean dry, Boolean force, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean resetHard, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, Boolean localMaven, List<String> excludedExtensions, List<String> repositories, String userName,
                                char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
                                Boolean trace, String progressOptions, String dependencySolver,
                                NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
@@ -550,6 +551,7 @@ public class DefaultNBootOptions implements NBootOptions {
         this.initScripts = initScripts;
         this.initPlatforms = initPlatforms;
         this.initJava = initJava;
+        this.localMaven = localMaven;
         this.desktopLauncher = desktopLauncher;
         this.menuLauncher = menuLauncher;
         this.userLauncher = userLauncher;
@@ -612,6 +614,11 @@ public class DefaultNBootOptions implements NBootOptions {
     @Override
     public NOptional<Boolean> initJava() {
         return NOptional.ofNamed(initJava, "initJava");
+    }
+
+    @Override
+    public NOptional<Boolean> localMaven() {
+        return NOptional.ofNamed(localMaven, "localMaven");
     }
 
     @Override

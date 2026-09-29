@@ -500,12 +500,20 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       the prefix operator (+,-,=) when specified defines whether the repository is
         to include (+), to exclude (-) or to replace (=) ie all existing repositories will be
         discarded and replaced with the given list of repositories.
-      This list will be used when creating a new workspace. In that conditions, the list may affects the 'archetype' considered.
+      When creating a new workspace, the list applies to the archetype repository list and is
+      persisted in the workspace configuration. When the workspace already exists, the list is
+      applied to the current repository list instead, and is NOT persisted: the exclusion only
+      lasts for the current run.
       For example, the default repositories in "default" archetype are 'local,maven-local,maven-central,system'.
           "--repos=+jcenter" produces a final repository list of 'local,maven-local,maven-central,system,jcenter'
           "--repos=jcenter"  also produces a final repository list of 'local,maven-local,maven-central,system,jcenter'
           "--repos=-system"  produces a final repository list of 'local,maven-local,maven-central'
           "--repos==system"  produces a final repository list of 'system'
+      The exclusion operator also applies to the sub-repositories of the maven settings
+      repository, so a single flag prevents the local maven folder from being used at boot
+      time as well as at runtime:
+          "--repos=-maven-local"  keeps the maven repository but drops its local sub-repository (~/.m2).
+                                   Use "--local-maven=false" to express the same intent explicitly.
       The repository names supported are
                     ```kw local```          : local user nuts folder repository
                     ```kw system```         : local user nuts folder repository
@@ -554,6 +562,16 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       register one or multiple (comma ',' separated) repositories at initialization time.
       It works just like ```sh --repos``` but this is only relevant when the workspace is created.
       It is discarded otherwise. When no  ```sh --boot-repos```, the workspace will be created using ```sh --repos``` configuration.
+
+ ```sh --local-maven | --!local-maven | --local-maven=true|false``` (default is ```kw true```)
+      enables or disables the local maven folder repository (```path ~/.m2/repository```).
+      This is honoured both at boot time, so that ```sh nuts``` itself is never resolved from the
+      local maven folder, and at runtime.
+      ```kw --local-maven=false``` and ```kw --!local-maven``` are equivalent. The option must be
+      specified before the command, like any other global option.
+      This replaces the deprecated ```sh ---m2``` option.
+      Use ```sh --repos=-maven-local``` if you only want to drop that sub-repository through the
+      repository selection mechanism instead.
 
 
  ```sh --yes | -y | --force```

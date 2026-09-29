@@ -410,6 +410,9 @@ public class NBootWorkspaceCmdLineFormatter {
         if (isApiVersionOrAfter(V085)) {
             fillOption("--boot-repositories", null, options.bootRepositories(), ";", arguments, false);
         }
+        if (isApiVersionOrAfter(V100)) {
+            fillOption("--local-maven", null, options.localMaven(), true, arguments, false);
+        }
 
         fillOption("--global", "-g", options.system(), false, arguments, false);
         fillOption("--gui", null, options.gui(), false, arguments, false);

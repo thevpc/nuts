@@ -63,15 +63,19 @@ import java.util.Map;
 public class MavenFolderRepository extends NFolderRepositoryBase {
 
     private MvnClient wrapper;
-    private boolean disableMe;
+    private boolean skipLocalMaven;
 
     public MavenFolderRepository(NRepositorySpec options, NRepository parentRepository) {
         super(options, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
-        if("maven-local".equals(options.name())) {
-            NLiteral enableM2 = workspace().getCustomBootOption("---m2").orNull();
-            if(enableM2!=null){
-                disableMe=!enableM2.isNull() && !enableM2.asBoolean().orElse(true);
+        if(MavenUtils.LOCAL_MAVEN_REPO_NAME.equals(options.name())) {
+            // only the local maven repository is subject to --local-maven
+            NOptional<Boolean> enabled = workspace().bootOptions().localMaven();
+            if (enabled.isPresent() && !enabled.orElse(true)) {
+                skipLocalMaven = true;
+                // report as disabled so that repository listings and filters
+                // agree with the actual behaviour
+                enabled(false);
             }
         }
     }
@@ -82,7 +86,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
 
     @Override
     public NIterator<NId> searchCore(final NDefinitionFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
-        if(disableMe){
+        if(skipLocalMaven){
             return NIterator.ofEmpty();
         }
         if (!acceptedFetchNoCache(fetchMode)) {
@@ -101,7 +105,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NIterator<NId> findNonSingleVersionImpl(final NId id, NDefinitionFilter idFilter, NFetchMode fetchMode) {
-        if(disableMe){
+        if(skipLocalMaven){
             return NIterator.ofEmpty();
         }
         return super.findNonSingleVersionImpl(id, idFilter, fetchMode);
@@ -136,7 +140,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
-        if(disableMe){
+        if(skipLocalMaven){
             return null;
         }
         if (wrapper == null) {
@@ -190,7 +194,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
-        if(disableMe){
+        if(skipLocalMaven){
             throw new NArtifactNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         if (!acceptedFetchNoCache(fetchMode)) {

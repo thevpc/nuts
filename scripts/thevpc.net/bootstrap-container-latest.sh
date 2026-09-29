@@ -49,7 +49,7 @@ run_nuts() {
     [ "${NUTS_CONTAINER_VERBOSE:-0}" = "1" ] && echo "Installing Nuts version $NUTS_VERSION..."
     curl -sL "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar" -o "$TARGET_HOME/bin/nuts.jar"
 
-    local JAVA_ARGS=(-Ny "${NUTS_ARGS[@]}")
+    local JAVA_ARGS=(--local-maven=false -Ny "${NUTS_ARGS[@]}")
     [ "${NUTS_CONTAINER_VERBOSE:-0}" = "1" ] && echo "Launching Nuts with arguments: ${JAVA_ARGS[*]}"
     java -jar "$TARGET_HOME/bin/nuts.jar" "${JAVA_ARGS[@]}"
 
