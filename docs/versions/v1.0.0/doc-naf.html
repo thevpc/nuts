@@ -82,7 +82,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerNafVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="../../versions/v1.0.0/doc-naf.html">v1.0.0 (Latest)</a>
+                        <a class="dropdown-item " href="../../versions/v1.1.0/doc-naf.html">v1.1.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="../../versions/v1.0.0/doc-naf.html">v1.0.0</a>
                         
                         <a class="dropdown-item " href="../../versions/v0.8.9/doc-naf.html">v0.8.9</a>
                         
@@ -107,9 +109,9 @@
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item not-active"
-                                   href="../../versions/v1.0.0/doc-naf.html">Developer Documentation</a></li>
+                                   href="../../versions/v1.1.0/doc-naf.html">Developer Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="../../versions/v1.0.0/doc-api.html">Core API Javadoc</a></li>
+                                   href="../../versions/v1.1.0/doc-api.html">Core API Javadoc</a></li>
                             <li><a class="dropdown-item "
                                    href="../../compatibility.html">API Compatibility</a></li>
                             <li><a class="dropdown-item "
@@ -767,6 +769,14 @@
 
                 <section id="doc-title-section">
                     
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing developer documentation for version <strong>v1.0.0</strong>. 
+                            <a href="../../versions/v1.1.0/doc-naf.html" class="alert-link">Switch to latest version (v1.1.0) &rarr;</a>
+                        </div>
+                    </div>
+                    
                     <h1>Developer Documentation <span class="badge badge-secondary font-weight-normal small ml-2">v1.0.0</span></h1>
                     <p class="lead">Everything you need to know about embedding Nuts Application Framework in your application.</p>
                     <hr class="divider">
@@ -795,8 +805,8 @@
                         </h3>
 
                         <div class="text-card">
-                            <p class="md-phrase">NAF powers the <a href="/doc-nuts" class="md-link">Nuts package manager</a>. To learn about using Nuts as a tool, see the Nuts documentation.To make use of <mark class="md-code md-code-ac1">NAF</mark>  you need add the dependency  <code class="md-code md-code-ac3">net.thevpc.nuts#nuts:1.0.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-ac3">https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre><code class="language-xml">&lt;dependencies&gt;
-        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;1.0.0&lt;/version&gt;&lt;/dependency&gt;
+                            <p class="md-phrase">NAF powers the <a href="/doc-nuts" class="md-link">Nuts package manager</a>. To learn about using Nuts as a tool, see the Nuts documentation.To make use of <mark class="md-code md-code-ac1">NAF</mark>  you need add the dependency  <code class="md-code md-code-ac3">net.thevpc.nuts#nuts:1.1.0</code> and provide a hint to maven to point to the right repository <code class="md-code md-code-ac3">https://maven.thevpc.net</code></p><H4 class="md-title-2">Configure your pom.xml</H4><pre><code class="language-xml">&lt;dependencies&gt;
+        &lt;dependency&gt;&lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;&lt;artifactId&gt;nuts&lt;/artifactId&gt;&lt;version&gt;1.1.0&lt;/version&gt;&lt;/dependency&gt;
     &lt;/dependencies&gt;
     &lt;repositories&gt;
         &lt;repository&gt;&lt;id&gt;thevpc&lt;/id&gt;&lt;url&gt;https://maven.thevpc.net&lt;/url&gt;&lt;/repository&gt;
@@ -3931,7 +3941,7 @@ nuts my-app
 </code></pre><p class="md-phrase">If a jar defines multiple <code class="md-code md-code-ac1">public static void main</code> classes, <mark class="md-code md-code-ac1">nuts</mark> prompts for which one to run, interactively.</p><hr class="divider" class="md-hr"><H4 class="md-title-2">2. Opting into NAF</H4><p class="md-phrase">NAF adds install/update/uninstall hooks, structured command-line parsing, and shell completion support. Enable it by adding <mark class="md-code md-code-ac1">nuts</mark> as a compile dependency and flagging the artifact:</p><pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0.0&lt;/version&gt;
+    &lt;version&gt;1.1.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><pre><code class="language-xml">&lt;properties&gt;
     &lt;nuts.application&gt;true&lt;/nuts.application&gt;
@@ -4173,7 +4183,7 @@ Implementation-Version: 1.2.3
                             <p class="md-phrase">nuts can work flawlessly with spring boot applications. You just need one dependency and one annotation <code class="md-code md-code-ac1">@NApp</code> to mark your <mark class="md-code md-code-ac1">SpringBootApplication</mark>.</p><p class="md-phrase">Add the following dependency to you spring boot project</p><pre><code class="language-xml">&lt;dependency&gt;
         &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
         &lt;artifactId&gt;nuts-spring-boot&lt;/artifactId&gt;
-        &lt;version&gt;1.0.0.0&lt;/version&gt;
+        &lt;version&gt;1.1.0.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre><p class="md-phrase">Add @NApp in your <mark class="md-code md-code-ac1">SpringBootApplication</mark> top class.</p><pre><code class="language-java">@NApp
 @SpringBootApplication
@@ -4242,7 +4252,7 @@ NBeanRef.of(&quot;nonExistentBean&quot;).as(SomeInterface.class).someMethod(); /
                             <H4 class="md-title-1">Nuts SLF4J Integration</H4><p class="md-phrase">Nuts provides seamless integration with SLF4J, the standard logging facade for Java applications. This integration allows you to use Nuts' powerful <mark class="md-code md-code-ac1">NLog</mark> structured logging system while maintaining compatibility with your existing SLF4J infrastructure.</p><H4 class="md-title-2">Installation</H4><p class="md-phrase">Add the following dependency to your Spring Boot project:</p><pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;net.thevpc.nuts&lt;/groupId&gt;
     &lt;artifactId&gt;nuts-nuts-slf4j&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0.0&lt;/version&gt;
+    &lt;version&gt;1.1.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><H4 class="md-title-2">Why SLF4J Integration?</H4><p class="md-phrase">SLF4J is the de facto standard logging facade in the Java ecosystem. By integrating Nuts with SLF4J, you get:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Unified logging:</b> Use <mark class="md-code md-code-ac1">NLog</mark> alongside your existing SLF4J loggers without conflicts</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Flexible backend support:</b> Route logs to Logback, Log4j2, or any SLF4J-compatible backend</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Structured logging:</b> Leverage Nuts' <mark class="md-code md-code-ac1">NLog</mark> for rich, semantically meaningful logs with <mark class="md-code md-code-ac1">NMsg</mark></p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Backward compatibility:</b> Existing SLF4J code continues to work without modification</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Context propagation:</b> MDC (Mapped Diagnostic Context) values flow seamlessly between Nuts and SLF4J</p></li></ul><H4 class="md-title-2">Basic Usage</H4><p class="md-phrase">Once the dependency is added, <mark class="md-code md-code-ac1">NLog</mark> automatically delegates to SLF4J:</p><pre><code class="language-java">import net.thevpc.nuts.NLog;
 import net.thevpc.nuts.NMsg;

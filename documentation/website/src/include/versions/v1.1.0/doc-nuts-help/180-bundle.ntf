@@ -1,0 +1,81 @@
+---
+id: bundle-help
+title: bundle
+---
+
+creates a self-contained, air-gapped bundle of one or more ```sh nuts``` applications and their dependencies
+
+##) SYNOPSIS:
+
+```sh bundle <id>...```
+        creates a bundle for the given application id(s) and their dependencies
+
+##) OPTIONS:
+
+```sh --app <id>```
+        adds the given application id to the bundle ; equivalent to passing ```sh <id>``` as a non-option argument (may be repeated)
+
+```sh --lib <id>```
+        adds the given id to the bundle as a plain library (its dependencies are resolved but it is not treated as an executable application ; may be repeated)
+
+```sh --jar, --as-jar```
+        builds the bundle as a single executable jar file (default format)
+
+```sh --zip, --as-zip```
+        builds the bundle as a zip archive
+
+```sh --dir, --as-dir```
+        builds the bundle as a plain folder (no ```sh nuts``` bundle metadata files are written)
+
+```sh --exploded, --as-exploded```
+        builds the bundle as an unpacked folder, keeping the ```sh nuts``` bundle metadata files so it can later be cleaned or rebuilt in place
+
+```sh --target <path>```
+        sets the destination file (for ```sh --jar```/```sh --zip```) or folder (for ```sh --dir```/```sh --exploded```) ; when omitted, a name is derived from the resolved application name and version
+
+```sh --clean```
+        (with ```sh --dir``` or ```sh --exploded``` only) deletes any bundle content and metadata already present at the target location before building
+
+```sh --app-name, --name <name>```
+        overrides the application name used to derive the default bundle file/folder name
+
+```sh --app-version <version>```
+        overrides the application version used to derive the default bundle file/folder name
+
+```sh --app-title, --title <title>```
+        sets the application title stored in the bundle info
+
+```sh --app-desc, --desc <description>```
+        sets the application description stored in the bundle info
+
+```sh --optional```
+        marks resolved dependencies as optional
+
+```sh --embedded```
+        runs the embedded ```sh nuts``` workspace (bootstrapped when the bundle is executed) in embedded mode
+
+```sh -y, --yes```
+        answers yes to confirmation prompts of the embedded workspace when the bundle is executed
+
+```sh -z, --reset```
+        resets the embedded ```sh nuts``` workspace when the bundle is executed
+
+```sh -l, --verbose```
+        runs the embedded ```sh nuts``` workspace in verbose mode when the bundle is executed
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES:
+
+```sh bundle my-group:my-app#1.0```
+        creates an executable jar bundle (```sh my-app-1.0-bundle.jar```) containing ```sh my-group:my-app#1.0``` and its dependencies
+
+```sh bundle my-group:my-app#1.0 --zip --target my-app-bundle.zip```
+        creates a zip bundle at ```sh my-app-bundle.zip```
+
+```sh bundle my-group:my-app#1.0 --exploded --target ./my-app-bundle --clean```
+        builds (or refreshes) an exploded bundle folder, wiping any previous content first
+
+```sh bundle my-group:my-app#1.0 --lib my-group:extra-plugin#2.0```
+        bundles the app together with an extra library that is not itself launched as an application
+

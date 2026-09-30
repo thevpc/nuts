@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community Core API</name>
     <url>https://github.com/thevpc/nuts</url>
-    <description>Nuts Package Manager Bootstrap</description>
+    <description>Nuts Package Manager API</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-boot</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
     <distributionManagement>

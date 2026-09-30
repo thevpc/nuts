@@ -8,26 +8,30 @@ do_deploy(){
   cd $NUTS_BASE/$1 && $MVN_CMD clean deploy -Pdeploy
 }
 
-# do_deploy nuts/core/nuts-boot/
+#do_deploy nuts/core/nuts-boot/
 #do_deploy nuts/core/nuts-api/
 #do_deploy nuts/core/nuts-runtime/
+#do_deploy nuts/extensions/nuts-ssh/
+#do_deploy nuts/extensions/nuts-term/
+#do_deploy nuts/libraries/nuts-slf4j/
+#do_deploy nuts/libraries/nuts-spring-boot/
+
 #do_deploy nuts/extensions/nuts-compression/
-do_deploy nuts/extensions/nuts-ssh/
-do_deploy nuts/extensions/nuts-term/
-do_deploy nuts/libraries/nuts-slf4j/
-do_deploy nuts/libraries/nuts-spring-boot/
-do_deploy nuts/libraries/nuts-swig/
-do_deploy nuts/libraries/nuts-tomcat-classloader/
-#
-do_deploy nuts/installers/nuts-installer/
-#
-do_deploy nuts/core/nuts-app/
-do_deploy nuts/core/nuts-app-full/
+#do_deploy nuts/libraries/nuts-swing/
+
+do_deploy nuts-companions/nsh/nsh
 do_deploy nuts-companions/nsh/nsh-lib
-do_deploy nuts-productivity/kifkif/modules/kifkif-core
-do_deploy nuts-productivity/kifkif/modules/kifkif-swing
-do_deploy nuts-productivity/kifkif/
 do_deploy nuts-productivity/nmvn/nmvn-lib
 do_deploy nuts-productivity/nmvn/nmvn
 do_deploy nuts-productivity/nuts-noapi/noapi
+
+
+do_deploy nuts/libraries/nuts-tomcat-classloader/
+do_deploy nuts/installers/nuts-installer/
+do_deploy nuts/core/nuts-app/
+do_deploy nuts/core/nuts-app-full/
+
+do_deploy nuts-productivity/kifkif/modules/kifkif-core
+do_deploy nuts-productivity/kifkif/modules/kifkif-swing
+do_deploy nuts-productivity/kifkif/
 

@@ -7,7 +7,7 @@ import net.thevpc.nuts.boot.internal.util.NBootUtils;
 import java.util.Arrays;
 
 public interface NBootWorkspace {
-    String NUTS_BOOT_VERSION = "1.0.0";
+    String NUTS_BOOT_VERSION = "1.1.0";
 
     static NBootWorkspace of(String[] args) {
         return of(NBootArguments.ofFullArgs(args));

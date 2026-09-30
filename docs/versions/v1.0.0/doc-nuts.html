@@ -83,7 +83,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="../../versions/v1.0.0/doc-nuts.html">v1.0.0 (Latest)</a>
+                        <a class="dropdown-item " href="../../versions/v1.1.0/doc-nuts.html">v1.1.0 (Latest)</a>
+                        
+                        <a class="dropdown-item active" href="../../versions/v1.0.0/doc-nuts.html">v1.0.0</a>
                         
                         <a class="dropdown-item " href="../../versions/v0.8.9/doc-nuts.html">v0.8.9</a>
                         
@@ -110,9 +112,9 @@
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item not-active"
-                                   href="../../versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
+                                   href="../../versions/v1.1.0/doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="../../versions/v1.0.0/doc-nuts-help.html">Command Help</a></li>
+                                   href="../../versions/v1.1.0/doc-nuts-help.html">Command Help</a></li>
                             <li><a class="dropdown-item "
                                    href="../../faq.html">FAQ</a></li>
                             <li><a class="dropdown-item "
@@ -603,6 +605,14 @@
 
                 <section id="doc-title-section">
                     
+                    <div class="alert alert-warning doc-version-banner d-flex align-items-center mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <div>
+                            You are viewing documentation for version <strong>v1.0.0</strong>. 
+                            <a href="../../versions/v1.1.0/doc-nuts.html" class="alert-link">Switch to latest version (v1.1.0) &rarr;</a>
+                        </div>
+                    </div>
+                    
                     <h1>User Documentation <span class="badge badge-secondary font-weight-normal small ml-2">v1.0.0</span></h1>
                     <p class="lead">Everything you need to know about installing, configuring, and using Nuts Package Manager.</p>
                     <hr class="divider">
@@ -661,7 +671,7 @@ curl -s https://thevpc.net/nuts/install-latest.sh | bash
 java -jar nuts-app-latest.jar -Zy
 </code></pre><div class="alert alert-success mb-4"><p class="md-phrase">After installation, <b class="md-bold">restart your terminal session</b> so that environment paths and shell integration take effect.</p></div><hr class="divider" class="md-hr"><H4 class="md-title-2">System Requirements</H4><p class="md-phrase"><b class="md-bold">nuts</b> is lightweight and designed to run on any major operating system:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Java</b>: Requires Java Runtime Environment (JRE) or Java Development Kit (JDK) version <b class="md-bold">8</b> or higher (tested up to Java <b class="md-bold">25</b>). For Java 1.8, update 150+ is required.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Disk Space</b>: ~15MB for the minimal <b class="md-bold">nuts</b> installation. Additional space is used for your local package cache (typically 100MB to 500MB depending on usage).</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Memory</b>: Operates comfortably in ~300MB RAM when JVM heap is capped (e.g. <code class="md-code md-code-ac1">NUTS_JAVA_OPTIONS=-Xmx32m</code>). By default, HotSpot dynamically sizes memory according to total system RAM.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Operating System</b>: Linux (all distributions), macOS (Intel & Apple Silicon), Windows 7 and later.</p></li></ul><p class="md-phrase">Verify your local Java version before installing:</p><pre><code class="language-bash">java -version
 </code></pre><hr class="divider" class="md-hr"><H4 class="md-title-2">Verifying Installation</H4><p class="md-phrase">To verify that <b class="md-bold">nuts</b> is correctly installed and accessible in your <mark class="md-code md-code-ac1">PATH</mark>, open a new terminal and run:</p><pre><code class="language-bash">nuts --version
-</code></pre><p class="md-phrase">Output will display the installed API and runtime implementation versions:</p><pre><code class="language-text">1.0.0/1.0.0.0
+</code></pre><p class="md-phrase">Output will display the installed API and runtime implementation versions:</p><pre><code class="language-text">1.1.0/1.1.0.0
 </code></pre><H4 class="md-title-2">Next Steps</H4><p class="md-phrase">Now that <b class="md-bold">nuts</b> is installed, proceed to the <a href="030-first-app.md" class="md-link">First App</a> guide to install and launch your first package.</p>
                         </div>
 
@@ -820,16 +830,16 @@ nuts netbeans-launcher#1.2.0 &amp;
                         </h3>
 
                         <div class="text-card">
-                            <div class="alert alert-success mb-4"><p class="md-phrase">What You'll Learn In this section, you will learn how to create shortcuts and simplify command execution in <b class="md-bold">nuts</b>. We will cover:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Imports</b>: How to omit group IDs when running artifacts.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Aliases</b>: How to create custom commands with preset arguments.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Launchers</b>: How to generate desktop icons and system menu entries for applications.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Command Precedence</b>: How <b class="md-bold">nuts</b> resolves what to execute when you type a command.</p></li></ul></div><p class="md-phrase">By default, Maven artifacts are uniquely identified by their full Long ID, consisting of a <mark class="md-code md-code-ac1">groupId</mark>, <mark class="md-code md-code-ac1">artifactId</mark>, <mark class="md-code md-code-ac1">version</mark>, and sometimes a <mark class="md-code md-code-ac1">classifier</mark>. For instance, to invoke the <mark class="md-code md-code-ac1">nsh</mark> shell, you would theoretically need to type:</p><pre><code class="language-bash">nuts net.thevpc.nsh:nsh#1.0.0.0
-</code></pre><p class="md-phrase">This is cumbersome for daily use. <b class="md-bold">nuts</b> provides three features—Imports, Aliases, and Launchers—that allow you to call artifacts with simple words or clicks instead of typing full coordinates.</p><H4 class="md-title-2">Imports</H4><p class="md-phrase">Imports allow you to discard the <mark class="md-code md-code-ac1">groupId</mark> and call or install artifacts using only their <mark class="md-code md-code-ac1">artifactId</mark>. When you add an import for <code class="md-code md-code-ac1">com.my-company</code>, any artifact belonging to that group ID will be resolved automatically.</p><p class="md-phrase">For example, without imports, running <mark class="md-code md-code-ac1">nsh</mark> looks like this:</p><pre><code class="language-bash">nuts net.thevpc.nsh:nsh#1.0.0.0
+                            <div class="alert alert-success mb-4"><p class="md-phrase">What You'll Learn In this section, you will learn how to create shortcuts and simplify command execution in <b class="md-bold">nuts</b>. We will cover:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><b class="md-bold">Imports</b>: How to omit group IDs when running artifacts.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Aliases</b>: How to create custom commands with preset arguments.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Launchers</b>: How to generate desktop icons and system menu entries for applications.</p></li><li class="md-uli"><p class="md-phrase"><b class="md-bold">Command Precedence</b>: How <b class="md-bold">nuts</b> resolves what to execute when you type a command.</p></li></ul></div><p class="md-phrase">By default, Maven artifacts are uniquely identified by their full Long ID, consisting of a <mark class="md-code md-code-ac1">groupId</mark>, <mark class="md-code md-code-ac1">artifactId</mark>, <mark class="md-code md-code-ac1">version</mark>, and sometimes a <mark class="md-code md-code-ac1">classifier</mark>. For instance, to invoke the <mark class="md-code md-code-ac1">nsh</mark> shell, you would theoretically need to type:</p><pre><code class="language-bash">nuts net.thevpc.nsh:nsh#1.1.0.0
+</code></pre><p class="md-phrase">This is cumbersome for daily use. <b class="md-bold">nuts</b> provides three features—Imports, Aliases, and Launchers—that allow you to call artifacts with simple words or clicks instead of typing full coordinates.</p><H4 class="md-title-2">Imports</H4><p class="md-phrase">Imports allow you to discard the <mark class="md-code md-code-ac1">groupId</mark> and call or install artifacts using only their <mark class="md-code md-code-ac1">artifactId</mark>. When you add an import for <code class="md-code md-code-ac1">com.my-company</code>, any artifact belonging to that group ID will be resolved automatically.</p><p class="md-phrase">For example, without imports, running <mark class="md-code md-code-ac1">nsh</mark> looks like this:</p><pre><code class="language-bash">nuts net.thevpc.nsh:nsh#1.1.0.0
 </code></pre><p class="md-phrase">If we import the group ID, we can omit it entirely:</p><pre><code class="language-bash">nuts settings add import net.thevpc.nsh
 # Now call it simply with the artifactId:
-nuts nsh#1.0.0.0
+nuts nsh#1.1.0.0
 # Or, if you want the default/latest version, even simpler:
 nuts nsh
-</code></pre><div class="alert alert-info mb-4"><p class="md-phrase"><b class="md-bold">Note:</b> By default, <b class="md-bold">nuts</b> already imports a few core group IDs, including <code class="md-code md-code-ac1">net.thevpc</code>, which is why many built-in companion tools work immediately without requiring you to configure imports manually.</p></div><H4 class="md-title-2">Aliases</H4><p class="md-phrase">Aliases allow you to define your own custom commands by wrapping existing artifacts and pre-defining specific arguments. This is very similar to standard shell aliases (e.g., where <mark class="md-code md-code-ac1">ll</mark> is defined as an alias for <code class="md-code md-code-ac1">/bin/ls -l</code>).</p><p class="md-phrase">Let's say you frequently run a tool with a specific set of verbose flags and custom parameters:</p><pre><code class="language-bash">nuts settings add alias ll=&#39;net.thevpc.nsh:nsh#1.0.0.0 -c ls -l&#39;
+</code></pre><div class="alert alert-info mb-4"><p class="md-phrase"><b class="md-bold">Note:</b> By default, <b class="md-bold">nuts</b> already imports a few core group IDs, including <code class="md-code md-code-ac1">net.thevpc</code>, which is why many built-in companion tools work immediately without requiring you to configure imports manually.</p></div><H4 class="md-title-2">Aliases</H4><p class="md-phrase">Aliases allow you to define your own custom commands by wrapping existing artifacts and pre-defining specific arguments. This is very similar to standard shell aliases (e.g., where <mark class="md-code md-code-ac1">ll</mark> is defined as an alias for <code class="md-code md-code-ac1">/bin/ls -l</code>).</p><p class="md-phrase">Let's say you frequently run a tool with a specific set of verbose flags and custom parameters:</p><pre><code class="language-bash">nuts settings add alias ll=&#39;net.thevpc.nsh:nsh#1.1.0.0 -c ls -l&#39;
 </code></pre><p class="md-phrase">Now, instead of typing the full artifact ID and its arguments, you can simply call your alias:</p><pre><code class="language-bash">nuts ll
-</code></pre><p class="md-phrase">Aliases are powerful because they are stored securely in your workspace configuration and persist across sessions, unlike standard shell aliases which are often bound to a specific terminal profile (like <code class="md-code md-code-ac1">.bashrc</code>).</p><H4 class="md-title-2">Launchers</H4><p class="md-phrase">Launchers take the concept of an alias one step further by integrating directly with your Operating System's desktop environment. Launchers allow you to create Desktop Environment shortcuts, system menu entries, and icons (whenever a GUI is applicable).</p><p class="md-phrase">To create a launcher that adds a shortcut to your OS applications menu and your desktop:</p><pre><code class="language-bash">nuts settings add launcher --menu --desktop &#39;net.thevpc.nsh:nsh#1.0.0.0&#39;
+</code></pre><p class="md-phrase">Aliases are powerful because they are stored securely in your workspace configuration and persist across sessions, unlike standard shell aliases which are often bound to a specific terminal profile (like <code class="md-code md-code-ac1">.bashrc</code>).</p><H4 class="md-title-2">Launchers</H4><p class="md-phrase">Launchers take the concept of an alias one step further by integrating directly with your Operating System's desktop environment. Launchers allow you to create Desktop Environment shortcuts, system menu entries, and icons (whenever a GUI is applicable).</p><p class="md-phrase">To create a launcher that adds a shortcut to your OS applications menu and your desktop:</p><pre><code class="language-bash">nuts settings add launcher --menu --desktop &#39;net.thevpc.nsh:nsh#1.1.0.0&#39;
 </code></pre><p class="md-phrase">After running this command, you no longer need the terminal to start the application. You can simply click on the new desktop icon or open it via your OS application menu.</p><H4 class="md-title-2">Command Precedence</H4><p class="md-phrase">When you type a short command like <code class="md-code md-code-ac1">nuts build</code>, how does <b class="md-bold">nuts</b> know exactly what you mean? <b class="md-bold">nuts</b> resolves commands using a strict order of precedence:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase">1. <b class="md-bold">Built-in Commands</b>: First, <b class="md-bold">nuts</b> checks if the word is a core command (e.g., <mark class="md-code md-code-ac1">install</mark>, <mark class="md-code md-code-ac1">search</mark>, <mark class="md-code md-code-ac1">settings</mark>).</p></li><li class="md-uli"><p class="md-phrase">2. <b class="md-bold">Aliases</b>: If it's not a built-in command, it checks your configured workspace aliases.</p></li><li class="md-uli"><p class="md-phrase">3. <b class="md-bold">Imported Artifacts</b>: Next, it appends your configured Imports (group IDs) to see if an installed artifact matches the name.</p></li><li class="md-uli"><p class="md-phrase">4. <b class="md-bold">Full Artifact ID</b>: It checks if the string itself is a valid, resolvable Long ID in your configured repositories.</p></li><li class="md-uli"><p class="md-phrase">5. <b class="md-bold">System Commands</b>: Finally, if all else fails, it may attempt to delegate to the underlying operating system path, depending on your execution mode.</p></li></ul><H4 class="md-title-2">Managing Configurations</H4><p class="md-phrase">You can easily manage your aliases, imports, and launchers using the <mark class="md-code md-code-ac1">settings</mark> command.</p><H4 class="md-title-3">Listing</H4><p class="md-phrase">To view what is currently configured in your workspace:</p><pre><code class="language-bash">nuts settings list imports
 nuts settings list aliases
 nuts settings list launchers
@@ -1018,12 +1028,12 @@ RUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash
 RUN nuts -Zy install &lt;your application&gt;
 CMD nuts -y &lt;your application&gt;
 </code></pre><p class="md-phrase">Alternatively, here is a more explicit approach that downloads the <b class="md-bold">nuts</b> JAR directly. This example packages the <mark class="md-code md-code-ac1">noapi</mark> OpenAPI tool:</p><pre><code class="language-Dockerfile">FROM eclipse-temurin:21-jre
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar -qO nuts.jar
+RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar -qO nuts.jar
 RUN java -jar nuts.jar -Zy install net.thevpc.nuts.toolbox:noapi
 CMD java -jar nuts.jar -y net.thevpc.nuts.toolbox:noapi
 </code></pre><H4 class="md-title-3">Multi-stage Docker Build</H4><p class="md-phrase">For production deployments, it is best practice to use a multi-stage Docker build. This approach allows you to use a full JDK for dependency resolution and packaging, while creating a minimal JRE-based image for the final runtime, resulting in significantly smaller container sizes:</p><pre><code class="language-Dockerfile"># Stage 1: Build and Resolve
 FROM eclipse-temurin:21-jdk AS builder
-RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar -qO nuts.jar
+RUN wget https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar -qO nuts.jar
 # Install and resolve all dependencies in the builder stage
 RUN java -jar nuts.jar -Zy install com.mycompany:my-server
 
@@ -1087,7 +1097,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuts
-          key: $-nuts-$39a933ad7bd345f9a99a3af715a5bb749a1d44d1b4228011654839ee1e8dc6c5
+          key: $-nuts-$a6cdbd53abe2450e8293006676c8fddf1b05707ef8a9351ca39f81f985f35641
           restore-keys: |
             $-nuts-
             
@@ -1829,10 +1839,10 @@ For Help, type nuts help
                             <H4 class="md-title-2">Synopsis</H4><pre><code class="language-sh">nuts info [options]
 </code></pre><H4 class="md-title-2">Description</H4><p class="md-phrase">The <mark class="md-code md-code-ac1">info</mark> command provides detailed diagnostic information about the booted <b class="md-bold">nuts</b> workspace. While <mark class="md-code md-code-ac1">version</mark> gives you basic API and runtime versions, <mark class="md-code md-code-ac1">info</mark> displays the complete operational context, including configuration variables, storage locations, security flags, and the Java environment running the workspace.</p><H4 class="md-title-2">Example Output</H4><pre><code class="language-bash">$ nuts info
 name                     = default-workspace
-nuts-api-version         = 1.0.0
-nuts-api-id              = net.thevpc.app.nuts:nuts#1.0.0
+nuts-api-version         = 1.1.0
+nuts-api-id              = net.thevpc.app.nuts:nuts#1.1.0
 nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core//nuts-core-.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/1.0.0/nuts-1.0.0.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core//nuts-core-.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/1.1.0/nuts-1.1.0.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -1862,7 +1872,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/1.0.0/nuts-1.0.0.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/1.1.0/nuts-1.1.0.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux
@@ -1899,8 +1909,8 @@ repositories-count       = 5
                         <div class="text-card">
                             <H4 class="md-title-2">Synopsis</H4><pre><code class="language-sh">nuts version
 </code></pre><H4 class="md-title-2">Description</H4><p class="md-phrase">The <mark class="md-code md-code-ac1">version</mark> command displays the current version of the <b class="md-bold">nuts</b> runtime.</p><p class="md-phrase"><b class="md-bold">nuts</b> uses a decoupled architecture consisting of a bootstrap API and a runtime implementation. </p><ul class="md-ul"><li class="md-uli"><p class="md-phrase">The API (the <code class="md-code md-code-ac1">nuts-*.jar</code> file, ~500KB) contains only the minimum logic required to bootstrap the environment and fetch the runtime.</p></li><li class="md-uli">The Implementation (the full runtime, ~3MB) contains the actual logic for dependency resolution, package management, and execution.</li></ul><p class="md-phrase">Generally, the implementation version tracks the API version, but they can evolve independently.</p><pre><code class="language-bash">$ nuts version
-1.0.0/1.0.0.0
-</code></pre><p class="md-phrase">Here, the <mark class="md-code md-code-ac1">version</mark> command displays both the API version (<code class="md-code md-code-ac1">1.0.0</code>) and the implementation version.</p>
+1.1.0/1.1.0.0
+</code></pre><p class="md-phrase">Here, the <mark class="md-code md-code-ac1">version</mark> command displays both the API version (<code class="md-code md-code-ac1">1.1.0</code>) and the implementation version.</p>
                         </div>
 
                         

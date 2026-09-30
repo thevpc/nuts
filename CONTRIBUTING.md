@@ -66,7 +66,7 @@ The script directly invokes `java -jar` using your locally compiled Maven artifa
 
 `nuts-release-tool` will:
 - Parse `nuts-release-tool.tson` configuration at repository root.
-- Pre-process markdown templates using `nsite` (replacing variables like `1.0.0.0` and `0.8.9.0`).
+- Pre-process markdown templates using `nsite` (replacing variables like `1.1.0.0` and `0.8.9.0`).
 - Generate root `README.md`, `CONTRIBUTING.md`, and update the static HTML site in `docs/` (including `docs/download.html`, published at [https://thevpc.github.io/nuts/download.html](https://thevpc.github.io/nuts/download.html)).
 
 ---
@@ -86,7 +86,7 @@ You can contribute in a myriad of ways:
   please mark them with 'bug' label. `nuts` should make best effort to work on any environment. So if you encounter any malfunctioning, please contribute with submitting the issue. We are actually unable to test on all environments, so you really are our best hope!   
 * submitting a feature request again on [github issues corner](https://github.com/thevpc/nuts/issues)
   please detail your idea and mark it with 'enhancement' label.
-* working on existing issues. The issues are marked with labels. The priority is given always to the current version milestone (example 1.0.0).
+* working on existing issues. The issues are marked with labels. The priority is given always to the current version milestone (example 1.1.0).
   The complexity of the issue is estimated with the `T-shirt sizing` approach: `size-xxs` is the simplest, `size-m` is medium sized and `size-xxl` is the more complex one.
   Complexity is relative to both required time to do the task and experience on ```nuts``` project to do the work. So please start with smallest (simplest) issues. 
 * working on media and UX by submitting enhancements/replacements of existing website/icons/themes, etc... 

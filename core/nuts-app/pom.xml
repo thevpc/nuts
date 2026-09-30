@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-app</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community App</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-boot</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
     <distributionManagement>

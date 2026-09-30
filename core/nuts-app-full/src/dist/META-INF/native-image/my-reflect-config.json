@@ -236,6 +236,13 @@
     "allPublicConstructors": true
   },
   {
+    "name": "java.lang.constant.Constable",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true
+  },
+  {
     "name": "java.lang.reflect.GenericArrayType",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,

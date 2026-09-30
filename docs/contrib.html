@@ -72,7 +72,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="headerVersionDropdown">
                         <h6 class="dropdown-header text-uppercase small text-muted">Documentation Versions</h6>
-                        <a class="dropdown-item " href="versions/v1.0.0/doc-nuts.html">v1.0.0 (Latest)</a>
+                        <a class="dropdown-item " href="versions/v1.1.0/doc-nuts.html">v1.1.0 (Latest)</a>
+                        
+                        <a class="dropdown-item " href="versions/v1.0.0/doc-nuts.html">v1.0.0</a>
                         
                         <a class="dropdown-item active" href="versions/v0.8.9/doc-nuts.html">v0.8.9</a>
                         
@@ -99,9 +101,9 @@
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item "
-                                   href="versions/v1.0.0/doc-nuts.html">User Documentation</a></li>
+                                   href="versions/v1.1.0/doc-nuts.html">User Documentation</a></li>
                             <li><a class="dropdown-item "
-                                   href="versions/v1.0.0/doc-nuts-help.html">Command Help</a></li>
+                                   href="versions/v1.1.0/doc-nuts-help.html">Command Help</a></li>
                             <li><a class="dropdown-item "
                                    href="faq.html">FAQ</a></li>
                             <li><a class="dropdown-item not-active"
@@ -199,7 +201,7 @@
 cd nuts
 </code></pre><p class="md-phrase">Then, you need to invoke <code class="md-code md-code-ac1">mvn install</code> to compile all of the project:</p><pre><code class="language-bash">mvn clean install
 </code></pre><p class="md-phrase">That being done, <mark class="md-code md-code-ac1">nuts</mark> will be compiled and installed to your local maven repository.</p><H4 class="md-title-2">Building Documentation and preparing development scripts</H4><p class="md-phrase">The next thing we need to worry about is the building of nuts community website and to have a working development version of <mark class="md-code md-code-ac1">nuts</mark> you can rely on in your tests manipulations.</p><p class="md-phrase">To do so we will need to install locally <mark class="md-code md-code-ac3">nuts</mark> and <mark class="md-code md-code-ac3">nsh</mark>.</p><p class="md-phrase">Assuming you are always under <mark class="md-code md-code-ac1">nuts</mark> repo root folder, issue the following command (its a bash command, so you need to be on linux or MacOS for it to work)</p><pre><code class="language-bash">cd installers/nuts-release-tool
-java -jar target/nuts-release-tool-1.0.0.0.jar
+java -jar target/nuts-release-tool-1.1.0.0.jar
 </code></pre><p class="md-phrase">You can now play with your development version of nuts using the generated <mark class="md-code md-code-ac1">nuts-dev</mark> script. You may want to update the following line to match your java 8 JDK install location or simply add it to your shell <mark class="md-code md-code-ac1">rcfile</mark>.</p><pre><code class="language-sh">NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
 </code></pre><p class="md-phrase">Indeed, you must compile <mark class="md-code md-code-ac1">nuts</mark> with java 8 because nuts needs to be working on Java 8 and all later java versions ( this means that compiling on more recent versions of java should pass successfully as well). So you must not use deprecated features (in java9+) in nuts source code (examples : js nashorn, rmi activation, etc...)</p><H4 class="md-title-2">Running, testing and working with nuts-dev, in development environment</H4><p class="md-phrase">Here are some tips when working on nuts project or even working on an application that builds on <mark class="md-code md-code-ac1">nuts</mark> using NAF (aka Nuts Application Framework) for example:</p><ul class="md-ul"><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-ac3">nuts-dev</mark> is the script you are most of the time using when developing <mark class="md-code md-code-ac1">nuts</mark> project.</p></li><li class="md-uli"><p class="md-phrase"><mark class="md-code md-code-ac3">nuts-dev</mark> script uses a special workspace called <mark class="md-code md-code-ac3">development</mark>, so it does not interfere with your local <mark class="md-code md-code-ac1">nuts</mark> installation.</p></li><li class="md-uli"><p class="md-phrase">you can always change the workspace in <mark class="md-code md-code-ac3">nuts-dev</mark> using <mark class="md-code md-code-ac3">-w</mark> option</p></li></ul><pre><code class="language-sh">./nuts-dev -w test
 </code></pre><ul class="md-ul"><li class="md-uli"><p class="md-phrase">You can run nuts in debug mode with <mark class="md-code md-code-ac1">--debug</mark> that shall be the very <b class="md-bold">FIRST</b> option. The following example will spawn a jvm listening on the 5005/tcp port you can attach to your favorite IDE.</p></li></ul><pre><code class="language-sh">./nuts-dev --debug

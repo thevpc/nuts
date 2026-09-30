@@ -1,4 +1,4 @@
-$NUTS_VERSION = "{{stableApiVersion}}"
+$NUTS_VERSION = "0.8.9"
 $JAR_URL = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar"
 $OUT_FILE = "nuts.jar"
 
