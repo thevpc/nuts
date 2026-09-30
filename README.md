@@ -5,7 +5,7 @@
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
 / /\  / /_/ / /_(__  )   latest version 1.1.0.0 
-\_\ \/\__,_/\__/____/    LTS version 0.8.9.0 
+\_\ \/\__,_/\__/____/    LTS version 1.0.0.0 
 ```
 
 > **The package manager Java never had.**

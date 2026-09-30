@@ -1,9 +1,16 @@
 [
   {
+    "id": "v1.1.0",
+    "name": "v1.1. (Latest)",
+    "version": "1.1.0",
+    "isLatest": true,
+    "path": "v1.0.0"
+  },
+  {
     "id": "v1.0.0",
     "name": "v1.0. (Latest)",
     "version": "1.0.0",
-    "isLatest": true,
+    "isLatest": false,
     "path": "v1.0.0"
   },
   {
