@@ -114,11 +114,11 @@ public class NMavenSettingsLoaderBoot {
                                     // as an additional repository. warn when it claims to replace
                                     // central, since that cannot be honoured.
                                     if (NBootUtils.isBlank(mirrorOf) || NMavenSettingsUtilsBoot.mirrorsCentral(mirrorOf)) {
-                                        NBootContext.log().log(Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofC("maven mirror %s (%s) replaces central but nuts uses it as an extra repository", id, url0).asWarning());
+                                        NBootContext.log().log(Level.FINEST, NBootLog.INTENT_ALERT, NBootMsg.ofC("maven mirror %s (%s) replaces central but nuts uses it as an extra repository", id, url0).asWarning());
                                     }
                                     list.add(NBootRepositoryLocation.of(id.trim(), "maven", url0.trim()));
                                 } else {
-                                    NBootContext.log().log(Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring incomplete maven mirror declaration in %s", settingsFilePath).asWarning());
+                                    NBootContext.log().log(Level.FINEST, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring incomplete maven mirror declaration in %s", settingsFilePath).asWarning());
                                 }
                             }
                             break;
@@ -134,7 +134,7 @@ public class NMavenSettingsLoaderBoot {
                                         String id = firstElementText(repository, "id");
                                         String url0 = firstElementText(repository, "url");
                                         if (NBootUtils.isBlank(id) || NBootUtils.isBlank(url0)) {
-                                            NBootContext.log().log(Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring incomplete maven repository declaration in profile %s", profileId).asWarning());
+                                            NBootContext.log().log(Level.FINEST, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring incomplete maven repository declaration in profile %s", profileId).asWarning());
                                             continue;
                                         }
                                         if (!isRepositoryEnabled(repository)) {
@@ -149,7 +149,7 @@ public class NMavenSettingsLoaderBoot {
                                             }
                                         }
                                         if (duplicate) {
-                                            NBootContext.log().log(Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring duplicate maven repository id %s in profile %s", trimmedId, profileId).asWarning());
+                                            NBootContext.log().log(Level.FINEST, NBootLog.INTENT_ALERT, NBootMsg.ofC("ignoring duplicate maven repository id %s in profile %s", trimmedId, profileId).asWarning());
                                             continue;
                                         }
                                         list.add(NBootRepositoryLocation.of(trimmedId, "maven", url0.trim()));
@@ -203,7 +203,7 @@ public class NMavenSettingsLoaderBoot {
             for (Element unsupported : elements(activation)) {
                 String n = unsupported.getNodeName();
                 if (!"activeByDefault".equals(n)) {
-                    NBootContext.log().log(Level.WARNING, NBootLog.INTENT_ALERT, NBootMsg.ofC("maven profile %s activation by <%s> is not supported and is ignored", profileId, n).asWarning());
+                    NBootContext.log().log(Level.FINEST, NBootLog.INTENT_ALERT, NBootMsg.ofC("maven profile %s activation by <%s> is not supported and is ignored", profileId, n).asWarning());
                 }
             }
         }

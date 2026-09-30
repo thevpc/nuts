@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class NMavenSettingsLoader {
@@ -128,11 +127,11 @@ public class NMavenSettingsLoader {
                                     // used as an additional repository. warn when it claims to
                                     // replace central, since that cannot be honoured.
                                     if (mirrorOf.isEmpty() || MavenSettingsUtils.mirrorsCentral(mirrorOf)) {
-                                        log.log(NMsg.ofC("maven mirror %s (%s) replaces central but nuts uses it as an extra repository", id, url0).asWarning());
+                                        log.log(NMsg.ofC("maven mirror %s (%s) replaces central but nuts uses it as an extra repository", id, url0).asFinestAlert());
                                     }
                                     list.add(new NRepositoryLocation(id.trim(), "maven", url0.trim()));
                                 } else {
-                                    log.log(NMsg.ofC("ignoring incomplete maven mirror declaration in %s", settingsFilePath).asWarning());
+                                    log.log(NMsg.ofC("ignoring incomplete maven mirror declaration in %s", settingsFilePath).asFinestAlert());
                                 }
                             }
                             break;
@@ -148,7 +147,7 @@ public class NMavenSettingsLoader {
                                         String id = firstElementText(repository, "id");
                                         String url0 = firstElementText(repository, "url");
                                         if (id.isEmpty() || url0.isEmpty()) {
-                                            log.log(NMsg.ofC("ignoring incomplete maven repository declaration in profile %s", profileId).asWarning());
+                                            log.log(NMsg.ofC("ignoring incomplete maven repository declaration in profile %s", profileId).asFinestAlert());
                                             continue;
                                         }
                                         if (!isRepositoryEnabled(repository)) {
@@ -163,7 +162,7 @@ public class NMavenSettingsLoader {
                                             }
                                         }
                                         if (duplicate) {
-                                            log.log(NMsg.ofC("ignoring duplicate maven repository id %s in profile %s", trimmedId, profileId).asWarning());
+                                            log.log(NMsg.ofC("ignoring duplicate maven repository id %s in profile %s", trimmedId, profileId).asFinestAlert());
                                             continue;
                                         }
                                         list.add(new NRepositoryLocation(trimmedId, "maven", url0.trim()));
@@ -217,7 +216,7 @@ public class NMavenSettingsLoader {
             for (Element unsupported : elements(activation)) {
                 String n = unsupported.getNodeName();
                 if (!"activeByDefault".equals(n)) {
-                    log.log(NMsg.ofC("maven profile %s activation by <%s> is not supported and is ignored", profileId, n).asWarning());
+                    log.log(NMsg.ofC("maven profile %s activation by <%s> is not supported and is ignored", profileId, n).asFinestAlert());
                 }
             }
         }

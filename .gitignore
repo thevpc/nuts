@@ -304,3 +304,5 @@ core/nuts-app-full/target
 /target/
 /libraries/target/
 /installers/target/site/
+/core/nuts-boot/.naru/local/
+
