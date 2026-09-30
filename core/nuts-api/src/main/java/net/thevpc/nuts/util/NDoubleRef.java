@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NDoubleRef extends NObjectRef<Double> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NDoubleRef extends NObjectRef<Double> {
         return new NDoubleRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -30,11 +30,6 @@ public class NDoubleRef extends NObjectRef<Double> {
      * @return n double ref result
      */
     public NDoubleRef(Double value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -44,12 +39,6 @@ public class NDoubleRef extends NObjectRef<Double> {
      * @return inc result
      */
     public NDoubleRef inc() {
-        /**
-         * Inc.
-         *
-         * @param 1 1
-         * @return inc result
-         */
         return inc(1);
     }
 
@@ -60,12 +49,6 @@ public class NDoubleRef extends NObjectRef<Double> {
      * @return inc result
      */
     public NDoubleRef inc(double value) {
-        /**
-         * Adds add.
-         *
-         * @param value value
-         * @return add result
-         */
         return add(value);
     }
 
@@ -78,18 +61,8 @@ public class NDoubleRef extends NObjectRef<Double> {
     public NDoubleRef add(double value) {
         final Double o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param o o
-           */
             set(value + o);
         }
         return this;
@@ -104,18 +77,8 @@ public class NDoubleRef extends NObjectRef<Double> {
     public NDoubleRef mul(double value) {
         final Double o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o * value);
         }
         return this;
@@ -130,18 +93,8 @@ public class NDoubleRef extends NObjectRef<Double> {
     public NDoubleRef div(double value) {
         final Double o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o / value);
         }
         return this;
@@ -153,12 +106,6 @@ public class NDoubleRef extends NObjectRef<Double> {
      * @return dec result
      */
     public NDoubleRef dec() {
-        /**
-         * Adds add.
-         *
-         * @param -1 -1
-         * @return add result
-         */
         return add(-1);
     }
 
@@ -169,12 +116,6 @@ public class NDoubleRef extends NObjectRef<Double> {
      * @return dec result
      */
     public NDoubleRef dec(double value) {
-        /**
-         * Adds add.
-         *
-         * @param -value -value
-         * @return add result
-         */
         return add(-value);
     }
 

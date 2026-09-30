@@ -224,11 +224,6 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
      * @return copy result
      */
     public NTextTransformConfig copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -329,23 +324,8 @@ public class NTextTransformConfig implements Cloneable, NBlankable {
      * @return process all result
      */
     public NTextTransformConfig processAll(boolean enable) {
-      /**
-       * Process title numbers.
-       *
-       * @param enable enable
-       */
         processTitleNumbers(enable);
-      /**
-       * Process vars.
-       *
-       * @param enable enable
-       */
         processVars(enable);
-      /**
-       * Process includes.
-       *
-       * @param enable enable
-       */
         processIncludes(enable);
         return this;
     }

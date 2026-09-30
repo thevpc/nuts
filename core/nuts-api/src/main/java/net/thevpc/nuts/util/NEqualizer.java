@@ -23,13 +23,13 @@ public interface NEqualizer<T> {
     };
 
     /**
-     * Creates a new instance of of ref.
+     * Creates a new instance of ref.
      *
      * @return of ref result
      */
     static <T> NEqualizer<T> ofRef(){return (NEqualizer) REF;}
     /**
-     * Creates a new instance of of default.
+     * Creates a new instance of default.
      *
      * @return of default result
      */

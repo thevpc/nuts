@@ -19,12 +19,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return default n buffered generator result
      */
     public DefaultNBufferedGenerator(NGenerator<T> reader) {
-      /**
-       * This.
-       *
-       * @param reader reader
-       * @param 1024 1024
-       */
         this(reader, 1024);
     }
 
@@ -86,11 +80,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return peek at result
      */
     public T peekAt(int offset) {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(offset + 1);
         int index = pos + offset;
         return (index < limit) ? (T) buffer[index] : null;
@@ -102,11 +91,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return peek result
      */
     public T peek() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         return pos < limit ? (T) buffer[pos] : null;
     }
@@ -118,11 +102,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return has next result
      */
     public boolean hasNext() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         return limit - pos > 0;
     }
@@ -134,11 +113,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return has next result
      */
     public boolean hasNext(int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(count);
         return limit - pos >= count;
     }
@@ -151,11 +125,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return skip result
      */
     public boolean skip(int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(count);
         if (limit - pos < count) return false;
         pos += count;
@@ -169,11 +138,6 @@ public class DefaultNBufferedGenerator<T> implements NBufferedGenerator<T> {
      * @return next result
      */
     public T next() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         if (pos >= limit) {
             return null;

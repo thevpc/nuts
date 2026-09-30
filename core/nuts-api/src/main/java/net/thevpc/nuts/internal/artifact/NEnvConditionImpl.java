@@ -71,17 +71,6 @@ public class NEnvConditionImpl implements NEnvCondition {
      * @return default n env condition result
      */
     public NEnvConditionImpl() {
-      /**
-       * This.
-       *
-       * @param null null
-       * @param null null
-       * @param null null
-       * @param null null
-       * @param null null
-       * @param null null
-       * @param null null
-       */
         this(null, null, null, null, null, null, null);
     }
 

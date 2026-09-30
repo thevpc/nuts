@@ -47,7 +47,7 @@ import java.util.stream.*;
 public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, AutoCloseable {
 
     /**
-     * Creates a new instance of of array.
+     * Creates a new instance of array.
      *
      * @param str str
      * @return of array result
@@ -57,128 +57,88 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of int array.
+     * Creates a new instance of int array.
      *
      * @param items items
      * @return of int array result
      */
     static <T> NStream<T> ofIntArray(int... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofIntArray(items) n element.of int array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofIntArray(items));
     }
 
     /**
-     * Creates a new instance of of long array.
+     * Creates a new instance of long array.
      *
      * @param items items
      * @return of long array result
      */
     static <T> NStream<T> ofLongArray(long... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofLongArray(items) n element.of long array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofLongArray(items));
     }
 
     /**
-     * Creates a new instance of of boolean array.
+     * Creates a new instance of boolean array.
      *
      * @param items items
      * @return of boolean array result
      */
     static <T> NStream<T> ofBooleanArray(boolean... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofBooleanArray(items) n element.of boolean array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofBooleanArray(items));
     }
 
     /**
-     * Creates a new instance of of byte array.
+     * Creates a new instance of byte array.
      *
      * @param items items
      * @return of byte array result
      */
     static <T> NStream<T> ofByteArray(byte... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofByteArray(items) n element.of byte array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofByteArray(items));
     }
 
 
     /**
-     * Creates a new instance of of char array.
+     * Creates a new instance of char array.
      *
      * @param items items
      * @return of char array result
      */
     static <T> NStream<T> ofCharArray(char... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofCharArray(items) n element.of char array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofCharArray(items));
     }
 
     /**
-     * Creates a new instance of of short array.
+     * Creates a new instance of short array.
      *
      * @param items items
      * @return of short array result
      */
     static <T> NStream<T> ofShortArray(short... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofShortArray(items) n element.of short array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofShortArray(items));
     }
 
     /**
-     * Creates a new instance of of float array.
+     * Creates a new instance of float array.
      *
      * @param items items
      * @return of float array result
      */
     static <T> NStream<T> ofFloatArray(float... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofFloatArray(items) n element.of float array(items)
-       */
         return (NStream<T>) ofStream(IntStream.range(0, items.length).mapToObj(i -> items[i])).withDescription(() -> NElement.ofFloatArray(items));
     }
 
     /**
-     * Creates a new instance of of double array.
+     * Creates a new instance of double array.
      *
      * @param items items
      * @return of double array result
      */
     static <T> NStream<T> ofDoubleArray(double... items) {
-      /**
-       * Return.
-       *
-       * @param NElement.ofDoubleArray(items) n element.of double array(items)
-       */
         return (NStream<T>) ofStream(Arrays.stream(items).boxed()).withDescription(() -> NElement.ofDoubleArray(items));
     }
 
     /**
-     * Creates a new instance of of optional.
+     * Creates a new instance of optional.
      *
      * @param str str
      * @return of optional result
@@ -188,7 +148,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of optional.
+     * Creates a new instance of optional.
      *
      * @param str str
      * @return of optional result
@@ -198,7 +158,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of iterable.
+     * Creates a new instance of iterable.
      *
      * @param str str
      * @return of iterable result
@@ -208,7 +168,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of iterator.
+     * Creates a new instance of iterator.
      *
      * @param str str
      * @return of iterator result
@@ -218,7 +178,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of stream.
+     * Creates a new instance of stream.
      *
      * @param str str
      * @return of stream result
@@ -228,7 +188,7 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -237,18 +197,12 @@ public interface NStream<T> extends Iterable<T>, NRedescribable<NStream<T>>, Aut
     }
 
     /**
-     * Creates a new instance of of singleton.
+     * Creates a new instance of singleton.
      *
      * @param element element
      * @return of singleton result
      */
     static <T> NStream<T> ofSingleton(T element) {
-        /**
-         * Creates a new instance of of iterable.
-         *
-         * @param Arrays.asList(element) arrays.as list(element)
-         * @return of iterable result
-         */
         return ofIterable(Arrays.asList(element));
     }
 

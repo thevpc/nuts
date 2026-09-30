@@ -29,7 +29,7 @@ package net.thevpc.nuts.text;
 public interface NTextArtTableRenderer extends NTextArtRenderer {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -38,7 +38,7 @@ public interface NTextArtTableRenderer extends NTextArtRenderer {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result

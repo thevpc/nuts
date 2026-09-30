@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.app.NApplication;
 import net.thevpc.nuts.app.NApplicationHandleMode;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.collections.NProperties;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;

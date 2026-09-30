@@ -19,12 +19,6 @@ public class NDetachedAssertException extends IllegalArgumentException implement
      * @return n detached assert exception result
      */
     public NDetachedAssertException(NMsg formattedMessage,Throwable ex) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       * @param ex ex
-       */
         super(formattedMessage == null ? "assert failed" : formattedMessage.toString(),ex);
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }
@@ -35,11 +29,6 @@ public class NDetachedAssertException extends IllegalArgumentException implement
      * @return n detached assert exception result
      */
     public NDetachedAssertException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       */
         super(formattedMessage == null ? "assert failed" : formattedMessage.toString());
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }

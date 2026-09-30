@@ -45,7 +45,7 @@ import java.util.stream.Stream;
  */
 public interface NFragmentElement extends NElement, Iterable<NElement> {
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */

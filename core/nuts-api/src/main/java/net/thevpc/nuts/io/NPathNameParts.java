@@ -21,7 +21,7 @@ public class NPathNameParts {
     private NPathExtensionType type;
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param baseName base name
      * @param extension extension
@@ -33,7 +33,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param baseName base name
      * @param extension extension
@@ -45,7 +45,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of smart.
+     * Creates a new instance of smart.
      *
      * @param baseName base name
      * @param extension extension
@@ -57,7 +57,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param baseName base name
      * @param extension extension
@@ -68,7 +68,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param baseName base name
      * @param extension extension
@@ -79,7 +79,7 @@ public class NPathNameParts {
     }
 
     /**
-     * Creates a new instance of of smart.
+     * Creates a new instance of smart.
      *
      * @param baseName base name
      * @param extension extension
@@ -174,38 +174,18 @@ public class NPathNameParts {
                 s -> {
                     switch (NStringUtils.strip(s).toLowerCase()) {
                         case "name":
-                            /**
-                             * Converts to name.
-                             *
-                             * @return to name result
-                             */
                             return toName();
                         case "base":
                         case "basename":
                         case "base-name":
-                            /**
-                             * Base name.
-                             *
-                             * @return base name result
-                             */
                             return baseName();
                         case "ext":
                         case "extension":
-                            /**
-                             * Extension.
-                             *
-                             * @return extension result
-                             */
                             return extension();
                         case "fullext":
                         case "full-ext":
                         case "full-extension":
                         case "fullextension":
-                            /**
-                             * Full extension.
-                             *
-                             * @return full extension result
-                             */
                             return fullExtension();
                     }
                     return null;

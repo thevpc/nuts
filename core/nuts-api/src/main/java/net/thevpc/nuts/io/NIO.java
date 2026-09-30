@@ -46,7 +46,7 @@ import java.util.List;
  */
 public interface NIO extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -55,7 +55,7 @@ public interface NIO extends NComponent {
     }
 
     /**
-     * Creates a new instance of of null raw input stream.
+     * Creates a new instance of null raw input stream.
      *
      * @return of null raw input stream result
      */
@@ -64,7 +64,7 @@ public interface NIO extends NComponent {
     }
 
     /**
-     * Creates a new instance of of null raw output stream.
+     * Creates a new instance of null raw output stream.
      *
      * @return of null raw output stream result
      */

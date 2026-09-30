@@ -26,18 +26,12 @@ public interface NConnectionString  {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result
      */
     static NConnectionString of(String expression) {
-        /**
-         * Returns the get.
-         *
-         * @param expression).get( expression).get(
-         * @return get result
-         */
         return get(expression).get();
     }
 

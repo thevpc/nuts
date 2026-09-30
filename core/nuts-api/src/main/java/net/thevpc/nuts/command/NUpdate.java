@@ -46,7 +46,7 @@ import java.util.List;
  */
 public interface NUpdate extends NWorkspaceCmd {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

@@ -48,7 +48,7 @@ import java.util.function.UnaryOperator;
 public interface NDescriptorBuilder extends Serializable, NBlankable, NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

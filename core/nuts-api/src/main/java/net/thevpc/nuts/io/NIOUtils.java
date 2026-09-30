@@ -230,14 +230,6 @@ public class NIOUtils {
      * @param out sortie
      */
     public static long copy(Reader in, Writer out) {
-        /**
-         * Copy.
-         *
-         * @param in in
-         * @param out out
-         * @param DEFAULT_BUFFER_SIZE default_buffer_size
-         * @return copy result
-         */
         return copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
@@ -249,14 +241,6 @@ public class NIOUtils {
      * @return size copied
      */
     public static long copy(InputStream in, OutputStream out) {
-        /**
-         * Copy.
-         *
-         * @param in in
-         * @param out out
-         * @param DEFAULT_BUFFER_SIZE default_buffer_size
-         * @return copy result
-         */
         return copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
@@ -282,12 +266,6 @@ public class NIOUtils {
             }
             return len;
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -312,12 +290,6 @@ public class NIOUtils {
                 count += len;
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
         return count;
@@ -341,12 +313,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -369,12 +335,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -390,12 +350,6 @@ public class NIOUtils {
 
         try {
             out = new CharArrayWriter();
-          /**
-           * Copy.
-           *
-           * @param r r
-           * @param out out
-           */
             copy(r, out);
             out.flush();
             return out.toCharArray();
@@ -419,12 +373,6 @@ public class NIOUtils {
         try {
             try {
                 out = new ByteArrayOutputStream();
-              /**
-               * Copy.
-               *
-               * @param r r
-               * @param out out
-               */
                 copy(r, out);
                 out.flush();
                 return out.toByteArray();
@@ -434,12 +382,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -457,12 +399,6 @@ public class NIOUtils {
         try {
             try {
                 out = new ByteArrayOutputStream();
-              /**
-               * Copy.
-               *
-               * @param r r
-               * @param out out
-               */
                 copy(r, out);
                 out.flush();
                 return out.toByteArray();
@@ -475,12 +411,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -515,14 +445,6 @@ public class NIOUtils {
                     return to.toByteArray();
                 } else {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                  /**
-                   * Copy.
-                   *
-                   * @param stream stream
-                   * @param os os
-                   * @param close close
-                   * @param true true
-                   */
                     copy(stream, os, close, true);
                     return os.toByteArray();
                 }
@@ -532,12 +454,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -574,12 +490,6 @@ public class NIOUtils {
                 }
             }
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -593,11 +503,6 @@ public class NIOUtils {
      * @param file file
      */
     public static void delete(File file) {
-      /**
-       * Delete.
-       *
-       * @param file.toPath() file.to path()
-       */
         delete(file.toPath());
     }
 
@@ -674,12 +579,6 @@ public class NIOUtils {
                 }
             });
         } catch (IOException ex) {
-            /**
-             * Nio exception.
-             *
-             * @param ex ex
-             * @return nio exception result
-             */
             throw new NIOException(ex);
         }
     }
@@ -713,12 +612,6 @@ public class NIOUtils {
                 return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.SHORT);
             }
         }
-        /**
-         * N unexpected exception.
-         *
-         * @param type) type)
-         * @return n unexpected exception result
-         */
         throw new NUnexpectedException(NMsg.ofC("%s not supported", type));
     }
 
@@ -732,12 +625,6 @@ public class NIOUtils {
         if (s == null) {
             return "";
         }
-        /**
-         * Returns the file extension.
-         *
-         * @param s.getFileName().toString() s.get file name().to string()
-         * @return get file extension result
-         */
         return getFileExtension(s.getFileName().toString());
     }
 
@@ -751,12 +638,6 @@ public class NIOUtils {
         if (s == null) {
             return "";
         }
-        /**
-         * Returns the file extension.
-         *
-         * @param s.getName() s.get name()
-         * @return get file extension result
-         */
         return getFileExtension(s.getName());
     }
 
@@ -886,12 +767,6 @@ public class NIOUtils {
             Files.walk(src)
                     .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
         } catch (IOException e) {
-            /**
-             * Nio exception.
-             *
-             * @param e e
-             * @return nio exception result
-             */
             throw new NIOException(e);
         }
     }
@@ -907,12 +782,6 @@ public class NIOUtils {
         try {
             Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            /**
-             * Nio exception.
-             *
-             * @param e e
-             * @return nio exception result
-             */
             throw new NIOException(e);
         }
     }
@@ -928,36 +797,13 @@ public class NIOUtils {
         if (Files.isRegularFile(file1) && Files.isRegularFile(file2)) {
             try {
                 if (Files.size(file1) == Files.size(file2)) {
-                  /**
-                   * Try.
-                   *
-                   * @param Files.newInputStream(file1) files.new input stream(file1)
-                   */
                     try (InputStream in1 = Files.newInputStream(file1)) {
-                      /**
-                       * Try.
-                       *
-                       * @param Files.newInputStream(file1) files.new input stream(file1)
-                       */
                         try (InputStream in2 = Files.newInputStream(file1)) {
-                            /**
-                             * Compare content.
-                             *
-                             * @param in1 in1
-                             * @param in2 in2
-                             * @return compare content result
-                             */
                             return compareContent(in1, in2);
                         }
                     }
                 }
             } catch (IOException e) {
-                /**
-                 * Nio exception.
-                 *
-                 * @param e e
-                 * @return nio exception result
-                 */
                 throw new NIOException(e);
             }
         }
@@ -1019,11 +865,6 @@ public class NIOUtils {
      */
     public static byte[] readBestEffort(int len, InputStream in) {
         if (len < 0) {
-            /**
-             * Index out of bounds exception.
-             *
-             * @return index out of bounds exception result
-             */
             throw new IndexOutOfBoundsException();
         }
         if (len == 0) {
@@ -1050,11 +891,6 @@ public class NIOUtils {
      */
     public static int readBestEffort(byte[] b, int off, int len, InputStream in) {
         if (len < 0) {
-            /**
-             * Index out of bounds exception.
-             *
-             * @return index out of bounds exception result
-             */
             throw new IndexOutOfBoundsException();
         }
         int n = 0;
@@ -1063,12 +899,6 @@ public class NIOUtils {
             try {
                 count = in.read(b, off + n, len - n);
             } catch (IOException e) {
-                /**
-                 * Nio exception.
-                 *
-                 * @param e e
-                 * @return nio exception result
-                 */
                 throw new NIOException(e);
             }
             if (count < 0) {
@@ -1086,26 +916,9 @@ public class NIOUtils {
      * @return read bytes result
      */
     public static byte[] readBytes(File file) {
-      /**
-       * Try.
-       *
-       * @param FileInputStream(file) file input stream(file)
-       */
         try (InputStream in = new FileInputStream(file)) {
-            /**
-             * Read bytes.
-             *
-             * @param in in
-             * @return read bytes result
-             */
             return readBytes(in);
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1117,26 +930,9 @@ public class NIOUtils {
      * @return read bytes result
      */
     public static byte[] readBytes(Path file) {
-      /**
-       * Try.
-       *
-       * @param Files.newInputStream(file) files.new input stream(file)
-       */
         try (InputStream in = Files.newInputStream(file)) {
-            /**
-             * Read bytes.
-             *
-             * @param in in
-             * @return read bytes result
-             */
             return readBytes(in);
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1148,26 +944,9 @@ public class NIOUtils {
      * @return read bytes result
      */
     public static byte[] readBytes(URL url) {
-      /**
-       * Try.
-       *
-       * @param url.openStream() url.open stream()
-       */
         try (InputStream in = url.openStream()) {
-            /**
-             * Read bytes.
-             *
-             * @param in in
-             * @return read bytes result
-             */
             return readBytes(in);
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1199,13 +978,6 @@ public class NIOUtils {
      * @return read bytes result
      */
     public static byte[] readBytes(InputStream from) {
-        /**
-         * Read bytes.
-         *
-         * @param from from
-         * @param -1 -1
-         * @return read bytes result
-         */
         return readBytes(from, -1);
     }
 
@@ -1218,13 +990,6 @@ public class NIOUtils {
      */
     public static byte[] readBytes(InputStream from, int bufferSize) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-      /**
-       * Copy.
-       *
-       * @param from from
-       * @param out out
-       * @param bufferSize buffer size
-       */
         copy(from, out, bufferSize);
         return out.toByteArray();
     }
@@ -1236,13 +1001,6 @@ public class NIOUtils {
      * @return read chars result
      */
     public static char[] readChars(Reader from) {
-        /**
-         * Read chars.
-         *
-         * @param from from
-         * @param -1 -1
-         * @return read chars result
-         */
         return readChars(from, -1);
     }
 
@@ -1255,13 +1013,6 @@ public class NIOUtils {
      */
     public static char[] readChars(Reader from, int bufferSize) {
         CharArrayWriter out = new CharArrayWriter();
-      /**
-       * Copy.
-       *
-       * @param from from
-       * @param out out
-       * @param bufferSize buffer size
-       */
         copy(from, out, bufferSize);
         return out.toCharArray();
     }
@@ -1276,12 +1027,6 @@ public class NIOUtils {
         try {
             return new String(Files.readAllBytes(file.toPath()));
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1296,12 +1041,6 @@ public class NIOUtils {
         try {
             return new String(Files.readAllBytes(file));
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1317,26 +1056,9 @@ public class NIOUtils {
         if (p != null) {
             p.toFile().mkdirs();
         }
-      /**
-       * Try.
-       *
-       * @param Files.newOutputStream(file) files.new output stream(file)
-       */
         try (OutputStream out = Files.newOutputStream(file)) {
-          /**
-           * Copy.
-           *
-           * @param in in
-           * @param out out
-           */
             copy(in, out);
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }
@@ -1352,26 +1074,9 @@ public class NIOUtils {
         if (p != null) {
             p.toFile().mkdirs();
         }
-      /**
-       * Try.
-       *
-       * @param Files.newBufferedWriter(file) files.new buffered writer(file)
-       */
         try (Writer out = Files.newBufferedWriter(file)) {
-          /**
-           * Copy.
-           *
-           * @param in in
-           * @param out out
-           */
             copy(in, out);
         } catch (IOException ex) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param ex ex
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(ex);
         }
     }

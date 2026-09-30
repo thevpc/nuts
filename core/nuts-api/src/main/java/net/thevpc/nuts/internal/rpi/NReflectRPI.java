@@ -20,17 +20,11 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NReflectRPI extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
     static NReflectRPI of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

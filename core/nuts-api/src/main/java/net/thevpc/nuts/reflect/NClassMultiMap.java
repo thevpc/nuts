@@ -13,24 +13,17 @@ import java.util.Set;
  */
 public interface NClassMultiMap<K, V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param valueType value type
      * @return of result
      */
     static <V> NClassMultiMap<Object, V> of(Class<V> valueType) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @param valueType value type
-         * @return of result
-         */
         return of(null, valueType);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param key1Type key1 type
      * @param valueType value type

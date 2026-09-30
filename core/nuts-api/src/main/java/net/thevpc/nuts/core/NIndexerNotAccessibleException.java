@@ -41,11 +41,6 @@ public class NIndexerNotAccessibleException extends NException {
      * @param message message
      */
     public NIndexerNotAccessibleException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -56,12 +51,6 @@ public class NIndexerNotAccessibleException extends NException {
      * @param cause   cause
      */
     public NIndexerNotAccessibleException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 

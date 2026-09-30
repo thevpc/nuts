@@ -38,7 +38,7 @@ import java.util.function.Function;
 public interface NReflectConfigurationBuilder extends NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

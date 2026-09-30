@@ -91,12 +91,6 @@ public class NRunAs {
      */
     public static NRunAs user(String name) {
         if (NBlankable.isBlank(name)) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param name" name"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("invalid user name");
         }
         return new NRunAs(NRunAsMode.SUDO, name);

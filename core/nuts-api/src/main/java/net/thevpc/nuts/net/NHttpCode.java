@@ -39,17 +39,12 @@ public class NHttpCode {
     private int code;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param code code
      * @return of result
      */
     public static NHttpCode of(int code) {
-      /**
-       * Synchronized.
-       *
-       * @param NHttpCode.cache n http code.cache
-       */
         synchronized (NHttpCode.cache) {
             if (code >= 0 && code < 600) {
                 return cache.computeIfAbsent(code, integer -> new NHttpCode(code));
@@ -74,11 +69,6 @@ public class NHttpCode {
      * @return is ok result
      */
     public boolean isOk() {
-      /**
-       * Return.
-       *
-       * @param 300 300
-       */
         return (code >= 200 && code < 300);
     }
 
@@ -88,11 +78,6 @@ public class NHttpCode {
      * @return is client error result
      */
     public boolean isClientError() {
-      /**
-       * Return.
-       *
-       * @param 500 500
-       */
         return (code >= 400 && code < 500);
     }
 

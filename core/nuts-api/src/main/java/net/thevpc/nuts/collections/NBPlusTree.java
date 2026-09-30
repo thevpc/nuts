@@ -58,14 +58,6 @@ public interface NBPlusTree<K, V> extends Map<K, V>, AutoCloseable {
      * @return a new in-memory {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> of(int order, boolean allowDuplicates) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param order order
-         * @param allowDuplicates allow duplicates
-         * @param Comparable::compareTo comparable::compare to
-         * @return of result
-         */
         return of(order, allowDuplicates, Comparable::compareTo);
     }
 
@@ -119,17 +111,6 @@ public interface NBPlusTree<K, V> extends Map<K, V>, AutoCloseable {
      * @return a new page-based in-memory {@code NBPlusTree}
      */
     static <K extends Comparable<K>, V> NBPlusTree<K, V> ofInMemory(int pageSize, int order, boolean allowDuplicates, NDataSerializer<K> keySerializer, NDataSerializer<V> valSerializer) {
-        /**
-         * Creates a new instance of of in memory.
-         *
-         * @param pageSize page size
-         * @param order order
-         * @param allowDuplicates allow duplicates
-         * @param keySerializer key serializer
-         * @param valSerializer val serializer
-         * @param Comparable::compareTo comparable::compare to
-         * @return of in memory result
-         */
         return ofInMemory(pageSize, order, allowDuplicates, keySerializer, valSerializer, Comparable::compareTo);
     }
 

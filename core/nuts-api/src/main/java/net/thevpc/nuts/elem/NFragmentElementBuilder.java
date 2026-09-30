@@ -41,7 +41,7 @@ import java.util.function.Consumer;
  */
 public interface NFragmentElementBuilder extends NElementBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

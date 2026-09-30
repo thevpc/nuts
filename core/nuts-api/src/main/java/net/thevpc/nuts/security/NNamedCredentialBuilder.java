@@ -8,7 +8,7 @@ package net.thevpc.nuts.security;
  */
 public interface NNamedCredentialBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

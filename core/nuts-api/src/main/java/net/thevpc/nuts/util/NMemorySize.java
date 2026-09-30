@@ -56,13 +56,7 @@ public class NMemorySize implements Serializable{
             largestUnit = this.smallestUnit;
         }
         this.largestUnit = largestUnit;
-      /**
-       * Apply units.
-       */
         applyUnits();
-      /**
-       * Check me.
-       */
         checkMe();
     }
 
@@ -98,9 +92,6 @@ public class NMemorySize implements Serializable{
         values[NMemoryUnit.BYTE.ordinal()] = memBytes;
         this.smallestUnit = detectSmallestUnit();
         this.largestUnit = detectLargestUnit();
-      /**
-       * Check me.
-       */
         checkMe();
     }
 
@@ -214,14 +205,8 @@ public class NMemorySize implements Serializable{
                 largestUnit = this.smallestUnit;
             }
             this.largestUnit = largestUnit;
-          /**
-           * Apply units.
-           */
             applyUnits();
         }
-      /**
-       * Check me.
-       */
         checkMe();
     }
 
@@ -246,9 +231,6 @@ public class NMemorySize implements Serializable{
             largestUnit = this.smallestUnit;
         }
         this.largestUnit = largestUnit;
-      /**
-       * Apply units.
-       */
         applyUnits();
         this.bytes = rebuildSizeBytes();
         this.bits = rebuildSizeBits();
@@ -276,11 +258,6 @@ public class NMemorySize implements Serializable{
      * @return rebuild size bits result
      */
     private int rebuildSizeBits() {
-      /**
-       * Return.
-       *
-       * @param 8 8
-       */
         return (int) (this.values[NMemoryUnit.BIT.ordinal()] % 8);
     }
 
@@ -316,19 +293,7 @@ public class NMemorySize implements Serializable{
                 break;
             }
             case PETA_BYTE: {
-              /**
-               * Adds add.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param get(NMemoryUnit.ZETA_BYTE) get(n memory unit.zeta_byte)
-               */
                 add(NMemoryUnit.PETA_BYTE, KB * get(NMemoryUnit.ZETA_BYTE));
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 break;
             }
@@ -337,19 +302,7 @@ public class NMemorySize implements Serializable{
                         KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 break;
             }
@@ -359,26 +312,8 @@ public class NMemorySize implements Serializable{
                                 + KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.TERA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 break;
             }
@@ -389,33 +324,9 @@ public class NMemorySize implements Serializable{
                                 + KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.GIGA_BYTE n memory unit.giga_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.GIGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.TERA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
                 break;
             }
@@ -427,40 +338,10 @@ public class NMemorySize implements Serializable{
                                 + KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.MEGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.GIGA_BYTE n memory unit.giga_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.GIGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.TERA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
                 break;
             }
@@ -473,47 +354,11 @@ public class NMemorySize implements Serializable{
                                 + KB * KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.KILO_BYTE n memory unit.kilo_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.KILO_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.MEGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.GIGA_BYTE n memory unit.giga_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.GIGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.TERA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
                 break;
             }
@@ -527,54 +372,12 @@ public class NMemorySize implements Serializable{
                                 + 8L * KB * KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + 8L * KB * KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.BYTE n memory unit.byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.KILO_BYTE n memory unit.kilo_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.KILO_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.MEGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.GIGA_BYTE n memory unit.giga_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.GIGA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.TERA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.ZETA_BYTE, 0);
-              /**
-               * Sets the set.
-               *
-               * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-               * @param 0 0
-               */
                 set(NMemoryUnit.PETA_BYTE, 0);
                 break;
             }
@@ -635,7 +438,7 @@ public class NMemorySize implements Serializable{
 
 
     /**
-     * Creates a new instance of of bits.
+     * Creates a new instance of bits.
      *
      * @param bits bits
      * @param iec iec
@@ -648,7 +451,7 @@ public class NMemorySize implements Serializable{
     }
 
     /**
-     * Creates a new instance of of bits.
+     * Creates a new instance of bits.
      *
      * @param bits bits
      * @param smallestUnit smallest unit
@@ -656,20 +459,11 @@ public class NMemorySize implements Serializable{
      * @return of bits result
      */
     public static NMemorySize ofBits(long bits, NMemoryUnit smallestUnit, NMemoryUnit largestUnit) {
-        /**
-         * Creates a new instance of of bits.
-         *
-         * @param bits bits
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @param false false
-         * @return of bits result
-         */
         return ofBits(bits, smallestUnit, largestUnit, false);
     }
 
     /**
-     * Creates a new instance of of bits.
+     * Creates a new instance of bits.
      *
      * @param bits bits
      * @param smallestUnit smallest unit
@@ -684,492 +478,290 @@ public class NMemorySize implements Serializable{
     }
 
     /**
-     * Creates a new instance of of bits only.
+     * Creates a new instance of bits only.
      *
      * @param value value
      * @return of bits only result
      */
     public static NMemorySize ofBitsOnly(long value) {
-        /**
-         * Creates a new instance of of bits only.
-         *
-         * @param value value
-         * @param false false
-         * @return of bits only result
-         */
         return ofBitsOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of bytes only.
+     * Creates a new instance of bytes only.
      *
      * @param value value
      * @return of bytes only result
      */
     public static NMemorySize ofBytesOnly(long value) {
-        /**
-         * Creates a new instance of of bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of bytes only result
-         */
         return ofBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of kilo bytes only.
+     * Creates a new instance of kilo bytes only.
      *
      * @param value value
      * @return of kilo bytes only result
      */
     public static NMemorySize ofKiloBytesOnly(long value) {
-        /**
-         * Creates a new instance of of kilo bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of kilo bytes only result
-         */
         return ofKiloBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of mega bytes only.
+     * Creates a new instance of mega bytes only.
      *
      * @param value value
      * @return of mega bytes only result
      */
     public static NMemorySize ofMegaBytesOnly(long value) {
-        /**
-         * Creates a new instance of of mega bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of mega bytes only result
-         */
         return ofMegaBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of tera bytes only.
+     * Creates a new instance of tera bytes only.
      *
      * @param value value
      * @return of tera bytes only result
      */
     public static NMemorySize ofTeraBytesOnly(long value) {
-        /**
-         * Creates a new instance of of tera bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of tera bytes only result
-         */
         return ofTeraBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of peta bytes only.
+     * Creates a new instance of peta bytes only.
      *
      * @param value value
      * @return of peta bytes only result
      */
     public static NMemorySize ofPetaBytesOnly(long value) {
-        /**
-         * Creates a new instance of of peta bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of peta bytes only result
-         */
         return ofPetaBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of zeta bytes only.
+     * Creates a new instance of zeta bytes only.
      *
      * @param value value
      * @return of zeta bytes only result
      */
     public static NMemorySize ofZetaBytesOnly(long value) {
-        /**
-         * Creates a new instance of of zeta bytes only.
-         *
-         * @param value value
-         * @param false false
-         * @return of zeta bytes only result
-         */
         return ofZetaBytesOnly(value, false);
     }
 
     /**
-     * Creates a new instance of of bits.
+     * Creates a new instance of bits.
      *
      * @param value value
      * @return of bits result
      */
     public static NMemorySize ofBits(long value) {
-        /**
-         * Creates a new instance of of bits.
-         *
-         * @param value value
-         * @param false false
-         * @return of bits result
-         */
         return ofBits(value, false);
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param value value
      * @return of bytes result
      */
     public static NMemorySize ofBytes(long value) {
-        /**
-         * Creates a new instance of of bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of bytes result
-         */
         return ofBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of kilo bytes.
+     * Creates a new instance of kilo bytes.
      *
      * @param value value
      * @return of kilo bytes result
      */
     public static NMemorySize ofKiloBytes(long value) {
-        /**
-         * Creates a new instance of of kilo bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of kilo bytes result
-         */
         return ofKiloBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of mega bytes.
+     * Creates a new instance of mega bytes.
      *
      * @param value value
      * @return of mega bytes result
      */
     public static NMemorySize ofMegaBytes(long value) {
-        /**
-         * Creates a new instance of of mega bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of mega bytes result
-         */
         return ofMegaBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of tera bytes.
+     * Creates a new instance of tera bytes.
      *
      * @param value value
      * @return of tera bytes result
      */
     public static NMemorySize ofTeraBytes(long value) {
-        /**
-         * Creates a new instance of of tera bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of tera bytes result
-         */
         return ofTeraBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of peta bytes.
+     * Creates a new instance of peta bytes.
      *
      * @param value value
      * @return of peta bytes result
      */
     public static NMemorySize ofPetaBytes(long value) {
-        /**
-         * Creates a new instance of of peta bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of peta bytes result
-         */
         return ofPetaBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of zeta bytes.
+     * Creates a new instance of zeta bytes.
      *
      * @param value value
      * @return of zeta bytes result
      */
     public static NMemorySize ofZetaBytes(long value) {
-        /**
-         * Creates a new instance of of zeta bytes.
-         *
-         * @param value value
-         * @param false false
-         * @return of zeta bytes result
-         */
         return ofZetaBytes(value, false);
     }
 
     /**
-     * Creates a new instance of of bits only.
+     * Creates a new instance of bits only.
      *
      * @param value value
      * @param iec iec
      * @return of bits only result
      */
     public static NMemorySize ofBitsOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.BIT n memory unit.bit
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.BIT, iec);
     }
 
     /**
-     * Creates a new instance of of bytes only.
+     * Creates a new instance of bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of bytes only result
      */
     public static NMemorySize ofBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.BYTE n memory unit.byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of kilo bytes only.
+     * Creates a new instance of kilo bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of kilo bytes only result
      */
     public static NMemorySize ofKiloBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.KILO_BYTE n memory unit.kilo_byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.KILO_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of mega bytes only.
+     * Creates a new instance of mega bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of mega bytes only result
      */
     public static NMemorySize ofMegaBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.MEGA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of tera bytes only.
+     * Creates a new instance of tera bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of tera bytes only result
      */
     public static NMemorySize ofTeraBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.TERA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of peta bytes only.
+     * Creates a new instance of peta bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of peta bytes only result
      */
     public static NMemorySize ofPetaBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.PETA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of zeta bytes only.
+     * Creates a new instance of zeta bytes only.
      *
      * @param value value
      * @param iec iec
      * @return of zeta bytes only result
      */
     public static NMemorySize ofZetaBytesOnly(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param value value
-         * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-         * @param iec iec
-         * @return of unit only result
-         */
         return ofUnitOnly(value, NMemoryUnit.ZETA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param value value
      * @param iec iec
      * @return of bytes result
      */
     public static NMemorySize ofBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.BYTE n memory unit.byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of kilo bytes.
+     * Creates a new instance of kilo bytes.
      *
      * @param value value
      * @param iec iec
      * @return of kilo bytes result
      */
     public static NMemorySize ofKiloBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.KILO_BYTE n memory unit.kilo_byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.KILO_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of mega bytes.
+     * Creates a new instance of mega bytes.
      *
      * @param value value
      * @param iec iec
      * @return of mega bytes result
      */
     public static NMemorySize ofMegaBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.MEGA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of tera bytes.
+     * Creates a new instance of tera bytes.
      *
      * @param value value
      * @param iec iec
      * @return of tera bytes result
      */
     public static NMemorySize ofTeraBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.TERA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of peta bytes.
+     * Creates a new instance of peta bytes.
      *
      * @param value value
      * @param iec iec
      * @return of peta bytes result
      */
     public static NMemorySize ofPetaBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.PETA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of zeta bytes.
+     * Creates a new instance of zeta bytes.
      *
      * @param value value
      * @param iec iec
      * @return of zeta bytes result
      */
     public static NMemorySize ofZetaBytes(long value, boolean iec) {
-        /**
-         * Creates a new instance of of unit.
-         *
-         * @param value value
-         * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-         * @param iec iec
-         * @return of unit result
-         */
         return ofUnit(value, NMemoryUnit.ZETA_BYTE, iec);
     }
 
     /**
-     * Creates a new instance of of unit only.
+     * Creates a new instance of unit only.
      *
      * @param value value
      * @param unit unit
@@ -1183,7 +775,7 @@ public class NMemorySize implements Serializable{
     }
 
     /**
-     * Creates a new instance of of unit.
+     * Creates a new instance of unit.
      *
      * @param valueInUnit value in unit
      * @param unit unit
@@ -1191,19 +783,11 @@ public class NMemorySize implements Serializable{
      * @return of unit result
      */
     public static NMemorySize ofUnit(long valueInUnit, NMemoryUnit unit, boolean iec) {
-        /**
-         * Creates a new instance of of unit only.
-         *
-         * @param valueInUnit value in unit
-         * @param unit unit
-         * @param iec).canonicalize( iec).canonicalize(
-         * @return of unit only result
-         */
         return ofUnitOnly(valueInUnit, unit, iec).canonicalize();
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param durationMillis duration millis
      * @param smallestUnit smallest unit
@@ -1217,7 +801,7 @@ public class NMemorySize implements Serializable{
 
 
     /**
-     * Creates a new instance of of bytes and bits.
+     * Creates a new instance of bytes and bits.
      *
      * @param bytes bytes
      * @param bits bits
@@ -1229,7 +813,7 @@ public class NMemorySize implements Serializable{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param values values
      * @param smallestUnit smallest unit
@@ -1242,22 +826,13 @@ public class NMemorySize implements Serializable{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param values values
      * @param iec iec
      * @return of result
      */
     public static NMemorySize of(long[] values, boolean iec) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param values values
-         * @param null null
-         * @param null null
-         * @param iec iec
-         * @return of result
-         */
         return of(values, null, null, iec);
     }
 
@@ -1321,13 +896,6 @@ public class NMemorySize implements Serializable{
      * @return is zero down result
      */
     public boolean isZeroDown(NMemoryUnit unit) {
-        /**
-         * Checks if is zero.
-         *
-         * @param NMemoryUnit.BIT n memory unit.bit
-         * @param unit unit
-         * @return is zero result
-         */
         return isZero(NMemoryUnit.BIT, unit);
     }
 
@@ -1338,13 +906,6 @@ public class NMemorySize implements Serializable{
      * @return is zero up result
      */
     public boolean isZeroUp(NMemoryUnit unit) {
-        /**
-         * Checks if is zero.
-         *
-         * @param unit unit
-         * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-         * @return is zero result
-         */
         return isZero(unit, NMemoryUnit.TERA_BYTE);
     }
 
@@ -1357,53 +918,18 @@ public class NMemorySize implements Serializable{
     public long getAs(NMemoryUnit unit) {
         switch (unit) {
             case ZETA_BYTE:
-                /**
-                 * As zeta bytes.
-                 *
-                 * @return as zeta bytes result
-                 */
                 return asZetaBytes();
             case PETA_BYTE:
-                /**
-                 * As peta bytes.
-                 *
-                 * @return as peta bytes result
-                 */
                 return asPetaBytes();
             case TERA_BYTE:
-                /**
-                 * As tera bytes.
-                 *
-                 * @return as tera bytes result
-                 */
                 return asTeraBytes();
             case MEGA_BYTE:
-                /**
-                 * As mega bytes.
-                 *
-                 * @return as mega bytes result
-                 */
                 return asMegaBytes();
             case KILO_BYTE:
-                /**
-                 * Ass kilo bytes.
-                 *
-                 * @return ass kilo bytes result
-                 */
                 return assKiloBytes();
             case BYTE:
-                /**
-                 * As bytes.
-                 *
-                 * @return as bytes result
-                 */
                 return asBytes();
             case BIT:
-                /**
-                 * As bits.
-                 *
-                 * @return as bits result
-                 */
                 return asBits();
         }
         return 0;
@@ -1447,12 +973,6 @@ public class NMemorySize implements Serializable{
      * @return bits result
      */
     public long bits() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.BIT n memory unit.bit
-         * @return get result
-         */
         return get(NMemoryUnit.BIT);
     }
 
@@ -1462,12 +982,6 @@ public class NMemorySize implements Serializable{
      * @return bytes result
      */
     public long bytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.BYTE n memory unit.byte
-         * @return get result
-         */
         return get(NMemoryUnit.BYTE);
     }
 
@@ -1477,12 +991,6 @@ public class NMemorySize implements Serializable{
      * @return kilo bytes result
      */
     public long kiloBytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.KILO_BYTE n memory unit.kilo_byte
-         * @return get result
-         */
         return get(NMemoryUnit.KILO_BYTE);
     }
 
@@ -1492,12 +1000,6 @@ public class NMemorySize implements Serializable{
      * @return mega bytes result
      */
     public long megaBytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.MEGA_BYTE n memory unit.mega_byte
-         * @return get result
-         */
         return get(NMemoryUnit.MEGA_BYTE);
     }
 
@@ -1507,12 +1009,6 @@ public class NMemorySize implements Serializable{
      * @return tera bytes result
      */
     public long teraBytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.TERA_BYTE n memory unit.tera_byte
-         * @return get result
-         */
         return get(NMemoryUnit.TERA_BYTE);
     }
 
@@ -1522,12 +1018,6 @@ public class NMemorySize implements Serializable{
      * @return peta bytes result
      */
     public long petaBytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.PETA_BYTE n memory unit.peta_byte
-         * @return get result
-         */
         return get(NMemoryUnit.PETA_BYTE);
     }
 
@@ -1537,12 +1027,6 @@ public class NMemorySize implements Serializable{
      * @return zeta bytes result
      */
     public long zetaBytes() {
-        /**
-         * Returns the get.
-         *
-         * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-         * @return get result
-         */
         return get(NMemoryUnit.ZETA_BYTE);
     }
 
@@ -1691,13 +1175,6 @@ public class NMemorySize implements Serializable{
      * @return normalize result
      */
     public NMemorySize normalize() {
-        /**
-         * With units.
-         *
-         * @param NMemoryUnit.BIT n memory unit.bit
-         * @param NMemoryUnit.ZETA_BYTE).canonicalize( n memory unit.zeta_byte).canonicalize(
-         * @return with units result
-         */
         return withUnits(NMemoryUnit.BIT,NMemoryUnit.ZETA_BYTE).canonicalize();
     }
 
@@ -1707,12 +1184,6 @@ public class NMemorySize implements Serializable{
      * @return with largest unit result
      */
     public NMemorySize withLargestUnit() {
-        /**
-         * With largest unit.
-         *
-         * @param NMemoryUnit.ZETA_BYTE n memory unit.zeta_byte
-         * @return with largest unit result
-         */
         return withLargestUnit(NMemoryUnit.ZETA_BYTE);
     }
     /**
@@ -1721,12 +1192,6 @@ public class NMemorySize implements Serializable{
      * @return with smallest unit result
      */
     public NMemorySize withSmallestUnit() {
-        /**
-         * With smallest unit.
-         *
-         * @param NMemoryUnit.BIT n memory unit.bit
-         * @return with smallest unit result
-         */
         return withSmallestUnit(NMemoryUnit.BIT);
     }
     /**
@@ -1765,12 +1230,6 @@ public class NMemorySize implements Serializable{
         }
         NMemorySize d = new NMemorySize(toUnitsArray(), smallestUnit, largestUnit, iec);
         if (this.bytes != d.bytes || this.bits != d.bits) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param "unexpected" "unexpected"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("unexpected");
         }
         return d.canonicalize();
@@ -1815,15 +1274,6 @@ public class NMemorySize implements Serializable{
         for (int i = 0; i < a.length; i++) {
             a[i] = -a[i];
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param a a
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @param iec iec
-         * @return of result
-         */
         return of(a, smallestUnit, largestUnit, iec);
     }
 
@@ -1856,15 +1306,6 @@ public class NMemorySize implements Serializable{
         double ms = bytes * other;
         long msL = (long) (bytes * other);
         long ns = (long) (bits * other + (ms - msL) * 8);
-        /**
-         * Creates a new instance of of bytes and bits.
-         *
-         * @param msL ms l
-         * @param ns ns
-         * @param iec).withUnits(smallestUnit iec).with units(smallest unit
-         * @param largestUnit largest unit
-         * @return of bytes and bits result
-         */
         return ofBytesAndBits(msL, (int) ns, iec).withUnits(smallestUnit, largestUnit);
     }
 
@@ -1879,15 +1320,6 @@ public class NMemorySize implements Serializable{
         for (int i = 0; i < a.length; i++) {
             a[i] *= other;
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param a a
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @param iec iec
-         * @return of result
-         */
         return of(a, smallestUnit, largestUnit, iec);
     }
 
@@ -1962,12 +1394,6 @@ public class NMemorySize implements Serializable{
         }
         NMemorySize d = new NMemorySize(values, smallestUnit, largestUnit, iec);
         if (this.bytes != d.bytes || this.bits != d.bits) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param this this
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("unexpected " + d + "<>" + this);
         }
         return d;
@@ -1979,11 +1405,6 @@ public class NMemorySize implements Serializable{
      * @return is zero result
      */
     public boolean isZero() {
-      /**
-       * Return.
-       *
-       * @param 0 0
-       */
         return ((bytes | bits) == 0);
     }
 
@@ -2114,12 +1535,6 @@ public class NMemorySize implements Serializable{
      * @return reduce to largest unit result
      */
     public NMemorySize reduceToLargestUnit() {
-        /**
-         * With smallest unit.
-         *
-         * @param largestUnit() largest unit()
-         * @return with smallest unit result
-         */
         return withSmallestUnit(largestUnit());
     }
 
@@ -2129,12 +1544,6 @@ public class NMemorySize implements Serializable{
      * @return reduce to smallest unit result
      */
     public NMemorySize reduceToSmallestUnit() {
-        /**
-         * With smallest unit.
-         *
-         * @param smallestUnit() smallest unit()
-         * @return with smallest unit result
-         */
         return withSmallestUnit(smallestUnit());
     }
 

@@ -622,11 +622,6 @@ public class NStreamTokenizer {
                 sb.append((char) c);
             }
             peekc = c;
-            /**
-             * Next token.
-             *
-             * @return next token result
-             */
             return nextToken();
         }
         if(_read_op()){

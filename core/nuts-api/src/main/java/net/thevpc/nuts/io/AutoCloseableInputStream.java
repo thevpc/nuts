@@ -36,9 +36,6 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public int read(byte[] b) throws IOException {
         int r = super.read(b);
         if (r < 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -48,9 +45,6 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public int read(byte[] b, int off, int len) throws IOException {
         int r = super.read(b, off, len);
         if (r == 0 && len > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -60,9 +54,6 @@ public class AutoCloseableInputStream extends java.io.InputStream implements Aut
     public long skip(long n) throws IOException {
         long r = super.skip(n);
         if (r == 0 && n > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;

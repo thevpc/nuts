@@ -133,12 +133,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public int hashCode() {
-            /**
-             * Returns the class.
-             *
-             * @param ).getName().hashCode( ).get name().hash code(
-             * @return get class result
-             */
             return getClass().getName().hashCode();
         }
 
@@ -161,12 +155,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public int hashCode() {
-            /**
-             * Returns the class.
-             *
-             * @param ).getName().hashCode( ).get name().hash code(
-             * @return get class result
-             */
             return getClass().getName().hashCode();
         }
 
@@ -189,12 +177,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public int hashCode() {
-            /**
-             * Returns the class.
-             *
-             * @param ).getName().hashCode( ).get name().hash code(
-             * @return get class result
-             */
             return getClass().getName().hashCode();
         }
 
@@ -222,11 +204,6 @@ public class NReservedNPredicateUtils {
                 return NStringUtils.isBlank((char[]) t);
             }
             if (t instanceof NBlankable) {
-              /**
-               * Return.
-               *
-               * @param t).isBlank( t).is blank(
-               */
                 return ((NBlankable) t).isBlank();
             }
             return false;
@@ -234,12 +211,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public int hashCode() {
-            /**
-             * Returns the class.
-             *
-             * @param ).getName().hashCode( ).get name().hash code(
-             * @return get class result
-             */
             return getClass().getName().hashCode();
         }
 
@@ -345,12 +316,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public String toString() {
-            /**
-             * With pars.
-             *
-             * @param withPars(right.toString() with pars(right.to string()
-             * @return with pars result
-             */
             return withPars(left.toString()) + " | " + withPars(right.toString());
         }
     }
@@ -402,12 +367,6 @@ public class NReservedNPredicateUtils {
 
         @Override
         public String toString() {
-            /**
-             * With pars.
-             *
-             * @param withPars(right.toString() with pars(right.to string()
-             * @return with pars result
-             */
             return withPars(left.toString()) + " & " + withPars(right.toString());
         }
     }

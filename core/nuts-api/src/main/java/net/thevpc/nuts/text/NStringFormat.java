@@ -12,7 +12,7 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NStringFormat<T> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param expectedType expected type

@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface NElementMetadata {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -22,7 +22,7 @@ public interface NElementMetadata {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param key key
      * @param value value
@@ -33,7 +33,7 @@ public interface NElementMetadata {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result

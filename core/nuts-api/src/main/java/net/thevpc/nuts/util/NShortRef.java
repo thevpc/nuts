@@ -5,7 +5,7 @@ package net.thevpc.nuts.util;
  */
 public class NShortRef extends NObjectRef<Short> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -13,7 +13,7 @@ public class NShortRef extends NObjectRef<Short> {
         return new NShortRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -29,11 +29,6 @@ public class NShortRef extends NObjectRef<Short> {
      * @return n short ref result
      */
     public NShortRef(Short value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -43,12 +38,6 @@ public class NShortRef extends NObjectRef<Short> {
      * @return inc result
      */
     public NShortRef inc() {
-        /**
-         * Inc.
-         *
-         * @param (short)1 (short)1
-         * @return inc result
-         */
         return inc((short)1);
     }
 
@@ -59,12 +48,6 @@ public class NShortRef extends NObjectRef<Short> {
      * @return inc result
      */
     public NShortRef inc(short value) {
-        /**
-         * Adds add.
-         *
-         * @param value value
-         * @return add result
-         */
         return add(value);
     }
 
@@ -77,18 +60,8 @@ public class NShortRef extends NObjectRef<Short> {
     public NShortRef add(short value) {
         final Short o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param o) o)
-           */
             set((short) (value + o));
         }
         return this;
@@ -103,18 +76,8 @@ public class NShortRef extends NObjectRef<Short> {
     public NShortRef mul(short value) {
         final Short o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value) value)
-           */
             set((short) (o * value));
         }
         return this;
@@ -129,18 +92,8 @@ public class NShortRef extends NObjectRef<Short> {
     public NShortRef div(short value) {
         final Short o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value) value)
-           */
             set((short) (o / value));
         }
         return this;
@@ -152,12 +105,6 @@ public class NShortRef extends NObjectRef<Short> {
      * @return dec result
      */
     public NShortRef dec() {
-        /**
-         * Adds add.
-         *
-         * @param -1 -1
-         * @return add result
-         */
         return add((short) -1);
     }
 
@@ -168,12 +115,6 @@ public class NShortRef extends NObjectRef<Short> {
      * @return dec result
      */
     public NShortRef dec(short value) {
-        /**
-         * Adds add.
-         *
-         * @param -value -value
-         * @return add result
-         */
         return add((short) -value);
     }
 

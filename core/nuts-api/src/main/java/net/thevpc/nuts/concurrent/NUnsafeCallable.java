@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 public interface NUnsafeCallable<T> extends NRedescribable<NUnsafeCallable<T>> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result
@@ -54,7 +54,7 @@ public interface NUnsafeCallable<T> extends NRedescribable<NUnsafeCallable<T>> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result

@@ -110,13 +110,6 @@ public class NNameFormat {
      * @return parse result
      */
     public static String[] parse(CharSequence value) {
-        /**
-         * Parse.
-         *
-         * @param value value
-         * @param false false
-         * @return parse result
-         */
         return parse(value, false);
     }
 
@@ -131,13 +124,6 @@ public class NNameFormat {
         if (value == null) {
             return new String[]{""};
         }
-        /**
-         * Parse.
-         *
-         * @param value.toString() value.to string()
-         * @param sep sep
-         * @return parse result
-         */
         return parse(value.toString(), sep);
     }
 
@@ -148,13 +134,6 @@ public class NNameFormat {
      * @return parse result
      */
     public static String[] parse(String value) {
-        /**
-         * Parse.
-         *
-         * @param value value
-         * @param false false
-         * @return parse result
-         */
         return parse(value, false);
     }
 
@@ -166,13 +145,6 @@ public class NNameFormat {
      */
     public static boolean isSeparator(char c) {
         int t = Character.getType(c);
-        /**
-         * Checks if is separator.
-         *
-         * @param c c
-         * @param t t
-         * @return is separator result
-         */
         return isSeparator(c,t);
     }
     /**

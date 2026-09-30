@@ -208,13 +208,6 @@ public final class NCharEscapeSet {
 
     /** Returns a new set with {@code extra} appended at the end. */
     public NCharEscapeSet andThen(NCharEscapeSet extra) {
-        /**
-         * Combine.
-         *
-         * @param this this
-         * @param extra extra
-         * @return combine result
-         */
         return combine(this, extra);
     }
 

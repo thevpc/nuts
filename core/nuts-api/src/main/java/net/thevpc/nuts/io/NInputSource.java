@@ -43,7 +43,7 @@ import java.nio.file.Path;
 public interface NInputSource extends NContentMetadataProvider, NInputContentProvider {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param file file
      * @return of result
@@ -53,7 +53,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param file file
      * @return of result
@@ -63,7 +63,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param file file
      * @return of result
@@ -73,7 +73,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param bytes bytes
      * @return of result
@@ -103,7 +103,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -112,7 +112,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param inputSource input source
      * @return of result
@@ -122,7 +122,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of multi read.
+     * Creates a new instance of multi read.
      *
      * @param source source
      * @return of multi read result
@@ -132,7 +132,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param inputStream input stream
      * @param metadata metadata
@@ -143,7 +143,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param reader reader
      * @param metadata metadata
@@ -154,7 +154,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param reader reader
      * @return of result
@@ -165,7 +165,7 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param bytes bytes
      * @param metadata metadata
@@ -176,24 +176,17 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @return of result
      */
     static NInputSource of(NInputStreamProvider other) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param other other
-         * @param null null
-         * @return of result
-         */
         return of(other, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @param metadata metadata
@@ -206,24 +199,17 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @return of result
      */
     static NInputSource of(NReaderProvider other) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param other other
-         * @param null null
-         * @return of result
-         */
         return of(other, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @param metadata metadata

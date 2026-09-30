@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  */
 public interface NTypeLoader {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result

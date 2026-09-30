@@ -21,65 +21,31 @@ public abstract class NIteratorDelegate<T> extends NIteratorBase<T> {
 
     @Override
     public boolean hasNextImpl() {
-        /**
-         * Base iterator.
-         *
-         * @param ).hasNext( ).has next(
-         * @return base iterator result
-         */
         return baseIterator().hasNext();
     }
 
     @Override
     public T next() {
-        /**
-         * Base iterator.
-         *
-         * @param ).next( ).next(
-         * @return base iterator result
-         */
         return baseIterator().next();
     }
 
     @Override
     public NElement describe() {
-        /**
-         * Base iterator.
-         *
-         * @param ).describe( ).describe(
-         * @return base iterator result
-         */
         return baseIterator().describe();
     }
 
     @Override
     public void remove() {
-      /**
-       * Base iterator.
-       *
-       * @param ).remove( ).remove(
-       */
         baseIterator().remove();
     }
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-      /**
-       * Base iterator.
-       *
-       * @param ).forEachRemaining(action ).for each remaining(action
-       */
         baseIterator().forEachRemaining(action);
     }
 
     @Override
     public List<T> toList() {
-        /**
-         * Base iterator.
-         *
-         * @param ).toList( ).to list(
-         * @return base iterator result
-         */
         return baseIterator().toList();
     }
 }

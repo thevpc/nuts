@@ -18,12 +18,6 @@ public class NErrorOptionalException extends NException {
      * @return n error optional exception result
      */
     public NErrorOptionalException(NMsg formattedMessage, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       * @param cause cause
-       */
         super(formattedMessage, cause);
     }
 

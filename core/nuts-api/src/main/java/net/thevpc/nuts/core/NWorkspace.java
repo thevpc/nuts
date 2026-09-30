@@ -62,17 +62,11 @@ import java.util.function.Supplier;
  */
 public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
     static NWorkspace of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

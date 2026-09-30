@@ -16,7 +16,7 @@ import java.nio.CharBuffer;
  */
 public interface NCharQueue extends CharSequence {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -25,7 +25,7 @@ public interface NCharQueue extends CharSequence {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param size size
      * @return of result
@@ -35,7 +35,7 @@ public interface NCharQueue extends CharSequence {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param size size
      * @param increment increment
@@ -46,7 +46,7 @@ public interface NCharQueue extends CharSequence {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @return of result

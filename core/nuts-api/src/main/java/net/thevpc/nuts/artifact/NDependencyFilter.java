@@ -45,7 +45,7 @@ public interface NDependencyFilter extends NFilter {
     //////// COMMON START
 
     /**
-     * Creates a new instance of of nonnull.
+     * Creates a new instance of nonnull.
      *
      * @param filter filter
      * @return of nonnull result
@@ -55,7 +55,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of always.
+     * Creates a new instance of always.
      *
      * @return of always result
      */
@@ -64,7 +64,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of never.
+     * Creates a new instance of never.
      *
      * @return of never result
      */
@@ -73,7 +73,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of all.
+     * Creates a new instance of all.
      *
      * @param others others
      * @return of all result
@@ -83,7 +83,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of any.
+     * Creates a new instance of any.
      *
      * @param others others
      * @return of any result
@@ -93,7 +93,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of not.
+     * Creates a new instance of not.
      *
      * @param other other
      * @return of not result
@@ -103,7 +103,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of none.
+     * Creates a new instance of none.
      *
      * @param others others
      * @return of none result
@@ -113,7 +113,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of from.
+     * Creates a new instance of from.
      *
      * @param a a
      * @return of from result
@@ -123,7 +123,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of as.
+     * Creates a new instance of as.
      *
      * @param a a
      * @return of as result
@@ -133,7 +133,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result
@@ -369,7 +369,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of runnable.
+     * Creates a new instance of runnable.
      *
      * @param optional optional
      * @param anyEnv any env
@@ -398,7 +398,7 @@ public interface NDependencyFilter extends NFilter {
     }
 
     /**
-     * Creates a new instance of of desktop.
+     * Creates a new instance of desktop.
      *
      * @param de de
      * @return of desktop result

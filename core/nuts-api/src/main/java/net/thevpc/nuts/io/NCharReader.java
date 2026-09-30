@@ -25,13 +25,6 @@ public class NCharReader extends Reader {
      * @return n char reader result
      */
     public NCharReader(Reader reader) {
-      /**
-       * This.
-       *
-       * @param reader reader
-       * @param 1024 1024
-       * @param true true
-       */
         this(reader, 1024, true);
     }
 
@@ -82,11 +75,6 @@ public class NCharReader extends Reader {
      * @return peek at result
      */
     public int peekAt(int offset) {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(offset + 1);
         int index = pos + offset;
         return (index < limit) ? buffer[index] : -1;
@@ -113,11 +101,6 @@ public class NCharReader extends Reader {
      * @return can read result
      */
     public boolean canRead() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         return limit - pos > 0;
     }
@@ -129,11 +112,6 @@ public class NCharReader extends Reader {
      * @return can read result
      */
     public boolean canRead(int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(count);
         return limit - pos >= count;
     }
@@ -145,14 +123,6 @@ public class NCharReader extends Reader {
      * @return read result
      */
     public int read(char[] buffer) {
-        /**
-         * Read.
-         *
-         * @param buffer buffer
-         * @param 0 0
-         * @param buffer.length buffer.length
-         * @return read result
-         */
         return read(buffer, 0, buffer.length);
     }
 
@@ -165,11 +135,6 @@ public class NCharReader extends Reader {
      * @return read result
      */
     public int read(char[] buffer, int offset, int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(count);
         int available = Math.min(count, limit - pos);
         if (available <= 0) return -1;
@@ -187,11 +152,6 @@ public class NCharReader extends Reader {
      */
     public boolean read(String text) {
         if (text == null || text.isEmpty()) return true;
-      /**
-       * Fill.
-       *
-       * @param text.length() text.length()
-       */
         fill(text.length());
         if (limit - pos < text.length()) return false;
         for (int i = 0; i < text.length(); i++) {
@@ -209,11 +169,6 @@ public class NCharReader extends Reader {
      */
     public boolean peek(String text) {
         if (text == null || text.isEmpty()) return true;
-      /**
-       * Fill.
-       *
-       * @param text.length() text.length()
-       */
         fill(text.length());
         if (limit - pos < text.length()) return false;
         for (int i = 0; i < text.length(); i++) {
@@ -228,11 +183,6 @@ public class NCharReader extends Reader {
      * @return read char result
      */
     public char readChar() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         if (pos >= limit) throw NException.ofSafeIOException(new EOFException());
         return buffer[pos++];
@@ -240,11 +190,6 @@ public class NCharReader extends Reader {
 
     @Override
     public int read() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         if (pos >= limit) {
             return -1;
@@ -260,11 +205,6 @@ public class NCharReader extends Reader {
      * @return peek result
      */
     public String peek(int offset, int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(offset + count);
         int available = Math.min(count, limit - pos - offset);
         return new String(buffer, pos + offset, available);
@@ -318,11 +258,6 @@ public class NCharReader extends Reader {
      * @return peek result
      */
     public int peek() {
-      /**
-       * Fill.
-       *
-       * @param 1 1
-       */
         fill(1);
         return pos < limit ? buffer[pos] : -1;
     }
@@ -334,11 +269,6 @@ public class NCharReader extends Reader {
      * @return peek result
      */
     public String peek(int count) {
-      /**
-       * Fill.
-       *
-       * @param count count
-       */
         fill(count);
         int available = Math.min(count, limit - pos);
         return new String(buffer, pos, available);

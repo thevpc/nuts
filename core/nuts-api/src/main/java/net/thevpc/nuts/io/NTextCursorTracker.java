@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NIORPI;
  */
 public interface NTextCursorTracker {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -18,7 +18,7 @@ public interface NTextCursorTracker {
         return NIORPI.of().createTextCursorTracker();
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param tabSize tab size
      * @param maxRewindDepth max rewind depth

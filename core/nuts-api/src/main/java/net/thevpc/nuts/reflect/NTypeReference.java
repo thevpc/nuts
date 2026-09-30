@@ -50,7 +50,7 @@ public abstract class NTypeReference<T> implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param args args
@@ -81,11 +81,6 @@ public abstract class NTypeReference<T> implements Serializable {
                     : (Class<?>) ((ParameterizedType) type).getRawType();
             constructor = rawType.getConstructor();
         }
-      /**
-       * Return.
-       *
-       * @param constructor.newInstance( constructor.new instance(
-       */
         return (T) constructor.newInstance();
     }
 
@@ -120,12 +115,6 @@ public abstract class NTypeReference<T> implements Serializable {
      * @return is assignable from result
      */
     public boolean isAssignableFrom(NTypeReference<?> cls) {
-        /**
-         * Type class.
-         *
-         * @param ).isAssignableFrom(cls.typeClass() ).is assignable from(cls.type class()
-         * @return type class result
-         */
         return typeClass().isAssignableFrom(cls.typeClass());
     }
 
@@ -150,12 +139,6 @@ public abstract class NTypeReference<T> implements Serializable {
      * @return is interface result
      */
     public boolean isInterface() {
-        /**
-         * Type class.
-         *
-         * @param ).isInterface( ).is interface(
-         * @return type class result
-         */
         return typeClass().isInterface();
     }
 
@@ -183,12 +166,6 @@ public abstract class NTypeReference<T> implements Serializable {
         if (superclass == null) {
             return null;
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param superclass superclass
-         * @return of result
-         */
         return of(superclass);
     }
 
@@ -199,12 +176,6 @@ public abstract class NTypeReference<T> implements Serializable {
      * @return is instance result
      */
     public <T> boolean isInstance(T t) {
-        /**
-         * Type class.
-         *
-         * @param ).isInstance(t ).is instance(t
-         * @return type class result
-         */
         return typeClass().isInstance(t);
     }
 

@@ -39,37 +39,25 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NDescriptorWriter extends NObjectWriter, NComponent {
     /**
-     * Creates a new instance of of ntf.
+     * Creates a new instance of ntf.
      *
      * @return of ntf result
      */
     static NDescriptorWriter ofNtf() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true ).ntf(true
-         * @return of result
-         */
         return of().ntf(true);
     }
 
     /**
-     * Creates a new instance of of plain.
+     * Creates a new instance of plain.
      *
      * @return of plain result
      */
     static NDescriptorWriter ofPlain() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false ).ntf(false
-         * @return of result
-         */
         return of().ntf(false);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -78,92 +66,56 @@ public interface NDescriptorWriter extends NObjectWriter, NComponent {
     }
 
     /**
-     * Creates a new instance of of ntf maven.
+     * Creates a new instance of ntf maven.
      *
      * @return of ntf maven result
      */
     static NDescriptorWriter ofNtfMaven() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(true).descriptor style(n descriptor style.maven
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
     /**
-     * Creates a new instance of of maven.
+     * Creates a new instance of maven.
      *
      * @return of maven result
      */
     static NDescriptorWriter ofMaven() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MAVEN ).ntf(false).descriptor style(n descriptor style.maven
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.MAVEN);
     }
 
     /**
-     * Creates a new instance of of ntf nuts.
+     * Creates a new instance of ntf nuts.
      *
      * @return of ntf nuts result
      */
     static NDescriptorWriter ofNtfNuts() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.NUTS ).ntf(true).descriptor style(n descriptor style.nuts
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     /**
-     * Creates a new instance of of nuts.
+     * Creates a new instance of nuts.
      *
      * @return of nuts result
      */
     static NDescriptorWriter ofNuts() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.NUTS ).ntf(false).descriptor style(n descriptor style.nuts
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.NUTS);
     }
 
     /**
-     * Creates a new instance of of ntf manifest.
+     * Creates a new instance of ntf manifest.
      *
      * @return of ntf manifest result
      */
     static NDescriptorWriter ofNtfManifest() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(true).descriptor style(n descriptor style.manifest
-         * @return of result
-         */
         return of().ntf(true).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 
     /**
-     * Creates a new instance of of manifest.
+     * Creates a new instance of manifest.
      *
      * @return of manifest result
      */
     static NDescriptorWriter ofManifest() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST ).ntf(false).descriptor style(n descriptor style.manifest
-         * @return of result
-         */
         return of().ntf(false).descriptorStyle(NDescriptorStyle.MANIFEST);
     }
 

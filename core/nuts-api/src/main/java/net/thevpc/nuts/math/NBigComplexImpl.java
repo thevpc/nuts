@@ -22,18 +22,12 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     private BigDecimal imag;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result
      */
     public static NBigComplex of(String any) {
-        /**
-         * Parse.
-         *
-         * @param any).get( any).get(
-         * @return parse result
-         */
         return parse(any).get();
     }
     /**
@@ -55,7 +49,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param x x
      * @param y y
@@ -66,7 +60,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     }
 
     /**
-     * Creates a new instance of of polar.
+     * Creates a new instance of polar.
      *
      * @param r r
      * @param theta theta
@@ -125,42 +119,21 @@ public class NBigComplexImpl extends Number implements NBigComplex{
 
     @Override
     public double doubleValue() {
-        /**
-         * Real value.
-         *
-         * @param ).doubleValue( ).double value(
-         * @return real value result
-         */
         return realValue().doubleValue();
     }
 
     @Override
     public int intValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (int) doubleValue();
     }
 
     @Override
     public long longValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (long) doubleValue();
     }
 
     @Override
     public float floatValue() {
-      /**
-       * Return.
-       *
-       * @param doubleValue( double value(
-       */
         return (float) doubleValue();
     }
 
@@ -179,37 +152,13 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     @Override
     public String toString() {
         if (imag.equals(BigDecimal.ZERO)) {
-            /**
-             * Real to string.
-             *
-             * @param real real
-             * @return real to string result
-             */
             return realToString(real);
         } else if (real.equals(BigDecimal.ZERO)) {
-            /**
-             * Imag to string.
-             *
-             * @param imag imag
-             * @return imag to string result
-             */
             return imagToString(imag);
         } else {
             if (imag.compareTo(BigDecimal.ZERO) < 0) {
-                /**
-                 * Real to string.
-                 *
-                 * @param imagToString(imag imag to string(imag
-                 * @return real to string result
-                 */
                 return realToString(real) + imagToString(imag);
             }
-            /**
-             * Real to string.
-             *
-             * @param imagToString(imag imag to string(imag
-             * @return real to string result
-             */
             return realToString(real) + "+" + imagToString(imag);
         }
     }
@@ -329,12 +278,6 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
 
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
-            /**
-             * Arithmetic exception.
-             *
-             * @param number." number."
-             * @return arithmetic exception result
-             */
             throw new ArithmeticException("Division by zero complex number.");
         }
 
@@ -355,12 +298,6 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         mc= NNumberUtils.contextMathContext(mc);
         BigDecimal denominator = this.real.multiply(this.real, mc).add(this.imag.multiply(this.imag, mc), mc);
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
-            /**
-             * Arithmetic exception.
-             *
-             * @param undefined." undefined."
-             * @return arithmetic exception result
-             */
             throw new ArithmeticException("Inverse of zero complex number is undefined.");
         }
         return new NBigComplexImpl(

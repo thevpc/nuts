@@ -11,41 +11,27 @@ import java.lang.reflect.Type;
 public interface NPlatformSignature extends NSignature<Type, NPlatformSignature> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param types types
      * @return of result
      */
     static NPlatformSignature of(Type... types) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @param types types
-         * @return of result
-         */
         return of(null, types);
     }
 
     /**
-     * Creates a new instance of of var args.
+     * Creates a new instance of var args.
      *
      * @param types types
      * @return of var args result
      */
     static NPlatformSignature ofVarArgs(Type... types) {
-        /**
-         * Creates a new instance of of var args.
-         *
-         * @param null null
-         * @param types types
-         * @return of var args result
-         */
         return ofVarArgs(null, types);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param types types
@@ -56,7 +42,7 @@ public interface NPlatformSignature extends NSignature<Type, NPlatformSignature>
     }
 
     /**
-     * Creates a new instance of of var args.
+     * Creates a new instance of var args.
      *
      * @param name name
      * @param types types
@@ -67,7 +53,7 @@ public interface NPlatformSignature extends NSignature<Type, NPlatformSignature>
     }
 
     /**
-     * Creates a new instance of of map.
+     * Creates a new instance of map.
      *
      * @return of map result
      */

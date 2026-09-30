@@ -142,9 +142,6 @@ public class NDuration implements Serializable, NElementSimple {
             largestUnit = this.smallestUnit;
         }
         this.largestUnit = largestUnit;
-      /**
-       * Apply units.
-       */
         applyUnits();
     }
 
@@ -174,9 +171,6 @@ public class NDuration implements Serializable, NElementSimple {
             largestUnit = this.smallestUnit;
         }
         this.largestUnit = largestUnit;
-      /**
-       * Apply units.
-       */
         applyUnits();
     }
 
@@ -323,9 +317,6 @@ public class NDuration implements Serializable, NElementSimple {
                 largestUnit = this.smallestUnit;
             }
             this.largestUnit = largestUnit;
-          /**
-           * Apply units.
-           */
             applyUnits();
         }
     }
@@ -352,11 +343,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return rebuild time nanos result
      */
     private int rebuildTimeNanos() {
-      /**
-       * Return.
-       *
-       * @param 1000 1000
-       */
         return (int) (nanos + micros * 1000);
     }
 
@@ -526,11 +512,6 @@ public class NDuration implements Serializable, NElementSimple {
                                                                     weeks != 0 ? ChronoUnit.WEEKS :
                                                                             months != 0 ? ChronoUnit.MONTHS :
                                                                                     years != 0 ? ChronoUnit.YEARS :
-                                                                                          /**
-                                                                                           * Normalize.
-                                                                                           *
-                                                                                           * @param ChronoUnit.FOREVER chrono unit.forever
-                                                                                           */
                                                                                             normalize(ChronoUnit.FOREVER);
         }
     }
@@ -554,11 +535,6 @@ public class NDuration implements Serializable, NElementSimple {
                                                                     milliSeconds != 0 ? ChronoUnit.MILLIS :
                                                                             micros != 0 ? ChronoUnit.MICROS :
                                                                                     nanos != 0 ? ChronoUnit.NANOS :
-                                                                                          /**
-                                                                                           * Normalize.
-                                                                                           *
-                                                                                           * @param ChronoUnit.FOREVER chrono unit.forever
-                                                                                           */
                                                                                             normalize(ChronoUnit.FOREVER);
         }
     }
@@ -622,13 +598,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of nanos only result
      */
     public static NDuration ofNanosOnly(long durationNanos) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationNanos duration nanos
-         * @param ChronoUnit.MILLIS chrono unit.millis
-         * @return of unit only result
-         */
         return ofUnitOnly(durationNanos, ChronoUnit.MILLIS);
     }
 
@@ -639,13 +608,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of millis only result
      */
     public static NDuration ofMillisOnly(long durationMillis) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationMillis duration millis
-         * @param ChronoUnit.MILLIS chrono unit.millis
-         * @return of unit only result
-         */
         return ofUnitOnly(durationMillis, ChronoUnit.MILLIS);
     }
 
@@ -656,13 +618,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of seconds only result
      */
     public static NDuration ofSecondsOnly(long durationSeconds) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationSeconds duration seconds
-         * @param ChronoUnit.SECONDS chrono unit.seconds
-         * @return of unit only result
-         */
         return ofUnitOnly(durationSeconds, ChronoUnit.SECONDS);
     }
 
@@ -673,13 +628,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of minutes only result
      */
     public static NDuration ofMinutesOnly(long durationMinutes) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationMinutes duration minutes
-         * @param ChronoUnit.MINUTES chrono unit.minutes
-         * @return of unit only result
-         */
         return ofUnitOnly(durationMinutes, ChronoUnit.MINUTES);
     }
 
@@ -690,13 +638,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of hours only result
      */
     public static NDuration ofHoursOnly(long durationHours) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationHours duration hours
-         * @param ChronoUnit.HOURS chrono unit.hours
-         * @return of unit only result
-         */
         return ofUnitOnly(durationHours, ChronoUnit.HOURS);
     }
 
@@ -707,13 +648,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of days only result
      */
     public static NDuration ofDaysOnly(long durationDays) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationDays duration days
-         * @param ChronoUnit.DAYS chrono unit.days
-         * @return of unit only result
-         */
         return ofUnitOnly(durationDays, ChronoUnit.DAYS);
     }
 
@@ -724,13 +658,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of weeks only result
      */
     public static NDuration ofWeeksOnly(long durationWeeks) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationWeeks duration weeks
-         * @param ChronoUnit.WEEKS chrono unit.weeks
-         * @return of unit only result
-         */
         return ofUnitOnly(durationWeeks, ChronoUnit.WEEKS);
     }
 
@@ -741,13 +668,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of month only result
      */
     public static NDuration ofMonthOnly(long durationMonths) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationMonths duration months
-         * @param ChronoUnit.MONTHS chrono unit.months
-         * @return of unit only result
-         */
         return ofUnitOnly(durationMonths, ChronoUnit.MONTHS);
     }
 
@@ -758,13 +678,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of years only result
      */
     public static NDuration ofYearsOnly(long durationYears) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationYears duration years
-         * @param ChronoUnit.YEARS chrono unit.years
-         * @return of unit only result
-         */
         return ofUnitOnly(durationYears, ChronoUnit.YEARS);
     }
 
@@ -775,13 +688,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of seconds result
      */
     public static NDuration ofSeconds(long durationSeconds) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationSeconds duration seconds
-         * @param ChronoUnit.SECONDS chrono unit.seconds
-         * @return of unit result
-         */
         return ofUnit(durationSeconds, ChronoUnit.SECONDS);
     }
 
@@ -792,13 +698,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of minutes result
      */
     public static NDuration ofMinutes(long durationMinutes) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationMinutes duration minutes
-         * @param ChronoUnit.MINUTES chrono unit.minutes
-         * @return of unit result
-         */
         return ofUnit(durationMinutes, ChronoUnit.MINUTES);
     }
 
@@ -809,13 +708,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of hours result
      */
     public static NDuration ofHours(long durationHours) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationHours duration hours
-         * @param ChronoUnit.HOURS chrono unit.hours
-         * @return of unit result
-         */
         return ofUnit(durationHours, ChronoUnit.HOURS);
     }
 
@@ -826,13 +718,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of days result
      */
     public static NDuration ofDays(long durationDays) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationDays duration days
-         * @param ChronoUnit.DAYS chrono unit.days
-         * @return of unit result
-         */
         return ofUnit(durationDays, ChronoUnit.DAYS);
     }
 
@@ -843,13 +728,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of weeks result
      */
     public static NDuration ofWeeks(long durationWeeks) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationWeeks duration weeks
-         * @param ChronoUnit.WEEKS chrono unit.weeks
-         * @return of unit result
-         */
         return ofUnit(durationWeeks, ChronoUnit.WEEKS);
     }
 
@@ -860,13 +738,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of month result
      */
     public static NDuration ofMonth(long durationMonths) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationMonths duration months
-         * @param ChronoUnit.MONTHS chrono unit.months
-         * @return of unit result
-         */
         return ofUnit(durationMonths, ChronoUnit.MONTHS);
     }
 
@@ -877,13 +748,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of years result
      */
     public static NDuration ofYears(long durationYears) {
-        /**
-         * Creates a new instance of unit.
-         *
-         * @param durationYears duration years
-         * @param ChronoUnit.YEARS chrono unit.years
-         * @return of unit result
-         */
         return ofUnit(durationYears, ChronoUnit.YEARS);
     }
 
@@ -908,13 +772,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of unit result
      */
     public static NDuration ofUnit(long durationInUnit, ChronoUnit unit) {
-        /**
-         * Creates a new instance of unit only.
-         *
-         * @param durationInUnit duration in unit
-         * @param unit).normalize( unit).normalize(
-         * @return of unit only result
-         */
         return ofUnitOnly(durationInUnit, unit).normalize();
     }
 
@@ -983,14 +840,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return of result
      */
     public static NDuration of(long[] values) {
-        /**
-         * Creates a new instance of.
-         *
-         * @param values values
-         * @param null null
-         * @param null null
-         * @return of result
-         */
         return of(values, null, null);
     }
 
@@ -1004,13 +853,6 @@ public class NDuration implements Serializable, NElementSimple {
     public static NDuration ofSecondsAndNanos(long durationSeconds, long nanos) {
         long millis = durationSeconds * 1000 + nanos / 1000000;
         int ns = (int) (nanos % 1000000);
-        /**
-         * Creates a new instance of millis and nanos.
-         *
-         * @param millis millis
-         * @param ns ns
-         * @return of millis and nanos result
-         */
         return ofMillisAndNanos(millis, ns);
     }
 
@@ -1142,74 +984,24 @@ public class NDuration implements Serializable, NElementSimple {
     public long to(ChronoUnit unit) {
         switch (unit) {
             case YEARS:
-                /**
-                 * Converts to years.
-                 *
-                 * @return to years result
-                 */
                 return toYears();
             case MONTHS:
-                /**
-                 * Converts to months.
-                 *
-                 * @return to months result
-                 */
                 return toMonths();
             case WEEKS:
-                /**
-                 * Converts to weeks.
-                 *
-                 * @return to weeks result
-                 */
                 return toWeeks();
             case DAYS:
-                /**
-                 * Converts to days.
-                 *
-                 * @return to days result
-                 */
                 return toDays();
             case HOURS:
-                /**
-                 * Converts to hours.
-                 *
-                 * @return to hours result
-                 */
                 return toHours();
             case MINUTES:
-                /**
-                 * Converts to minutes.
-                 *
-                 * @return to minutes result
-                 */
                 return toMinutes();
             case SECONDS:
-                /**
-                 * Converts to seconds.
-                 *
-                 * @return to seconds result
-                 */
                 return toSeconds();
             case MILLIS:
-                /**
-                 * Converts to millis.
-                 *
-                 * @return to millis result
-                 */
                 return toMillis();
             case MICROS:
-                /**
-                 * Converts to micros.
-                 *
-                 * @return to micros result
-                 */
                 return toMicros();
             case NANOS:
-                /**
-                 * Converts to nanos.
-                 *
-                 * @return to nanos result
-                 */
                 return toNanos();
         }
         return 0;
@@ -1493,12 +1285,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return truncated to millis result
      */
     public NDuration truncatedToMillis() {
-        /**
-         * Truncated to.
-         *
-         * @param ChronoUnit.MILLIS chrono unit.millis
-         * @return truncated to result
-         */
         return truncatedTo(ChronoUnit.MILLIS);
     }
 
@@ -1508,12 +1294,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return truncated to seconds result
      */
     public NDuration truncatedToSeconds() {
-        /**
-         * Truncated to.
-         *
-         * @param ChronoUnit.SECONDS chrono unit.seconds
-         * @return truncated to result
-         */
         return truncatedTo(ChronoUnit.SECONDS);
     }
 
@@ -1523,12 +1303,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return truncated to minutes result
      */
     public NDuration truncatedToMinutes() {
-        /**
-         * Truncated to.
-         *
-         * @param ChronoUnit.MINUTES chrono unit.minutes
-         * @return truncated to result
-         */
         return truncatedTo(ChronoUnit.MINUTES);
     }
 
@@ -1538,12 +1312,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return truncated to days result
      */
     public NDuration truncatedToDays() {
-        /**
-         * Truncated to.
-         *
-         * @param ChronoUnit.DAYS chrono unit.days
-         * @return truncated to result
-         */
         return truncatedTo(ChronoUnit.DAYS);
     }
 
@@ -1554,12 +1322,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return truncated to result
      */
     public NDuration truncatedTo(ChronoUnit smallestUnit) {
-        /**
-         * With smallest unit.
-         *
-         * @param smallestUnit smallest unit
-         * @return with smallest unit result
-         */
         return withSmallestUnit(smallestUnit);
     }
 
@@ -1584,12 +1346,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return collapsed to result
      */
     public NDuration collapsedTo(ChronoUnit largestUnit) {
-        /**
-         * With largest unit.
-         *
-         * @param largestUnit largest unit
-         * @return with largest unit result
-         */
         return withLargestUnit(largestUnit);
     }
 
@@ -1615,13 +1371,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return clamped to result
      */
     public NDuration clampedTo(ChronoUnit smallestUnit, ChronoUnit largestUnit) {
-        /**
-         * With units.
-         *
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @return with units result
-         */
         return withUnits(smallestUnit, largestUnit);
     }
 
@@ -1679,14 +1428,6 @@ public class NDuration implements Serializable, NElementSimple {
         for (int i = 0; i < a.length; i++) {
             a[i] = -a[i];
         }
-        /**
-         * Creates a new instance of.
-         *
-         * @param a a
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @return of result
-         */
         return of(a, smallestUnit, largestUnit);
     }
 
@@ -1718,14 +1459,6 @@ public class NDuration implements Serializable, NElementSimple {
         double ms = timeMillis * other;
         long msL = (long) (timeMillis * other);
         long ns = (long) (timeNanos * other + (ms - msL) * 1000000);
-        /**
-         * Creates a new instance of millis and nanos.
-         *
-         * @param msL ms l
-         * @param ns).withUnits(smallestUnit ns).with units(smallest unit
-         * @param largestUnit largest unit
-         * @return of millis and nanos result
-         */
         return ofMillisAndNanos(msL, (int) ns).withUnits(smallestUnit, largestUnit);
     }
 
@@ -1740,14 +1473,6 @@ public class NDuration implements Serializable, NElementSimple {
         for (int i = 0; i < a.length; i++) {
             a[i] *= other;
         }
-        /**
-         * Creates a new instance of.
-         *
-         * @param a a
-         * @param smallestUnit smallest unit
-         * @param largestUnit largest unit
-         * @return of result
-         */
         return of(a, smallestUnit, largestUnit);
     }
 
@@ -1780,204 +1505,60 @@ public class NDuration implements Serializable, NElementSimple {
         // Step 1: Carry overflow values upward (handle both positive and negative)
         // Only normalize between units that are within our smallest/largest range
         if (shouldNormalizeUnit(ChronoUnit.NANOS, ChronoUnit.MICROS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.NANOS chrono unit.nanos
-           * @param ChronoUnit.MICROS chrono unit.micros
-           * @param 1000L 1000 l
-           */
             carryOverflow(values, ChronoUnit.NANOS, ChronoUnit.MICROS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MICROS, ChronoUnit.MILLIS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.MICROS chrono unit.micros
-           * @param ChronoUnit.MILLIS chrono unit.millis
-           * @param 1000L 1000 l
-           */
             carryOverflow(values, ChronoUnit.MICROS, ChronoUnit.MILLIS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MILLIS, ChronoUnit.SECONDS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.MILLIS chrono unit.millis
-           * @param ChronoUnit.SECONDS chrono unit.seconds
-           * @param 1000L 1000 l
-           */
             carryOverflow(values, ChronoUnit.MILLIS, ChronoUnit.SECONDS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.SECONDS, ChronoUnit.MINUTES)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.SECONDS chrono unit.seconds
-           * @param ChronoUnit.MINUTES chrono unit.minutes
-           * @param 60L 60 l
-           */
             carryOverflow(values, ChronoUnit.SECONDS, ChronoUnit.MINUTES, 60L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MINUTES, ChronoUnit.HOURS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.MINUTES chrono unit.minutes
-           * @param ChronoUnit.HOURS chrono unit.hours
-           * @param 60L 60 l
-           */
             carryOverflow(values, ChronoUnit.MINUTES, ChronoUnit.HOURS, 60L);
         }
         if (shouldNormalizeUnit(ChronoUnit.HOURS, ChronoUnit.DAYS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.HOURS chrono unit.hours
-           * @param ChronoUnit.DAYS chrono unit.days
-           * @param 24L 24 l
-           */
             carryOverflow(values, ChronoUnit.HOURS, ChronoUnit.DAYS, 24L);
         }
         if (shouldNormalizeUnit(ChronoUnit.DAYS, ChronoUnit.WEEKS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.DAYS chrono unit.days
-           * @param ChronoUnit.WEEKS chrono unit.weeks
-           * @param 7L 7 l
-           */
             carryOverflow(values, ChronoUnit.DAYS, ChronoUnit.WEEKS, 7L);
         }
         if (shouldNormalizeUnit(ChronoUnit.WEEKS, ChronoUnit.MONTHS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.WEEKS chrono unit.weeks
-           * @param ChronoUnit.MONTHS chrono unit.months
-           * @param 4L 4 l
-           */
             carryOverflow(values, ChronoUnit.WEEKS, ChronoUnit.MONTHS, 4L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MONTHS, ChronoUnit.YEARS)) {
-          /**
-           * Carry overflow.
-           *
-           * @param values values
-           * @param ChronoUnit.MONTHS chrono unit.months
-           * @param ChronoUnit.YEARS chrono unit.years
-           * @param 12L 12 l
-           */
             carryOverflow(values, ChronoUnit.MONTHS, ChronoUnit.YEARS, 12L);
         }
 
         // Step 2: Normalize mixed signs (e.g., -5 seconds + 200 millis → -4 seconds - 800 millis)
         // Only between units within our range
         if (shouldNormalizeUnit(ChronoUnit.NANOS, ChronoUnit.MICROS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.NANOS chrono unit.nanos
-           * @param ChronoUnit.MICROS chrono unit.micros
-           * @param 1000L 1000 l
-           */
             normalizeMixedSigns(values, ChronoUnit.NANOS, ChronoUnit.MICROS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MICROS, ChronoUnit.MILLIS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.MICROS chrono unit.micros
-           * @param ChronoUnit.MILLIS chrono unit.millis
-           * @param 1000L 1000 l
-           */
             normalizeMixedSigns(values, ChronoUnit.MICROS, ChronoUnit.MILLIS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MILLIS, ChronoUnit.SECONDS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.MILLIS chrono unit.millis
-           * @param ChronoUnit.SECONDS chrono unit.seconds
-           * @param 1000L 1000 l
-           */
             normalizeMixedSigns(values, ChronoUnit.MILLIS, ChronoUnit.SECONDS, 1000L);
         }
         if (shouldNormalizeUnit(ChronoUnit.SECONDS, ChronoUnit.MINUTES)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.SECONDS chrono unit.seconds
-           * @param ChronoUnit.MINUTES chrono unit.minutes
-           * @param 60L 60 l
-           */
             normalizeMixedSigns(values, ChronoUnit.SECONDS, ChronoUnit.MINUTES, 60L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MINUTES, ChronoUnit.HOURS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.MINUTES chrono unit.minutes
-           * @param ChronoUnit.HOURS chrono unit.hours
-           * @param 60L 60 l
-           */
             normalizeMixedSigns(values, ChronoUnit.MINUTES, ChronoUnit.HOURS, 60L);
         }
         if (shouldNormalizeUnit(ChronoUnit.HOURS, ChronoUnit.DAYS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.HOURS chrono unit.hours
-           * @param ChronoUnit.DAYS chrono unit.days
-           * @param 24L 24 l
-           */
             normalizeMixedSigns(values, ChronoUnit.HOURS, ChronoUnit.DAYS, 24L);
         }
         if (shouldNormalizeUnit(ChronoUnit.DAYS, ChronoUnit.WEEKS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.DAYS chrono unit.days
-           * @param ChronoUnit.WEEKS chrono unit.weeks
-           * @param 7L 7 l
-           */
             normalizeMixedSigns(values, ChronoUnit.DAYS, ChronoUnit.WEEKS, 7L);
         }
         if (shouldNormalizeUnit(ChronoUnit.WEEKS, ChronoUnit.MONTHS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.WEEKS chrono unit.weeks
-           * @param ChronoUnit.MONTHS chrono unit.months
-           * @param 4L 4 l
-           */
             normalizeMixedSigns(values, ChronoUnit.WEEKS, ChronoUnit.MONTHS, 4L);
         }
         if (shouldNormalizeUnit(ChronoUnit.MONTHS, ChronoUnit.YEARS)) {
-          /**
-           * Normalize mixed signs.
-           *
-           * @param values values
-           * @param ChronoUnit.MONTHS chrono unit.months
-           * @param ChronoUnit.YEARS chrono unit.years
-           * @param 12L 12 l
-           */
             normalizeMixedSigns(values, ChronoUnit.MONTHS, ChronoUnit.YEARS, 12L);
         }
 
@@ -2067,11 +1648,6 @@ public class NDuration implements Serializable, NElementSimple {
      * @return is zero result
      */
     public boolean isZero() {
-      /**
-       * Return.
-       *
-       * @param 0 0
-       */
         return ((timeMillis | timeNanos) == 0);
     }
 

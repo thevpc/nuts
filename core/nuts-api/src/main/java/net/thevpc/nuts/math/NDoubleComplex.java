@@ -21,12 +21,6 @@ public interface NDoubleComplex extends Serializable, NNumber {
      * @since 0.8.6
      */
     static NDoubleComplex of(String any) {
-        /**
-         * Parse.
-         *
-         * @param any).get( any).get(
-         * @return parse result
-         */
         return parse(any).get();
     }
 
@@ -40,7 +34,7 @@ public interface NDoubleComplex extends Serializable, NNumber {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param x x
      * @param y y
@@ -51,7 +45,7 @@ public interface NDoubleComplex extends Serializable, NNumber {
     }
 
     /**
-     * Creates a new instance of of polar.
+     * Creates a new instance of polar.
      *
      * @param r r
      * @param theta theta

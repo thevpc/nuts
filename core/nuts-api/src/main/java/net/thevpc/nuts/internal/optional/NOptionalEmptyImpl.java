@@ -26,11 +26,6 @@ public class NOptionalEmptyImpl<T> extends NOptionalThrowableImpl<T> implements 
      * @return n reserved optional empty result
      */
     public NOptionalEmptyImpl(Supplier<NMsg> message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -77,11 +72,6 @@ public class NOptionalEmptyImpl<T> extends NOptionalThrowableImpl<T> implements 
 
     @Override
     public T get() {
-      /**
-       * Throw error.
-       *
-       * @param message() message()
-       */
         throwError(message());
         //never reached!
         return null;
@@ -89,11 +79,6 @@ public class NOptionalEmptyImpl<T> extends NOptionalThrowableImpl<T> implements 
 
     @Override
     public T get(Supplier<NMsg> message) {
-      /**
-       * Throw error.
-       *
-       * @param message message
-       */
         throwError(message);
         //never reached!
         return null;

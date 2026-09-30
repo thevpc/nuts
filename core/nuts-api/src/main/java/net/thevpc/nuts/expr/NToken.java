@@ -130,7 +130,7 @@ public class NToken {
     public Number nval;
 
     /**
-     * Creates a new instance of of special.
+     * Creates a new instance of special.
      *
      * @param ttype ttype
      * @param sval sval
@@ -159,7 +159,7 @@ public class NToken {
         return new NToken(ttype, sval, 0, lineno, sval, ttypeString);
     }
     /**
-     * Creates a new instance of of char.
+     * Creates a new instance of char.
      *
      * @param ttype ttype
      * @param lineno lineno
@@ -170,7 +170,7 @@ public class NToken {
         return new NToken(ttype, sval, 0, lineno, sval, "'" + sval + "'");
     }
     /**
-     * Creates a new instance of of str.
+     * Creates a new instance of str.
      *
      * @param ttype ttype
      * @param sval sval
@@ -183,7 +183,7 @@ public class NToken {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ttype ttype
      * @param sval sval

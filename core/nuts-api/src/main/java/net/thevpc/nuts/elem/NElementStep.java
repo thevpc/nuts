@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public interface NElementStep extends Serializable, NToElement {
     /**
-     * Creates a new instance of of child.
+     * Creates a new instance of child.
      *
      * @param index index
      * @return of child result
@@ -23,7 +23,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of child.
+     * Creates a new instance of child.
      *
      * @param name name
      * @return of child result
@@ -33,7 +33,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of param.
+     * Creates a new instance of param.
      *
      * @param index index
      * @return of param result
@@ -43,7 +43,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of param.
+     * Creates a new instance of param.
      *
      * @param name name
      * @return of param result
@@ -53,7 +53,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of ann param.
+     * Creates a new instance of ann param.
      *
      * @param paramIndex param index
      * @param index index
@@ -64,7 +64,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of ann param.
+     * Creates a new instance of ann param.
      *
      * @param paramIndex param index
      * @param name name
@@ -75,7 +75,7 @@ public interface NElementStep extends Serializable, NToElement {
     }
 
     /**
-     * Creates a new instance of of sub list.
+     * Creates a new instance of sub list.
      *
      * @param index index
      * @return of sub list result

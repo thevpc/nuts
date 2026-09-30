@@ -66,13 +66,6 @@ public class NLine {
      * @return n line result
      */
     public NLine(String content, NNewLineMode newLine) {
-      /**
-       * This.
-       *
-       * @param content content
-       * @param newLine new line
-       * @param false false
-       */
         this(content, newLine, false);
     }
 
@@ -95,12 +88,6 @@ public class NLine {
                 for (int i = 0; i < content.length(); i++) {
                     char c = content.charAt(i);
                     if (c == '\r' || c == '\n') {
-                        /**
-                         * N illegal argument exception.
-                         *
-                         * @param newLine") new line")
-                         * @return n illegal argument exception result
-                         */
                         throw new NIllegalArgumentException(NMsg.ofC("unexpected newLine"));
                     }
                 }

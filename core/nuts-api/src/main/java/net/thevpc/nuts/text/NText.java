@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  */
 public interface NText extends NBlankable, NElementSimple {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @return of result
@@ -55,7 +55,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of plain.
+     * Creates a new instance of plain.
      *
      * @param str str
      * @return of plain result
@@ -65,22 +65,16 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of new line.
+     * Creates a new instance of new line.
      *
      * @return of new line result
      */
     static NText ofNewLine() {
-        /**
-         * Creates a new instance of of plain.
-         *
-         * @param "\n" "\n"
-         * @return of plain result
-         */
         return ofPlain("\n");
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @return of result
@@ -90,7 +84,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param str str
      * @return of result
@@ -100,7 +94,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of blank.
+     * Creates a new instance of blank.
      *
      * @return of blank result
      */
@@ -109,7 +103,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of list.
+     * Creates a new instance of list.
      *
      * @param nodes nodes
      * @return of list result
@@ -119,7 +113,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of list.
+     * Creates a new instance of list.
      *
      * @param nodes nodes
      * @return of list result
@@ -129,7 +123,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -140,7 +134,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -151,7 +145,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param styles styles
@@ -162,7 +156,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param plainText plain text
      * @param style style
@@ -173,7 +167,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled error.
+     * Creates a new instance of styled error.
      *
      * @param other other
      * @return of styled error result
@@ -183,7 +177,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled path.
+     * Creates a new instance of styled path.
      *
      * @param plainPath plain path
      * @return of styled path result
@@ -193,7 +187,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param style style
@@ -204,7 +198,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled.
+     * Creates a new instance of styled.
      *
      * @param other other
      * @param style style
@@ -215,7 +209,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of title.
+     * Creates a new instance of title.
      *
      * @param other other
      * @param level level
@@ -226,7 +220,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of title.
+     * Creates a new instance of title.
      *
      * @param other other
      * @param level level
@@ -237,7 +231,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of command.
+     * Creates a new instance of command.
      *
      * @param command command
      * @return of command result
@@ -247,7 +241,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code.
+     * Creates a new instance of code.
      *
      * @param lang lang
      * @param text text
@@ -259,7 +253,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code.
+     * Creates a new instance of code.
      *
      * @param lang lang
      * @param text text
@@ -270,7 +264,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code or command.
+     * Creates a new instance of code or command.
      *
      * @param lang lang
      * @param text text
@@ -281,7 +275,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code or command.
+     * Creates a new instance of code or command.
      *
      * @param text text
      * @return of code or command result
@@ -291,7 +285,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of code or command.
+     * Creates a new instance of code or command.
      *
      * @param lang lang
      * @param text text
@@ -303,7 +297,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of numbering.
+     * Creates a new instance of numbering.
      *
      * @return of numbering result
      */
@@ -312,7 +306,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of numbering.
+     * Creates a new instance of numbering.
      *
      * @param pattern pattern
      * @return of numbering result
@@ -322,7 +316,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of anchor.
+     * Creates a new instance of anchor.
      *
      * @param anchorName anchor name
      * @return of anchor result
@@ -332,7 +326,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of link.
+     * Creates a new instance of link.
      *
      * @param value value
      * @param sep sep
@@ -343,7 +337,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of anchor.
+     * Creates a new instance of anchor.
      *
      * @param anchorName anchor name
      * @param sep sep
@@ -354,7 +348,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of link.
+     * Creates a new instance of link.
      *
      * @param value value
      * @return of link result
@@ -364,7 +358,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of include.
+     * Creates a new instance of include.
      *
      * @param value value
      * @return of include result
@@ -374,7 +368,7 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of include.
+     * Creates a new instance of include.
      *
      * @param value value
      * @param sep sep
@@ -385,228 +379,134 @@ public interface NText extends NBlankable, NElementSimple {
     }
 
     /**
-     * Creates a new instance of of styled success.
+     * Creates a new instance of styled success.
      *
      * @param value value
      * @return of styled success result
      */
     static NText ofStyledSuccess(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.success() n text style.success()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.success());
     }
 
     /**
-     * Creates a new instance of of styled warn.
+     * Creates a new instance of styled warn.
      *
      * @param value value
      * @return of styled warn result
      */
     static NText ofStyledWarn(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.warn() n text style.warn()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.warn());
     }
 
     /**
-     * Creates a new instance of of styled primary1.
+     * Creates a new instance of styled primary1.
      *
      * @param value value
      * @return of styled primary1 result
      */
     static NText ofStyledPrimary1(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary1() n text style.primary1()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary1());
     }
 
     /**
-     * Creates a new instance of of styled primary2.
+     * Creates a new instance of styled primary2.
      *
      * @param value value
      * @return of styled primary2 result
      */
     static NText ofStyledPrimary2(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary2() n text style.primary2()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary2());
     }
 
     /**
-     * Creates a new instance of of styled primary3.
+     * Creates a new instance of styled primary3.
      *
      * @param value value
      * @return of styled primary3 result
      */
     static NText ofStyledPrimary3(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary3() n text style.primary3()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary3());
     }
 
     /**
-     * Creates a new instance of of styled primary4.
+     * Creates a new instance of styled primary4.
      *
      * @param value value
      * @return of styled primary4 result
      */
     static NText ofStyledPrimary4(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary4() n text style.primary4()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary4());
     }
 
     /**
-     * Creates a new instance of of styled primary5.
+     * Creates a new instance of styled primary5.
      *
      * @param value value
      * @return of styled primary5 result
      */
     static NText ofStyledPrimary5(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary5() n text style.primary5()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary5());
     }
 
     /**
-     * Creates a new instance of of styled primary6.
+     * Creates a new instance of styled primary6.
      *
      * @param value value
      * @return of styled primary6 result
      */
     static NText ofStyledPrimary6(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary6() n text style.primary6()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary6());
     }
 
     /**
-     * Creates a new instance of of styled primary7.
+     * Creates a new instance of styled primary7.
      *
      * @param value value
      * @return of styled primary7 result
      */
     static NText ofStyledPrimary7(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary7() n text style.primary7()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary7());
     }
 
     /**
-     * Creates a new instance of of styled primary8.
+     * Creates a new instance of styled primary8.
      *
      * @param value value
      * @return of styled primary8 result
      */
     static NText ofStyledPrimary8(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary8() n text style.primary8()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary8());
     }
 
     /**
-     * Creates a new instance of of styled primary9.
+     * Creates a new instance of styled primary9.
      *
      * @param value value
      * @return of styled primary9 result
      */
     static NText ofStyledPrimary9(String value) {
-        /**
-         * Creates a new instance of of styled.
-         *
-         * @param value value
-         * @param NTextStyle.primary9() n text style.primary9()
-         * @return of styled result
-         */
         return ofStyled(value, NTextStyle.primary9());
     }
 
     /**
-     * Creates a new instance of of space.
+     * Creates a new instance of space.
      *
      * @return of space result
      */
     static NText ofSpace() {
-        /**
-         * Creates a new instance of of plain.
-         *
-         * @param " "
-         * @return of plain result
-         */
         return ofPlain(" ");
     }
 
     /**
-     * Creates a new instance of of spaces.
+     * Creates a new instance of spaces.
      *
      * @param columns columns
      * @return of spaces result
      */
     static NText ofSpaces(int columns) {
         if (columns <= 0) {
-            /**
-             * Creates a new instance of of blank.
-             *
-             * @return of blank result
-             */
             return ofBlank();
         }
-        /**
-         * Creates a new instance of of plain.
-         *
-         * @param columns) columns)
-         * @return of plain result
-         */
         return ofPlain(NStringUtils.repeat(' ', columns));
     }
 

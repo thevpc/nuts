@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
 public class NBooleanRef extends NObjectRef<Boolean> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -16,7 +16,7 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -26,51 +26,34 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     }
 
     /**
-     * Creates a new instance of of false.
+     * Creates a new instance of false.
      *
      * @return of false result
      */
     public static NBooleanRef ofFalse() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param false false
-         * @return of result
-         */
         return of(false);
     }
 
     /**
-     * Creates a new instance of of true.
+     * Creates a new instance of true.
      *
      * @return of true result
      */
     public static NBooleanRef ofTrue() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param true true
-         * @return of result
-         */
         return of(true);
     }
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @return of null result
      */
     public static NBooleanRef ofNull() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @return of result
-         */
         return of();
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -85,11 +68,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      * @return n boolean ref result
      */
     public NBooleanRef(Boolean value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -101,11 +79,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     public NBooleanRef flip() {
         Boolean v = get();
         if (v != null) {
-          /**
-           * Sets the set.
-           *
-           * @param !v !v
-           */
             set(!v);
         }
         return this;
@@ -117,11 +90,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      * @return set result
      */
     public NBooleanRef set() {
-      /**
-       * Sets the set.
-       *
-       * @param true true
-       */
         set(true);
         return this;
     }
@@ -134,11 +102,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      */
     public NBooleanRef or(boolean b) {
         Boolean v = get();
-      /**
-       * Sets the set.
-       *
-       * @param b b
-       */
         set(v == null ? b : v || b);
         return this;
     }
@@ -151,11 +114,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      */
     public NBooleanRef and(boolean b) {
         Boolean v = get();
-      /**
-       * Sets the set.
-       *
-       * @param b b
-       */
         set(v == null ? b : v && b);
         return this;
     }
@@ -166,11 +124,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      * @return set true result
      */
     public NBooleanRef setTrue() {
-      /**
-       * Sets the set.
-       *
-       * @param true true
-       */
         set(true);
         return this;
     }
@@ -181,11 +134,6 @@ public class NBooleanRef extends NObjectRef<Boolean> {
      * @return set false result
      */
     public NBooleanRef setFalse() {
-      /**
-       * Sets the set.
-       *
-       * @param false false
-       */
         set(false);
         return this;
     }
@@ -198,18 +146,8 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     public NBooleanRef flipOrTrue() {
         Boolean v = get();
         if (v != null) {
-          /**
-           * Sets the set.
-           *
-           * @param !v !v
-           */
             set(!v);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param true true
-           */
             set(true);
         }
         return this;
@@ -223,18 +161,8 @@ public class NBooleanRef extends NObjectRef<Boolean> {
     public NBooleanRef flipOrFalse() {
         Boolean v = get();
         if (v != null) {
-          /**
-           * Sets the set.
-           *
-           * @param !v !v
-           */
             set(!v);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param false false
-           */
             set(false);
         }
         return this;

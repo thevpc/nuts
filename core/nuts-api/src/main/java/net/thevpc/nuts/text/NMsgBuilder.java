@@ -16,7 +16,7 @@ import java.util.logging.Level;
 public class NMsgBuilder {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -67,12 +67,6 @@ public class NMsgBuilder {
      * @return with msg plain result
      */
     public NMsgBuilder withMsgPlain(String plain) {
-        /**
-         * With msg.
-         *
-         * @param NMsg.ofPlain(plain) n msg.of plain(plain)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofP(plain));
     }
 
@@ -83,12 +77,6 @@ public class NMsgBuilder {
      * @return with msg ntf result
      */
     public NMsgBuilder withMsgNtf(String plain) {
-        /**
-         * With msg.
-         *
-         * @param NMsg.ofNtf(plain) n msg.of ntf(plain)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofNtf(plain));
     }
 
@@ -99,12 +87,6 @@ public class NMsgBuilder {
      * @return with msg c result
      */
     public NMsgBuilder withMsgC(String plain) {
-        /**
-         * With msg.
-         *
-         * @param NMsg.ofC(plain) n msg.of c(plain)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofC(plain));
     }
 
@@ -116,12 +98,6 @@ public class NMsgBuilder {
      * @return with msg c result
      */
     public NMsgBuilder withMsgC(String plain, Object... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofC(plain, params));
     }
 
@@ -133,12 +109,6 @@ public class NMsgBuilder {
      * @return with msg v result
      */
     public NMsgBuilder withMsgV(String message, NMsgParam... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofV(message, params));
     }
 
@@ -150,12 +120,6 @@ public class NMsgBuilder {
      * @return with msg v result
      */
     public NMsgBuilder withMsgV(String message, Map<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofV(message, vars));
     }
 
@@ -167,12 +131,6 @@ public class NMsgBuilder {
      * @return with msg v result
      */
     public NMsgBuilder withMsgV(String message, Function<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofV(message, vars));
     }
 
@@ -185,12 +143,6 @@ public class NMsgBuilder {
      * @return with msg m result
      */
     public NMsgBuilder withMsgM(String message, NMsgParam... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofM(message, params));
     }
 
@@ -202,12 +154,6 @@ public class NMsgBuilder {
      * @return with msg m result
      */
     public NMsgBuilder withMsgM(String message, Map<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofM(message, vars));
     }
 
@@ -219,12 +165,6 @@ public class NMsgBuilder {
      * @return with msg m result
      */
     public NMsgBuilder withMsgM(String message, Function<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofV(message, vars));
     }
 
@@ -236,12 +176,6 @@ public class NMsgBuilder {
      * @return with msg s result
      */
     public NMsgBuilder withMsgS(String message, Object... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofS(message, params));
     }
 
@@ -253,12 +187,6 @@ public class NMsgBuilder {
      * @return with msg s result
      */
     public NMsgBuilder withMsgS(String message, NMsgParam... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofS(message, params));
     }
 
@@ -270,12 +198,6 @@ public class NMsgBuilder {
      * @return with msg s result
      */
     public NMsgBuilder withMsgS(String message, Map<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofS(message, vars));
     }
 
@@ -287,12 +209,6 @@ public class NMsgBuilder {
      * @return with msg s result
      */
     public NMsgBuilder withMsgS(String message, Function<String, ?> vars) {
-        /**
-         * With msg.
-         *
-         * @param vars) vars)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofS(message, vars));
     }
 
@@ -304,12 +220,6 @@ public class NMsgBuilder {
      * @return with msg j result
      */
     public NMsgBuilder withMsgJ(String message, NMsgParam... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofJ(message, params));
     }
 
@@ -321,12 +231,6 @@ public class NMsgBuilder {
      * @return with msg j result
      */
     public NMsgBuilder withMsgJ(String message, Object... params) {
-        /**
-         * With msg.
-         *
-         * @param params) params)
-         * @return with msg result
-         */
         return withMsg(NMsg.ofJ(message, params));
     }
 

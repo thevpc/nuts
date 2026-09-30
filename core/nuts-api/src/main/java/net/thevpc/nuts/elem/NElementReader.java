@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  */
 public interface NElementReader extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -30,62 +30,38 @@ public interface NElementReader extends NComponent {
     }
 
     /**
-     * Creates a new instance of of json.
+     * Creates a new instance of json.
      *
      * @return of json result
      */
     static NElementReader ofJson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).json( ).json(
-         * @return of result
-         */
         return of().json();
     }
 
     /**
-     * Creates a new instance of of tson.
+     * Creates a new instance of tson.
      *
      * @return of tson result
      */
     static NElementReader ofTson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).tson( ).tson(
-         * @return of result
-         */
         return of().tson();
     }
 
     /**
-     * Creates a new instance of of yaml.
+     * Creates a new instance of yaml.
      *
      * @return of yaml result
      */
     static NElementReader ofYaml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).yaml( ).yaml(
-         * @return of result
-         */
         return of().yaml();
     }
 
     /**
-     * Creates a new instance of of xml.
+     * Creates a new instance of xml.
      *
      * @return of xml result
      */
     static NElementReader ofXml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).xml( ).xml(
-         * @return of result
-         */
         return of().xml();
     }
 

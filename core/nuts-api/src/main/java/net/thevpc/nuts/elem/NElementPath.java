@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface NElementPath {
     /**
-     * Creates a new instance of of root.
+     * Creates a new instance of root.
      *
      * @return of root result
      */

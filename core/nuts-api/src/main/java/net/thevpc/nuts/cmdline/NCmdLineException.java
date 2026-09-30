@@ -19,12 +19,6 @@ public class NCmdLineException extends NIllegalArgumentException {
      * @return n cmd line exception result
      */
     public NCmdLineException(NMsg formattedMessage, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       * @param cause cause
-       */
         super(formattedMessage, cause);
     }
 
@@ -35,11 +29,6 @@ public class NCmdLineException extends NIllegalArgumentException {
      * @return n cmd line exception result
      */
     public NCmdLineException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       */
         super(formattedMessage);
     }
 

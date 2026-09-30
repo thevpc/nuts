@@ -18,17 +18,11 @@ import java.util.function.Function;
  */
 public interface NExprRPI extends NComponent {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
     static NExprRPI of() {
-        /**
-         * Returns the get.
-         *
-         * @param ).get( ).get(
-         * @return get result
-         */
         return get().get();
     }
 

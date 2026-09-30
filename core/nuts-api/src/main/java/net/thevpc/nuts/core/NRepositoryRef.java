@@ -180,11 +180,6 @@ public class NRepositoryRef extends NConfigItem implements Cloneable {
      * @return copy result
      */
     public NRepositoryRef copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

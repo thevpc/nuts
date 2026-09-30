@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 public interface NIteratorBuilder<T> {
 
     /**
-     * Creates a new instance of of coalesce.
+     * Creates a new instance of coalesce.
      *
      * @param t t
      * @return of coalesce result
@@ -36,7 +36,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of concat.
+     * Creates a new instance of concat.
      *
      * @param t t
      * @return of concat result
@@ -46,7 +46,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param t t
      * @return of result
@@ -56,7 +56,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of runnable.
+     * Creates a new instance of runnable.
      *
      * @param t t
      * @return of runnable result
@@ -66,7 +66,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of runnable.
+     * Creates a new instance of runnable.
      *
      * @param t t
      * @param n n
@@ -77,7 +77,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of supplier.
+     * Creates a new instance of supplier.
      *
      * @param from from
      * @param name name
@@ -88,7 +88,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of array values.
+     * Creates a new instance of array values.
      *
      * @param t t
      * @param n n
@@ -99,7 +99,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of array values.
+     * Creates a new instance of array values.
      *
      * @param t t
      * @param n n
@@ -110,7 +110,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of array values.
+     * Creates a new instance of array values.
      *
      * @param t t
      * @param n n
@@ -121,7 +121,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -130,7 +130,7 @@ public interface NIteratorBuilder<T> {
     }
 
     /**
-     * Creates a new instance of of flat map.
+     * Creates a new instance of flat map.
      *
      * @param from from
      * @return of flat map result

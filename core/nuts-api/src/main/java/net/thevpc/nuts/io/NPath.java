@@ -399,7 +399,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
 
 
     /**
-     * Creates a new instance of of origin.
+     * Creates a new instance of origin.
      *
      * @param clazz clazz
      * @return of origin result
@@ -409,7 +409,7 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
     }
 
     /**
-     * Creates a new instance of of origins.
+     * Creates a new instance of origins.
      *
      * @param clazz clazz
      * @return of origins result
@@ -678,11 +678,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write object result
      */
     default NPath writeObject(Object any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
@@ -697,11 +692,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write msg result
      */
     default NPath writeMsg(NMsg any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }
@@ -716,11 +706,6 @@ public interface NPath extends NInputSource, NOutputTarget, Comparable<NPath> {
      * @return write text result
      */
     default NPath writeText(NText any, NPathOption... options) {
-      /**
-       * Try.
-       *
-       * @param this.getNPrintStream(options) this.get n print stream(options)
-       */
         try (NPrintStream out = this.getNPrintStream(options)) {
             out.print(any);
         }

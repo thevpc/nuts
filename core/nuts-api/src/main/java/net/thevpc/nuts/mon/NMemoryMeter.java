@@ -14,7 +14,7 @@ public class NMemoryMeter implements NTextFormattable {
     private String name;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -23,7 +23,7 @@ public class NMemoryMeter implements NTextFormattable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @return of unstarted result
      */
@@ -58,14 +58,8 @@ public class NMemoryMeter implements NTextFormattable {
      * @return
      */
     public NMemoryMeter restart() {
-      /**
-       * Stop.
-       */
         stop();
         NMemoryMeter c = copy();
-      /**
-       * Start.
-       */
         start();
         return c;
     }
@@ -77,20 +71,9 @@ public class NMemoryMeter implements NTextFormattable {
      * @return
      */
     public NMemoryMeter restart(String name) {
-      /**
-       * Stop.
-       */
         stop();
         NMemoryMeter c = copy();
-      /**
-       * Sets the name.
-       *
-       * @param name name
-       */
         name(name);
-      /**
-       * Start.
-       */
         start();
         return c;
     }
@@ -187,12 +170,6 @@ public class NMemoryMeter implements NTextFormattable {
      * @return in use memory result
      */
     public long inUseMemory() {
-        /**
-         * Usage.
-         *
-         * @param ).inUseMemory( ).in use memory(
-         * @return usage result
-         */
         return usage().inUseMemory();
     }
 
@@ -202,11 +179,6 @@ public class NMemoryMeter implements NTextFormattable {
      * @return usage result
      */
     public NMemoryUsage usage() {
-      /**
-       * Return.
-       *
-       * @param endMemory).minus(startMemory end memory).minus(start memory
-       */
         return ((endMemory == null) ? NMemorySnapshot.now() : endMemory).minus(startMemory);
     }
 
@@ -218,12 +190,6 @@ public class NMemoryMeter implements NTextFormattable {
 
     @Override
     public NText toText() {
-        /**
-         * Usage.
-         *
-         * @param ).toText( ).to text(
-         * @return usage result
-         */
         return usage().toText();
     }
 }

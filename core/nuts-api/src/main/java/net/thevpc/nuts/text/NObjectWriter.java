@@ -58,18 +58,12 @@ public interface NObjectWriter extends NCmdLineConfigurable, NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result
      */
     static NObjectWriter of(Object any) {
-        /**
-         * Returns the get.
-         *
-         * @param any).get( any).get(
-         * @return get result
-         */
         return get(any).get();
     }
 

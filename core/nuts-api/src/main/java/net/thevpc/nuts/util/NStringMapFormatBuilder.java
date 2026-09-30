@@ -30,7 +30,7 @@ public class NStringMapFormatBuilder {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -105,17 +105,7 @@ public class NStringMapFormatBuilder {
      * @return set quote supported result
      */
     public NStringMapFormatBuilder setQuoteSupported(boolean quoteSupported) {
-      /**
-       * Double quote supported.
-       *
-       * @param quoteSupported quote supported
-       */
         doubleQuoteSupported(quoteSupported);
-      /**
-       * Simple quote supported.
-       *
-       * @param quoteSupported quote supported
-       */
         simpleQuoteSupported(quoteSupported);
         return this;
     }

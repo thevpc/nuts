@@ -47,12 +47,6 @@ public interface NRateLimitValueBuilder {
      * @return a {@link NRateLimitRuleBuilder} initialized with the given capacity
      */
     default NRateLimitRuleBuilder withLimit(String limitId, int capacity) {
-        /**
-         * With limit.
-         *
-         * @param limitId).withCapacity(capacity limit id).with capacity(capacity
-         * @return with limit result
-         */
         return withLimit(limitId).withCapacity(capacity);
     }
 
@@ -66,12 +60,6 @@ public interface NRateLimitValueBuilder {
      * @return a {@link NRateLimitRuleBuilder} initialized with capacity and duration
      */
     default NRateLimitRuleBuilder withLimit(String limitId, int capacity, NDuration duration) {
-        /**
-         * With limit.
-         *
-         * @param limitId).withCapacity(capacity).withDuration(duration limit id).with capacity(capacity).with duration(duration
-         * @return with limit result
-         */
         return withLimit(limitId).withCapacity(capacity).withDuration(duration);
     }
 
@@ -82,12 +70,6 @@ public interface NRateLimitValueBuilder {
      * @return a {@link NRateLimitRuleBuilder} initialized with the given capacity
      */
     default NRateLimitRuleBuilder withLimit(int capacity) {
-        /**
-         * With limit.
-         *
-         * @param null).withCapacity(capacity null).with capacity(capacity
-         * @return with limit result
-         */
         return withLimit(null).withCapacity(capacity);
     }
 
@@ -99,12 +81,6 @@ public interface NRateLimitValueBuilder {
      * @return a {@link NRateLimitRuleBuilder} initialized with capacity and duration
      */
     default NRateLimitRuleBuilder withLimit(int capacity, NDuration duration) {
-        /**
-         * With limit.
-         *
-         * @param null).withCapacity(capacity).withDuration(duration null).with capacity(capacity).with duration(duration
-         * @return with limit result
-         */
         return withLimit(null).withCapacity(capacity).withDuration(duration);
     }
 

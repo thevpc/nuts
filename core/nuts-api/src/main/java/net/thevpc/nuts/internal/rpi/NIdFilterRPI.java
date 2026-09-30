@@ -36,7 +36,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NIdFilterRPI extends NTypedFilters<NIdFilter> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

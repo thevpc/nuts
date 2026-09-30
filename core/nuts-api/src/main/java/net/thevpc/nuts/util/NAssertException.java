@@ -18,12 +18,6 @@ public class NAssertException extends NIllegalArgumentException {
      * @return n assert exception result
      */
     public NAssertException(NMsg formattedMessage, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       * @param cause cause
-       */
         super(formattedMessage, cause);
     }
 

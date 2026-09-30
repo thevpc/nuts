@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NElementRPI;
  */
 public interface NElementFormatter extends NElementTransform {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param style style
      * @return of result
@@ -20,22 +20,16 @@ public interface NElementFormatter extends NElementTransform {
     }
 
     /**
-     * Creates a new instance of of pretty.
+     * Creates a new instance of pretty.
      *
      * @return of pretty result
      */
     static NElementFormatter ofPretty() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NElementFormatterStyle.PRETTY n element formatter style.pretty
-         * @return of result
-         */
         return of(NElementFormatterStyle.PRETTY);
     }
 
     /**
-     * Creates a new instance of of compact.
+     * Creates a new instance of compact.
      *
      * @param compact compact
      * @return of compact result
@@ -45,62 +39,38 @@ public interface NElementFormatter extends NElementTransform {
     }
 
     /**
-     * Creates a new instance of of compact.
+     * Creates a new instance of compact.
      *
      * @return of compact result
      */
     static NElementFormatter ofCompact() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NElementFormatterStyle.COMPACT n element formatter style.compact
-         * @return of result
-         */
         return of(NElementFormatterStyle.COMPACT);
     }
 
     /**
-     * Creates a new instance of of stable.
+     * Creates a new instance of stable.
      *
      * @return of stable result
      */
     static NElementFormatter ofStable() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NElementFormatterStyle.STABLE n element formatter style.stable
-         * @return of result
-         */
         return of(NElementFormatterStyle.STABLE);
     }
 
     /**
-     * Creates a new instance of of verbatim.
+     * Creates a new instance of verbatim.
      *
      * @return of verbatim result
      */
     static NElementFormatter ofVerbatim() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NElementFormatterStyle.VERBATIM n element formatter style.verbatim
-         * @return of result
-         */
         return of(NElementFormatterStyle.VERBATIM);
     }
 
     /**
-     * Creates a new instance of of simple.
+     * Creates a new instance of simple.
      *
      * @return of simple result
      */
     static NElementFormatter ofSimple() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NElementFormatterStyle.SIMPLE n element formatter style.simple
-         * @return of result
-         */
         return of(NElementFormatterStyle.SIMPLE);
     }
 

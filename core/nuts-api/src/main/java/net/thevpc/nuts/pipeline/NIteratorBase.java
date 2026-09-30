@@ -35,9 +35,6 @@ public abstract class NIteratorBase<T> implements NIterator<T> {
     public final boolean hasNext() {
         boolean b = hasNextImpl();
         if(!b){
-          /**
-           * Close.
-           */
             close();
         }
         return b;

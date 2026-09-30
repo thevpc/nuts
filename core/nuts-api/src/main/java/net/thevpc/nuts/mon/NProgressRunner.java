@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public interface NProgressRunner {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

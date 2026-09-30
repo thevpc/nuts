@@ -324,11 +324,6 @@ public class NRetryCallModel implements Cloneable, NCopiable {
      * @return a clone of this instance
      */
     public NRetryCallModel copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -339,19 +334,8 @@ public class NRetryCallModel implements Cloneable, NCopiable {
      */
     protected NRetryCallModel clone() {
         try {
-          /**
-           * Return.
-           *
-           * @param super.clone( super.clone(
-           */
             return (NRetryCallModel) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }

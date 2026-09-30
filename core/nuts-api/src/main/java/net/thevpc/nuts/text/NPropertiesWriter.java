@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public interface NPropertiesWriter extends NContentTypeWriter {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

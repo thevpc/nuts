@@ -20,7 +20,7 @@ public class NBeanRef {
     private NElement variant;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @param variant variant
@@ -31,7 +31,7 @@ public class NBeanRef {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @return of result

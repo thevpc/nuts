@@ -41,7 +41,7 @@ import java.util.List;
  */
 public interface NUndeploy extends NWorkspaceCmd {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -107,7 +107,7 @@ public interface NUndeploy extends NWorkspaceCmd {
     boolean isOffline();
 
     /**
-     * Creates a new instance of offline.
+     * Creates a new instance offline.
      *
      * @param offline offline
      * @return offline result

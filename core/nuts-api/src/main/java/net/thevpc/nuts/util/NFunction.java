@@ -13,24 +13,17 @@ import java.util.function.Supplier;
  */
 public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunction<T, V>> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result
      */
     static <T, V> NFunction<T, V> of(Function<T, V> o) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param o o
-         * @param null null
-         * @return of result
-         */
         return of(o, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @param defaultDescription default description
@@ -47,7 +40,7 @@ public interface NFunction<T, V> extends Function<T, V>, NRedescribable<NFunctio
     }
 
     /**
-     * Creates a new instance of of unsafe.
+     * Creates a new instance of unsafe.
      *
      * @param o o
      * @param onError on error

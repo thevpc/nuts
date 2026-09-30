@@ -18,7 +18,7 @@ import net.thevpc.nuts.ext.NExtensions;
 public interface NDefinitionFactory extends NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

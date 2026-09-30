@@ -18,7 +18,7 @@ public class NStringLiteralFormatBuilder {
     private NElementType elementType;
 
     /**
-     * Creates a new instance of of tson.
+     * Creates a new instance of tson.
      *
      * @param elementType element type
      * @return of tson result
@@ -51,7 +51,7 @@ public class NStringLiteralFormatBuilder {
     }
 
     /**
-     * Creates a new instance of of java.
+     * Creates a new instance of java.
      *
      * @param elementType element type
      * @return of java result
@@ -65,7 +65,7 @@ public class NStringLiteralFormatBuilder {
     }
 
     /**
-     * Creates a new instance of of shell.
+     * Creates a new instance of shell.
      *
      * @param elementType element type
      * @return of shell result

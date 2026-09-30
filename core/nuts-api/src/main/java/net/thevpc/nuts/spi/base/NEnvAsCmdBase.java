@@ -34,11 +34,6 @@ public abstract class NEnvAsCmdBase implements NEnv {
      */
     public NEnvAsCmdBase(NScorableContext context,String protocol) {
         this.protocol=protocol;
-      /**
-       * Init.
-       *
-       * @param context.criteria() context.criteria()
-       */
         init(context.criteria());
     }
 
@@ -51,11 +46,6 @@ public abstract class NEnvAsCmdBase implements NEnv {
      */
     public NEnvAsCmdBase(NConnectionString connectionString,String protocol) {
         this.protocol=protocol;
-      /**
-       * Init.
-       *
-       * @param connectionString connection string
-       */
         init(connectionString);
     }
 
@@ -75,12 +65,6 @@ public abstract class NEnvAsCmdBase implements NEnv {
         NEnvCmdSPI commander=new NEnvCmdSPI() {
             @Override
             public String exec(String cmd) {
-                /**
-                 * Run system command.
-                 *
-                 * @param cmd cmd
-                 * @return run system command result
-                 */
                 return runSystemCommand(cmd);
             }
 
@@ -219,11 +203,6 @@ public abstract class NEnvAsCmdBase implements NEnv {
      * @return is supported protocol result
      */
     private boolean isSupportedProtocol(String protocol) {
-      /**
-       * Return.
-       *
-       * @param this.protocol.equals(protocol) this.protocol.equals(protocol)
-       */
         return (this.protocol.equals(protocol));
     }
 

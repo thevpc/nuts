@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>, AutoCloseable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result
@@ -54,7 +54,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of int2.
+     * Creates a new instance of int2.
      *
      * @param a a
      * @param b b
@@ -65,7 +65,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of int2.
+     * Creates a new instance of int2.
      *
      * @return of int2 result
      */
@@ -74,7 +74,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of empty.
+     * Creates a new instance of empty.
      *
      * @return of empty result
      */
@@ -83,7 +83,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of singleton.
+     * Creates a new instance of singleton.
      *
      * @param element element
      * @return of singleton result
@@ -93,7 +93,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of with description.
+     * Creates a new instance of with description.
      *
      * @param base base
      * @param description description
@@ -105,7 +105,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of auto closable.
+     * Creates a new instance of auto closable.
      *
      * @param t t
      * @param close close
@@ -116,7 +116,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of safe.
+     * Creates a new instance of safe.
      *
      * @param type type
      * @param t t
@@ -127,7 +127,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of safe ignore.
+     * Creates a new instance of safe ignore.
      *
      * @param t t
      * @return of safe ignore result
@@ -137,7 +137,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of safe postpone.
+     * Creates a new instance of safe postpone.
      *
      * @param t t
      * @return of safe postpone result
@@ -157,7 +157,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of non null.
+     * Creates a new instance of non null.
      *
      * @param t t
      * @return of non null result
@@ -167,7 +167,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of concat.
+     * Creates a new instance of concat.
      *
      * @param all all
      * @return of concat result
@@ -177,7 +177,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of coalesce2.
+     * Creates a new instance of coalesce2.
      *
      * @param all all
      * @return of coalesce2 result
@@ -187,7 +187,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of coalesce.
+     * Creates a new instance of coalesce.
      *
      * @param all all
      * @return of coalesce result
@@ -197,7 +197,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of concat.
+     * Creates a new instance of concat.
      *
      * @param all all
      * @return of concat result
@@ -207,7 +207,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of concat lists.
+     * Creates a new instance of concat lists.
      *
      * @param all all
      * @return of concat lists result
@@ -217,7 +217,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of coalesce.
+     * Creates a new instance of coalesce.
      *
      * @param all all
      * @return of coalesce result
@@ -259,7 +259,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of sorted.
+     * Creates a new instance of sorted.
      *
      * @param it it
      * @param c c
@@ -271,7 +271,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of distinct.
+     * Creates a new instance of distinct.
      *
      * @param it it
      * @return of distinct result
@@ -281,7 +281,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of distinct.
+     * Creates a new instance of distinct.
      *
      * @param it it
      * @param converter converter
@@ -292,7 +292,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of collector.
+     * Creates a new instance of collector.
      *
      * @param it it
      * @param consumer consumer
@@ -303,7 +303,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of nullify if empty.
+     * Creates a new instance of nullify if empty.
      *
      * @param other other
      * @return of nullify if empty result
@@ -313,7 +313,7 @@ public interface NIterator<T> extends Iterator<T>, NRedescribable<NIterator<T>>,
     }
 
     /**
-     * Creates a new instance of of convert non null.
+     * Creates a new instance of convert non null.
      *
      * @param from from
      * @param converter converter

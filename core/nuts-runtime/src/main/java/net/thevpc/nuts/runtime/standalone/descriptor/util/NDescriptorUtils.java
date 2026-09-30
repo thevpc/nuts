@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.collections.NProperties;
 import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.io.NIn;
 import net.thevpc.nuts.log.NLog;

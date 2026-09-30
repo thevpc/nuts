@@ -120,11 +120,6 @@ public class NReflectUtils {
 
         // Check cache first
         if (DEFAULTS_CACHE.containsKey(type)) {
-          /**
-           * Return.
-           *
-           * @param DEFAULTS_CACHE.get(type defaults_cache.get(type
-           */
             return (T) DEFAULTS_CACHE.get(type);
         }
 
@@ -250,13 +245,6 @@ public class NReflectUtils {
      * @see #isPrimitiveOrBoxed(Class, boolean)
      */
     public static boolean isPrimitiveOrBoxed(Class<?> anyType) {
-        /**
-         * Checks if is primitive or boxed.
-         *
-         * @param anyType any type
-         * @param true true
-         * @return is primitive or boxed result
-         */
         return isPrimitiveOrBoxed(anyType, true);
     }
 
@@ -547,12 +535,6 @@ public class NReflectUtils {
      * @see #commonAncestors(Class[])
      */
     public static Class<?> commonAncestor(Class<?>... classes) {
-        /**
-         * Common ancestors.
-         *
-         * @param classes).get(0 classes).get(0
-         * @return common ancestors result
-         */
         return commonAncestors(classes).get(0);
     }
 
@@ -629,12 +611,6 @@ public class NReflectUtils {
      */
     public static <T> List<T> listServices(Class<T> type, Class<?>... sources) {
         List<T> instances = new ArrayList<>();
-      /**
-       * Load services.
-       *
-       * @param type type
-       * @param sources sources
-       */
         loadServices(type, e -> instances.add(e), sources);
         return instances;
     }
@@ -1021,12 +997,6 @@ public class NReflectUtils {
             return NOptional.of((Class<?>) type);
         }
         if (type instanceof ParameterizedType) {
-            /**
-             * Returns the raw class.
-             *
-             * @param type).getRawType() type).get raw type()
-             * @return get raw class result
-             */
             return getRawClass(((ParameterizedType) type).getRawType());
         }
         if (type instanceof GenericArrayType) {
@@ -1036,24 +1006,12 @@ public class NReflectUtils {
         if (type instanceof WildcardType) {
             Type[] upper = ((WildcardType) type).getUpperBounds();
             if (upper.length > 0) {
-                /**
-                 * Returns the raw class.
-                 *
-                 * @param upper[0] upper[0]
-                 * @return get raw class result
-                 */
                 return getRawClass(upper[0]);
             }
         }
         if (type instanceof TypeVariable) {
             Type[] bounds = ((TypeVariable<?>) type).getBounds();
             if (bounds.length > 0) {
-                /**
-                 * Returns the raw class.
-                 *
-                 * @param bounds[0] bounds[0]
-                 * @return get raw class result
-                 */
                 return getRawClass(bounds[0]);
             }
             return NOptional.of(Object.class);

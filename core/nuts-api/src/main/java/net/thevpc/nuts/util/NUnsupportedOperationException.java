@@ -39,11 +39,6 @@ public class NUnsupportedOperationException extends NException {
      * Constructs a new NutsUnsupportedOperationException exception
      */
     public NUnsupportedOperationException() {
-      /**
-       * Super.
-       *
-       * @param operation") operation")
-       */
         super(NMsg.ofP("unsupported operation"));
     }
 
@@ -53,11 +48,6 @@ public class NUnsupportedOperationException extends NException {
      * @param message message
      */
     public NUnsupportedOperationException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -68,12 +58,6 @@ public class NUnsupportedOperationException extends NException {
      * @param cause   cause
      */
     public NUnsupportedOperationException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 
@@ -86,14 +70,6 @@ public class NUnsupportedOperationException extends NException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NUnsupportedOperationException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

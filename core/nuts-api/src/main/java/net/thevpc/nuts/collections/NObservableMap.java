@@ -35,7 +35,7 @@ import java.util.*;
  */
 public interface NObservableMap<K, V> extends Map<K, V> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -43,7 +43,7 @@ public interface NObservableMap<K, V> extends Map<K, V> {
         return  NUtilsRPI.of().createObservableMap();
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param base base
      * @return of result

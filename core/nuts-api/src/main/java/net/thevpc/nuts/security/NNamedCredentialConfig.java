@@ -85,11 +85,6 @@ public final class NNamedCredentialConfig extends NConfigItem implements Cloneab
      * @return copy result
      */
     public NNamedCredentialConfig copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 

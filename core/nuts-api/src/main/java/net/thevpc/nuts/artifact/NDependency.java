@@ -66,34 +66,22 @@ public interface NDependency extends Serializable, NBlankable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     static NDependency of(String value) {
-        /**
-         * Returns the get.
-         *
-         * @param value).get( value).get(
-         * @return get result
-         */
         return get(value).get();
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     static NDependency of(NId value) {
-        /**
-         * Returns the get.
-         *
-         * @param value).get( value).get(
-         * @return get result
-         */
         return get(value).get();
     }
 

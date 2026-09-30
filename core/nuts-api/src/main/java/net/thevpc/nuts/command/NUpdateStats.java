@@ -40,7 +40,7 @@ import java.util.Collection;
  */
 public interface NUpdateStats extends NWorkspaceCmd {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

@@ -43,12 +43,6 @@ public interface NWorkBalancerWorkerLoad {
      * @return completed jobs count
      */
     default long completedJobsCount() {
-        /**
-         * Succeeded job count.
-         *
-         * @param failedJobsCount( failed jobs count(
-         * @return succeeded job count result
-         */
         return succeededJobCount() + failedJobsCount();
     }
 

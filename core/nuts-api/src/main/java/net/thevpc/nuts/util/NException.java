@@ -66,7 +66,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         NReservedExceptions.setDefaultExceptionFactory(defaultExceptionFactory);
     }
     /**
-     * Creates a new instance of of safe illegal argument exception.
+     * Creates a new instance of safe illegal argument exception.
      *
      * @param message message
      * @return of safe illegal argument exception result
@@ -76,7 +76,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param th th
      * @return of safe io exception result
@@ -86,7 +86,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param message message
      * @param th th
@@ -97,7 +97,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe io exception.
+     * Creates a new instance of safe io exception.
      *
      * @param message message
      * @return of safe io exception result
@@ -107,7 +107,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe illegal argument exception.
+     * Creates a new instance of safe illegal argument exception.
      *
      * @param message message
      * @param th th
@@ -118,7 +118,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe assert exception.
+     * Creates a new instance of safe assert exception.
      *
      * @param message message
      * @return of safe assert exception result
@@ -128,7 +128,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe assert exception.
+     * Creates a new instance of safe assert exception.
      *
      * @param message message
      * @param ex ex
@@ -139,7 +139,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe cmd line exception.
+     * Creates a new instance of safe cmd line exception.
      *
      * @param message message
      * @return of safe cmd line exception result
@@ -149,7 +149,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe cmd line exception.
+     * Creates a new instance of safe cmd line exception.
      *
      * @param message message
      * @param ex ex
@@ -160,7 +160,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe no such element exception.
+     * Creates a new instance of safe no such element exception.
      *
      * @param message message
      * @return of safe no such element exception result
@@ -170,7 +170,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe unexpected exception.
+     * Creates a new instance of safe unexpected exception.
      *
      * @param message message
      * @return of safe unexpected exception result
@@ -180,7 +180,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     /**
-     * Creates a new instance of of safe unsupported enum exception.
+     * Creates a new instance of safe unsupported enum exception.
      *
      * @param e e
      * @return of safe unsupported enum exception result
@@ -231,7 +231,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
 
 
     /**
-     * Creates a new instance of of unchecked exception.
+     * Creates a new instance of unchecked exception.
      *
      * @param th th
      * @return of unchecked exception result
@@ -250,11 +250,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      *                retrieval by the {@link #message()} method.
      */
     public NException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param NException.messageToString(message) n exception.message to string(message)
-       */
         super(NException.messageToString(message));
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -274,12 +269,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      *                indicates that the cause is nonexistent or unknown.)
      */
     public NException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param occurred":message.toString() occurred":message.to string()
-       * @param cause cause
-       */
         super(message==null?"error occurred":message.toString(), cause);
         this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
@@ -325,12 +314,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public static NText messageToFormattedString(NMsg message) {
         if (NWorkspace.get().isNotPresent()) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param workspace":message.toString() workspace":message.to string()
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(message==null?"missing workspace":message.toString());
         }
         return NText.of(validateFormattedMessage(message));
@@ -343,12 +326,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * @return message to string result
      */
     public static String messageToString(NMsg message) {
-        /**
-         * Message to formatted string.
-         *
-         * @param message).filteredText( message).filtered text(
-         * @return message to formatted string result
-         */
         return messageToFormattedString(message).filteredText();
     }
 
@@ -386,11 +363,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     @NGetter
     public String message() {
-        /**
-         * Returns the message.
-         *
-         * @return get message result
-         */
         return getMessage();
     }
 

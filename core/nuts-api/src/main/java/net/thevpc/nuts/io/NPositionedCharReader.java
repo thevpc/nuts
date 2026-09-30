@@ -21,11 +21,6 @@ public class NPositionedCharReader extends NCharReader {
      * @return n positioned char reader result
      */
     public NPositionedCharReader(Reader reader) {
-      /**
-       * Super.
-       *
-       * @param reader reader
-       */
         super(reader);
     }
 
@@ -62,11 +57,6 @@ public class NPositionedCharReader extends NCharReader {
         if (x < 0) {
             return x;
         }
-      /**
-       * Advance.
-       *
-       * @param x x
-       */
         advance((char) x);
         return x;
     }
@@ -74,11 +64,6 @@ public class NPositionedCharReader extends NCharReader {
     @Override
     public char readChar() {
         char c = super.readChar();
-      /**
-       * Advance.
-       *
-       * @param c c
-       */
         advance(c);
         return c;
     }
@@ -87,11 +72,6 @@ public class NPositionedCharReader extends NCharReader {
     public int read(char[] buffer, int offset, int count) {
         int n = super.read(buffer, offset, count);
         for (int i = 0; i < n; i++) {
-          /**
-           * Advance.
-           *
-           * @param i] i]
-           */
             advance(buffer[offset + i]);
         }
         return n;

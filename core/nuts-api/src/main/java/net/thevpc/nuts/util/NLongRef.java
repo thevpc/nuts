@@ -6,7 +6,7 @@ package net.thevpc.nuts.util;
  */
 public class NLongRef extends NObjectRef<Long> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -14,7 +14,7 @@ public class NLongRef extends NObjectRef<Long> {
         return new NLongRef(null);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -30,11 +30,6 @@ public class NLongRef extends NObjectRef<Long> {
      * @return n long ref result
      */
     public NLongRef(Long value) {
-      /**
-       * Super.
-       *
-       * @param value value
-       */
         super(value);
     }
 
@@ -44,12 +39,6 @@ public class NLongRef extends NObjectRef<Long> {
      * @return inc result
      */
     public NLongRef inc() {
-        /**
-         * Inc.
-         *
-         * @param 1 1
-         * @return inc result
-         */
         return inc(1);
     }
 
@@ -60,12 +49,6 @@ public class NLongRef extends NObjectRef<Long> {
      * @return inc result
      */
     public NLongRef inc(long value) {
-        /**
-         * Adds add.
-         *
-         * @param value value
-         * @return add result
-         */
         return add(value);
     }
 
@@ -78,18 +61,8 @@ public class NLongRef extends NObjectRef<Long> {
     public NLongRef add(long value) {
         final Long o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param o o
-           */
             set(value + o);
         }
         return this;
@@ -104,18 +77,8 @@ public class NLongRef extends NObjectRef<Long> {
     public NLongRef mul(long value) {
         final Long o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o * value);
         }
         return this;
@@ -130,18 +93,8 @@ public class NLongRef extends NObjectRef<Long> {
     public NLongRef div(long value) {
         final Long o = get();
         if (o == null) {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(value);
         } else {
-          /**
-           * Sets the set.
-           *
-           * @param value value
-           */
             set(o / value);
         }
         return this;
@@ -153,12 +106,6 @@ public class NLongRef extends NObjectRef<Long> {
      * @return dec result
      */
     public NLongRef dec() {
-        /**
-         * Adds add.
-         *
-         * @param -1 -1
-         * @return add result
-         */
         return add(-1);
     }
 
@@ -169,12 +116,6 @@ public class NLongRef extends NObjectRef<Long> {
      * @return dec result
      */
     public NLongRef dec(long value) {
-        /**
-         * Adds add.
-         *
-         * @param -value -value
-         * @return add result
-         */
         return add(-value);
     }
 

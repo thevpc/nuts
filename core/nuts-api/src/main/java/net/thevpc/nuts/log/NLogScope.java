@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public interface NLogScope extends NBlankable {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

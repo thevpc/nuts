@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.artifact.NIdLocation;
+import net.thevpc.nuts.collections.NProperties;
 import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;

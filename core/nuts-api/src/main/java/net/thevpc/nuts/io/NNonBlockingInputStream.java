@@ -41,7 +41,7 @@ import java.io.InputStream;
 public interface NNonBlockingInputStream extends Closeable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param base base
      * @return of result

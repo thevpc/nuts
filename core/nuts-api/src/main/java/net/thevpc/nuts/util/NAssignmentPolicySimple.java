@@ -16,7 +16,7 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
     private NMapSideStrategy target;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param source source
      * @param target target
@@ -101,12 +101,6 @@ class NAssignmentPolicySimple implements NAssignmentPolicy {
      * @return apply optional value result
      */
     public <T> boolean applyOptionalValue(Supplier<NOptional<T>> sourceGetter, Supplier<NOptional<T>> targetGetter, Consumer<T> targetSetter) {
-        /**
-         * Apply value.
-         *
-         * @param targetSetter target setter
-         * @return apply value result
-         */
         return applyValue(() -> sourceGetter.get().orNull(), () -> targetGetter.get().orNull(), targetSetter);
     }
 

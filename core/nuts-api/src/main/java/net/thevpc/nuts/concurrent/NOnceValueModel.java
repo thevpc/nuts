@@ -171,11 +171,6 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      * @return a cloned instance
      */
     public NOnceValueModel copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -186,19 +181,8 @@ public class NOnceValueModel implements Cloneable, NCopiable {
      */
     protected NOnceValueModel clone() {
         try {
-            /**
-             * Return.
-             *
-             * @param super.clone(super.clone(
-             */
             return (NOnceValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
     }

@@ -13,13 +13,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -39,11 +39,6 @@ public class NValidationException extends NException {
      * Constructs a new NutsValidationException exception
      */
     public NValidationException() {
-      /**
-       * Super.
-       *
-       * @param value") value")
-       */
         super(NMsg.ofNtf("invalid value"));
     }
 
@@ -53,11 +48,6 @@ public class NValidationException extends NException {
      * @param message message
      */
     public NValidationException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 
@@ -68,12 +58,6 @@ public class NValidationException extends NException {
      * @param cause   cause
      */
     public NValidationException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       */
         super(message, cause);
     }
 
@@ -82,18 +66,10 @@ public class NValidationException extends NException {
      *
      * @param message            message
      * @param cause              cause
-     * @param enableSuppression  whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
+     * @param enableSuppression  whether suppression is enabled or disabled
+     * @param writableStackTrace whether the stack trace should be writable
      */
     public NValidationException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param message message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

@@ -23,7 +23,7 @@ import java.time.LocalTime;
 public interface NLiteral extends NBlankable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result
@@ -33,322 +33,202 @@ public interface NLiteral extends NBlankable {
     }
 
     /**
-     * Creates a new instance of of object.
+     * Creates a new instance of object.
      *
      * @param any any
      * @return of object result
      */
     static NOptional<Object> ofObject(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asObject( any).as object(
-         * @return of result
-         */
         return of(any).asObject();
     }
 
     /**
-     * Creates a new instance of of instant.
+     * Creates a new instance of instant.
      *
      * @param any any
      * @return of instant result
      */
     static NOptional<Instant> ofInstant(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asInstant( any).as instant(
-         * @return of result
-         */
         return of(any).asInstant();
     }
 
     /**
-     * Creates a new instance of of local date.
+     * Creates a new instance of local date.
      *
      * @param any any
      * @return of local date result
      */
     static NOptional<LocalDate> ofLocalDate(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asLocalDate( any).as local date(
-         * @return of result
-         */
         return of(any).asLocalDate();
     }
 
     /**
-     * Creates a new instance of of local date time.
+     * Creates a new instance of local date time.
      *
      * @param any any
      * @return of local date time result
      */
     static NOptional<LocalDateTime> ofLocalDateTime(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asLocalDateTime( any).as local date time(
-         * @return of result
-         */
         return of(any).asLocalDateTime();
     }
 
     /**
-     * Creates a new instance of of local time.
+     * Creates a new instance of local time.
      *
      * @param any any
      * @return of local time result
      */
     static NOptional<LocalTime> ofLocalTime(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asLocalTime( any).as local time(
-         * @return of result
-         */
         return of(any).asLocalTime();
     }
 
     /**
-     * Creates a new instance of of big complex.
+     * Creates a new instance of big complex.
      *
      * @param any any
      * @return of big complex result
      */
     static NOptional<NBigComplex> ofBigComplex(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asBigComplex( any).as big complex(
-         * @return of result
-         */
         return of(any).asBigComplex();
     }
 
     /**
-     * Creates a new instance of of double complex.
+     * Creates a new instance of double complex.
      *
      * @param any any
      * @return of double complex result
      */
     static NOptional<NDoubleComplex> ofDoubleComplex(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asDoubleComplex( any).as double complex(
-         * @return of result
-         */
         return of(any).asDoubleComplex();
     }
 
     /**
-     * Creates a new instance of of float complex.
+     * Creates a new instance of float complex.
      *
      * @param any any
      * @return of float complex result
      */
     static NOptional<NFloatComplex> ofFloatComplex(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asFloatComplex( any).as float complex(
-         * @return of result
-         */
         return of(any).asFloatComplex();
     }
 
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @param any any
      * @return of number result
      */
     static NOptional<Number> ofNumber(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asNumber( any).as number(
-         * @return of result
-         */
         return of(any).asNumber();
     }
 
     /**
-     * Creates a new instance of of boolean.
+     * Creates a new instance of boolean.
      *
      * @param any any
      * @return of boolean result
      */
     static NOptional<Boolean> ofBoolean(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asBoolean( any).as boolean(
-         * @return of result
-         */
         return of(any).asBoolean();
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param any any
      * @return of long result
      */
     static NOptional<Long> ofLong(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asLong( any).as long(
-         * @return of result
-         */
         return of(any).asLong();
     }
 
     /**
-     * Creates a new instance of of double.
+     * Creates a new instance of double.
      *
      * @param any any
      * @return of double result
      */
     static NOptional<Double> ofDouble(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asDouble( any).as double(
-         * @return of result
-         */
         return of(any).asDouble();
     }
 
     /**
-     * Creates a new instance of of float.
+     * Creates a new instance of float.
      *
      * @param any any
      * @return of float result
      */
     static NOptional<Float> ofFloat(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asFloat( any).as float(
-         * @return of result
-         */
         return of(any).asFloat();
     }
 
     /**
-     * Creates a new instance of of byte.
+     * Creates a new instance of byte.
      *
      * @param any any
      * @return of byte result
      */
     static NOptional<Byte> ofByte(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asByte( any).as byte(
-         * @return of result
-         */
         return of(any).asByte();
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param any any
      * @return of short result
      */
     static NOptional<Short> ofShort(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asShort( any).as short(
-         * @return of result
-         */
         return of(any).asShort();
     }
 
     /**
-     * Creates a new instance of of char.
+     * Creates a new instance of char.
      *
      * @param any any
      * @return of char result
      */
     static NOptional<Character> ofChar(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asChar( any).as char(
-         * @return of result
-         */
         return of(any).asChar();
     }
 
     /**
-     * Creates a new instance of of int.
+     * Creates a new instance of int.
      *
      * @param any any
      * @return of int result
      */
     static NOptional<Integer> ofInt(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asInt( any).as int(
-         * @return of result
-         */
         return of(any).asInt();
     }
 
     /**
-     * Creates a new instance of of string.
+     * Creates a new instance of string.
      *
      * @param any any
      * @return of string result
      */
     static NOptional<String> ofString(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asString( any).as string(
-         * @return of result
-         */
         return of(any).asString();
     }
 
     /**
-     * Creates a new instance of of big int.
+     * Creates a new instance of big int.
      *
      * @param any any
      * @return of big int result
      */
     static NOptional<BigInteger> ofBigInt(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asBigInt( any).as big int(
-         * @return of result
-         */
         return of(any).asBigInt();
     }
 
     /**
-     * Creates a new instance of of big decimal.
+     * Creates a new instance of big decimal.
      *
      * @param any any
      * @return of big decimal result
      */
     static NOptional<BigDecimal> ofBigDecimal(Object any) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param any).asBigDecimal( any).as big decimal(
-         * @return of result
-         */
         return of(any).asBigDecimal();
     }
 

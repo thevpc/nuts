@@ -46,12 +46,6 @@ public class NStringMapFormat {
         try {
             return URLEncoder.encode(x, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param e e
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(e);
         }
     };
@@ -59,12 +53,6 @@ public class NStringMapFormat {
         try {
             return URLDecoder.decode(x, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param e e
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException(e);
         }
     };
@@ -99,12 +87,6 @@ public class NStringMapFormat {
         if (builder.equalsChars() != null) {
             for (char c : builder.equalsChars().toCharArray()) {
                 if (isWhitespace(c)) {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param whitespaces" whitespaces"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -112,12 +94,6 @@ public class NStringMapFormat {
         if (builder.escapeChars() != null) {
             for (char c : builder.escapeChars().toCharArray()) {
                 if (isWhitespace(c)) {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param whitespaces" whitespaces"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -125,12 +101,6 @@ public class NStringMapFormat {
         if (builder.separatorChars() != null) {
             for (char c : builder.separatorChars().toCharArray()) {
                 if (isWhitespace(c)) {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param whitespaces" whitespaces"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("eq chars could not include whitespaces");
                 }
             }
@@ -197,13 +167,6 @@ public class NStringMapFormat {
          * @return token result
          */
         public Token(TokenType type, String value) {
-          /**
-           * This.
-           *
-           * @param type type
-           * @param value value
-           * @param value value
-           */
             this(type, value, value);
         }
 
@@ -381,12 +344,6 @@ public class NStringMapFormat {
                 }
             }
         } catch (IOException e) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param e e
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(e);
         }
     }
@@ -443,11 +400,6 @@ public class NStringMapFormat {
             m.computeIfAbsent(null, v -> new ArrayList<>()).add(null);
         }
         while (true) {
-          /**
-           * Skip separator.
-           *
-           * @param tokens tokens
-           */
             skipSeparator(tokens);
             Map.Entry<String, String> u;
             if ((u = readEntry(tokens)) != null) {
@@ -559,12 +511,6 @@ public class NStringMapFormat {
             for (Map.Entry<String, String> e : map.entrySet()) {
                 map2.put(e.getKey(), Arrays.asList(e.getValue()));
             }
-            /**
-             * Format duplicates.
-             *
-             * @param map2 map2
-             * @return format duplicates result
-             */
             return formatDuplicates(map2);
         }
         return "";

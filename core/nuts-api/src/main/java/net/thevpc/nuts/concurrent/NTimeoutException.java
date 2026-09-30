@@ -41,11 +41,6 @@ public class NTimeoutException extends NException {
      * @param message      message or null
      */
     public NTimeoutException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message == null ? NMsg.ofC("timeout"): message);
     }
     /**

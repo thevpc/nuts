@@ -47,11 +47,6 @@ public class NReadOnlyException extends NException {
      * @return n read only exception result
      */
     public NReadOnlyException(NMsg msg) {
-      /**
-       * Super.
-       *
-       * @param readonly"):msg readonly"):msg
-       */
         super(msg==null?NMsg.ofC("cannot update readonly"):msg);
     }
 

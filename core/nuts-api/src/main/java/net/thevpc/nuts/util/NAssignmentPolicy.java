@@ -17,7 +17,7 @@ public interface NAssignmentPolicy {
     NAssignmentPolicy SOURCE_NON_BLANK = NAssignmentPolicySimple.SOURCE_NON_BLANK;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param source source
      * @param target target
@@ -36,12 +36,6 @@ public interface NAssignmentPolicy {
      * @return apply optional value result
      */
     default <T> boolean applyOptionalValue(Supplier<NOptional<T>> sourceGetter, Supplier<NOptional<T>> targetGetter, Consumer<T> targetSetter) {
-        /**
-         * Apply value.
-         *
-         * @param targetSetter target setter
-         * @return apply value result
-         */
         return applyValue(() -> sourceGetter.get().orNull(), () -> targetGetter.get().orNull(), targetSetter);
     }
 
@@ -54,12 +48,6 @@ public interface NAssignmentPolicy {
      * @return apply optional mapping value result
      */
     default <T> boolean applyOptionalMappingValue(Supplier<NOptional<T>> sourceGetter, Supplier<NOptional<T>> targetGetter, MappingAssigner<T> targetSetter) {
-        /**
-         * Apply mapping value.
-         *
-         * @param targetSetter target setter
-         * @return apply mapping value result
-         */
         return applyMappingValue(() -> sourceGetter.get().orNull(), () -> targetGetter.get().orNull(), targetSetter);
     }
 

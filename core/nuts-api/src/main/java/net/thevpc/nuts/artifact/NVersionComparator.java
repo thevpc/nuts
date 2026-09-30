@@ -14,7 +14,7 @@ import java.util.Comparator;
  */
 public interface NVersionComparator extends Comparator<NVersion> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -23,7 +23,7 @@ public interface NVersionComparator extends Comparator<NVersion> {
     }
 
     /**
-     * Creates a new instance of of maven.
+     * Creates a new instance of maven.
      *
      * @return of maven result
      */

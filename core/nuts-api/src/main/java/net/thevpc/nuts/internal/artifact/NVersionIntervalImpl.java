@@ -78,11 +78,6 @@ public class NVersionIntervalImpl implements NVersionInterval, Serializable {
         }
         if (!NBlankable.isBlank(upperBound) && !upperBound.equals(NConstants.Versions.LATEST) && !upperBound.equals(NConstants.Versions.RELEASE)) {
             int t = versionComparator.compare(version,NVersion.of(upperBound));
-          /**
-           * Return.
-           *
-           * @param 0 0
-           */
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
         return true;

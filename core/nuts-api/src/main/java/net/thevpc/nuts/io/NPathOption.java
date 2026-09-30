@@ -155,7 +155,7 @@ public interface NPathOption {
     NPathOption SORTED = NPathStandardOption.NOSHARE_DELETE;
 
     /**
-     * Creates a new instance of of credentials.
+     * Creates a new instance of credentials.
      *
      * @param userName user name
      * @param secret secret
@@ -166,7 +166,7 @@ public interface NPathOption {
     }
 
     /**
-     * Creates a new instance of of http basic credentials.
+     * Creates a new instance of http basic credentials.
      *
      * @param userName user name
      * @param secret secret
@@ -177,7 +177,7 @@ public interface NPathOption {
     }
 
     /**
-     * Creates a new instance of of http bearer credentials.
+     * Creates a new instance of http bearer credentials.
      *
      * @param secret secret
      * @return of http bearer credentials result

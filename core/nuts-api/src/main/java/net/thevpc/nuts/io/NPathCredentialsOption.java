@@ -41,7 +41,7 @@ public class NPathCredentialsOption implements NPathOption {
     }
 
     /**
-     * Creates a new instance of of http bearer.
+     * Creates a new instance of http bearer.
      *
      * @param secret secret
      * @return of http bearer result

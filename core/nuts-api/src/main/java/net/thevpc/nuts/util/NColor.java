@@ -449,7 +449,7 @@ public interface NColor {
 
 
     /**
-     * Creates a new instance of of name.
+     * Creates a new instance of name.
      *
      * @param name name
      * @return of name result
@@ -459,7 +459,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of canonical name.
+     * Creates a new instance of canonical name.
      *
      * @param name name
      * @return of canonical name result
@@ -489,7 +489,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of4.
+     * Creates a new instance of4.
      *
      * @param color color
      * @return of4 result
@@ -499,7 +499,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of4.
+     * Creates a new instance of4.
      *
      * @param color color
      * @param name name
@@ -510,7 +510,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of8.
+     * Creates a new instance of8.
      *
      * @param color color
      * @return of8 result
@@ -520,7 +520,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of8.
+     * Creates a new instance of8.
      *
      * @param color color
      * @param name name
@@ -531,7 +531,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of16.
+     * Creates a new instance of16.
      *
      * @param color color
      * @return of16 result
@@ -541,7 +541,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of16.
+     * Creates a new instance of16.
      *
      * @param color color
      * @param name name
@@ -552,7 +552,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of24.
+     * Creates a new instance of24.
      *
      * @param color color
      * @return of24 result
@@ -561,7 +561,7 @@ public interface NColor {
         return NColorBase.of24(color);
     }
     /**
-     * Creates a new instance of of24.
+     * Creates a new instance of24.
      *
      * @param color color
      * @param name name
@@ -572,7 +572,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param r r
      * @param g g
@@ -584,7 +584,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param r r
      * @param g g
@@ -597,7 +597,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param r r
      * @param g g
@@ -610,7 +610,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param r r
      * @param g g
@@ -624,7 +624,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param color color
      * @return of32 result
@@ -634,7 +634,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of32.
+     * Creates a new instance of32.
      *
      * @param color color
      * @param name name
@@ -645,7 +645,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of64.
+     * Creates a new instance of64.
      *
      * @param color color
      * @return of64 result
@@ -655,7 +655,7 @@ public interface NColor {
     }
 
     /**
-     * Creates a new instance of of64.
+     * Creates a new instance of64.
      *
      * @param color color
      * @param name name

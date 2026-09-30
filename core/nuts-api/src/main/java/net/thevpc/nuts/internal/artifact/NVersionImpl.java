@@ -66,14 +66,6 @@ public class NVersionImpl implements NVersion {
      * @return inc version result
      */
     public static String incVersion(String oldVersion, int level, long count) {
-        /**
-         * Inc version.
-         *
-         * @param oldVersion old version
-         * @param level level
-         * @param BigInteger.valueOf(count) big integer.value of(count)
-         * @return inc version result
-         */
         return incVersion(oldVersion, level, BigInteger.valueOf(count));
     }
 
@@ -242,48 +234,21 @@ public class NVersionImpl implements NVersion {
 
     @Override
     public int compareTo(String other) {
-        /**
-         * Compare to.
-         *
-         * @param NVersion.of(other) n version.of(other)
-         * @param null null
-         * @return compare to result
-         */
         return compareTo(NVersion.of(other), null);
     }
 
     @Override
     public int compareTo(NVersion other) {
-        /**
-         * Compare to.
-         *
-         * @param other other
-         * @param null null
-         * @return compare to result
-         */
         return compareTo(other, null);
     }
 
     @Override
     public int compareTo(String other, NVersionComparator comparator) {
-        /**
-         * Compare to.
-         *
-         * @param NVersion.of(other) n version.of(other)
-         * @param comparator comparator
-         * @return compare to result
-         */
         return compareTo(other == null ? BLANK : NVersion.of(other), comparator);
     }
 
     @Override
     public int compareTo(NVersion other, NVersionComparator comparator) {
-      /**
-       * Return.
-       *
-       * @param comparator).compare(this comparator).compare(this
-       * @param other other
-       */
         return (comparator == null ? NVersionComparator.of() : comparator).compare(this, other);
     }
 
@@ -339,12 +304,6 @@ public class NVersionImpl implements NVersion {
 
     @Override
     public NVersionFilter toFilter() {
-        /**
-         * Converts to filter.
-         *
-         * @param null null
-         * @return to filter result
-         */
         return toFilter(null);
     }
 
@@ -374,12 +333,6 @@ public class NVersionImpl implements NVersion {
 
     @Override
     public NOptional<List<NVersionInterval>> toIntervals() {
-        /**
-         * Converts to intervals.
-         *
-         * @param null null
-         * @return to intervals result
-         */
         return toIntervals(null);
     }
 
@@ -484,12 +437,6 @@ public class NVersionImpl implements NVersion {
 
     @Override
     public boolean isSingleValue() {
-        /**
-         * As single value.
-         *
-         * @param ).isPresent( ).is present(
-         * @return as single value result
-         */
         return singleValue().isPresent();
     }
 
@@ -512,24 +459,11 @@ public class NVersionImpl implements NVersion {
 
     @Override
     public NVersion inc() {
-        /**
-         * Inc.
-         *
-         * @param -1 -1
-         * @return inc result
-         */
         return inc(-1);
     }
 
     @Override
     public NVersion inc(int index) {
-        /**
-         * Inc.
-         *
-         * @param index index
-         * @param 1 1
-         * @return inc result
-         */
         return inc(index, 1);
     }
 
@@ -549,23 +483,11 @@ public class NVersionImpl implements NVersion {
      * @return part count result
      */
     public int partCount() {
-        /**
-         * Returns the parts.
-         *
-         * @param ).size( ).size(
-         * @return get parts result
-         */
         return getParts().size();
     }
 
     @Override
     public int numberCount() {
-        /**
-         * Returns the parts.
-         *
-         * @param ).numberCount( ).number count(
-         * @return get parts result
-         */
         return getParts().numberCount();
     }
 
@@ -916,12 +838,6 @@ public class NVersionImpl implements NVersion {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param separator" separator"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("illegal separator");
                 }
                 all.add(0, new NVersionPartImpl(sep, NVersionPartType.SEPARATOR));
@@ -945,12 +861,6 @@ public class NVersionImpl implements NVersion {
                     sep = ".";
                 }
                 if (!sep.equals(".") && !sep.equals("-")) {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param sep).toString() sep).to string()
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException(NMsg.ofC(NI18n.of("illegal version number separator %s"), sep).toString());
                 }
                 all.add(new NVersionPartImpl(sep, NVersionPartType.SEPARATOR));

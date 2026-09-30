@@ -384,11 +384,6 @@ public class NCachedValueModel implements Cloneable, NCopiable {
      * @return copy result
      */
     public NCachedValueModel copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -399,19 +394,8 @@ public class NCachedValueModel implements Cloneable, NCopiable {
      */
     protected NCachedValueModel clone() {
         try {
-            /**
-             * Return.
-             *
-             * @param super.clone(super.clone(
-             */
             return (NCachedValueModel) super.clone();
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s", getClass()), e);
         }
     }

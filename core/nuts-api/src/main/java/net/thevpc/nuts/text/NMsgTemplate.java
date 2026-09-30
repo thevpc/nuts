@@ -32,115 +32,67 @@ public class NMsgTemplate {
     ));
 
     /**
-     * Creates a new instance of of c.
+     * Creates a new instance of c.
      *
      * @param message message
      * @return of c result
      */
     public static NMsgTemplate ofC(String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.CFORMAT n msg type.cformat
-         * @param null null
-         * @return of result
-         */
         return of(message, NMsgType.CFORMAT,null);
     }
 
     /**
-     * Creates a new instance of of j.
+     * Creates a new instance of j.
      *
      * @param message message
      * @return of j result
      */
     public static NMsgTemplate ofJ(String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.JFORMAT n msg type.jformat
-         * @param null null
-         * @return of result
-         */
         return of(message, NMsgType.JFORMAT,null);
     }
 
     /**
-     * Creates a new instance of of s.
+     * Creates a new instance of s.
      *
      * @param message message
      * @return of s result
      */
     public static NMsgTemplate ofS(String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.SFORMAT n msg type.sformat
-         * @param null null
-         * @return of result
-         */
         return of(message, NMsgType.SFORMAT,null);
     }
 
     /**
-     * Creates a new instance of of v.
+     * Creates a new instance of v.
      *
      * @param message message
      * @return of v result
      */
     public static NMsgTemplate ofV(String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.VFORMAT n msg type.vformat
-         * @param null null
-         * @return of result
-         */
         return of(message, NMsgType.VFORMAT,null);
     }
 
     /**
-     * Creates a new instance of of m.
+     * Creates a new instance of m.
      *
      * @param message message
      * @return of m result
      */
     public static NMsgTemplate ofM(String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.MFORMAT n msg type.mformat
-         * @param null null
-         * @return of result
-         */
         return of(message, NMsgType.MFORMAT,null);
     }
     /**
-     * Creates a new instance of of custom.
+     * Creates a new instance of custom.
      *
      * @param messageTypeId message type id
      * @param message message
      * @return of custom result
      */
     public static NMsgTemplate ofCustom(String messageTypeId,String message) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param message message
-         * @param NMsgType.CUSTOM n msg type.custom
-         * @param messageTypeId message type id
-         * @return of result
-         */
         return of(message, NMsgType.CUSTOM,messageTypeId);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param message message
      * @param format format
@@ -177,12 +129,6 @@ public class NMsgTemplate {
                 break;
             }
             default: {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param allowed" allowed"
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
             }
         }
@@ -329,23 +275,11 @@ public class NMsgTemplate {
                     return NUtilsRPI.of().extractMessageParams(message, NMsgType.CUSTOM, customMessageId());
                 }
                 default: {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param allowed" allowed"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
                 }
             }
             return params;
         } catch (IOException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new UncheckedIOException(e);
         }
     }
@@ -376,12 +310,6 @@ public class NMsgTemplate {
         if (!provided.containsAll(required)) {
             Set<String> missing = new HashSet<>(required);
             missing.removeAll(provided);
-            /**
-             * N illegal argument exception.
-             *
-             * @param missing) missing)
-             * @return n illegal argument exception result
-             */
             throw new NIllegalArgumentException(NMsg.ofC("missing template parameters %s", missing));
         }
         switch (format) {
@@ -404,12 +332,6 @@ public class NMsgTemplate {
                 return NMsg.ofCustom(customMessageId,message, params);
             }
             default: {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param allowed" allowed"
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("invalid format. only "+ACCEPTED_FORMATS+" are allowed");
             }
         }

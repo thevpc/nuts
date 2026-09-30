@@ -15,7 +15,7 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface NExprVarResolver {
     /**
-     * Creates a new instance of of const.
+     * Creates a new instance of const.
      *
      * @param vars vars
      * @return of const result
@@ -25,7 +25,7 @@ public interface NExprVarResolver {
     }
 
     /**
-     * Creates a new instance of of read only.
+     * Creates a new instance of read only.
      *
      * @param vars vars
      * @return of read only result
@@ -35,7 +35,7 @@ public interface NExprVarResolver {
     }
 
     /**
-     * Creates a new instance of of map.
+     * Creates a new instance of map.
      *
      * @param variables variables
      * @return of map result
@@ -45,7 +45,7 @@ public interface NExprVarResolver {
     }
 
     /**
-     * Creates a new instance of of read only map.
+     * Creates a new instance of read only map.
      *
      * @param variables variables
      * @return of read only map result

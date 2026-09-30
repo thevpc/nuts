@@ -33,7 +33,7 @@ package net.thevpc.nuts.text;
 public interface NTableModel {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -42,7 +42,7 @@ public interface NTableModel {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param text text
      * @return of result

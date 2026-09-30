@@ -159,12 +159,6 @@ public final class NReservedLangUtils {
      * @return non null list from array result
      */
     public static <T> List<T> nonNullListFromArray(T[] other) {
-        /**
-         * Non null list.
-         *
-         * @param Arrays.asList(other) arrays.as list(other)
-         * @return non null list result
-         */
         return nonNullList(Arrays.asList(other));
     }
 
@@ -281,12 +275,6 @@ public final class NReservedLangUtils {
      * @return unique non blank list result
      */
     public static <T> List<T> uniqueNonBlankList(Collection<T> other) {
-        /**
-         * Unique list.
-         *
-         * @param !NBlankable.isBlank(x)).collect(Collectors.toList() !n blankable.is blank(x)).collect( collectors.to list()
-         * @return unique list result
-         */
         return uniqueList(other).stream().filter(x -> !NBlankable.isBlank(x)).collect(Collectors.toList());
     }
 
@@ -317,12 +305,6 @@ public final class NReservedLangUtils {
      * @return non blank set result
      */
     public static <T> Set<T> nonBlankSet(Collection<T> other) {
-        /**
-         * Sets the set.
-         *
-         * @param !NBlankable.isBlank(x)).collect(Collectors.toSet() !n blankable.is blank(x)).collect( collectors.to set()
-         * @return set result
-         */
         return set(other).stream().filter(x -> !NBlankable.isBlank(x)).collect(Collectors.toSet());
     }
 

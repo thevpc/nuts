@@ -49,7 +49,7 @@ public interface NOutputTarget extends NContentMetadataProvider {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param outputStream output stream
      * @param metadata metadata
@@ -59,7 +59,7 @@ public interface NOutputTarget extends NContentMetadataProvider {
         return NIORPI.of().createOutputTarget(outputStream, metadata);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param writer writer
      * @return of result
@@ -69,7 +69,7 @@ public interface NOutputTarget extends NContentMetadataProvider {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param writer writer
      * @param metadata metadata

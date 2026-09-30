@@ -12,151 +12,87 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NTextFormat<T> extends NStringFormat<T> {
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @return of number result
      */
     static NTextFormat<Number> ofNumber() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param null null
-         * @return of result
-         */
         return of("number", Number.class, null);
     }
 
     /**
-     * Creates a new instance of of bytes.
+     * Creates a new instance of bytes.
      *
      * @param pattern pattern
      * @return of bytes result
      */
     static NTextFormat<Number> ofBytes(String pattern) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "bytes" "bytes"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("bytes", Number.class, pattern);
     }
 
     /**
-     * Creates a new instance of of frequency.
+     * Creates a new instance of frequency.
      *
      * @param pattern pattern
      * @return of frequency result
      */
     static NTextFormat<Number> ofFrequency(String pattern) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "bytes" "bytes"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("bytes", Number.class, pattern);
     }
 
     /**
-     * Creates a new instance of of distance.
+     * Creates a new instance of distance.
      *
      * @param pattern pattern
      * @return of distance result
      */
     static NTextFormat<Number> ofDistance(String pattern) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "meters" "meters"
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of("meters", Number.class, pattern);
     }
 
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @param type type
      * @param pattern pattern
      * @return of number result
      */
     static NTextFormat<Number> ofNumber(String type, String pattern) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param type type
-         * @param Number.class number.class
-         * @param pattern pattern
-         * @return of result
-         */
         return of(type, Number.class, pattern);
     }
 
     /**
-     * Creates a new instance of of number.
+     * Creates a new instance of number.
      *
      * @param format format
      * @return of number result
      */
     static NTextFormat<Number> ofNumber(String format) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param format format
-         * @return of result
-         */
         return of("number", Number.class, format);
     }
 
     /**
-     * Creates a new instance of of percent.
+     * Creates a new instance of percent.
      *
      * @return of percent result
      */
     static NTextFormat<Number> ofPercent() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param "number" "number"
-         * @param Number.class number.class
-         * @param "00.00%" "00.00%"
-         * @return of result
-         */
         return of("number", Number.class, "00.00%");
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param expectedType expected type
      * @return of result
      */
     static <T> NTextFormat<T> of(String type, Class<T> expectedType) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param type type
-         * @param expectedType expected type
-         * @param null null
-         * @return of result
-         */
         return of(type, expectedType, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param expectedType expected type
@@ -164,14 +100,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
      * @return of result
      */
     static <T> NTextFormat<T> of(String type, Class<T> expectedType, String pattern) {
-        /**
-         * Returns the get.
-         *
-         * @param type type
-         * @param expectedType expected type
-         * @param pattern).get( pattern).get(
-         * @return get result
-         */
         return get(type, expectedType, pattern).get();
     }
 
@@ -199,12 +127,6 @@ public interface NTextFormat<T> extends NStringFormat<T> {
     NText toText(T object);
 
     default String toString(T object) {
-        /**
-         * Converts to text.
-         *
-         * @param object).filteredText( object).filtered text(
-         * @return to text result
-         */
         return toText(object).filteredText();
     }
 }

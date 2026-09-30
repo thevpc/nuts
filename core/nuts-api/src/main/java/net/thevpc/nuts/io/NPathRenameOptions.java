@@ -38,7 +38,7 @@ public class NPathRenameOptions {
     }
 
     /**
-     * Creates a new instance of of template.
+     * Creates a new instance of template.
      *
      * @param template template
      * @return of template result

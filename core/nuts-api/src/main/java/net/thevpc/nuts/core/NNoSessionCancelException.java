@@ -40,11 +40,6 @@ public class NNoSessionCancelException extends NNoSessionException {
      * @return n no session cancel exception result
      */
     public NNoSessionCancelException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
     }
 }

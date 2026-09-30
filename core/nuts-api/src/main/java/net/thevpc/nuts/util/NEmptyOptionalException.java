@@ -17,11 +17,6 @@ public class NEmptyOptionalException extends NException {
      * @return n empty optional exception result
      */
     public NEmptyOptionalException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       */
         super(formattedMessage);
     }
 

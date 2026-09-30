@@ -28,57 +28,36 @@ public class NChronometer implements Serializable {
     private ChronoUnit largestUnit;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
     public static NChronometer of() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @param null null
-         * @return of result
-         */
         return of(null, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @return of result
      */
     public static NChronometer of(String name) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param name name
-         * @param null null
-         * @return of result
-         */
         return of(name, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param smallestUnit smallest unit
      * @return of result
      */
     public static NChronometer of(ChronoUnit smallestUnit) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @param smallestUnit smallest unit
-         * @return of result
-         */
         return of(null, smallestUnit);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param smallestUnit smallest unit
@@ -89,57 +68,36 @@ public class NChronometer implements Serializable {
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted() {
-        /**
-         * Creates a new instance of of unstarted.
-         *
-         * @param null null
-         * @param null null
-         * @return of unstarted result
-         */
         return ofUnstarted(null, null);
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param name name
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted(String name) {
-        /**
-         * Creates a new instance of of unstarted.
-         *
-         * @param name name
-         * @param null null
-         * @return of unstarted result
-         */
         return ofUnstarted(name, null);
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param smallestUnit smallest unit
      * @return of unstarted result
      */
     public static NChronometer ofUnstarted(ChronoUnit smallestUnit) {
-        /**
-         * Creates a new instance of of unstarted.
-         *
-         * @param null null
-         * @param smallestUnit smallest unit
-         * @return of unstarted result
-         */
         return ofUnstarted(null, smallestUnit);
     }
 
     /**
-     * Creates a new instance of of unstarted.
+     * Creates a new instance of unstarted.
      *
      * @param name name
      * @param smallestUnit smallest unit
@@ -194,14 +152,8 @@ public class NChronometer implements Serializable {
      * @return {@code this} instance
      */
     public NChronometer restart() {
-      /**
-       * Stop.
-       */
         stop();
         NChronometer c = copy();
-      /**
-       * Start.
-       */
         start();
         return c;
     }
@@ -214,20 +166,9 @@ public class NChronometer implements Serializable {
      * @return {@code this} instance
      */
     public NChronometer restart(String newName) {
-      /**
-       * Stop.
-       */
         stop();
         NChronometer c = copy();
-      /**
-       * Sets the name.
-       *
-       * @param newName new name
-       */
         name(newName);
-      /**
-       * Start.
-       */
         start();
         return c;
     }
@@ -449,11 +390,6 @@ public class NChronometer implements Serializable {
         }
         if (running) {
             long curr = System.nanoTime() - lastNanos;
-          /**
-           * Return.
-           *
-           * @param accumulatedNanos accumulated nanos
-           */
             return (curr + accumulatedNanos);
         }
         return accumulatedNanos;

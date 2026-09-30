@@ -44,11 +44,6 @@ public class NHex {
     public static short toShort(String v) {
         byte[] b = toBytes(v, 2);
         // Mask with 0xFF to treat as unsigned during promotion
-      /**
-       * Return.
-       *
-       * @param 0xFF) 0x ff)
-       */
         return (short) (((b[0] & 0xFF) << 8) | (b[1] & 0xFF));
     }
 
@@ -62,11 +57,6 @@ public class NHex {
         byte[] b = toBytes(v, 2);
         int ch1 = b[0];
         int ch2 = b[1];
-      /**
-       * Return.
-       *
-       * @param 0 0
-       */
         return (ch1 << 8) + (ch2 << 0);
     }
 
@@ -92,11 +82,6 @@ public class NHex {
      */
     public static long toLong(String v) {
         byte[] b = toBytes(v, 8);
-      /**
-       * Return.
-       *
-       * @param 0 0
-       */
         return ((long) b[0] << 56) + ((long) (b[1] & 255) << 48) + ((long) (b[2] & 255) << 40) + ((long) (b[3] & 255) << 32) + ((long) (b[4] & 255) << 24) + (long) ((b[5] & 255) << 16) + (long) ((b[6] & 255) << 8) + (long) ((b[7] & 255) << 0);
     }
 
@@ -107,12 +92,6 @@ public class NHex {
      * @return from byte result
      */
     public static String fromByte(byte a) {
-        /**
-         * From bytes.
-         *
-         * @param byte[]{a} byte[]{a}
-         * @return from bytes result
-         */
         return fromBytes(new byte[]{a});
     }
 
@@ -217,12 +196,6 @@ public class NHex {
         }
         byte[] a = toBytes(s);
         if (a.length != size) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param size size
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("invalid hex " + a.length + " <> " + size);
         }
         return a;

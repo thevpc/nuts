@@ -8,41 +8,27 @@ package net.thevpc.nuts.reflect;
  */
 public interface NReflectSignature extends NSignature<NReflectType, NReflectSignature> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param types types
      * @return of result
      */
     static NReflectSignature of(NReflectType... types) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @param types types
-         * @return of result
-         */
         return of(null, types);
     }
 
     /**
-     * Creates a new instance of of var args.
+     * Creates a new instance of var args.
      *
      * @param types types
      * @return of var args result
      */
     static NReflectSignature ofVarArgs(NReflectType... types) {
-        /**
-         * Creates a new instance of of var args.
-         *
-         * @param null null
-         * @param types types
-         * @return of var args result
-         */
         return ofVarArgs(null, types);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param types types
@@ -53,7 +39,7 @@ public interface NReflectSignature extends NSignature<NReflectType, NReflectSign
     }
 
     /**
-     * Creates a new instance of of var args.
+     * Creates a new instance of var args.
      *
      * @param name name
      * @param types types
@@ -64,7 +50,7 @@ public interface NReflectSignature extends NSignature<NReflectType, NReflectSign
     }
 
     /**
-     * Creates a new instance of of map.
+     * Creates a new instance of map.
      *
      * @return of map result
      */

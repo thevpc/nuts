@@ -23,11 +23,6 @@ public class NOptionalValidValueImpl<T> extends NOptionalValidImpl<T> implements
      * @return n reserved optional valid value result
      */
     public NOptionalValidValueImpl(T value, Supplier<NMsg> message) {
-      /**
-       * Super.
-       *
-       * @param message message
-       */
         super(message);
         this.value = value;
     }

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.collections;
 
 import net.thevpc.nuts.artifact.NDescriptorProperty;
 import net.thevpc.nuts.artifact.NEnvCondition;
-import net.thevpc.nuts.util.NProperties;
+import net.thevpc.nuts.collections.NProperties;
 
 import java.util.*;
 

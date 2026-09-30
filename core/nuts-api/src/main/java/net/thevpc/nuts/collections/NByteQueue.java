@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
  */
 public interface NByteQueue {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -24,7 +24,7 @@ public interface NByteQueue {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param size size
      * @return of result
@@ -34,7 +34,7 @@ public interface NByteQueue {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @return of result

@@ -69,11 +69,6 @@ public enum NNewLineMode implements NEnum {
      */
     public static NNewLineMode system() {
         if (autoValue == null) {
-          /**
-           * Synchronized.
-           *
-           * @param NNewLineMode.class n new line mode.class
-           */
             synchronized (NNewLineMode.class) {
                 if (autoValue == null) {
                     autoValue = parse(System.getProperty("line.separator", "\n")).orElse(LF);
@@ -90,11 +85,6 @@ public enum NNewLineMode implements NEnum {
      */
     public NNewLineMode normalize() {
         if (this == AUTO) {
-            /**
-             * System.
-             *
-             * @return system result
-             */
             return system();
         }
         return this;
@@ -114,12 +104,6 @@ public enum NNewLineMode implements NEnum {
             case CR:
                 return "\r";
             case AUTO: {
-                /**
-                 * Normalize.
-                 *
-                 * @param ).value( ).value(
-                 * @return normalize result
-                 */
                 return normalize().value();
             }
         }

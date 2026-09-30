@@ -32,7 +32,7 @@ public class DefaultNLiteral implements NLiteral {
     private static final NLiteral NULL = new DefaultNLiteral(null);
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result
@@ -1056,7 +1056,7 @@ public class DefaultNLiteral implements NLiteral {
     @Override
     public NLiteral asLiteralAt(int index) {
         /**
-         * Creates a new instance of of.
+         * Creates a new instance.
          *
          * @param asObjectAt(index).orNull() as object at(index).or null()
          * @return of result

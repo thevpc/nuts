@@ -25,11 +25,6 @@ public class NHttpResponseException extends NException implements NMsgCodeAware 
      *                later retrieval by the {@link #message()} method.
      */
     public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code) {
-      /**
-       * Super.
-       *
-       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
-       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message);
         this.code = code;
         this.responseMessage = message;
@@ -52,12 +47,6 @@ public class NHttpResponseException extends NException implements NMsgCodeAware 
      *                unknown.)
      */
     public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
-       * @param cause cause
-       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause);
         this.code = code;
         this.responseMessage = message;
@@ -78,14 +67,6 @@ public class NHttpResponseException extends NException implements NMsgCodeAware 
      *                           be writable
      */
     public NHttpResponseException(NMsg message, NMsgCode messageCode, NHttpCode code, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-      /**
-       * Super.
-       *
-       * @param messageCode!=null?NMsg.ofC("%s",messageCode.message()):message message code!=null?n msg.of c("%s",message code.message()):message
-       * @param cause cause
-       * @param enableSuppression enable suppression
-       * @param writableStackTrace writable stack trace
-       */
         super(messageCode!=null?NMsg.ofC("%s",messageCode.message()):message, cause, enableSuppression, writableStackTrace);
         this.code = code;
         this.responseMessage = message;

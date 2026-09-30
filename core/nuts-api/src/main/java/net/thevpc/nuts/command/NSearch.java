@@ -52,7 +52,7 @@ import java.util.List;
 public interface NSearch extends NWorkspaceCmd {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -61,7 +61,7 @@ public interface NSearch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ids ids
      * @return of result
@@ -71,7 +71,7 @@ public interface NSearch extends NWorkspaceCmd {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ids ids
      * @return of result

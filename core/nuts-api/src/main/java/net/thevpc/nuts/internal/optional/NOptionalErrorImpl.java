@@ -28,11 +28,6 @@ public class NOptionalErrorImpl<T> extends NOptionalThrowableImpl<T> implements 
      * @return n reserved optional error result
      */
     public NOptionalErrorImpl(Supplier<NMsg> message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param NMsg.ofInvalidValue(cause):message n msg.of invalid value(cause):message
-       */
         super(message==null?() -> NMsg.ofInvalidValue(cause):message);
         this.cause = cause;
     }
@@ -95,22 +90,12 @@ public class NOptionalErrorImpl<T> extends NOptionalThrowableImpl<T> implements 
 
     @Override
     public T get() {
-      /**
-       * Throw error.
-       *
-       * @param message() message()
-       */
         throwError(message());
         return null;
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
-      /**
-       * Throw error.
-       *
-       * @param message message
-       */
         throwError(message);
         //never reached!
         return null;

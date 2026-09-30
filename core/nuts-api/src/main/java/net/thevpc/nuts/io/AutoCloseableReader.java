@@ -32,9 +32,6 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(char[] chars, int i, int len) throws IOException {
         int r = base.read(chars, i, len);
         if (r == 0 && len > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -44,9 +41,6 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(CharBuffer target) throws IOException {
         int r = base.read(target);
         if (r == 0 && target.length() > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -56,9 +50,6 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read() throws IOException {
         int r = base.read();
         if (r < 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -68,9 +59,6 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public int read(char[] cbuf) throws IOException {
         int r = base.read(cbuf);
         if (r == 0 && cbuf.length > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;
@@ -80,9 +68,6 @@ public class AutoCloseableReader extends Reader implements AutoCloseable {
     public long skip(long n) throws IOException {
         long r = base.skip(n);
         if (r == 0 && n > 0) {
-          /**
-           * Close.
-           */
             close();
         }
         return r;

@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NExprRPI;
  */
 public interface NExprOperator {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param name name
      * @param operatorFixity operator fixity

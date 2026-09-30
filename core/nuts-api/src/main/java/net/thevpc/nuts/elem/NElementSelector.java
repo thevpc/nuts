@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NElementSelector {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result

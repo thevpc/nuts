@@ -28,13 +28,6 @@ public final class NTypeName<T> implements Serializable {
      * @return n type name result
      */
     public NTypeName(String name, NTypeName... parameters) {
-      /**
-       * This.
-       *
-       * @param name name
-       * @param parameters parameters
-       * @param 0 0
-       */
         this(name, parameters, 0);
     }
 
@@ -49,20 +42,8 @@ public final class NTypeName<T> implements Serializable {
     public NTypeName(String name, NTypeName[] parameters, int arr) {
         if (name.contains("<")) {
             if (parameters.length != 0) {
-                /**
-                 * Illegal argument exception.
-                 *
-                 * @param parameters" parameters"
-                 * @return illegal argument exception result
-                 */
                 throw new IllegalArgumentException("Could not use <> names with effective parameters");
             }
-            /**
-             * Illegal argument exception.
-             *
-             * @param yet" yet"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("Not Supported yet");
         } else {
             this.typeName = name;
@@ -151,7 +132,7 @@ public final class NTypeName<T> implements Serializable {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param args args

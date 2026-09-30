@@ -27,9 +27,6 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
      * @return n version filter with description result
      */
     public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, Supplier<NElement> description) {
-      /**
-       * Super.
-       */
         super();
         this.baseVersionFilter = baseVersionFilter;
         this.description = description;

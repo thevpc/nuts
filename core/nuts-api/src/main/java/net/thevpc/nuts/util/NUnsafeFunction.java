@@ -38,24 +38,17 @@ import java.util.function.Supplier;
  */
 public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NRedescribable<NUnsafeFunction<T, R>> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @return of result
      */
     static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<T, V> o) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param o o
-         * @param null null
-         * @return of result
-         */
         return of(o, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param o o
      * @param defaultDescription default description

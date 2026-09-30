@@ -42,24 +42,17 @@ public class NExceptionHandler {
     private boolean built;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ex ex
      * @return of result
      */
     public static NExceptionHandler of(Throwable ex) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ex ex
-         * @param null null
-         * @return of result
-         */
         return of(ex, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param ex ex
      * @param out out
@@ -272,29 +265,14 @@ public class NExceptionHandler {
         }
         built = true;
         if (throwable == null) {
-          /**
-           * Code.
-           *
-           * @param 0 0
-           */
             code(0);
             return this;
         }
         int errorCode = NException.resolveExitCode(throwable).orElse(204);
-      /**
-       * Code.
-       *
-       * @param errorCode error code
-       */
         code(errorCode);
         if (errorCode == 0) {
             return this;
         }
-      /**
-       * Session.
-       *
-       * @param NSessionAwareExceptionBase.resolveSession(throwable).orNull() n session aware exception base.resolve session(throwable).or null()
-       */
         session(NSessionAwareExceptionBase.resolveSession(throwable).orNull());
         messageFormatted = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable).map(NSessionAwareExceptionBase::formattedMessage)
                 .orNull();
@@ -351,29 +329,11 @@ public class NExceptionHandler {
             }
             if (session != null) {
                 session.runWith(() -> {
-                    /**
-                     * N exception.
-                     *
-                     * @param o.exitCode()) o.exit code())
-                     * @return n exception result
-                     */
                     throw new NException(NMsg.ofC("%s", o.toString(), o.exitCode()));
                 });
             }
-            /**
-             * N boot exception.
-             *
-             * @param o.exitCode()) o.exit code())
-             * @return n boot exception result
-             */
             throw new NBootException(NBootMsg.ofC("%s", o.toString(), o.exitCode()));
         }
-        /**
-         * N boot exception.
-         *
-         * @param 255) 255)
-         * @return n boot exception result
-         */
         throw new NBootException(NBootMsg.ofC("%s", throwable.toString(), 255));
     }
 
@@ -384,9 +344,6 @@ public class NExceptionHandler {
      * @return show error result
      */
     public NExceptionHandler showError() {
-      /**
-       * Build.
-       */
         build();
         if (throwable == null) {
             return this;
@@ -508,12 +465,6 @@ public class NExceptionHandler {
      * @return propagate result
      */
     public NExceptionHandler propagate() {
-        /**
-         * Show error.
-         *
-         * @param ).reThrow( ).re throw(
-         * @return show error result
-         */
         return showError().reThrow();
     }
 
@@ -523,11 +474,6 @@ public class NExceptionHandler {
      * @return handle result
      */
     public NExceptionHandler handle() {
-        /**
-         * Show error.
-         *
-         * @return show error result
-         */
         return showError();
     }
 

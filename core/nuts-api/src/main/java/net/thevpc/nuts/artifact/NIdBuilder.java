@@ -44,39 +44,27 @@ import java.util.Map;
 public interface NIdBuilder extends NBlankable, NComponent, Serializable {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param id id
      * @return of result
      */
     static NIdBuilder of(NId id) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).copyFrom(id ).copy from(id
-         * @return of result
-         */
         return of().copyFrom(id);
     }
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param groupId group id
      * @param artifactId artifact id
      * @return of result
      */
     static NIdBuilder of(String groupId, String artifactId) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).groupId(groupId).artifactId(artifactId ).group id(group id).artifact id(artifact id
-         * @return of result
-         */
         return of().groupId(groupId).artifactId(artifactId);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

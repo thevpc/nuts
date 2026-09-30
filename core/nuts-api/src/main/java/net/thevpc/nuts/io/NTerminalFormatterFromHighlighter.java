@@ -25,7 +25,7 @@ public class NTerminalFormatterFromHighlighter implements NTerminalFormatter {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param highlighter highlighter
      * @return of result

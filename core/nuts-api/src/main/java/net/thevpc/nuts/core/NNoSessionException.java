@@ -45,11 +45,6 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      * Constructs a 'missing session' exception
      */
     public NNoSessionException() {
-      /**
-       * This.
-       *
-       * @param session") session")
-       */
         this(NMsg.ofP("missing session"));
     }
 
@@ -62,11 +57,6 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      *                later retrieval by the {@link #message()} method.
      */
     public NNoSessionException(NMsg message) {
-      /**
-       * Super.
-       *
-       * @param message.toString() message.to string()
-       */
         super(message.toString());
         this.message = message;
     }
@@ -87,12 +77,6 @@ public class NNoSessionException extends RuntimeException implements NExceptionB
      *                unknown.)
      */
     public NNoSessionException(NMsg message, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param message.toString() message.to string()
-       * @param cause cause
-       */
         super(message.toString(), cause);
         this.message = message;
     }

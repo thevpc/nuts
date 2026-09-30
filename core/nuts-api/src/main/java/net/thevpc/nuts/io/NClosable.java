@@ -50,11 +50,6 @@ public interface NClosable extends Closeable {
      * @return do with result
      */
     static <T> void doWith(T any, Consumer<T> r) {
-      /**
-       * Try.
-       *
-       * @param ofAny(any) of any(any)
-       */
         try (NClosable ignored = ofAny(any)) {
             r.accept(any);
         }
@@ -68,11 +63,6 @@ public interface NClosable extends Closeable {
      * @return call with result
      */
     static <T, V> V callWith(T any, Function<T, V> r) {
-      /**
-       * Try.
-       *
-       * @param ofAny(any) of any(any)
-       */
         try (NClosable ignored = ofAny(any)) {
             return r.apply(any);
         }

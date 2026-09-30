@@ -31,7 +31,7 @@ public class NPlatformHome {
 
 
     /**
-     * Creates a new instance of of system.
+     * Creates a new instance of system.
      *
      * @param platformOsFamily platform os family
      * @param env env
@@ -43,7 +43,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @param env env
@@ -55,7 +55,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of system.
+     * Creates a new instance of system.
      *
      * @param platformOsFamily platform os family
      * @return of system result
@@ -65,7 +65,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @return of result
@@ -75,7 +75,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param platformOsFamily platform os family
      * @param system system
@@ -86,7 +86,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param system system
      * @return of result
@@ -96,45 +96,29 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param userName user name
      * @return of portable result
      */
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, String userName) {
-        /**
-         * Creates a new instance of of portable.
-         *
-         * @param platformOsFamily platform os family
-         * @param false false
-         * @param userName user name
-         * @return of portable result
-         */
         return ofPortable(platformOsFamily, false, userName);
     }
 
     /**
-     * Creates a new instance of of portable system.
+     * Creates a new instance of portable system.
      *
      * @param platformOsFamily platform os family
      * @param userName user name
      * @return of portable system result
      */
     public static NPlatformHome ofPortableSystem(NOsFamily platformOsFamily, String userName) {
-        /**
-         * Creates a new instance of of portable.
-         *
-         * @param platformOsFamily platform os family
-         * @param true true
-         * @param userName user name
-         * @return of portable result
-         */
         return ofPortable(platformOsFamily, true, userName);
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param system system
@@ -153,7 +137,7 @@ public class NPlatformHome {
     }
 
     /**
-     * Creates a new instance of of portable.
+     * Creates a new instance of portable.
      *
      * @param platformOsFamily platform os family
      * @param system system
@@ -294,25 +278,12 @@ public class NPlatformHome {
      */
     public String getWorkspaceLocation(NStoreType location, Map<NHomeLocation, String> homeLocations, String workspaceName) {
         if (location == null) {
-            /**
-             * Returns the workspace location.
-             *
-             * @param workspaceName workspace name
-             * @return get workspace location result
-             */
             return getWorkspaceLocation(workspaceName);
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (s != null) {
             return s;
         }
-        /**
-         * Returns the workspace store.
-         *
-         * @param location location
-         * @param workspaceName workspace name
-         * @return get workspace store result
-         */
         return getWorkspaceStore(location, workspaceName);
     }
 
@@ -325,24 +296,12 @@ public class NPlatformHome {
      */
     public String getBaseLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
         if (location == null) {
-            /**
-             * Home.
-             *
-             * @param nativePath("/ws" native path("/ws"
-             * @return home result
-             */
             return home() + nativePath("/ws");
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (!NBlankable.isBlank(s)) {
             return s;
         }
-        /**
-         * Returns the store.
-         *
-         * @param nativePath("/ws/" native path("/ws/"
-         * @return get store result
-         */
         return getStore(location) + nativePath("/ws/");
     }
 
@@ -355,23 +314,12 @@ public class NPlatformHome {
      */
     public String getGlobalLocation(NStoreType location, Map<NHomeLocation, String> homeLocations) {
         if (location == null) {
-            /**
-             * Global location.
-             *
-             * @return global location result
-             */
             return globalLocation();
         }
         String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (s != null) {
             return s;
         }
-        /**
-         * Returns the global store.
-         *
-         * @param location location
-         * @return get global store result
-         */
         return getGlobalStore(location);
     }
 
@@ -389,12 +337,6 @@ public class NPlatformHome {
             //return it as is and make it absolute
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
-        /**
-         * Home.
-         *
-         * @param workspaceName workspace name
-         * @return home result
-         */
         return home() + nativePath("/ws/" + workspaceName);
     }
 
@@ -404,12 +346,6 @@ public class NPlatformHome {
      * @return global location result
      */
     public String globalLocation() {
-        /**
-         * Home.
-         *
-         * @param nativePath("/global" native path("/global"
-         * @return home result
-         */
         return home() + nativePath("/global");
     }
 
@@ -447,12 +383,6 @@ public class NPlatformHome {
      */
     public String getWorkspaceStore(NStoreType location, String workspaceName) {
         if (location == null) {
-            /**
-             * Returns the workspace location.
-             *
-             * @param workspaceName workspace name
-             * @return get workspace location result
-             */
             return getWorkspaceLocation(workspaceName);
         }
         if (NBlankable.isBlank(workspaceName)) {
@@ -466,12 +396,6 @@ public class NPlatformHome {
                 workspaceName = fileName.toString();
             }
         }
-        /**
-         * Returns the store.
-         *
-         * @param nativePath(workspaceName) native path(workspace name)
-         * @return get store result
-         */
         return getStore(location) + nativePath("/ws/" + nativePath(workspaceName));
     }
 
@@ -482,12 +406,6 @@ public class NPlatformHome {
      * @return get global store result
      */
     public String getGlobalStore(NStoreType storeType) {
-        /**
-         * Returns the store.
-         *
-         * @param nativePath("/global" native path("/global"
-         * @return get store result
-         */
         return getStore(storeType) + nativePath("/global");
     }
 
@@ -499,11 +417,6 @@ public class NPlatformHome {
      */
     public String getStore(NStoreType location) {
         if (location == null) {
-            /**
-             * Home.
-             *
-             * @return home result
-             */
             return home();
         }
         NOsFamily platformOsFamily = this.platformOsFamily;

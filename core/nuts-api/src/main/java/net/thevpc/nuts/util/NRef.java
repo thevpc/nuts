@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public interface NRef<T> extends Supplier<T> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -43,7 +43,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param t t
      * @return of result
@@ -53,7 +53,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param t t
      * @param type type
@@ -64,7 +64,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @param t t
      * @return of null result
@@ -74,22 +74,16 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of null.
+     * Creates a new instance of null.
      *
      * @return of null result
      */
     static <T> NRef<T> ofNull() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param null null
-         * @return of result
-         */
         return of(null);
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param value value
      * @return of long result
@@ -99,7 +93,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @param value value
      * @return of long result
@@ -109,7 +103,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of long.
+     * Creates a new instance of long.
      *
      * @return of long result
      */
@@ -118,7 +112,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of int.
+     * Creates a new instance of int.
      *
      * @param value value
      * @return of int result
@@ -128,7 +122,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of int.
+     * Creates a new instance of int.
      *
      * @param value value
      * @return of int result
@@ -138,7 +132,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of int.
+     * Creates a new instance of int.
      *
      * @return of int result
      */
@@ -147,7 +141,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of false.
+     * Creates a new instance of false.
      *
      * @return of false result
      */
@@ -156,7 +150,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of true.
+     * Creates a new instance of true.
      *
      * @return of true result
      */
@@ -165,7 +159,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of boolean.
+     * Creates a new instance of boolean.
      *
      * @param value value
      * @return of boolean result
@@ -175,7 +169,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of boolean.
+     * Creates a new instance of boolean.
      *
      * @param value value
      * @return of boolean result
@@ -185,7 +179,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of boolean.
+     * Creates a new instance of boolean.
      *
      * @return of boolean result
      */
@@ -194,7 +188,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of byte.
+     * Creates a new instance of byte.
      *
      * @param value value
      * @return of byte result
@@ -204,7 +198,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of byte.
+     * Creates a new instance of byte.
      *
      * @param value value
      * @return of byte result
@@ -214,7 +208,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of byte.
+     * Creates a new instance of byte.
      *
      * @return of byte result
      */
@@ -223,7 +217,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param value value
      * @return of short result
@@ -233,7 +227,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @param value value
      * @return of short result
@@ -243,7 +237,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of short.
+     * Creates a new instance of short.
      *
      * @return of short result
      */
@@ -252,7 +246,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of float.
+     * Creates a new instance of float.
      *
      * @param value value
      * @return of float result
@@ -262,7 +256,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of float.
+     * Creates a new instance of float.
      *
      * @param value value
      * @return of float result
@@ -272,7 +266,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of float.
+     * Creates a new instance of float.
      *
      * @return of float result
      */
@@ -281,7 +275,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of double.
+     * Creates a new instance of double.
      *
      * @param value value
      * @return of double result
@@ -291,7 +285,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of double.
+     * Creates a new instance of double.
      *
      * @param value value
      * @return of double result
@@ -301,7 +295,7 @@ public interface NRef<T> extends Supplier<T> {
     }
 
     /**
-     * Creates a new instance of of double.
+     * Creates a new instance of double.
      *
      * @return of double result
      */

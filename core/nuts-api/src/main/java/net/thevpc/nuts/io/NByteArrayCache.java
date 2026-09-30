@@ -22,11 +22,6 @@ public class NByteArrayCache implements Closeable {
      * @return n byte array cache result
      */
     public NByteArrayCache() {
-      /**
-       * This.
-       *
-       * @param 1024 1024
-       */
         this(10 * 1024 * 1024);
     }
 
@@ -86,12 +81,6 @@ public class NByteArrayCache implements Closeable {
                 }
             }
         } catch (IOException e) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param e e
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(e);
         }
         return this;
@@ -111,23 +100,12 @@ public class NByteArrayCache implements Closeable {
                 } else {
                     this.out.close();
                     this.out = null;
-                  /**
-                   * Try.
-                   *
-                   * @param FileInputStream(file) file input stream(file)
-                   */
                     try (InputStream fis = new FileInputStream(file)) {
                         NIOUtils.copy(fis, out);
                     }
                 }
             }
         } catch (IOException e) {
-            /**
-             * Unchecked io exception.
-             *
-             * @param e e
-             * @return unchecked io exception result
-             */
             throw new UncheckedIOException(e);
         }
         return this;
@@ -139,12 +117,6 @@ public class NByteArrayCache implements Closeable {
             try {
                 out.close();
             } catch (IOException e) {
-                /**
-                 * Unchecked io exception.
-                 *
-                 * @param e e
-                 * @return unchecked io exception result
-                 */
                 throw new UncheckedIOException(e);
             }
         }

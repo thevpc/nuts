@@ -70,13 +70,6 @@ public class NUtils {
         if (filter.test(first)) {
             return first;
         }
-        /**
-         * First matching lazy.
-         *
-         * @param filter filter
-         * @param suppliers suppliers
-         * @return first matching lazy result
-         */
         return firstMatchingLazy(filter,suppliers);
     }
 
@@ -109,12 +102,6 @@ public class NUtils {
      * @return first non null result
      */
     public static <T> T firstNonNull(T... values) {
-        /**
-         * First non null.
-         *
-         * @param Arrays.asList(values) arrays.as list(values)
-         * @return first non null result
-         */
         return firstNonNull(values == null ? null : Arrays.asList(values));
     }
 
@@ -152,19 +139,8 @@ public class NUtils {
             return 1;
         } else {
             if (comparator != null) {
-              /**
-               * Return.
-               *
-               * @param (Comparator)comparator).compare(k1 ( comparator)comparator).compare(k1
-               * @param k2 k2
-               */
                 return ((Comparator)comparator).compare(k1, k2);
             }
-          /**
-           * Return.
-           *
-           * @param (Comparable)k1).compareTo(k2 ( comparable)k1).compare to(k2
-           */
             return ((Comparable)k1).compareTo(k2);
         }
     }
@@ -191,11 +167,6 @@ public class NUtils {
         }
         if (a instanceof Comparable && b instanceof Comparable) {
             try {
-              /**
-               * Return.
-               *
-               * @param a).compareTo(b a).compare to(b
-               */
                 return ((Comparable) a).compareTo(b);
             } catch (ClassCastException e) {
                 // If types are incompatible, fall back to hashCode

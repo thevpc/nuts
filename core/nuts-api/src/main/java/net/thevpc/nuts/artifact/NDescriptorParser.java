@@ -47,7 +47,7 @@ import java.nio.file.Path;
 public interface NDescriptorParser extends NComponent {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -56,7 +56,7 @@ public interface NDescriptorParser extends NComponent {
     }
 
     /**
-     * Creates a new instance of of maven.
+     * Creates a new instance of maven.
      *
      * @return of maven result
      */
@@ -65,7 +65,7 @@ public interface NDescriptorParser extends NComponent {
     }
 
     /**
-     * Creates a new instance of of manifest.
+     * Creates a new instance of manifest.
      *
      * @return of manifest result
      */
@@ -74,7 +74,7 @@ public interface NDescriptorParser extends NComponent {
     }
 
     /**
-     * Creates a new instance of of nuts.
+     * Creates a new instance of nuts.
      *
      * @return of nuts result
      */

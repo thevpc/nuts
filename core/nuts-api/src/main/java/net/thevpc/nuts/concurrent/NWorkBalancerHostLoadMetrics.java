@@ -156,11 +156,6 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
 
     @Override
     public NWorkBalancerHostLoadMetrics copy() {
-        /**
-         * Clone.
-         *
-         * @return clone result
-         */
         return clone();
     }
 
@@ -171,12 +166,6 @@ public class NWorkBalancerHostLoadMetrics implements NCopiable, Cloneable {
             copy.customMetrics = customMetrics == null ? null : new HashMap<>(customMetrics);
             return copy;
         } catch (CloneNotSupportedException e) {
-            /**
-             * Runtime exception.
-             *
-             * @param e e
-             * @return runtime exception result
-             */
             throw new NUnexpectedException(NMsg.ofC("clone unsupported for %s",getClass()),e);
         }
     }

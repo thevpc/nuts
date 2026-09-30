@@ -31,14 +31,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return parse result
      */
     public static <T extends Enum<T>> NOptional<NEnumSet<T>> parse(String value, Class<T> type) {
-        /**
-         * Parse type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @param type type
-         * @return parse type result
-         */
         return parseType(DEFAULT_CTR(), value, type);
     }
 
@@ -49,108 +41,61 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return none of result
      */
     public static <T extends Enum<T>> NEnumSet<T> noneOf(Class<T> type) {
-        /**
-         * None of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param type type
-         * @return none of type result
-         */
         return noneOfType(DEFAULT_CTR(), type);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @param tt tt
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(Collection<T> value, Class<T> tt) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @param tt tt
-         * @return of type result
-         */
         return ofType(DEFAULT_CTR(), value, tt);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @param tt tt
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T[] value, Class<T> tt) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @param tt tt
-         * @return of type result
-         */
         return ofType(DEFAULT_CTR(), value, tt);
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
      * @return of bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(long bits, Class<T> type) {
-        /**
-         * Creates a new instance of of type bit set.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param bits bits
-         * @param type type
-         * @return of type bit set result
-         */
         return ofTypeBitSet(DEFAULT_CTR(), bits, type);
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
      * @return of bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(BitSet bits, Class<T> type) {
-        /**
-         * Creates a new instance of of type bit set.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param bits bits
-         * @param type type
-         * @return of type bit set result
-         */
         return ofTypeBitSet(DEFAULT_CTR(), bits, type);
     }
 
     /**
-     * Creates a new instance of of bit set.
+     * Creates a new instance of bit set.
      *
      * @param bits bits
      * @param type type
      * @return of bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofBitSet(BigInteger bits, Class<T> type) {
-        /**
-         * Creates a new instance of of type bit set.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param bits bits
-         * @param type type
-         * @return of type bit set result
-         */
         return ofTypeBitSet(DEFAULT_CTR(), bits, type);
     }
 
@@ -161,64 +106,36 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return all of result
      */
     public static <T extends Enum<T>> NEnumSet<T> allOf(Class<T> type) {
-        /**
-         * All of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param type type
-         * @return all of type result
-         */
         return allOfType(DEFAULT_CTR(), type);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T value) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @return of type result
-         */
         return ofType(DEFAULT_CTR(), value);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(T... value) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @return of type result
-         */
         return ofType(DEFAULT_CTR(), value);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(Collection<T> value) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param DEFAULT_CTR() default_ctr()
-         * @param value value
-         * @return of type result
-         */
         return ofType(DEFAULT_CTR(), value);
     }
 
@@ -233,13 +150,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return parse type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> NOptional<V> parseType(Class<V> setType, String value, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param parseType(TYPED_CTR(setType) parse type(typed_ctr(set type)
-       * @param value value
-       * @param type type
-       */
         return (NOptional<V>) parseType(TYPED_CTR(setType), value, type);
     }
 
@@ -251,17 +161,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return none of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V noneOfType(Class<V> setType, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param noneOfType(TYPED_CTR(setType) none of type(typed_ctr(set type)
-       * @param type type
-       */
         return (V) noneOfType(TYPED_CTR(setType), type);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -269,18 +173,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofType(Class<V> setType, Collection<T> value, Class<T> tt) {
-      /**
-       * Return.
-       *
-       * @param ofType(TYPED_CTR(setType) of type(typed_ctr(set type)
-       * @param value value
-       * @param tt tt
-       */
         return (V) ofType(TYPED_CTR(setType), value, tt);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
@@ -288,18 +185,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofType(Class<V> setType, T[] value, Class<T> tt) {
-      /**
-       * Return.
-       *
-       * @param ofType(TYPED_CTR(setType) of type(typed_ctr(set type)
-       * @param value value
-       * @param tt tt
-       */
         return (V) ofType(TYPED_CTR(setType), value, tt);
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -307,18 +197,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofTypeBitSet(Class<V> setType, long bits, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param ofTypeBitSet(TYPED_CTR(setType) of type bit set(typed_ctr(set type)
-       * @param bits bits
-       * @param type type
-       */
         return (V) ofTypeBitSet(TYPED_CTR(setType), bits, type);
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -326,18 +209,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofTypeBitSet(Class<V> setType, BitSet bits, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param ofTypeBitSet(TYPED_CTR(setType) of type bit set(typed_ctr(set type)
-       * @param bits bits
-       * @param type type
-       */
         return (V) ofTypeBitSet(TYPED_CTR(setType), bits, type);
     }
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param setType set type
      * @param bits bits
@@ -345,13 +221,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofTypeBitSet(Class<V> setType, BigInteger bits, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param ofTypeBitSet(TYPED_CTR(setType) of type bit set(typed_ctr(set type)
-       * @param bits bits
-       * @param type type
-       */
         return (V) ofTypeBitSet(TYPED_CTR(setType), bits, type);
     }
 
@@ -363,63 +232,39 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return all of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V allOfType(Class<V> setType, Class<T> type) {
-      /**
-       * Return.
-       *
-       * @param allOfType(TYPED_CTR(setType) all of type(typed_ctr(set type)
-       * @param type type
-       */
         return (V) allOfType(TYPED_CTR(setType), type);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofType(Class<V> setType, T value) {
-      /**
-       * Return.
-       *
-       * @param ofType(TYPED_CTR(setType) of type(typed_ctr(set type)
-       * @param value value
-       */
         return (V) ofType(TYPED_CTR(setType), value);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofType(Class<V> setType, T... value) {
-      /**
-       * Return.
-       *
-       * @param ofType(TYPED_CTR(setType) of type(typed_ctr(set type)
-       * @param value value
-       */
         return (V) ofType(TYPED_CTR(setType), value);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param value value
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> V ofType(Class<V> setType, Collection<T> value) {
-      /**
-       * Return.
-       *
-       * @param ofType(TYPED_CTR(setType) of type(typed_ctr(set type)
-       * @param value value
-       */
         return (V) ofType(TYPED_CTR(setType), value);
     }
 
@@ -469,20 +314,13 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param valueType value type
      * @return of type result
      */
     public static <T extends Enum<T>, V extends NEnumSet<T>> NEnumSet<T> ofType(Class<V> setType, Class<T> valueType) {
-        /**
-         * Creates a new instance of of type.
-         *
-         * @param TYPED_CTR(setType) typed_ctr(set type)
-         * @param valueType value type
-         * @return of type result
-         */
         return ofType(TYPED_CTR(setType), valueType);
     }
 
@@ -494,33 +332,17 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return all of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> allOfType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, Class<T> type) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param EnumSet.allOf(type) enum set.all of(type)
-         * @param type type
-         * @return new instance result
-         */
         return newInstance(ctr, EnumSet.allOf(type), type);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
      * @return of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, T value) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param EnumSet.of(value) enum set.of(value)
-         * @param value.getClass() value.get class()
-         * @return new instance result
-         */
         return newInstance(ctr, EnumSet.of(value), (Class<T>) value.getClass());
     }
 
@@ -532,19 +354,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return none of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> noneOfType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, Class<T> type) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param EnumSet.noneOf(type) enum set.none of(type)
-         * @param type type
-         * @return new instance result
-         */
         return newInstance(ctr, EnumSet.noneOf(type), type);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -554,19 +368,11 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
         Class<T> t = (Class<T>) (value[0].getClass());
         EnumSet<T> e = EnumSet.noneOf(t);
         e.addAll(Arrays.asList(value));
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param e e
-         * @param t t
-         * @return new instance result
-         */
         return newInstance(ctr, e, t);
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -574,12 +380,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public static <T extends Enum<T>> NEnumSet<T> ofType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, Collection<T> value) {
         if (value == null || value.isEmpty()) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param collection" collection"
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("unable to resolve enum type from empty collection");
         }
         T a = value.stream().findAny().get();
@@ -588,7 +388,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
     }
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -596,20 +396,12 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, Collection<T> value, Class<T> tt) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param asSet(value) as set(value)
-         * @param tt tt
-         * @return new instance result
-         */
         return newInstance(ctr, asSet(value), tt);
     }
 
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param ctr ctr
      * @param value value
@@ -617,20 +409,12 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, T[] value, Class<T> tt) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param asSet(Arrays.asList(value)) as set( arrays.as list(value))
-         * @param tt tt
-         * @return new instance result
-         */
         return newInstance(ctr, asSet(Arrays.asList(value)), tt);
     }
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -638,20 +422,12 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofTypeBitSet(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, long bits, Class<T> type) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param type) type)
-         * @param type type
-         * @return new instance result
-         */
         return newInstance(ctr, bitToSet(bits, type), type);
     }
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -659,20 +435,12 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofTypeBitSet(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, BigInteger bits, Class<T> type) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param type) type)
-         * @param type type
-         * @return new instance result
-         */
         return newInstance(ctr, bitToSet(BitSet.valueOf(bits.toByteArray()), type), type);
     }
 
 
     /**
-     * Creates a new instance of of type bit set.
+     * Creates a new instance of type bit set.
      *
      * @param ctr ctr
      * @param bits bits
@@ -680,49 +448,28 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return of type bit set result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofTypeBitSet(NFunction2<Set<T>, Class<T>, NEnumSet<T>> ctr, BitSet bits, Class<T> type) {
-        /**
-         * New instance.
-         *
-         * @param ctr ctr
-         * @param type) type)
-         * @param type type
-         * @return new instance result
-         */
         return newInstance(ctr, bitToSet(bits, type), type);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @return of result
      */
     public static <T extends Enum<T>> NEnumSet<T> of(Class<T> type) {
-        /**
-         * None of.
-         *
-         * @param type type
-         * @return none of result
-         */
         return noneOf(type);
     }
 
 
     /**
-     * Creates a new instance of of type.
+     * Creates a new instance of type.
      *
      * @param setType set type
      * @param type type
      * @return of type result
      */
     public static <T extends Enum<T>> NEnumSet<T> ofType(NFunction2<Set<T>, Class<T>, NEnumSet<T>> setType, Class<T> type) {
-        /**
-         * None of type.
-         *
-         * @param setType set type
-         * @param type type
-         * @return none of type result
-         */
         return noneOfType(setType, type);
     }
 
@@ -764,12 +511,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return retain all result
      */
     public NEnumSet<T> retainAll(T... any) {
-        /**
-         * Retain all.
-         *
-         * @param Arrays.asList(any) arrays.as list(any)
-         * @return retain all result
-         */
         return retainAll(Arrays.asList(any));
     }
 
@@ -797,12 +538,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public boolean containsAll(T... any) {
         if (any != null) {
-            /**
-             * Contains all.
-             *
-             * @param Arrays.asList(any) arrays.as list(any)
-             * @return contains all result
-             */
             return containsAll(Arrays.asList(any));
         }
         return false;
@@ -826,12 +561,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public boolean containsNone(T... any) {
         if (any != null) {
-            /**
-             * Contains none.
-             *
-             * @param Arrays.asList(any) arrays.as list(any)
-             * @return contains none result
-             */
             return containsNone(Arrays.asList(any));
         }
         return false;
@@ -862,12 +591,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public boolean containsAny(T... any) {
         if (any != null) {
-            /**
-             * Contains any.
-             *
-             * @param Arrays.asList(any) arrays.as list(any)
-             * @return contains any result
-             */
             return containsAny(Arrays.asList(any));
         }
         return false;
@@ -913,12 +636,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      */
     public NEnumSet<T> addAll(NEnumSet<T> other) {
         if(other!=null){
-            /**
-             * Adds the specified all.
-             *
-             * @param other.toSet() other.to set()
-             * @return add all result
-             */
             return addAll(other.toSet());
         }
         return this;
@@ -931,12 +648,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return add all result
      */
     public NEnumSet<T> addAll(T... any) {
-        /**
-         * Adds the specified all.
-         *
-         * @param Arrays.asList(any) arrays.as list(any)
-         * @return add all result
-         */
         return addAll(Arrays.asList(any));
     }
 
@@ -984,12 +695,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return remove all result
      */
     public NEnumSet<T> removeAll(T... any) {
-        /**
-         * Removes the specified all.
-         *
-         * @param Arrays.asList(any) arrays.as list(any)
-         * @return remove all result
-         */
         return removeAll(Arrays.asList(any));
     }
 
@@ -999,12 +704,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
      * @return complement result
      */
     public NEnumSet<T> complement() {
-        /**
-         * All of.
-         *
-         * @param type).removeAll(values type).remove all(values
-         * @return all of result
-         */
         return allOf(type).removeAll(values);
     }
 
@@ -1189,12 +888,6 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
             d = clz.getDeclaredConstructor(Set.class, Class.class, NFunction2.class);
             d.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            /**
-             * Illegal argument exception.
-             *
-             * @param clz clz
-             * @return illegal argument exception result
-             */
             throw new IllegalArgumentException("missing constructor for " + clz);
         }
         return new NFunction2<Set<T>, Class<T>, NEnumSet<T>>() {

@@ -73,11 +73,6 @@ public class NApiUtilsRPI {
             return true;
         }
         if (any instanceof NBlankable) {
-          /**
-           * Return.
-           *
-           * @param any).isBlank( any).is blank(
-           */
             return ((NBlankable) any).isBlank();
         }
         if (any instanceof String) {
@@ -93,19 +88,9 @@ public class NApiUtilsRPI {
             return Array.getLength(any) == 0;
         }
         if (any instanceof Collection) {
-          /**
-           * Return.
-           *
-           * @param any).isEmpty( any).is empty(
-           */
             return ((Collection) any).isEmpty();
         }
         if (any instanceof Map) {
-          /**
-           * Return.
-           *
-           * @param any).isEmpty( any).is empty(
-           */
             return ((Map) any).isEmpty();
         }
         return false;
@@ -264,14 +249,6 @@ public class NApiUtilsRPI {
      * @return get or create ref property result
      */
     public static <T> T getOrCreateRefProperty(Class<T> type, Supplier<T> sup) {
-        /**
-         * Returns the or create ref property.
-         *
-         * @param "default" "default"
-         * @param type type
-         * @param sup sup
-         * @return get or create ref property result
-         */
         return getOrCreateRefProperty("default", type, sup);
     }
 
@@ -284,11 +261,6 @@ public class NApiUtilsRPI {
     public static NMsg resolveValidErrorMessage(Supplier<NMsg> supplier) {
         if (supplier == null) {
             NMsg m = NMsg.ofC("unexpected error : %s", "empty message supplier").asError();
-          /**
-           * Safe log.
-           *
-           * @param m m
-           */
             safeLog(m);
             return m;
         }
@@ -297,22 +269,12 @@ public class NApiUtilsRPI {
             t = supplier.get();
         } catch (Exception ex) {
             NMsg m = NMsg.ofC("unexpected error : %s", "message builder failed with : " + ex).asError();
-          /**
-           * Safe log.
-           *
-           * @param m m
-           */
             safeLog(m);
             return m;
         }
 
         if (t == null) {
             NMsg m = NMsg.ofC("unexpected error : %s", "empty error message").asError();
-          /**
-           * Safe log.
-           *
-           * @param m m
-           */
             safeLog(m);
             return m;
         }

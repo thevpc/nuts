@@ -48,7 +48,7 @@ public interface NElementWriter extends NContentTypeWriter {
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -57,332 +57,200 @@ public interface NElementWriter extends NContentTypeWriter {
     }
 
     /**
-     * Creates a new instance of of plain json.
+     * Creates a new instance of plain json.
      *
      * @return of plain json result
      */
     static NElementWriter ofPlainJson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).json( ).ntf(false).json(
-         * @return of result
-         */
         return of().ntf(false).json();
     }
 
     /**
-     * Creates a new instance of of json.
+     * Creates a new instance of json.
      *
      * @return of json result
      */
     static NElementWriter ofJson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).json( ).ntf(false).json(
-         * @return of result
-         */
         return of().ntf(false).json();
     }
 
     /**
-     * Creates a new instance of of plain props.
+     * Creates a new instance of plain props.
      *
      * @return of plain props result
      */
     static NElementWriter ofPlainProps() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.PROPS ).ntf(false).content type(n content type.props
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.PROPS);
     }
 
     /**
-     * Creates a new instance of of props.
+     * Creates a new instance of props.
      *
      * @return of props result
      */
     static NElementWriter ofProps() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.PROPS ).ntf(false).content type(n content type.props
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.PROPS);
     }
 
     /**
-     * Creates a new instance of of plain xml.
+     * Creates a new instance of plain xml.
      *
      * @return of plain xml result
      */
     static NElementWriter ofPlainXml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.XML ).ntf(false).content type(n content type.xml
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.XML);
     }
 
     /**
-     * Creates a new instance of of xml.
+     * Creates a new instance of xml.
      *
      * @return of xml result
      */
     static NElementWriter ofXml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.XML ).ntf(false).content type(n content type.xml
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.XML);
     }
 
     /**
-     * Creates a new instance of of plain tree.
+     * Creates a new instance of plain tree.
      *
      * @return of plain tree result
      */
     static NElementWriter ofPlainTree() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TREE ).ntf(false).content type(n content type.tree
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TREE);
     }
 
     /**
-     * Creates a new instance of of tree.
+     * Creates a new instance of tree.
      *
      * @return of tree result
      */
     static NElementWriter ofTree() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TREE ).ntf(false).content type(n content type.tree
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TREE);
     }
 
     /**
-     * Creates a new instance of of plain.
+     * Creates a new instance of plain.
      *
      * @return of plain result
      */
     static NElementWriter ofPlain() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.PLAIN ).ntf(false).content type(n content type.plain
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.PLAIN);
     }
 
     /**
-     * Creates a new instance of of plain tson.
+     * Creates a new instance of plain tson.
      *
      * @return of plain tson result
      */
     static NElementWriter ofPlainTson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TSON ).ntf(false).content type(n content type.tson
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TSON);
     }
 
     /**
-     * Creates a new instance of of tson.
+     * Creates a new instance of tson.
      *
      * @return of tson result
      */
     static NElementWriter ofTson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TSON ).ntf(false).content type(n content type.tson
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TSON);
     }
 
     /**
-     * Creates a new instance of of plain yaml.
+     * Creates a new instance of plain yaml.
      *
      * @return of plain yaml result
      */
     static NElementWriter ofPlainYaml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.YAML ).ntf(false).content type(n content type.yaml
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.YAML);
     }
 
     /**
-     * Creates a new instance of of yaml.
+     * Creates a new instance of yaml.
      *
      * @return of yaml result
      */
     static NElementWriter ofYaml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.YAML ).ntf(false).content type(n content type.yaml
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.YAML);
     }
 
     /**
-     * Creates a new instance of of plain table.
+     * Creates a new instance of plain table.
      *
      * @return of plain table result
      */
     static NElementWriter ofPlainTable() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TABLE ).ntf(false).content type(n content type.table
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TABLE);
     }
 
     /**
-     * Creates a new instance of of table.
+     * Creates a new instance of table.
      *
      * @return of table result
      */
     static NElementWriter ofTable() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false).contentType(NContentType.TABLE ).ntf(false).content type(n content type.table
-         * @return of result
-         */
         return of().ntf(false).contentType(NContentType.TABLE);
     }
 
     /**
-     * Creates a new instance of of ntf json.
+     * Creates a new instance of ntf json.
      *
      * @return of ntf json result
      */
     static NElementWriter ofNtfJson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).json( ).ntf(true).json(
-         * @return of result
-         */
         return of().ntf(true).json();
     }
 
     /**
-     * Creates a new instance of of ntf props.
+     * Creates a new instance of ntf props.
      *
      * @return of ntf props result
      */
     static NElementWriter ofNtfProps() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.PROPS ).ntf(true).content type(n content type.props
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.PROPS);
     }
 
     /**
-     * Creates a new instance of of ntf xml.
+     * Creates a new instance of ntf xml.
      *
      * @return of ntf xml result
      */
     static NElementWriter ofNtfXml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.XML ).ntf(true).content type(n content type.xml
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.XML);
     }
 
     /**
-     * Creates a new instance of of ntf tree.
+     * Creates a new instance of ntf tree.
      *
      * @return of ntf tree result
      */
     static NElementWriter ofNtfTree() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.TREE ).ntf(true).content type(n content type.tree
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.TREE);
     }
 
     /**
-     * Creates a new instance of of ntf tson.
+     * Creates a new instance of ntf tson.
      *
      * @return of ntf tson result
      */
     static NElementWriter ofNtfTson() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.TSON ).ntf(true).content type(n content type.tson
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.TSON);
     }
 
     /**
-     * Creates a new instance of of ntf yaml.
+     * Creates a new instance of ntf yaml.
      *
      * @return of ntf yaml result
      */
     static NElementWriter ofNtfYaml() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.YAML ).ntf(true).content type(n content type.yaml
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.YAML);
     }
 
     /**
-     * Creates a new instance of of ntf table.
+     * Creates a new instance of ntf table.
      *
      * @return of ntf table result
      */
     static NElementWriter ofNtfTable() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(true).contentType(NContentType.TABLE ).ntf(true).content type(n content type.table
-         * @return of result
-         */
         return of().ntf(true).contentType(NContentType.TABLE);
     }
 

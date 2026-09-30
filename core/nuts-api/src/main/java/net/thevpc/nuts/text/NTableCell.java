@@ -32,7 +32,7 @@ package net.thevpc.nuts.text;
  */
 public interface NTableCell {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @return of result
@@ -42,7 +42,7 @@ public interface NTableCell {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @return of result
@@ -52,7 +52,7 @@ public interface NTableCell {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param content content
      * @param colspan colspan

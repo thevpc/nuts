@@ -14,7 +14,7 @@ import java.util.Set;
 public interface NSetMultiValueMap<K, V> {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -23,7 +23,7 @@ public interface NSetMultiValueMap<K, V> {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param map map
      * @return of result

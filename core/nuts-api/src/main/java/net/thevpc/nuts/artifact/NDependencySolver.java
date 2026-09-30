@@ -39,7 +39,7 @@ import java.util.List;
 public interface NDependencySolver {
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -48,7 +48,7 @@ public interface NDependencySolver {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param solverName solver name
      * @return of result

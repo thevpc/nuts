@@ -14,7 +14,7 @@ public interface NFloatComplex extends NNumber {
     NFloatComplex I = NFloatComplexImpl.I;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param any any
      * @return of result
@@ -33,7 +33,7 @@ public interface NFloatComplex extends NNumber {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param x x
      * @param y y
@@ -44,7 +44,7 @@ public interface NFloatComplex extends NNumber {
     }
 
     /**
-     * Creates a new instance of of polar.
+     * Creates a new instance of polar.
      *
      * @param r r
      * @param theta theta

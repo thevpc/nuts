@@ -11,7 +11,7 @@ import net.thevpc.nuts.util.NOptional;
  */
 public interface NElementNavigator {
     /**
-     * Creates a new instance of of root.
+     * Creates a new instance of root.
      *
      * @param element element
      * @return of root result

@@ -20,12 +20,6 @@ public class NDetachedCmdLineException extends IllegalArgumentException implemen
      * @return n detached cmd line exception result
      */
     public NDetachedCmdLineException(NMsg formattedMessage, Throwable ex) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       * @param ex ex
-       */
         super(formattedMessage == null ? "assert failed" : formattedMessage.toString(),ex);
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }
@@ -36,11 +30,6 @@ public class NDetachedCmdLineException extends IllegalArgumentException implemen
      * @return n detached cmd line exception result
      */
     public NDetachedCmdLineException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage.toString() formatted message.to string()
-       */
         super(formattedMessage == null ? "assert failed" : formattedMessage.toString());
         this.formattedMessage = formattedMessage == null ? NMsg.ofC("assert failed") : formattedMessage;
     }

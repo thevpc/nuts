@@ -54,7 +54,7 @@ public interface NElementRPI extends NComponent {
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

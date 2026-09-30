@@ -13,25 +13,17 @@ import java.util.Set;
  */
 public interface NDecisionFilter<T> {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @return of result
      */
     static <T> NDecisionFilter<T> of(Class<T> type) {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param type type
-         * @param null null
-         * @param null null
-         * @return of result
-         */
         return of(type, null, null);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param type type
      * @param decisionConflict decision conflict

@@ -27,23 +27,17 @@ public interface NConnectionStringBuilder extends NComponent {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param expression expression
      * @return of result
      */
     static NConnectionStringBuilder of(String expression) {
-        /**
-         * Returns the get.
-         *
-         * @param expression).get( expression).get(
-         * @return get result
-         */
         return get(expression).get();
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

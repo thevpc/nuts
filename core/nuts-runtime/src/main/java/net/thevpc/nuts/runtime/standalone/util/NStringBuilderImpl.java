@@ -1363,7 +1363,7 @@ public class NStringBuilderImpl implements NStringBuilder {
     }
 
     /**
-     * Creates a new instance of offset by code points.
+     * Creates a new instance offset by code points.
      *
      * @param index index
      * @param codePointOffset code point offset

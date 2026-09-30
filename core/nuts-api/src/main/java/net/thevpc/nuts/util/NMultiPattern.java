@@ -28,15 +28,6 @@ public class NMultiPattern {
      * @return on match result
      */
     public NMultiPattern onMatch(String pattern, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param true true
-         * @param action action
-         * @param NMatchType.MATCH n match type.match
-         * @return on result
-         */
         return on(pattern, true, action, NMatchType.MATCH);
     }
 
@@ -49,15 +40,6 @@ public class NMultiPattern {
      * @return on match result
      */
     public NMultiPattern onMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param condition condition
-         * @param action action
-         * @param NMatchType.MATCH n match type.match
-         * @return on result
-         */
         return on(pattern, condition, action, NMatchType.MATCH);
     }
 
@@ -69,15 +51,6 @@ public class NMultiPattern {
      * @return on partial match result
      */
     public NMultiPattern onPartialMatch(String pattern, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param true true
-         * @param action action
-         * @param NMatchType.PARTIAL_MATCH n match type.partial_match
-         * @return on result
-         */
         return on(pattern, true, action, NMatchType.PARTIAL_MATCH);
     }
 
@@ -90,15 +63,6 @@ public class NMultiPattern {
      * @return on partial match result
      */
     public NMultiPattern onPartialMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param condition condition
-         * @param action action
-         * @param NMatchType.PARTIAL_MATCH n match type.partial_match
-         * @return on result
-         */
         return on(pattern, condition, action, NMatchType.PARTIAL_MATCH);
     }
 
@@ -110,15 +74,6 @@ public class NMultiPattern {
      * @return on full match result
      */
     public NMultiPattern onFullMatch(String pattern, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param true true
-         * @param action action
-         * @param NMatchType.FULL_MATCH n match type.full_match
-         * @return on result
-         */
         return on(pattern, true, action, NMatchType.FULL_MATCH);
     }
 
@@ -131,15 +86,6 @@ public class NMultiPattern {
      * @return on full match result
      */
     public NMultiPattern onFullMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param condition condition
-         * @param action action
-         * @param NMatchType.FULL_MATCH n match type.full_match
-         * @return on result
-         */
         return on(pattern, condition, action, NMatchType.FULL_MATCH);
     }
 
@@ -152,15 +98,6 @@ public class NMultiPattern {
      * @return on result
      */
     public NMultiPattern on(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param condition condition
-         * @param action action
-         * @param null null
-         * @return on result
-         */
         return on(pattern, condition, action, null);
     }
 
@@ -173,15 +110,6 @@ public class NMultiPattern {
      * @return on result
      */
     public NMultiPattern on(String pattern, Consumer<NStringMatchResult> action) {
-        /**
-         * On.
-         *
-         * @param pattern pattern
-         * @param true true
-         * @param action action
-         * @param null null
-         * @return on result
-         */
         return on(pattern, true, action, null);
     }
 
@@ -223,12 +151,6 @@ public class NMultiPattern {
                     break;
                 }
                 case NO_MATCH: {
-                    /**
-                     * Illegal argument exception.
-                     *
-                     * @param "unsupported" "unsupported"
-                     * @return illegal argument exception result
-                     */
                     throw new IllegalArgumentException("unsupported");
                 }
             }
@@ -251,12 +173,6 @@ public class NMultiPattern {
      * @return fully result
      */
     public NMultiPattern fully() {
-        /**
-         * Sets the fully.
-         *
-         * @param true true
-         * @return set fully result
-         */
         return setFully(true);
     }
 

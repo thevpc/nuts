@@ -32,11 +32,6 @@ public interface CharConsumer {
     default CharConsumer andThen(CharConsumer after) {
         NAssert.requireNamedNonNull(after);
         return (char t) -> {
-          /**
-           * Accept.
-           *
-           * @param t t
-           */
             accept(t);
             after.accept(t);
         };

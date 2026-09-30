@@ -38,16 +38,18 @@
     /* ---- Method definitions per platform ---- */
     var METHODS = {
         linux: [
-            { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl / wget',      desc: 'One-liner install. Recommended.' },
+            { id: 'oneliner', icon: 'fas fa-bolt',       label: 'One-liner',        desc: 'Quick script install. Recommended.' },
+            { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl / wget',      desc: 'Download the jar, then run it.' },
             { id: 'offline', icon: 'fas fa-cube',        label: 'Offline bundle',   desc: 'No internet after download. Air-gapped environments.' },
-            { id: 'deb',     icon: 'fab fa-ubuntu',     label: 'DEB package',      desc: 'Debian, Ubuntu, Mint, Pop!_OS.' },
-            { id: 'rpm',     icon: 'fas fa-box',         label: 'RPM package',      desc: 'RedHat, Fedora, OpenSuSE.' }
+            { id: 'packages',icon: 'fab fa-linux',       label: 'DEB / RPM package', desc: 'Debian, Ubuntu, RedHat, Fedora.' }
         ],
         macos: [
-            { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl',             desc: 'One-liner install. Recommended.' },
+            { id: 'oneliner', icon: 'fas fa-bolt',       label: 'One-liner',        desc: 'Quick script install. Recommended.' },
+            { id: 'curl',    icon: 'fas fa-terminal',   label: 'curl',             desc: 'Download the jar, then run it.' },
             { id: 'offline', icon: 'fas fa-cube',        label: 'Offline bundle',   desc: 'No internet after download.' }
         ],
         windows: [
+            { id: 'oneliner', icon: 'fas fa-bolt',       label: 'One-liner',        desc: 'PowerShell script install. Recommended.' },
             { id: 'jar',      icon: 'fas fa-download',  label: 'Download jar',     desc: 'Lightweight ~173KB. Requires Java 8+.' },
             { id: 'installer',icon: 'fas fa-magic',      label: 'Installer (.exe)', desc: 'Setup wizard. With or without bundled JRE.' },
             { id: 'offline',  icon: 'fas fa-cube',       label: 'Offline bundle',   desc: 'No internet after download. With or without JRE.' }
@@ -57,6 +59,23 @@
             { id: 'dockerfile',icon: 'fab fa-docker',     label: 'Dockerfile',       desc: 'Build your own image.' }
         ]
     };
+
+    /* ---- One-liner install steps (mirrors README) ---- */
+    /* only the channel matching the version chosen in step 1 is presented */
+    function oneLinerSteps(ver, shell) {
+        var selected;
+        if (shell === 'powershell') {
+            selected = (ver === 'stable')
+                ? { label: 'Stable Release',  code: 'powershell -Command "irm https://thevpc.net/nuts/install-stable.ps1 | iex"' }
+                : { label: 'Latest Release',  code: 'powershell -Command "irm https://thevpc.net/nuts/install-latest.ps1 | iex"' };
+        } else {
+            selected = (ver === 'stable')
+                ? { label: 'Stable Release (Production Systems)',        code: 'curl -s https://thevpc.net/nuts/install-stable.sh | bash' }
+                : { label: 'Latest Release (Recommended for Developers)', code: 'curl -s https://thevpc.net/nuts/install-latest.sh | bash' };
+        }
+        var verify = { label: 'Restart your terminal, then verify', code: 'nuts --version' };
+        return [selected, verify];
+    }
 
     /* ---- Install content per (platform, method, version) ---- */
     function getInstallContent(platform, method, ver) {
@@ -75,6 +94,8 @@
 
         var content = {
             linux: {
+                oneliner: steps(oneLinerSteps(ver, 'bash')) + tip.linux,
+
                 curl: steps([
                     { label: 'Using curl', code: 'curl -sL ' + jar + ' -o nuts.jar\njava -jar nuts.jar -Zy\nexit' },
                     { label: 'Or using wget', code: 'wget ' + jar + ' -qO nuts.jar\njava -jar nuts.jar -y\nexit' }
@@ -85,16 +106,15 @@
                     { name: 'Linux x64 Offline + JRE', desc: 'Bundled JRE. No Java needed.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-bin-with-java-' + v + '.zip', badge: 'JRE included' }
                 ]) + tip.linux,
 
-                deb: dlTable([
-                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' }
-                ]) + tip.linux,
-
-                rpm: dlTable([
+                packages: dlTable([
+                    { name: 'Debian / Ubuntu DEB', desc: 'DEB with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-deb-' + v + '.deb' },
                     { name: 'RedHat / OpenSuSE RPM', desc: 'RPM with all dependencies.', url: 'https://thevpc.net/nuts/' + api + '/nuts-app-full-linux64-rpm-' + v + '.rpm' }
                 ]) + tip.linux
             },
 
             macos: {
+                oneliner: steps(oneLinerSteps(ver, 'bash')) + tip.macos,
+
                 curl: steps([
                     { label: 'Using curl', code: 'curl -sL ' + jar + ' -o nuts.jar\njava -jar nuts.jar -Zy\nexit' }
                 ]) + tip.macos,
@@ -105,6 +125,8 @@
             },
 
             windows: {
+                oneliner: steps(oneLinerSteps(ver, 'powershell')) + tip.windows,
+
                 jar: '<p style="font-size:0.88rem;color:#5a6a7a;margin-bottom:12px">Download the jar and run it with Java:</p>'
                     + dlTable([
                         { name: 'nuts-app-' + v + '.jar', desc: 'Lightweight ~173KB bootstrap jar.', url: jar }
@@ -125,20 +147,24 @@
 
             docker: {
                 script: [
-                    '<p class="dl-docker__desc">JDK-agnostic: the bootstrap script uses whatever Java is in the base image. Nuts provisions the correct JDK per app internally.</p>',
-                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre-alpine bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
+                    '<p class="dl-docker__desc">JDK-agnostic: the bootstrap script uses whatever Java is in the base image. Nuts provisions the correct JDK per app internally. The one-liner installs <code>curl</code> in the container first, then bootstraps Nuts.</p>',
+                    steps([{ label: 'Run interactively — no Dockerfile needed', code: 'docker run -it --rm eclipse-temurin:8-jre bash -c \'\n'
+                        + 'apt-get update -qq && apt-get install -y -qq curl >/dev/null &&\n'
+                        + 'bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Override the Nuts version via env var:</p>',
-                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre-alpine bash -c \\\n  "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"' }]),
+                    steps([{ label: 'Pin a specific version', code: 'docker run -it --rm -e NUTS_VERSION=' + v + ' eclipse-temurin:8-jre bash -c \'\n'
+                        + 'apt-get update -qq && apt-get install -y -qq curl >/dev/null &&\n'
+                        + 'bash -c "$(curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh)"\'' }]),
                     '<p class="dl-docker__desc" style="margin-top:12px">Once inside the container:</p>',
                     steps([{ label: 'Install and run any app', code: 'nuts install org.apache.netbeans:netbeans\nnuts netbeans' }]),
-                    '<div class="dl-notice dl-notice--info" style="margin-top:16px"><i class="fas fa-info-circle"></i> We recommend <code>eclipse-temurin:8-jre-alpine</code> (~85MB) over the deprecated <code>openjdk:8</code> (~400MB). Any JDK 8+ image works.</div>'
+                    '<div class="dl-notice dl-notice--info" style="margin-top:16px"><i class="fas fa-info-circle"></i> We recommend <code>eclipse-temurin:8-jre</code> (~85MB) over the deprecated <code>openjdk:8</code> (~400MB). Any JDK 8+ image works.</div>'
                 ].join(''),
 
                 dockerfile: [
                     '<p class="dl-docker__desc">Use the bootstrap script in your Dockerfile — <code>NUTS_VERSION</code> controls which version is installed:</p>',
-                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
+                    steps([{ label: 'Via bootstrap script (recommended)', code: 'FROM eclipse-temurin:8-jre\nENV NUTS_VERSION=' + v + '\nRUN curl -sSL https://thevpc.net/nuts/bootstrap-container-latest.sh | bash -s -- -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<p class="dl-docker__desc" style="margin-top:20px">Or pin the jar directly for reproducible builds:</p>',
-                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre-alpine\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
+                    steps([{ label: 'Via jar (explicit control)', code: 'FROM eclipse-temurin:8-jre\nENV NUTS_VERSION=' + v + '\nRUN wget "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/${NUTS_VERSION}/nuts-app-${NUTS_VERSION}.jar" \\\n        -qO ~/bin/nuts.jar \\\n    && java -jar ~/bin/nuts.jar -Ny\nRUN nuts -Zy install <your-application>\nCMD ["nuts", "-y", "<your-application>"]' }]),
                     '<div class="dl-notice dl-notice--tip" style="margin-top:16px"><i class="fas fa-lightbulb"></i> The base image JDK is just a bootstrap ladder. Nuts provisions the correct JDK for each app it manages.</div>'
                 ].join('')
             }

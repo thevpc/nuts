@@ -40,7 +40,7 @@ import net.thevpc.nuts.time.NDuration;
 public interface NProgressEvent extends NSessionProvider {
 
     /**
-     * Creates a new instance of of start.
+     * Creates a new instance of start.
      *
      * @param source source
      * @param message message

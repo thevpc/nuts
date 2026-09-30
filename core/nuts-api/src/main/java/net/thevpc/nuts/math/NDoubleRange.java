@@ -12,7 +12,7 @@ public class NDoubleRange {
     private final boolean finite;
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -21,7 +21,7 @@ public class NDoubleRange {
     }
 
     /**
-     * Creates a new instance of of finite.
+     * Creates a new instance of finite.
      *
      * @return of finite result
      */
@@ -54,11 +54,6 @@ public class NDoubleRange {
      * @param d d
      */
     public void addAbs(double d) {
-      /**
-       * Adds add.
-       *
-       * @param Math.abs(d) math.abs(d)
-       */
         add(Math.abs(d));
     }
 
@@ -69,11 +64,6 @@ public class NDoubleRange {
      */
     public void addAbs(double[] d) {
         for (double aD : d) {
-          /**
-           * Adds the specified abs.
-           *
-           * @param aD a d
-           */
             addAbs(aD);
         }
     }
@@ -85,11 +75,6 @@ public class NDoubleRange {
      */
     public void addAbs(double[][] d) {
         for (double[] aD : d) {
-          /**
-           * Adds the specified abs.
-           *
-           * @param aD a d
-           */
             addAbs(aD);
         }
     }
@@ -101,11 +86,6 @@ public class NDoubleRange {
      */
     public void addAbs(double[][][] d) {
         for (double[][] aD : d) {
-          /**
-           * Adds the specified abs.
-           *
-           * @param aD a d
-           */
             addAbs(aD);
         }
     }
@@ -118,11 +98,6 @@ public class NDoubleRange {
      */
     public void add(double[] d) {
         for (double aD : d) {
-          /**
-           * Adds add.
-           *
-           * @param aD a d
-           */
             add(aD);
         }
     }
@@ -151,11 +126,6 @@ public class NDoubleRange {
      */
     public void add(double[][] d) {
         for (double[] aD : d) {
-          /**
-           * Adds add.
-           *
-           * @param aD a d
-           */
             add(aD);
         }
     }
@@ -167,11 +137,6 @@ public class NDoubleRange {
      */
     public void add(double[][][] d) {
         for (double[][] z : d) {
-          /**
-           * Adds add.
-           *
-           * @param z z
-           */
             add(z);
         }
     }
@@ -184,17 +149,7 @@ public class NDoubleRange {
      */
     public void add(NDoubleRange other) {
         if (other == null || !other.isSet()) return;
-      /**
-       * Adds add.
-       *
-       * @param other.min other.min
-       */
         add(other.min);
-      /**
-       * Adds add.
-       *
-       * @param other.max other.max
-       */
         add(other.max);
     }
 

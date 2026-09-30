@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  */
 public interface NRuntimeDistributionManager extends NComponent, NConnectionStringAware {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

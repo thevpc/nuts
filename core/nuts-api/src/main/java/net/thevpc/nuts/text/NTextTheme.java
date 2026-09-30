@@ -40,7 +40,7 @@ import net.thevpc.nuts.util.NSetter;
  */
 public interface NTextTheme {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

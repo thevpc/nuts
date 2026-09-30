@@ -17,7 +17,7 @@ public interface NExprContext {
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -195,7 +195,7 @@ public interface NExprContext {
     <A> NOptional<NFunction<A, ?>> findCommonPostfixOp(NExprCommonOp op, Class<? extends A> argType);
 
     /**
-     * Creates a new instance of of dollar interpolated string.
+     * Creates a new instance of dollar interpolated string.
      *
      * @param a a
      * @return of dollar interpolated string result
@@ -203,7 +203,7 @@ public interface NExprContext {
     NExprInterpolatedStringNode ofDollarInterpolatedString(String a);
 
     /**
-     * Creates a new instance of of moustache interpolated string.
+     * Creates a new instance of moustache interpolated string.
      *
      * @param a a
      * @return of moustache interpolated string result
@@ -211,7 +211,7 @@ public interface NExprContext {
     NExprInterpolatedStringNode ofMoustacheInterpolatedString(String a);
 
     /**
-     * Creates a new instance of of template.
+     * Creates a new instance of template.
      *
      * @return of template result
      */

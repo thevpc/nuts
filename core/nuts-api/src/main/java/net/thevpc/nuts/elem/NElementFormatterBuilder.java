@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  */
 public interface NElementFormatterBuilder {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

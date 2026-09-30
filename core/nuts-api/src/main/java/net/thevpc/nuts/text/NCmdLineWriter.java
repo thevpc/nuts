@@ -41,22 +41,16 @@ import net.thevpc.nuts.platform.NShellFamily;
 public interface NCmdLineWriter extends NObjectWriter {
 
     /**
-     * Creates a new instance of of plain.
+     * Creates a new instance of plain.
      *
      * @return of plain result
      */
     static NCmdLineWriter ofPlain() {
-        /**
-         * Creates a new instance of of.
-         *
-         * @param ).ntf(false ).ntf(false
-         * @return of result
-         */
         return of().ntf(false);
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */

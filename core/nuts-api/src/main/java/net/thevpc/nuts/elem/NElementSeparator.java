@@ -10,7 +10,7 @@ import net.thevpc.nuts.internal.rpi.NElementRPI;
  */
 public interface NElementSeparator extends NAffix {
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result
@@ -20,7 +20,7 @@ public interface NElementSeparator extends NAffix {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -29,7 +29,7 @@ public interface NElementSeparator extends NAffix {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param value value
      * @return of result

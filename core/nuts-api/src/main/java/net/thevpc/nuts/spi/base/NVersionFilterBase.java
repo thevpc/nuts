@@ -50,33 +50,16 @@ public abstract class NVersionFilterBase extends NFilterBase implements NVersion
      * @return abstract version filter result
      */
     public NVersionFilterBase(NFilterOp op) {
-      /**
-       * Super.
-       *
-       * @param op op
-       */
         super(op);
     }
 
     @Override
     public NVersionFilter or(NVersionFilter other) {
-        /**
-         * Or.
-         *
-         * @param other).to(NVersionFilter.class other).to(n version filter.class
-         * @return or result
-         */
         return or((NFilter) other).to(NVersionFilter.class);
     }
 
     @Override
     public NVersionFilter and(NVersionFilter other) {
-        /**
-         * And.
-         *
-         * @param other).to(NVersionFilter.class other).to(n version filter.class
-         * @return and result
-         */
         return and((NFilter) other).to(NVersionFilter.class);
     }
 

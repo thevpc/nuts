@@ -97,12 +97,6 @@ public interface NFlatExprElement extends NElement, Iterable<NElement> {
      * @return reshape result
      */
     default NElement reshape() {
-        /**
-         * Reshape.
-         *
-         * @param NExprElementReshaperType.DEFAULT n expr element reshaper type.default
-         * @return reshape result
-         */
         return reshape(NExprElementReshaperType.DEFAULT);
     }
 

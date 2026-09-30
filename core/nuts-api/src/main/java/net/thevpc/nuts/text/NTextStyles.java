@@ -51,7 +51,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param others others
      * @return of result
@@ -74,7 +74,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     }
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @param other other
      * @return of result
@@ -126,12 +126,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         if (this.isPlain()) {
             return other;
         }
-        /**
-         * Append.
-         *
-         * @param other.elements other.elements
-         * @return append result
-         */
         return append(other.elements);
     }
 
@@ -148,12 +142,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         List<NTextStyle> all = new ArrayList<NTextStyle>(size() + others.length + 1);
         all.addAll(Arrays.asList(elements));
         all.addAll(Arrays.asList(others));
-        /**
-         * Creates a new instance of of.
-         *
-         * @param NTextStyle[0]) n text style[0])
-         * @return of result
-         */
         return of(all.toArray(new NTextStyle[0]));
     }
 
@@ -170,12 +158,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         NTextStyle[] elements2 = new NTextStyle[elements.length + 1];
         System.arraycopy(elements, 0, elements2, 0, elements.length);
         elements2[elements.length] = other;
-        /**
-         * Creates a new instance of of.
-         *
-         * @param elements2 elements2
-         * @return of result
-         */
         return of(elements2);
     }
 
@@ -188,12 +170,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         if (elements.length <= 0) {
             return this;
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param 1) 1)
-         * @return of result
-         */
         return of(Arrays.copyOf(elements, elements.length - 1));
     }
 
@@ -206,12 +182,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
         if (elements.length <= 0) {
             return this;
         }
-        /**
-         * Creates a new instance of of.
-         *
-         * @param elements.length) elements.length)
-         * @return of result
-         */
         return of(Arrays.copyOfRange(elements, 1, elements.length));
     }
 
@@ -249,11 +219,6 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
 
     @Override
     public String toString() {
-        /**
-         * Id.
-         *
-         * @return id result
-         */
         return id();
     }
 

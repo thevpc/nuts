@@ -18,12 +18,6 @@ public class NNonCopiableException extends NIllegalArgumentException {
      * @return n non copiable exception result
      */
     public NNonCopiableException(NMsg formattedMessage, Throwable cause) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       * @param cause cause
-       */
         super(formattedMessage, cause);
     }
     /**
@@ -33,11 +27,6 @@ public class NNonCopiableException extends NIllegalArgumentException {
      * @return n non copiable exception result
      */
     public NNonCopiableException(NMsg formattedMessage) {
-      /**
-       * Super.
-       *
-       * @param formattedMessage formatted message
-       */
         super(formattedMessage);
     }
 

@@ -48,7 +48,7 @@ public class NAnsiTermHelper {
 
 
     /**
-     * Creates a new instance of of.
+     * Creates a new instance.
      *
      * @return of result
      */
@@ -196,11 +196,6 @@ public class NAnsiTermHelper {
                     int red = c.red();
                     int green = c.green();
                     int blue = c.blue();
-                  /**
-                   * Return.
-                   *
-                   * @param blue blue
-                   */
                     return ("38;2;" + red + ";" + green + ";" + blue);
                 }
             }
@@ -264,11 +259,6 @@ public class NAnsiTermHelper {
                 && NBlankable.isBlank(foreground)
                 && NBlankable.isBlank(background);
         if (plain) {
-            /**
-             * Plain.
-             *
-             * @return plain result
-             */
             return plain();
         }
         StringBuilder sb = new StringBuilder("\u001B[");

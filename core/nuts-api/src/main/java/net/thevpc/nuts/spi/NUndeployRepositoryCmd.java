@@ -105,7 +105,7 @@ public interface NUndeployRepositoryCmd extends NRepositoryCmd {
     boolean isOffline();
 
     /**
-     * Creates a new instance of offline.
+     * Creates a new instance offline.
      *
      * @param offline offline
      * @return offline result
