@@ -133,6 +133,8 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             } else if (n1.mode() == NMatchType.NO_MATCH) {
                                 buffer.append(q.read());
                             } else {
+                                // PARTIAL_MATCH or other - consume one character to avoid infinite loop
+                                buffer.append(q.read());
                                 return null;
                             }
                         }
@@ -265,6 +267,8 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     wasNewLine = false;
                                     buffer.append(q.read());
                                 } else {
+                                    // Consume one character to avoid infinite loop
+                                    buffer.append(q.read());
                                     return null;
                                 }
                             }
@@ -306,6 +310,8 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                         wasNewLine = false;
                                         buffer.append(q.read());
                                     } else {
+                                        // Consume one character to avoid infinite loop
+                                        buffer.append(q.read());
                                         return null;
                                     }
                                 }
@@ -355,7 +361,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             switch (n.mode()) {
                                 case FULL_MATCH: {
                                     wasNewLine = false;
-                                    q.read(3); // ignore extra // n.count()
+                                    q.read(n.count()); // ignore extra
 //                                    if(containsNewline(buffer.toString().toCharArray())) {
 //                                        q.readNewLine(true);
 //                                    }
@@ -371,13 +377,16 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     break;
                                 }
                                 default: {
+                                    // Consume one character to avoid infinite loop
+                                    wasNewLine = false;
+                                    buffer.append(q.read());
                                     return null;
                                 }
                             }
                         } else {
                             switch (n.mode()) {
                                 case FULL_MATCH: {
-                                    q.read(3); // ignore extra // n.count()
+                                    q.read(n.count()); // ignore extra
                                     NText p = pushUp(consumeBuffer());
                                     pushCode();
                                     if (p != null) {
@@ -392,6 +401,9 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     break;
                                 }
                                 default: {
+                                    // Consume one character to avoid infinite loop
+                                    wasNewLine = false;
+                                    buffer.append(q.read());
                                     return null;
                                 }
                             }
@@ -487,7 +499,16 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     private void pushSimpleStyle(int level) {
-        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NTextStyles.parse("p" + level).get(), level));
+        NTextStyles style = NTextStyles.parse("p" + level).orNull();
+        if (style == null) {
+            // Fallback to plain style if the specific level style is not found
+            style = NTextStyles.parse("p").orNull();
+            if (style == null) {
+                // Last resort: use empty style
+                style = NTextStyles.PLAIN;
+            }
+        }
+        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, style, level));
     }
 
     private void pushSimpleStyle(NTextStyles s) {
