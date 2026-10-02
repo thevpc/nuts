@@ -138,31 +138,23 @@ public class NPatternInfo implements Comparable<NPatternInfo> {
     public int compareTo(NPatternInfo b) {
         NPatternInfo a = this;
         // Handle null results
-        System.out.println("DEBUG: a.result = " + a.result);
-        System.out.println("DEBUG: b.result = " + b.result);
         if (a.result == null && b.result == null) {
-            System.out.println("DEBUG: Both null, returning 0");
             return 0;
         }
         if (a.result == null) {
-            System.out.println("DEBUG: a null, b not null, returning -1");
             return -1; // null results sort before non-null
         }
         if (b.result == null) {
-            System.out.println("DEBUG: a not null, b null, returning 1");
             return 1; // non-null results sort after null
         }
         // Both results are non-null, safe to call methods on them
-        System.out.println("DEBUG: Both non-null, comparing modes");
         int r = a.result.mode().compareTo(b.result.mode());
-        System.out.println("DEBUG: mode comparison result = " + r);
         if (r != 0) {
             return r;
         }
         switch (a.result.mode()) {
             case FULL_MATCH:
             case MATCH: {
-                System.out.println("DEBUG: Comparing lengths");
                 return -Integer.compare(a.result.get().length(), b.result.get().length());
             }
         }
