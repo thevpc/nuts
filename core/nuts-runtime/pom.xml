@@ -90,7 +90,8 @@
 
                 <configuration>
                     <!-- default compilation settings -->
-                    <release>8</release>
+                    <source>1.8</source>
+			<target>1.8</target>
                 </configuration>
 
                 <executions>
@@ -102,7 +103,8 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <release>9</release>
+                            <source>9</source>
+				<target>9</target>
                             <compileSourceRoots>
                                 <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
                             </compileSourceRoots>

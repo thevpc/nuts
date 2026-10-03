@@ -246,10 +246,25 @@ public interface NText extends NBlankable, NElementSimple {
      * @param lang lang
      * @param text text
      * @param sep sep
-     * @return of code result
+     * @return code result
      */
     static NTextCode ofCode(String lang, String text, String sep) {
         return NTextRPI.of().createCode(text, lang, sep);
+    }
+
+    /**
+     * Creates a new instance of code.
+     *
+     * @param start start
+     * @param kind kind
+     * @param separator separator
+     * @param end end
+     * @param text text
+     * @return code result
+     * @since  1.1.0
+     */
+    static NTextCode ofCode(String start, String kind, String separator, String end, String text) {
+        return NTextRPI.of().createCode(start,kind,separator,end,text);
     }
 
     /**

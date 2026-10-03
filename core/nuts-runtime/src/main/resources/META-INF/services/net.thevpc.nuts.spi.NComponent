@@ -91,6 +91,7 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.TsonCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.NTexupCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.CSharpCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.NtfCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.MtfCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.XmlCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.WinCmdBlocTextHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.CppCodeHighlighter

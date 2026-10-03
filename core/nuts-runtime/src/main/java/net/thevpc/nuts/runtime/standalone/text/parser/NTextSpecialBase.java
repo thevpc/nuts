@@ -34,31 +34,31 @@ import java.util.Objects;
 public abstract class NTextSpecialBase extends AbstractNText {
 
     private final String start;
-    private final String kind;
+    private final String qualifier;
     private final String separator;
     private final String end;
 
-    public NTextSpecialBase(String start, String kind, String separator, String end) {
+    public NTextSpecialBase(String start, String qualifier, String separator, String end) {
         super();
         this.start=start==null?"":start;
         this.end=end==null?"":end;
-        this.kind = kind==null?"":kind;
+        this.qualifier = qualifier ==null?"": qualifier;
         this.separator = separator==null?"":separator;
     }
 
-    public String getKind() {
-        return kind;
+    public String qualifier() {
+        return qualifier;
     }
 
     public String separator() {
         return separator;
     }
 
-    public String getStart() {
+    public String start() {
         return start;
     }
 
-    public String getEnd() {
+    public String end() {
         return end;
     }
 
@@ -67,11 +67,11 @@ public abstract class NTextSpecialBase extends AbstractNText {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NTextSpecialBase that = (NTextSpecialBase) o;
-        return Objects.equals(start, that.start) && Objects.equals(kind, that.kind) && Objects.equals(separator, that.separator) && Objects.equals(end, that.end);
+        return Objects.equals(start, that.start) && Objects.equals(qualifier, that.qualifier) && Objects.equals(separator, that.separator) && Objects.equals(end, that.end);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(start, kind, separator, end);
+        return Objects.hash(start, qualifier, separator, end);
     }
 }

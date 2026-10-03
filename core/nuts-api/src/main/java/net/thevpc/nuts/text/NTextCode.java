@@ -45,6 +45,20 @@ public interface NTextCode extends NText {
     String value();
 
     /**
+     *
+     * @return start
+     * @since 1.1.0
+     */
+    String start();
+
+    /**
+     * end
+     * @return end
+     * @since 1.1.0
+     */
+    String end();
+
+    /**
      * Qualifier.
      *
      * @return qualifier result

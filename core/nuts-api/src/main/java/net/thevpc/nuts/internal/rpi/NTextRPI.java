@@ -183,6 +183,8 @@ public interface NTextRPI extends NComponent {
      */
     NTextTitle createTitle(String other, int level);
 
+    NTextCode createCode(String start, String kind, String separator, String end, String text);
+
     /**
      * Creates a new instance of title.
      *

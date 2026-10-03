@@ -64,7 +64,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     public NText highlight() {
         NTextRPI txt = NTextRPI.of();
         NCodeHighlighter t = ((DefaultNTextRPI) txt)
-                .resolveCodeHighlighter(getKind());
+                .resolveCodeHighlighter(this.qualifier());
         return t.stringToText(text);
     }
 
@@ -80,11 +80,6 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     public String value() {
         return text;
-    }
-
-    @Override
-    public String qualifier() {
-        return getKind();
     }
 
     @Override
@@ -136,7 +131,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     @Override
     public NText substring(int start, int end) {
         return new DefaultNTextCode(
-                this.getStart(), getKind(), separator(), getEnd(),
+                this.start(), this.qualifier(), separator(), end(),
                 value().substring(start, end)
         );
     }
@@ -147,7 +142,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
+        return new DefaultNTextCode(start(), this.qualifier(), separator(), end(), c);
     }
 
     @Override
@@ -156,7 +151,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
+        return new DefaultNTextCode(start(), this.qualifier(), separator(), end(), c);
     }
 
     @Override
@@ -165,7 +160,7 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
         if(Objects.equals(text, c)){
             return this;
         }
-        return new DefaultNTextCode(getStart(),getKind(), separator(),getEnd(), c);
+        return new DefaultNTextCode(start(), this.qualifier(), separator(), end(), c);
     }
 
 

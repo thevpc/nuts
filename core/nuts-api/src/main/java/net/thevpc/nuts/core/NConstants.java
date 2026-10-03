@@ -673,6 +673,47 @@ public final class NConstants {
     }
 
     /**
+     * MTF (markdown text format) special names.
+     * <p>
+     * MTF is a hybrid format supporting both the {@code NTF} syntax and a subset of the
+     * {@code markdown} syntax.
+     *
+     * @app.category Constants
+     */
+    public static final class Mtf {
+
+        public static final Set<String> NAMES = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(
+                        "nuts-markdown-text-format",
+                        "nuts-markdown-format",
+                        "markdown-text-format",
+                        "mtf"
+                ))
+        );
+
+        public static final String MIME_TYPE = "text/x-mtf";
+
+        public static final Set<String> MIME_TYPES = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(
+                        "text/x-nuts-markdown-text-format",
+                        "text/x-mtf",
+                        "text/nuts-markdown-text-format",
+                        "text/mtf",
+                        "application/x-nuts-markdown-text-format",
+                        "application/x-mtf",
+                        "application/nuts-markdown-text-format",
+                        "application/mtf"
+                ))
+        );
+
+        /**
+         * private constructor
+         */
+        private Mtf() {
+        }
+    }
+
+    /**
      * Env variables
      *
      * @app.category Constants
