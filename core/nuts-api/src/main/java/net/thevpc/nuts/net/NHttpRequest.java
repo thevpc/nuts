@@ -48,7 +48,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Uri.
      *
-     * @param url url
+     * @param url  url
      * @param vars vars
      * @return uri result
      */
@@ -335,7 +335,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Adds the specified header.
      *
-     * @param name name
+     * @param name  name
      * @param value value
      * @return add header result
      */
@@ -367,7 +367,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Parameter.
      *
-     * @param name name
+     * @param name  name
      * @param value value
      * @return parameter result
      */
@@ -376,7 +376,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Adds the specified parameter.
      *
-     * @param name name
+     * @param name  name
      * @param value value
      * @return add parameter result
      */
@@ -478,7 +478,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Adds the specified form url encoded.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return add form url encoded result
      */
@@ -495,7 +495,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Form data.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return form data result
      */
@@ -504,7 +504,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Form data.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @return form data result
      */
@@ -611,7 +611,7 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Adds the specified part.
      *
-     * @param name name
+     * @param name  name
      * @param value value
      * @return add part result
      */
@@ -620,10 +620,10 @@ public interface NHttpRequest extends NMsgFormattable {
     /**
      * Adds the specified part.
      *
-     * @param name name
-     * @param fileName file name
+     * @param name        name
+     * @param fileName    file name
      * @param contentType content type
-     * @param body body
+     * @param body        body
      * @return add part result
      */
     NHttpRequest addPart(String name, String fileName, String contentType, NInputSource body);
@@ -708,4 +708,19 @@ public interface NHttpRequest extends NMsgFormattable {
      */
     CompletableFuture<NHttpResponse> runAsync(Executor executor);
 
+    /**
+     * add cookies
+     * @param cookies cookies to add
+     * @return this instance
+     * @since 1.1.0
+     */
+    NHttpRequest cookies(NHttpCookie... cookies);
+
+    /**
+     * add cookie
+     * @param cookie cookie to add
+     * @return this instance
+     * @since 1.1.0
+     */
+    NHttpRequest cookie(NHttpCookie cookie);
 }

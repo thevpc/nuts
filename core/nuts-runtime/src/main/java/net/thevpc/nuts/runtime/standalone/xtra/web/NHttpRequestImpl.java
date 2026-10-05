@@ -34,7 +34,7 @@ public class NHttpRequestImpl implements NHttpRequest {
     private Map<String, String> urlEncoded;
     private Mode mode = Mode.NONE;
 
-    private enum Mode {
+    protected enum Mode {
         NONE,
         BODY,
         FORM_DATA,
@@ -207,16 +207,16 @@ public class NHttpRequestImpl implements NHttpRequest {
         return this;
     }
 
-    public NHttpRequest addCookies(NHttpCookie[] cookies) {
+    public NHttpRequest cookies(NHttpCookie... cookies) {
         if (cookies != null) {
             for (NHttpCookie cookie : cookies) {
-                addCookie(cookie);
+                cookie(cookie);
             }
         }
         return this;
     }
 
-    public NHttpRequest addCookie(NHttpCookie cookie) {
+    public NHttpRequest cookie(NHttpCookie cookie) {
         if (cookie != null) {
             addHeader("Cookie", cookie.name() + "=" + cookie.value());
         }
