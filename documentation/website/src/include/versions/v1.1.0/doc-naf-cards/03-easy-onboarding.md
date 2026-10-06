@@ -1,0 +1,14 @@
+---
+title: Easy Onboarding
+subTitle:  | 
+    One line to start. Full runtime at your fingertips.
+    Get started instantly with NAF — no setup, no configuration, just
+    run. Behind that single line lies a powerful, fully-featured
+    runtime: dependency management, sessions, workspaces, and automation
+    tools ready for anything your application needs. NAF makes modern
+    Java development simple, composable, and ready to scale.
+contentType: java
+---
+
+Nuts.require();
+NOut.println("Hello Nuts!");

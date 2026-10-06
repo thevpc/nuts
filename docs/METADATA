@@ -1,12 +1,12 @@
-buildTime=2026-09-30-230111
+buildTime=2026-10-06-175812
 
 stableApiId=
-stableApiVersion=0.8.9
-stableAppId=net.thevpc.nuts:nuts-app#0.8.9
-stableAppVersion=0.8.9
-stableRuntimeId=net.thevpc.nuts:nuts-runtime#0.8.9.0
-stableRuntimeVersion=0.8.9.0
-stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/0.8.9/nuts-app-0.8.9.jar
+stableApiVersion=1.0.0
+stableAppId=net.thevpc.nuts:nuts-app#1.0.0
+stableAppVersion=1.0.0
+stableRuntimeId=net.thevpc.nuts:nuts-runtime#1.0.0.0
+stableRuntimeVersion=1.0.0.0
+stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar
 
 latestApiId=net.thevpc.nuts:nuts#1.1.0
 latestApiVersion=1.1.0

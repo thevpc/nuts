@@ -66,7 +66,7 @@ The script directly invokes `java -jar` using your locally compiled Maven artifa
 
 `nuts-release-tool` will:
 - Parse `nuts-release-tool.tson` configuration at repository root.
-- Pre-process markdown templates using `nsite` (replacing variables like `1.1.0.0` and `0.8.9.0`).
+- Pre-process markdown templates using `nsite` (replacing variables like `1.1.0.0` and `1.0.0.0`).
 - Generate root `README.md`, `CONTRIBUTING.md`, and update the static HTML site in `docs/` (including `docs/download.html`, published at [https://thevpc.github.io/nuts/download.html](https://thevpc.github.io/nuts/download.html)).
 
 ---

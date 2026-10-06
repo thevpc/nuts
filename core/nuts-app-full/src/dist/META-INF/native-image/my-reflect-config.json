@@ -6095,6 +6095,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.core.NConstants$Mtf",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.core.NConstants$Names",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -30413,6 +30427,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.runtime.standalone.text.highlighter.MtfCodeHighlighter",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.runtime.standalone.text.highlighter.NCodeHighlighterHelper",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -31030,6 +31058,48 @@
   },
   {
     "name": "net.thevpc.nuts.runtime.standalone.text.parser.v1.TitleParserStep",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.text.parser.v2.MTFParser",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.text.parser.v2.MTFParser$Embedded",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.runtime.standalone.text.parser.v2.MTFParser$StepEnum",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

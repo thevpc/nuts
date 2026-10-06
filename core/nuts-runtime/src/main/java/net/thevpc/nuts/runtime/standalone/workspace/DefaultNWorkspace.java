@@ -113,6 +113,7 @@ import java.util.stream.Collectors;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceExt {
 
+    public static final String RUNTIME_VERSION = "1.1.0.0";
     public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.get("0.8.0").get();
     public static final NVersion VERSION_SDK_LOCATION = NVersion.get("0.8.0").get();
     public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.get("0.8.0").get();
@@ -125,7 +126,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String VERSION_COMMAND_ALIAS_CONFIG = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
-    public static final String RUNTIME_VERSION = "1.1.0.0";
     public static final String RUNTIME_ID_STRING = NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION;
     public static final NId RUNTIME_ID = NId.get(RUNTIME_ID_STRING).get();
     public static final String WEAK_ADMIN_PASSWORD = "admin";

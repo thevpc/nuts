@@ -678,6 +678,12 @@
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.reflect.NScorableContext"] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.util.NScorableContext"] }]
 },
 {
+  "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.MtfCodeHighlighter",
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getScore","parameterTypes":["net.thevpc.nuts.reflect.NScorableContext"] }]
+},
+{
   "name":"net.thevpc.nuts.runtime.standalone.text.highlighter.NTexupCodeHighlighter",
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
