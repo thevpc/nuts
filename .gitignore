@@ -306,3 +306,4 @@ core/nuts-app-full/target
 /installers/target/site/
 /core/nuts-boot/.naru/local/
 
+/.nmvn/version-history.tson
