@@ -61,7 +61,7 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
     /**
      * Creates a new instance of polar.
      *
-     * @param r r
+     * @param r     r
      * @param theta theta
      * @return of polar result
      */
@@ -88,7 +88,7 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
 
     @Override
     public boolean isImaginary() {
-        return real == 0 && imag !=0;
+        return real == 0 && imag != 0;
     }
 
     @Override
@@ -291,5 +291,25 @@ public class NDoubleComplexImpl extends Number implements NDoubleComplex {
     public NDoubleComplex invDoubleComplex() {
         double denominator = this.real * this.real + this.imag * this.imag;
         return new NDoubleComplexImpl(this.real / denominator, -this.imag / denominator);
+    }
+
+    @Override
+    public NDoubleComplex addDouble(double other) {
+        return new NDoubleComplexImpl(real + other, imag);
+    }
+
+    @Override
+    public NDoubleComplex subtractDouble(double other) {
+        return new NDoubleComplexImpl(real - other, imag);
+    }
+
+    @Override
+    public NDoubleComplex multiplyDouble(double other) {
+        return new NDoubleComplexImpl(real * other, imag * other);
+    }
+
+    @Override
+    public NDoubleComplex divideDouble(double other) {
+        return new NDoubleComplexImpl(real / other, imag / other);
     }
 }

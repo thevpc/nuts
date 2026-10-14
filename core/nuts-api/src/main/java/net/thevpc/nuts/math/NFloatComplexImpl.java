@@ -62,7 +62,7 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     /**
      * Creates a new instance of polar.
      *
-     * @param r r
+     * @param r     r
      * @param theta theta
      * @return of polar result
      */
@@ -89,7 +89,7 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
 
     @Override
     public boolean isImaginary() {
-        return real == 0 && imag !=0;
+        return real == 0 && imag != 0;
     }
 
     @Override
@@ -290,5 +290,26 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     public NFloatComplex invFloatComplex() {
         float denominator = this.real * this.real + this.imag * this.imag;
         return new NFloatComplexImpl(this.real / denominator, -this.imag / denominator);
+    }
+
+
+    @Override
+    public NFloatComplex addFloat(float other) {
+        return new NFloatComplexImpl(real + other, imag);
+    }
+
+    @Override
+    public NFloatComplex subtractFloat(float other) {
+        return new NFloatComplexImpl(real - other, imag);
+    }
+
+    @Override
+    public NFloatComplex multiplyFloat(float other) {
+        return new NFloatComplexImpl(real * other, imag * other);
+    }
+
+    @Override
+    public NFloatComplex divideFloat(float other) {
+        return new NFloatComplexImpl(real / other, imag / other);
     }
 }

@@ -134,4 +134,35 @@ public interface NFloatComplex extends NNumber {
      * @return is imaginary result
      */
     boolean isImaginary();
+
+
+
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex addFloat(float other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex subtractFloat(float other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex multiplyFloat(float other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex divideFloat(float other);
 }

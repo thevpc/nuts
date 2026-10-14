@@ -145,6 +145,35 @@ public interface NDoubleComplex extends Serializable, NNumber {
     NDoubleComplex divideDoubleComplex(NDoubleComplex other);
 
     /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NDoubleComplex addDouble(double other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NDoubleComplex subtractDouble(double other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NDoubleComplex multiplyDouble(double other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NDoubleComplex divideDouble(double other);
+
+    /**
      * Inv double complex.
      *
      * @return inv double complex result

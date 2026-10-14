@@ -13,13 +13,13 @@ import java.util.Objects;
  * @author thevpc
  * @since 0.8.0
  */
-public class NBigComplexImpl extends Number implements NBigComplex{
+public class NBigComplexImpl extends Number implements NBigComplex {
     private static final BigDecimal BIG_DECIMAL_MINUS_ONE = new BigDecimal("-1");
     public static final NBigComplex ZERO = new NBigComplexImpl(BigDecimal.ZERO, BigDecimal.ZERO);
     public static final NBigComplex ONE = new NBigComplexImpl(BigDecimal.ONE, BigDecimal.ZERO);
     public static final NBigComplex I = new NBigComplexImpl(BigDecimal.ZERO, BigDecimal.ONE);
-    private BigDecimal real;
-    private BigDecimal imag;
+    private final BigDecimal real;
+    private final BigDecimal imag;
 
     /**
      * Creates a new instance.
@@ -30,6 +30,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     public static NBigComplex of(String any) {
         return parse(any).get();
     }
+
     /**
      * @param any string
      * @return optional of complex
@@ -62,7 +63,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
     /**
      * Creates a new instance of polar.
      *
-     * @param r r
+     * @param r     r
      * @param theta theta
      * @return of polar result
      */
@@ -253,7 +254,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
         BigDecimal b = this.imag;
         BigDecimal c = z2.realValue();
         BigDecimal d = z2.imagValue();
-        mc= NNumberUtils.contextMathContext(mc);
+        mc = NNumberUtils.contextMathContext(mc);
         BigDecimal p1 = a.multiply(c, mc);
         BigDecimal p2 = b.multiply(d, mc);
         BigDecimal p3 = (a.add(b, mc)).multiply(c.add(d, mc), mc);
@@ -268,11 +269,11 @@ public class NBigComplexImpl extends Number implements NBigComplex{
      * Divide big complex.
      *
      * @param other other
-     * @param mc mc
+     * @param mc    mc
      * @return divide big complex result
      */
     public NBigComplex divideBigComplex(NBigComplex other, MathContext mc) {
-        mc= NNumberUtils.contextMathContext(mc);
+        mc = NNumberUtils.contextMathContext(mc);
         BigDecimal c = other.realValue();
         BigDecimal d = other.imagValue();
         BigDecimal denominator = c.multiply(c, mc).add(d.multiply(d, mc), mc);
@@ -295,7 +296,7 @@ public class NBigComplexImpl extends Number implements NBigComplex{
      * @return inv big complex result
      */
     public NBigComplex invBigComplex(MathContext mc) {
-        mc= NNumberUtils.contextMathContext(mc);
+        mc = NNumberUtils.contextMathContext(mc);
         BigDecimal denominator = this.real.multiply(this.real, mc).add(this.imag.multiply(this.imag, mc), mc);
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             throw new ArithmeticException("Inverse of zero complex number is undefined.");
@@ -304,5 +305,45 @@ public class NBigComplexImpl extends Number implements NBigComplex{
                 this.real.divide(denominator, mc),
                 this.imag.negate().divide(denominator, mc)
         );
+    }
+
+    @Override
+    public NBigComplex addBigDecimal(BigDecimal other) {
+        return new NBigComplexImpl(real.add(other), imag);
+    }
+
+    @Override
+    public NBigComplex subtractBigDecimal(BigDecimal other) {
+        return new NBigComplexImpl(real.subtract(other), imag);
+    }
+
+    @Override
+    public NBigComplex multiplyBigDecimal(BigDecimal other, MathContext mc) {
+        return new NBigComplexImpl(real.multiply(other, mc), imag.multiply(other, mc));
+    }
+
+    @Override
+    public NBigComplex divideBigDecimal(BigDecimal other, MathContext mc) {
+        return new NBigComplexImpl(real.divide(other, mc), imag.divide(other, mc));
+    }
+
+    @Override
+    public NBigComplex addDouble(double other) {
+        return addBigDecimal(new BigDecimal(other));
+    }
+
+    @Override
+    public NBigComplex subtractDouble(double other) {
+        return subtractBigDecimal(new BigDecimal(other));
+    }
+
+    @Override
+    public NBigComplex multiplyDouble(double other, MathContext mc) {
+        return multiplyBigDecimal(new BigDecimal(other), mc);
+    }
+
+    @Override
+    public NBigComplex divideDouble(double other, MathContext mc) {
+        return divideBigDecimal(new BigDecimal(other), mc);
     }
 }

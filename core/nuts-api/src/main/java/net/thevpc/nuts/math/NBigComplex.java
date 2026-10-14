@@ -134,4 +134,65 @@ public interface NBigComplex extends NNumber {
      * @return is imaginary result
      */
     boolean isImaginary();
+
+
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex addBigDecimal(BigDecimal other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex subtractBigDecimal(BigDecimal other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex multiplyBigDecimal(BigDecimal other, MathContext mc);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex divideBigDecimal(BigDecimal other, MathContext mc);
+
+
+
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex addDouble(double other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex subtractDouble(double other);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex multiplyDouble(double other, MathContext mc);
+    /**
+     *
+     * @param other value
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex divideDouble(double other, MathContext mc);
 }
