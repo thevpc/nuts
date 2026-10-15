@@ -165,4 +165,21 @@ public interface NFloatComplex extends NNumber {
      * @since 1.1.0
      */
     NFloatComplex divideFloat(float other);
+
+
+    /**
+     * arg
+     * @return arg
+     * @since 1.1.0
+     */
+    float argFloat() ;
+
+    /**
+     * @since 1.1.0
+     */
+    NBigComplex toBigComplex();
+    /**
+     * @since 1.1.0
+     */
+    NDoubleComplex toDoubleComplex();
 }

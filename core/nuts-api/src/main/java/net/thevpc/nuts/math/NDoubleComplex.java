@@ -193,4 +193,25 @@ public interface NDoubleComplex extends Serializable, NNumber {
      * @return is imaginary result
      */
     boolean isImaginary();
+
+    /**
+     * arg
+     * @return arg
+     * @since 1.1.0
+     */
+    double argDouble() ;
+
+    /**
+     *
+     * @return complex
+     * @since 1.1.0
+     */
+    NBigComplex toBigComplex();
+
+    /**
+     *
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex toFloatComplex();
 }

@@ -346,4 +346,20 @@ public class NBigComplexImpl extends Number implements NBigComplex {
     public NBigComplex divideDouble(double other, MathContext mc) {
         return divideBigDecimal(new BigDecimal(other), mc);
     }
+
+
+    @Override
+    public BigDecimal argBigDecimal(MathContext mc) {
+        return BigAtan.atan2(imag, real, mc);
+    }
+
+    @Override
+    public NDoubleComplex toDoubleComplex() {
+        return NDoubleComplex.of(real.doubleValue(), imag.doubleValue());
+    }
+
+    @Override
+    public NFloatComplex toFloatComplex() {
+        return NFloatComplex.of(real.floatValue(), imag.floatValue());
+    }
 }

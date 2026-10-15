@@ -5,6 +5,7 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -312,4 +313,21 @@ public class NFloatComplexImpl extends Number implements NFloatComplex {
     public NFloatComplex divideFloat(float other) {
         return new NFloatComplexImpl(real / other, imag / other);
     }
+
+    @Override
+    public float argFloat() {
+        return (float) Math.atan2(imag, real);
+    }
+
+
+    @Override
+    public NBigComplex toBigComplex() {
+        return NBigComplex.of(new BigDecimal(real), new BigDecimal(imag));
+    }
+
+    @Override
+    public NDoubleComplex toDoubleComplex() {
+        return NDoubleComplex.of(real, imag);
+    }
+
 }

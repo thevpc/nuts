@@ -166,7 +166,6 @@ public interface NBigComplex extends NNumber {
     NBigComplex divideBigDecimal(BigDecimal other, MathContext mc);
 
 
-
     /**
      *
      * @param other value
@@ -195,4 +194,26 @@ public interface NBigComplex extends NNumber {
      * @since 1.1.0
      */
     NBigComplex divideDouble(double other, MathContext mc);
+
+    /**
+     *
+     * @param mc math context
+     * @return complex
+     * @since 1.1.0
+     */
+    BigDecimal argBigDecimal(MathContext mc);
+
+    /**
+     *
+     * @return complex
+     * @since 1.1.0
+     */
+    NDoubleComplex toDoubleComplex();
+
+    /**
+     *
+     * @return complex
+     * @since 1.1.0
+     */
+    NFloatComplex toFloatComplex();
 }
