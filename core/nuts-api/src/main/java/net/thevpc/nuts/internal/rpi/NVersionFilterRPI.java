@@ -26,10 +26,13 @@
 package net.thevpc.nuts.internal.rpi;
 
 import net.thevpc.nuts.artifact.NTypedFilters;
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NOptional;
+
+import java.util.function.Predicate;
 
 /**
  * @author thevpc
@@ -61,6 +64,14 @@ public interface NVersionFilterRPI extends NTypedFilters<NVersionFilter> {
      * @return by value result
      */
     NOptional<NVersionFilter> byValue(String version, NVersionComparator comparator);
+
+    /**
+     * version filter by predicate
+     * @param predicate predicate
+     * @return version filter
+     * @since 1.1.0
+     */
+    NVersionFilter byPredicate(Predicate<NVersion> predicate);
 
     /**
      * Parse.

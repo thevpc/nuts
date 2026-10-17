@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
+import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.artifact.NVersionComparator;
 import net.thevpc.nuts.artifact.NVersionFilter;
 import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
@@ -8,7 +9,9 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
+import java.util.function.Predicate;
 
+import net.thevpc.nuts.spi.base.NVersionFilterBase;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NMsg;
 
@@ -26,6 +29,25 @@ public class InternalNVersionFilterRPI extends InternalNTypedFilters<NVersionFil
 
     public NOptional<NVersionFilter> byValue(String version, NVersionComparator versionComparator) {
         return DefaultNVersionFilter.parse(version, versionComparator);
+    }
+
+    public NVersionFilter byPredicate(Predicate<NVersion> predicate) {
+        if (predicate == null) {
+            return always();
+        }
+        return
+                new NVersionFilterBase(NFilterOp.CUSTOM) {
+                    @Override
+                    public boolean acceptVersion(NVersion version) {
+                        return predicate.test(version);
+                    }
+
+                    @Override
+                    public NVersionFilter simplify() {
+                        return this;
+                    }
+                }
+                ;
     }
 
     @Override

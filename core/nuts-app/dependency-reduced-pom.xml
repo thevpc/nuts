@@ -169,7 +169,9 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.9</version>
             <executions>
               <execution>
                 <goals>
@@ -271,7 +273,9 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.9</version>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.9</version>
             <executions>
               <execution>
                 <goals>
@@ -309,9 +313,9 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <nuts.genericName>Package Manager</nuts.genericName>
     <github.global.server>github</github.global.server>

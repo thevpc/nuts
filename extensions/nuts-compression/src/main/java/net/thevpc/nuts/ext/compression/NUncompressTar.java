@@ -58,7 +58,7 @@ public class NUncompressTar implements NUncompressPackaging {
                 try (TarArchiveInputStream tis = createTarInputStream(_in)) {
                     TarArchiveEntry entry;
                     String root = null;
-                    while ((entry = tis.getNextTarEntry()) != null) {
+                    while ((entry = tis.getNextEntry()) != null) {
                         String fileName0 = entry.getName();
                         String fileName = fileName0;
 
@@ -133,7 +133,7 @@ public class NUncompressTar implements NUncompressPackaging {
                 try (TarArchiveInputStream tis = createTarInputStream(_in)) {
                     TarArchiveEntry entry;
                     String root = null;
-                    while ((entry = tis.getNextTarEntry()) != null) {
+                    while ((entry = tis.getNextEntry()) != null) {
                         String fileName = entry.getName();
 
                         if (uncompress.isSkipRoot()) {

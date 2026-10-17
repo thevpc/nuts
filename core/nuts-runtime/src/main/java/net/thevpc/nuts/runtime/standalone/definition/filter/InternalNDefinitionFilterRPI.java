@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -249,7 +250,7 @@ public class InternalNDefinitionFilterRPI extends InternalNTypedFilters<NDefinit
 
     @Override
     public NDefinitionFilter byVersion(String version) {
-        return new NDefinitionFilterByVersion(version,null);
+        return new NDefinitionFilterByVersion(version, null);
     }
 
     @Override
@@ -488,5 +489,23 @@ public class InternalNDefinitionFilterRPI extends InternalNTypedFilters<NDefinit
     @Override
     public NDefinitionFilter byDeployed(boolean value) {
         return NInstallStatusDefinitionFilter2.ofDeployed(value);
+    }
+
+    @Override
+    public NDefinitionFilter byPredicate(Predicate<NDefinition> predicate) {
+        if (predicate == null) {
+            return always();
+        }
+        return new DefinitionFilterBase(NFilterOp.CUSTOM) {
+            @Override
+            public boolean acceptDefinition(NDefinition descriptor) {
+                return predicate.test(descriptor);
+            }
+
+            @Override
+            public NDefinitionFilter simplify() {
+                return this;
+            }
+        };
     }
 }

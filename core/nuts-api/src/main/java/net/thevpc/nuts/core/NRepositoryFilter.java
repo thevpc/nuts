@@ -28,6 +28,8 @@ package net.thevpc.nuts.core;
 import net.thevpc.nuts.internal.rpi.NRepositoryFilterRPI;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.function.Predicate;
+
 /**
  * Created by vpc on 1/5/17.
  *
@@ -180,6 +182,17 @@ public interface NRepositoryFilter extends NFilter {
      */
     static NRepositoryFilter ofUuid(String... uuids){
         return NRepositoryFilterRPI.of().byUuid(uuids);
+    }
+
+    /**
+     * Creates a new instance of uuid.
+     *
+     * @param filter filter
+     * @return of uuid result
+     *
+     */
+    static NRepositoryFilter ofPredicate(Predicate<NRepository> filter){
+        return NRepositoryFilterRPI.of().byPredicate(filter);
     }
 
     /**

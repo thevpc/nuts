@@ -27,6 +27,8 @@ package net.thevpc.nuts.artifact;
 import net.thevpc.nuts.internal.rpi.NIdFilterRPI;
 import net.thevpc.nuts.util.NFilter;
 
+import java.util.function.Predicate;
+
 /**
  * Class for filtering Artifact Ids
  *
@@ -132,6 +134,16 @@ public interface NIdFilter extends NFilter {
      */
     static NIdFilter of(String expression){
         return NIdFilterRPI.of().parse(expression);
+    }
+
+    /**
+     * filter
+     * @param predicate predicate
+     * @return filter
+     * @since 1.1.0
+     */
+    static NIdFilter ofPredicate(Predicate<NId> predicate){
+        return NIdFilterRPI.of().byPredicate(predicate);
     }
 
     //////// COMMON END

@@ -33,6 +33,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.util.NFilter;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Dependency filter
@@ -50,7 +51,7 @@ public interface NDependencyFilter extends NFilter {
      * @param filter filter
      * @return of nonnull result
      */
-    static NDependencyFilter ofNonnull(NFilter filter){
+    static NDependencyFilter ofNonnull(NFilter filter) {
         return NDependencyFilterRPI.of().nonnull(filter);
     }
 
@@ -59,7 +60,7 @@ public interface NDependencyFilter extends NFilter {
      *
      * @return of always result
      */
-    static NDependencyFilter ofAlways(){
+    static NDependencyFilter ofAlways() {
         return NDependencyFilterRPI.of().always();
     }
 
@@ -68,7 +69,7 @@ public interface NDependencyFilter extends NFilter {
      *
      * @return of never result
      */
-    static NDependencyFilter ofNever(){
+    static NDependencyFilter ofNever() {
         return NDependencyFilterRPI.of().never();
     }
 
@@ -78,7 +79,7 @@ public interface NDependencyFilter extends NFilter {
      * @param others others
      * @return of all result
      */
-    static NDependencyFilter ofAll(NFilter... others){
+    static NDependencyFilter ofAll(NFilter... others) {
         return NDependencyFilterRPI.of().all(others);
     }
 
@@ -88,7 +89,7 @@ public interface NDependencyFilter extends NFilter {
      * @param others others
      * @return of any result
      */
-    static NDependencyFilter ofAny(NFilter... others){
+    static NDependencyFilter ofAny(NFilter... others) {
         return NDependencyFilterRPI.of().any(others);
     }
 
@@ -98,7 +99,7 @@ public interface NDependencyFilter extends NFilter {
      * @param other other
      * @return of not result
      */
-    static NDependencyFilter ofNot(NFilter other){
+    static NDependencyFilter ofNot(NFilter other) {
         return NDependencyFilterRPI.of().not(other);
     }
 
@@ -108,8 +109,18 @@ public interface NDependencyFilter extends NFilter {
      * @param others others
      * @return of none result
      */
-    static NDependencyFilter ofNone(NFilter... others){
+    static NDependencyFilter ofNone(NFilter... others) {
         return NDependencyFilterRPI.of().none(others);
+    }
+
+    /**
+     * filter
+     * @param predicate predicate
+     * @return filter
+     * @since 1.1.0
+     */
+    static NDependencyFilter ofPredicate(Predicate<NDependency> predicate) {
+        return NDependencyFilterRPI.of().byPredicate(predicate);
     }
 
     /**
@@ -118,7 +129,7 @@ public interface NDependencyFilter extends NFilter {
      * @param a a
      * @return of from result
      */
-    static NDependencyFilter ofFrom(NFilter a){
+    static NDependencyFilter ofFrom(NFilter a) {
         return NDependencyFilterRPI.of().from(a);
     }
 
@@ -128,7 +139,7 @@ public interface NDependencyFilter extends NFilter {
      * @param a a
      * @return of as result
      */
-    static NDependencyFilter ofAs(NFilter a){
+    static NDependencyFilter ofAs(NFilter a) {
         return NDependencyFilterRPI.of().as(a);
     }
 
@@ -138,7 +149,7 @@ public interface NDependencyFilter extends NFilter {
      * @param expression expression
      * @return of result
      */
-    static NDependencyFilter of(String expression){
+    static NDependencyFilter of(String expression) {
         return NDependencyFilterRPI.of().parse(expression);
     }
 
@@ -148,223 +159,246 @@ public interface NDependencyFilter extends NFilter {
 
     /**
      * accept only dependencies that match the given scope
+     *
      * @param scopes accepted scope
      * @return a filter that accepts only dependencies that match the given scope
      */
-    static NDependencyFilter ofScope(NDependencyScopePattern...scopes){
+    static NDependencyFilter ofScope(NDependencyScopePattern... scopes) {
         return NDependencyFilterRPI.of().byScope(scopes);
     }
 
     /**
      * accept only dependencies that match the given scope
+     *
      * @param scope accepted scope
      * @return a filter that accepts only dependencies that match the given scope
      */
-    static NDependencyFilter ofScope(NDependencyScope scope){
+    static NDependencyFilter ofScope(NDependencyScope scope) {
         return NDependencyFilterRPI.of().byScope(scope);
     }
 
     /**
      * accept only dependencies that match the given scopes
+     *
      * @param scopes accepted scopes list
      * @return a filter that accepts only dependencies that match the given scopes
      */
-    static NDependencyFilter ofScope(NDependencyScope... scopes){
+    static NDependencyFilter ofScope(NDependencyScope... scopes) {
         return NDependencyFilterRPI.of().byScope(scopes);
     }
 
     /**
      * accept only dependencies that match the given scopes
+     *
      * @param scopes accepted scope list
      * @return a filter that accepts only dependencies that match the given scopes
      */
-    static NDependencyFilter ofScope(Collection<NDependencyScope> scopes){
+    static NDependencyFilter ofScope(Collection<NDependencyScope> scopes) {
         return NDependencyFilterRPI.of().byScope(scopes);
     }
 
     /**
      * accept only dependencies that match the given optional state
+     *
      * @param optional accepted scope state. null matches any optional value
      * @return a filter that accepts only dependencies that match the given scope
      */
-    static NDependencyFilter ofOptional(Boolean optional){
+    static NDependencyFilter ofOptional(Boolean optional) {
         return NDependencyFilterRPI.of().byOptional(optional);
     }
 
     /**
      * return a new filter that accepts all of {@code filter} but the given exclusions
-     * @param filter base filter
+     *
+     * @param filter     base filter
      * @param exclusions excluded dependencies
      * @return return a new filter that accepts all of {@code filter} but the given exclusions
      */
-    static NDependencyFilter ofExclude(NDependencyFilter filter, String[] exclusions){
-        return NDependencyFilterRPI.of().byExclude(filter,exclusions);
+    static NDependencyFilter ofExclude(NDependencyFilter filter, String[] exclusions) {
+        return NDependencyFilterRPI.of().byExclude(filter, exclusions);
     }
 
     /**
      * accept only dependencies that match the given archs
+     *
      * @param archs accepted archs list
      * @return a filter that accepts only dependencies that match the given archs
      */
-    static NDependencyFilter ofArch(Collection<NArchFamily> archs){
+    static NDependencyFilter ofArch(Collection<NArchFamily> archs) {
         return NDependencyFilterRPI.of().byArch(archs);
     }
 
     /**
      * accept only dependencies that match the given arch
+     *
      * @param arch accepted arch
      * @return a filter that accepts only dependencies that match the given arch
      */
-    static NDependencyFilter ofArch(NArchFamily arch){
+    static NDependencyFilter ofArch(NArchFamily arch) {
         return NDependencyFilterRPI.of().byArch(arch);
     }
 
     /**
      * accept only dependencies that match the given archs
+     *
      * @param archs accepted arch list
      * @return a filter that accepts only dependencies that match the given archs
      */
-    static NDependencyFilter ofArch(NArchFamily... archs){
+    static NDependencyFilter ofArch(NArchFamily... archs) {
         return NDependencyFilterRPI.of().byArch(archs);
     }
 
     /**
      * accept only dependencies that match the given arch
+     *
      * @param arch accepted arch
      * @return a filter that accepts only dependencies that match the given arch
      */
-    static NDependencyFilter ofArch(String arch){
+    static NDependencyFilter ofArch(String arch) {
         return NDependencyFilterRPI.of().byArch(arch);
     }
 
     /**
      * accept only dependencies that match the given OSes
+     *
      * @param os accepted OS list
      * @return a filter that accepts only dependencies that match the given OSes
      */
-    static NDependencyFilter ofOs(Collection<NOsFamily> os){
+    static NDependencyFilter ofOs(Collection<NOsFamily> os) {
         return NDependencyFilterRPI.of().byOs(os);
     }
 
     /**
      * accept only dependencies that match the given OS
+     *
      * @param os accepted OS
      * @return a filter that accepts only dependencies that match the given OS
      */
-    static NDependencyFilter ofOs(String os){
+    static NDependencyFilter ofOs(String os) {
         return NDependencyFilterRPI.of().byOs(os);
     }
 
     /**
      * accept only dependencies that match the given OsDist
+     *
      * @param osDist accepted OsDist
      * @return a filter that accepts only dependencies that match the given OsDist
      */
-    static NDependencyFilter ofOsDist(String osDist){
+    static NDependencyFilter ofOsDist(String osDist) {
         return NDependencyFilterRPI.of().byOsDist(osDist);
     }
 
     /**
      * accept only dependencies that match the given OsDist list
+     *
      * @param osDists accepted OsDist list
      * @return a filter that accepts only dependencies that match the given OsDist list
      */
-    static NDependencyFilter ofOsDist(String ...osDists){
+    static NDependencyFilter ofOsDist(String... osDists) {
         return NDependencyFilterRPI.of().byOsDist(osDists);
     }
 
     /**
      * accept only dependencies that match the given OsDist list
+     *
      * @param osDists accepted OsDist list
      * @return a filter that accepts only dependencies that match the given OsDist list
      */
-    static NDependencyFilter ofOsDist(Collection<String> osDists){
+    static NDependencyFilter ofOsDist(Collection<String> osDists) {
         return NDependencyFilterRPI.of().byOsDist(osDists);
     }
 
     /**
      * accept only dependencies that match the given OS
+     *
      * @param os accepted OS
      * @return a filter that accepts only dependencies that match the given OS
      */
-    static NDependencyFilter ofOs(NOsFamily os){
+    static NDependencyFilter ofOs(NOsFamily os) {
         return NDependencyFilterRPI.of().byOs(os);
     }
 
     /**
      * accept only dependencies that match the given OSes
+     *
      * @param os accepted OS list
      * @return a filter that accepts only dependencies that match the given OSes
      */
-    static NDependencyFilter ofOs(NOsFamily... os){
+    static NDependencyFilter ofOs(NOsFamily... os) {
         return NDependencyFilterRPI.of().byOs(os);
     }
 
 
     /**
      * accept only dependencies that match the current Desktop Environment
+     *
      * @return a filter that accepts only dependencies that match the current Desktop Environment
      */
-    static NDependencyFilter ofCurrentDesktop(){
+    static NDependencyFilter ofCurrentDesktop() {
         return NDependencyFilterRPI.of().byCurrentDesktop();
     }
 
     /**
      * accept only dependencies that match the current Architecture
+     *
      * @return a filter that accepts only dependencies that match the current Architecture
      */
-    static NDependencyFilter ofCurrentArch(){
+    static NDependencyFilter ofCurrentArch() {
         return NDependencyFilterRPI.of().byCurrentArch();
     }
 
     /**
      * accept only dependencies that match the current OS
+     *
      * @return a filter that accepts only dependencies that match the current OS
      */
-    static NDependencyFilter ofCurrentOs(){
+    static NDependencyFilter ofCurrentOs() {
         return NDependencyFilterRPI.of().byCurrentOs();
     }
 
     /**
      * accept only dependencies that have a regular dependency type (such as "jar" in java)
+     *
      * @return a filter that accepts only dependencies that have a regular dependency type (such as "jar" in java)
      */
-    static NDependencyFilter ofRegularType(){
+    static NDependencyFilter ofRegularType() {
         return NDependencyFilterRPI.of().byRegularType();
     }
 
     /**
      * accept only dependencies that match the current environment (OS, arch, etc...)
+     *
      * @return a filter that accept only dependencies that match the current environment (OS, arch, etc...)
      */
-    static NDependencyFilter ofCurrentEnv(){
+    static NDependencyFilter ofCurrentEnv() {
         return NDependencyFilterRPI.of().byCurrentEnv();
     }
 
     /**
      * create filter that accepts only dependencies required for runtime execution.
-     *
+     * <p>
      * equivalent to {@code ofRunnable(false)}
      *
      * @return filter that accepts only dependencies required for runtime execution
      */
-    static NDependencyFilter ofRunnable(){
+    static NDependencyFilter ofRunnable() {
         return NDependencyFilterRPI.of().byRunnable();
     }
 
     /**
      * create filter that accepts only dependencies required for runtime execution.
-     *
+     * <p>
      * equivalent to {@code
      * ofScope(NutsDependencyScopePattern.RUN)
-     *                 .and(byOptional(optional?null:false))
-     *                 .and(byRegularType())
-     *                 .and(byCurrentEnv())
-     *                 }
+     * .and(byOptional(optional?null:false))
+     * .and(byRegularType())
+     * .and(byCurrentEnv())
+     * }
+     *
      * @param optional optional
      * @return filter that accepts only dependencies required for runtime execution
      */
-    static NDependencyFilter ofRunnable(boolean optional){
+    static NDependencyFilter ofRunnable(boolean optional) {
         return NDependencyFilterRPI.of().byRunnable(optional);
     }
 
@@ -372,28 +406,30 @@ public interface NDependencyFilter extends NFilter {
      * Creates a new instance of runnable.
      *
      * @param optional optional
-     * @param anyEnv any env
+     * @param anyEnv   any env
      * @return of runnable result
      */
-    static NDependencyFilter ofRunnable(boolean optional,boolean anyEnv){
-        return NDependencyFilterRPI.of().byRunnable(optional,anyEnv);
+    static NDependencyFilter ofRunnable(boolean optional, boolean anyEnv) {
+        return NDependencyFilterRPI.of().byRunnable(optional, anyEnv);
     }
 
     /**
      * accept only dependencies that match the given Desktop Environment
+     *
      * @param de accepted Desktop Environment
      * @return a filter that accepts only dependencies that match the given Desktop Environment
      */
-    static NDependencyFilter ofDesktop(NDesktopEnvironmentFamily de){
+    static NDependencyFilter ofDesktop(NDesktopEnvironmentFamily de) {
         return NDependencyFilterRPI.of().byDesktop(de);
     }
 
     /**
      * accept only dependencies that match any of the given Desktop Environment
+     *
      * @param de accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Desktop Environment
      */
-    static NDependencyFilter ofDesktop(NDesktopEnvironmentFamily... de){
+    static NDependencyFilter ofDesktop(NDesktopEnvironmentFamily... de) {
         return NDependencyFilterRPI.of().byDesktop(de);
     }
 
@@ -403,41 +439,42 @@ public interface NDependencyFilter extends NFilter {
      * @param de de
      * @return of desktop result
      */
-    static NDependencyFilter ofDesktop(Collection<NDesktopEnvironmentFamily> de){
+    static NDependencyFilter ofDesktop(Collection<NDesktopEnvironmentFamily> de) {
         return NDependencyFilterRPI.of().byDesktop(de);
     }
 
     /**
      * accept only dependencies that match any of the given Platform
+     *
      * @param values accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
-    static NDependencyFilter ofPlatform(NRuntimeDistributionFamily... values){
+    static NDependencyFilter ofPlatform(NRuntimeDistributionFamily... values) {
         return NDependencyFilterRPI.of().byPlatform(values);
     }
 
     /**
      * accept only dependencies that match any of the given Platform
+     *
      * @param values accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
-    static NDependencyFilter ofPlatform(String... values){
+    static NDependencyFilter ofPlatform(String... values) {
         return NDependencyFilterRPI.of().byPlatform(values);
     }
 
     /**
      * accept only dependencies that match the given type
+     *
      * @param type accepted type
      * @return a filter that accepts only dependencies that match the given type
      */
-    static NDependencyFilter ofType(String type){
+    static NDependencyFilter ofType(String type) {
         return NDependencyFilterRPI.of().byType(type);
     }
 
 
     //////// FACTORY END
-
-
 
 
     /**

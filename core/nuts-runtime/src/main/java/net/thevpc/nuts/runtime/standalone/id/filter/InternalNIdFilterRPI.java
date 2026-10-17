@@ -7,7 +7,9 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.List;
+import java.util.function.Predicate;
 
+import net.thevpc.nuts.spi.base.NIdFilterBase;
 import net.thevpc.nuts.util.*;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -63,6 +65,24 @@ public class InternalNIdFilterRPI extends InternalNTypedFilters<NIdFilter> imple
     }
 
     @Override
+    public NIdFilter byPredicate(Predicate<NId> predicate) {
+        if (predicate == null) {
+            return always();
+        }
+        return new NIdFilterBase(NFilterOp.CUSTOM) {
+            @Override
+            public boolean acceptId(NId id) {
+                return predicate.test(id);
+            }
+
+            @Override
+            public NIdFilter simplify() {
+                return this;
+            }
+        };
+    }
+
+    @Override
     public NIdFilter as(NFilter a) {
         if (a instanceof NIdFilter) {
             return (NIdFilter) a;
@@ -89,9 +109,9 @@ public class InternalNIdFilterRPI extends InternalNTypedFilters<NIdFilter> imple
     @Override
     public NIdFilter all(NFilter... others) {
         List<NIdFilter> all = convertList(others);
-        for (int i = all.size()-1; i >=0; i--) {
+        for (int i = all.size() - 1; i >= 0; i--) {
             NIdFilter c = (NIdFilter) all.get(i).simplify();
-            if(c!=null) {
+            if (c != null) {
                 if (c.equals(always())) {
                     if (all.size() > 1) {
                         all.remove(i);
@@ -99,7 +119,7 @@ public class InternalNIdFilterRPI extends InternalNTypedFilters<NIdFilter> imple
                 } else if (c.equals(never())) {
                     return never();
                 }
-            }else{
+            } else {
                 all.remove(i);
             }
         }
@@ -115,9 +135,9 @@ public class InternalNIdFilterRPI extends InternalNTypedFilters<NIdFilter> imple
     @Override
     public NIdFilter any(NFilter... others) {
         List<NIdFilter> all = convertList(others);
-        for (int i = all.size()-1; i >=0; i--) {
+        for (int i = all.size() - 1; i >= 0; i--) {
             NIdFilter c = (NIdFilter) all.get(i).simplify();
-            if(c!=null) {
+            if (c != null) {
                 if (c.equals(never())) {
                     if (all.size() > 1) {
                         all.remove(i);
@@ -125,7 +145,7 @@ public class InternalNIdFilterRPI extends InternalNTypedFilters<NIdFilter> imple
                 } else if (c.equals(always())) {
                     return always();
                 }
-            }else{
+            } else {
                 all.remove(i);
             }
         }

@@ -34,6 +34,7 @@ import net.thevpc.nuts.util.NFilter;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Descriptor filter
@@ -142,6 +143,17 @@ public interface NDefinitionFilter extends NFilter {
      */
     static NDefinitionFilter of(String expression){
         return NDefinitionFilterRPI.of().parse(expression);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param predicate predicate
+     * @return of result
+     * @since 1.1.0
+     */
+    static NDefinitionFilter ofPredicate(Predicate<NDefinition> predicate){
+        return NDefinitionFilterRPI.of().byPredicate(predicate);
     }
 
     //////// COMMON END

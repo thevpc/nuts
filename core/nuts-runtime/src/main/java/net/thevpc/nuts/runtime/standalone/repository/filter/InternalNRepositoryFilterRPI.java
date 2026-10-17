@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.internal.rpi.NRepositoryFilterRPI;
 import net.thevpc.nuts.reflect.NScorable;
@@ -8,6 +9,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
@@ -112,6 +114,24 @@ public class InternalNRepositoryFilterRPI extends InternalNTypedFilters<NReposit
             return always();
         }
         return new DefaultNRepositoryUuidFilter(Arrays.asList(uuids));
+    }
+
+    @Override
+    public NRepositoryFilter byPredicate(Predicate<NRepository> filter) {
+        if (filter == null) {
+            return always();
+        }
+        return new NRepositoryFilterBase(NFilterOp.CUSTOM) {
+            @Override
+            public boolean acceptRepository(NRepository repository) {
+                return filter.test(repository);
+            }
+
+            @Override
+            public NRepositoryFilter simplify() {
+                return this;
+            }
+        };
     }
 
     @Override

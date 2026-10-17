@@ -31,6 +31,7 @@ import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -178,6 +179,16 @@ public interface NVersionFilter extends NFilter {
      */
     static NOptional<NVersionFilter> ofValue(String version){
         return NVersionFilterRPI.of().byValue(version);
+    }
+
+    /**
+     * Creates a new instance of value.
+     *
+     * @param version version
+     * @return of value result
+     */
+    static NVersionFilter ofPredicate(Predicate<NVersion> version){
+        return NVersionFilterRPI.of().byPredicate(version);
     }
 
     /**

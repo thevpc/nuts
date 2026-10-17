@@ -31,6 +31,8 @@ import net.thevpc.nuts.artifact.NIdFilter;
 import net.thevpc.nuts.artifact.NTypedFilters;
 import net.thevpc.nuts.ext.NExtensions;
 
+import java.util.function.Predicate;
+
 /**
  * @app.category Base
  */
@@ -69,4 +71,11 @@ public interface NIdFilterRPI extends NTypedFilters<NIdFilter> {
      */
     NIdFilter byName(String... names);
 
+    /**
+     * filter
+     * @param predicate predicate
+     * @return filter
+     * @since 1.1.0
+     */
+    NIdFilter byPredicate(Predicate<NId> predicate);
 }

@@ -27,8 +27,11 @@
 package net.thevpc.nuts.internal.rpi;
 
 import net.thevpc.nuts.artifact.NTypedFilters;
+import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryFilter;
 import net.thevpc.nuts.ext.NExtensions;
+
+import java.util.function.Predicate;
 
 /**
  * @app.category Base
@@ -74,6 +77,13 @@ public interface NRepositoryFilterRPI extends NTypedFilters<NRepositoryFilter> {
      * @return by uuid result
      */
     NRepositoryFilter byUuid(String... uuids);
+
+    /**
+     * @param filter filter
+     * @return by predicate
+     * @since 1.1.0
+     */
+    NRepositoryFilter byPredicate(Predicate<NRepository> filter);
 
     /**
      * Installed repo.

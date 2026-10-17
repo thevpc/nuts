@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.internal.rpi;
 
-import net.thevpc.nuts.artifact.NDependencyFilter;
-import net.thevpc.nuts.artifact.NDependencyScope;
-import net.thevpc.nuts.artifact.NDependencyScopePattern;
-import net.thevpc.nuts.artifact.NTypedFilters;
+import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NDesktopEnvironmentFamily;
@@ -36,6 +33,7 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Dependencies filter factory
@@ -51,18 +49,20 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
      * @return a new session bound instance of NutsDependencyFilters
      */
     static NDependencyFilterRPI of() {
-       return NExtensions.of(NDependencyFilterRPI.class);
+        return NExtensions.of(NDependencyFilterRPI.class);
     }
 
     /**
      * accept only dependencies that match the given scope
+     *
      * @param scopes accepted scope
      * @return a filter that accepts only dependencies that match the given scope
      */
-    NDependencyFilter byScope(NDependencyScopePattern...scopes);
+    NDependencyFilter byScope(NDependencyScopePattern... scopes);
 
     /**
      * accept only dependencies that match the given scope
+     *
      * @param scope accepted scope
      * @return a filter that accepts only dependencies that match the given scope
      */
@@ -70,6 +70,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given scopes
+     *
      * @param scopes accepted scopes list
      * @return a filter that accepts only dependencies that match the given scopes
      */
@@ -77,6 +78,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given scopes
+     *
      * @param scopes accepted scope list
      * @return a filter that accepts only dependencies that match the given scopes
      */
@@ -84,6 +86,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given optional state
+     *
      * @param optional accepted scope state. null matches any optional value
      * @return a filter that accepts only dependencies that match the given scope
      */
@@ -91,7 +94,8 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * return a new filter that accepts all of {@code filter} but the given exclusions
-     * @param filter base filter
+     *
+     * @param filter     base filter
      * @param exclusions excluded dependencies
      * @return return a new filter that accepts all of {@code filter} but the given exclusions
      */
@@ -99,6 +103,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given archs
+     *
      * @param archs accepted archs list
      * @return a filter that accepts only dependencies that match the given archs
      */
@@ -106,6 +111,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given arch
+     *
      * @param arch accepted arch
      * @return a filter that accepts only dependencies that match the given arch
      */
@@ -113,6 +119,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given archs
+     *
      * @param archs accepted arch list
      * @return a filter that accepts only dependencies that match the given archs
      */
@@ -120,6 +127,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given arch
+     *
      * @param arch accepted arch
      * @return a filter that accepts only dependencies that match the given arch
      */
@@ -127,6 +135,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OSes
+     *
      * @param os accepted OS list
      * @return a filter that accepts only dependencies that match the given OSes
      */
@@ -134,6 +143,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OS
+     *
      * @param os accepted OS
      * @return a filter that accepts only dependencies that match the given OS
      */
@@ -141,6 +151,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OsDist
+     *
      * @param osDist accepted OsDist
      * @return a filter that accepts only dependencies that match the given OsDist
      */
@@ -148,13 +159,15 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OsDist list
+     *
      * @param osDists accepted OsDist list
      * @return a filter that accepts only dependencies that match the given OsDist list
      */
-    NDependencyFilter byOsDist(String ...osDists);
+    NDependencyFilter byOsDist(String... osDists);
 
     /**
      * accept only dependencies that match the given OsDist list
+     *
      * @param osDists accepted OsDist list
      * @return a filter that accepts only dependencies that match the given OsDist list
      */
@@ -162,6 +175,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OS
+     *
      * @param os accepted OS
      * @return a filter that accepts only dependencies that match the given OS
      */
@@ -169,6 +183,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given OSes
+     *
      * @param os accepted OS list
      * @return a filter that accepts only dependencies that match the given OSes
      */
@@ -177,37 +192,42 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the current Desktop Environment
+     *
      * @return a filter that accepts only dependencies that match the current Desktop Environment
      */
     NDependencyFilter byCurrentDesktop();
 
     /**
      * accept only dependencies that match the current Architecture
+     *
      * @return a filter that accepts only dependencies that match the current Architecture
      */
     NDependencyFilter byCurrentArch();
 
     /**
      * accept only dependencies that match the current OS
+     *
      * @return a filter that accepts only dependencies that match the current OS
      */
     NDependencyFilter byCurrentOs();
 
     /**
      * accept only dependencies that have a regular dependency type (such as "jar" in java)
+     *
      * @return a filter that accepts only dependencies that have a regular dependency type (such as "jar" in java)
      */
     NDependencyFilter byRegularType();
 
     /**
      * accept only dependencies that match the current environment (OS, arch, etc...)
+     *
      * @return a filter that accept only dependencies that match the current environment (OS, arch, etc...)
      */
     NDependencyFilter byCurrentEnv();
 
     /**
      * create filter that accepts only dependencies required for runtime execution.
-     *
+     * <p>
      * equivalent to {@code byRunnable(false)}
      *
      * @return filter that accepts only dependencies required for runtime execution
@@ -216,13 +236,14 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * create filter that accepts only dependencies required for runtime execution.
-     *
+     * <p>
      * equivalent to {@code
      * byScope(NutsDependencyScopePattern.RUN)
-     *                 .and(byOptional(optional?null:false))
-     *                 .and(byRegularType())
-     *                 .and(byCurrentEnv())
-     *                 }
+     * .and(byOptional(optional?null:false))
+     * .and(byRegularType())
+     * .and(byCurrentEnv())
+     * }
+     *
      * @param optional optional
      * @return filter that accepts only dependencies required for runtime execution
      */
@@ -232,13 +253,14 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
      * By runnable.
      *
      * @param optional optional
-     * @param anyEnv any env
+     * @param anyEnv   any env
      * @return by runnable result
      */
-    NDependencyFilter byRunnable(boolean optional,boolean anyEnv);
+    NDependencyFilter byRunnable(boolean optional, boolean anyEnv);
 
     /**
      * accept only dependencies that match the given Desktop Environment
+     *
      * @param de accepted Desktop Environment
      * @return a filter that accepts only dependencies that match the given Desktop Environment
      */
@@ -246,6 +268,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match any of the given Desktop Environment
+     *
      * @param de accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Desktop Environment
      */
@@ -261,6 +284,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match any of the given Platform
+     *
      * @param pf accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
@@ -268,6 +292,7 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match any of the given Platform
+     *
      * @param pf accepted Desktop Environment list
      * @return a filter that accepts only dependencies that match any of the given Platform
      */
@@ -275,9 +300,12 @@ public interface NDependencyFilterRPI extends NTypedFilters<NDependencyFilter> {
 
     /**
      * accept only dependencies that match the given type
+     *
      * @param type accepted type
      * @return a filter that accepts only dependencies that match the given type
      */
     NDependencyFilter byType(String type);
+
+    NDependencyFilter byPredicate(Predicate<NDependency> predicate);
 
 }

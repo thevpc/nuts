@@ -34,6 +34,7 @@ import net.thevpc.nuts.platform.NRuntimeDistributionFamily;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Dependencies filter factory
@@ -433,4 +434,12 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
      * @return by deployed result
      */
     NDefinitionFilter byDeployed(boolean value);
+
+    /**
+     * filter
+     * @param predicate predicate
+     * @return filter
+     * @since 1.1.0
+     */
+    NDefinitionFilter byPredicate(Predicate<NDefinition> predicate);
 }

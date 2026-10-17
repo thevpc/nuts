@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @NScore(fixed = NScorable.DEFAULT_SCORE)
@@ -211,24 +212,24 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
     }
 
     @Override
-    public NDependencyFilter byRunnable(boolean optional,boolean anyEnv) {
+    public NDependencyFilter byRunnable(boolean optional, boolean anyEnv) {
         return byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
-                .and(byOptional(optional?null:false))
+                .and(byOptional(optional ? null : false))
                 .and(byRegularType())
-                .and(anyEnv?null:byCurrentEnv());
+                .and(anyEnv ? null : byCurrentEnv());
     }
 
     @Override
     public NDependencyFilter byRunnable(boolean optional) {
         return byScope(NDependencyScopePattern.RUN, NDependencyScopePattern.COMPILE)
-                .and(byOptional(optional?null:false))
+                .and(byOptional(optional ? null : false))
                 .and(byRegularType())
                 .and(byCurrentEnv());
     }
 
     @Override
     public NDependencyFilter byRunnable() {
-        return byRunnable(false,false);
+        return byRunnable(false, false);
     }
 
     @Override
@@ -274,6 +275,24 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
     }
 
     @Override
+    public NDependencyFilter byPredicate(Predicate<NDependency> predicate) {
+        if (predicate == null) {
+            return always();
+        }
+        return new NDependencyFilterBase(NFilterOp.CUSTOM) {
+            @Override
+            public boolean acceptDependency(NDependency dependency, NId from) {
+                return predicate.test(dependency);
+            }
+
+            @Override
+            public NDependencyFilter simplify() {
+                return this;
+            }
+        };
+    }
+
+    @Override
     public NDependencyFilter byOs(String os) {
         if (os == null) {
             return always();
@@ -291,11 +310,11 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
 
     @Override
     public NDependencyFilter byOsDist(String... osDists) {
-        if (osDists == null || osDists.length==0) {
+        if (osDists == null || osDists.length == 0) {
             return always();
         }
         return new NDependencyOsDistIdFilter().add(
-                Arrays.stream(osDists).map(x-> NId.get(x).get())
+                Arrays.stream(osDists).map(x -> NId.get(x).get())
                         .collect(Collectors.toList())
         ).simplify();
     }
@@ -306,14 +325,14 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
             return always();
         }
         return new NDependencyOsDistIdFilter().add(
-                osDists.stream().map(x-> NId.get(x).get())
+                osDists.stream().map(x -> NId.get(x).get())
                         .collect(Collectors.toList())
         ).simplify();
     }
 
     @Override
     public NDependencyFilter byPlatform(NRuntimeDistributionFamily... pf) {
-        if (pf == null || pf.length==0) {
+        if (pf == null || pf.length == 0) {
             return always();
         }
         return new NDependencyPlatformFamilyFilter().add(Arrays.asList(pf)).simplify();
@@ -321,11 +340,11 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
 
     @Override
     public NDependencyFilter byPlatform(String... pf) {
-        if (pf == null || pf.length==0) {
+        if (pf == null || pf.length == 0) {
             return always();
         }
         return new NDependencyPlatformIdFilter().add(
-                Arrays.stream(pf).map(x-> NId.get(x).get())
+                Arrays.stream(pf).map(x -> NId.get(x).get())
                         .collect(Collectors.toList())
         ).simplify();
     }
