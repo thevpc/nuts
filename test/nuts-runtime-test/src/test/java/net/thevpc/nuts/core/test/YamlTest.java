@@ -102,6 +102,45 @@ public class YamlTest {
         Assertions.assertTrue(e.asObject().get().get("contentType").get().asStringValue().get().equals("ntf"));
     }
 
+    @Test
+    public void testYaml12FlowTagsAliasesAndRoundTrip() {
+        String source = "%YAML 1.2\n" +
+                "---\n" +
+                "base: &base {enabled: true, port: 443}\n" +
+                "copy: *base\n" +
+                "quoted: \"A\\u0064a\"\n" +
+                "flow: [plain, 'two:three', {empty: null}]\n" +
+                "explicit: !!str 12\n" +
+                "block: |-\n" +
+                "  alpha\n" +
+                "  beta\n";
+        NElement value = NElementReader.ofYaml().read(source, NElement.class);
+        Assertions.assertTrue(value.isObject());
+        NElement base = value.asObject().get().get("base").get();
+        NElement copy = value.asObject().get().get("copy").get();
+        Assertions.assertTrue(base.isObject());
+        Assertions.assertTrue(copy.isObject());
+        Assertions.assertTrue(copy.annotations().stream().anyMatch(a -> "yamlAlias".equals(a.name())));
+        Assertions.assertEquals("Ada", value.asObject().get().get("quoted").get().asStringValue().get());
+        Assertions.assertEquals("12", value.asObject().get().get("explicit").get().asStringValue().get());
+        Assertions.assertEquals("alpha\nbeta", value.asObject().get().get("block").get().asStringValue().get());
+
+        String formatted = NElementWriter.ofYaml()
+                .formatter(NElementFormatter.ofCompact())
+                .formatPlain(value);
+        NElement reparsed = NElementReader.ofYaml().read(formatted, NElement.class);
+        Assertions.assertTrue(reparsed.isObject());
+        Assertions.assertEquals("Ada", reparsed.asObject().get().get("quoted").get().asStringValue().get());
+        Assertions.assertTrue(reparsed.asObject().get().get("copy").get().isObject());
+    }
+
+    @Test
+    public void testYamlMultipleDocuments() {
+        NElement value = NElementReader.ofYaml().read("--- one\n--- two\n", NElement.class);
+        Assertions.assertTrue(value.isFragment());
+        Assertions.assertEquals(2, value.asFragment().get().size());
+    }
+
     private void display(NElement e) {
         NOut.println(NTextArtTableRenderer.of().render(
                 NTableModel.of(NText.of("JSON"))

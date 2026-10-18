@@ -62,15 +62,10 @@ public class YamlFormat {
                 return value1.build();
             }
             case SINGLE_QUOTED_STRING: {
-                String s = value.asStringValue().get();
-                if (s.codePoints().anyMatch(codePoint -> codePoint < 32)) {
-                    return str(value.asStringValue().get());
-                }
-                // should check for
                 return value;
             }
             case DOUBLE_QUOTED_STRING: {
-                return str(value.asStringValue().get());
+                return value;
             }
             case NAME:
                 return value;
@@ -135,6 +130,7 @@ public class YamlFormat {
             }
             case OBJECT:
             case ARRAY:
+            case FRAGMENT:
             case BOOLEAN:
             case INT:
             case FLOAT:
@@ -153,6 +149,50 @@ public class YamlFormat {
 
 
     void formatNode(NElement value, NPrintStream out, NElementFormatter formatter, NElementFactoryContext context, int indentLevel) {
+        if (value.type() == NElementType.FRAGMENT) {
+            boolean first = true;
+            for (NElement document : value.asFragment().get()) {
+                if (!first) {
+                    out.print("\n");
+                }
+                first = false;
+                out.print("---\n");
+                formatNode(document, out, formatter, context, 0);
+                out.print("\n");
+            }
+            return;
+        }
+        String alias = annotationValue(value, "yamlAlias");
+        if (alias != null) {
+            out.print("*");
+            out.print(alias);
+            return;
+        }
+        String anchor = annotationValue(value, "yamlAnchor");
+        String tag = annotationValue(value, "yamlTag");
+        if (anchor != null && isComplexType(value)) {
+            out.print(NStringUtils.repeat("   ", indentLevel));
+            out.print("&");
+            out.print(anchor);
+            out.print(" ");
+            if (tag != null) {
+                out.print("!<");
+                out.print(tag);
+                out.print("> ");
+            }
+            formatFlowNode(value, out, formatter, context);
+            return;
+        }
+        if (anchor != null) {
+            out.print("&");
+            out.print(anchor);
+            out.print(isComplexType(value) ? "\n" : " ");
+        }
+        if (tag != null) {
+            out.print("!<");
+            out.print(tag);
+            out.print("> ");
+        }
         value = ensureYaml(value);
         String indent = NStringUtils.repeat("   ", indentLevel);
         switch (value.type()) {
@@ -172,10 +212,23 @@ public class YamlFormat {
                 break;
             }
             case DOUBLE_QUOTED_STRING: {
-                out.print(value.asLiteral().toStringLiteral());
+                out.print(quoteYaml(value.asStringValue().get()));
+                break;
+            }
+            case SINGLE_QUOTED_STRING: {
+                String text = value.asStringValue().get();
+                out.print("'" + text.replace("'", "''") + "'");
+                break;
+            }
+            case NAME: {
+                formatName(value.asStringValue().get(), out);
                 break;
             }
             case OBJECT: {
+                if (value.asObject().get().pairs().isEmpty()) {
+                    out.print("{}");
+                    break;
+                }
                 boolean first = true;
                 for (NPairElement entry : value.asObject().get().pairs().toArray(new NPairElement[0])) {
                     if (!first) {
@@ -191,7 +244,7 @@ public class YamlFormat {
                         formatNode(key, out, formatter, context, indentLevel + 1);
                         out.print(indent);
                         out.print(":");
-                        if (isComplexType(val)) {
+                        if (isComplexType(val) && !isAlias(val)) {
                             out.print("\n");
                             formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
@@ -200,9 +253,9 @@ public class YamlFormat {
                         }
                     } else {
                         out.print(indent);
-                        formatNode(key, out, formatter, context, indentLevel);
+                        formatKey(key, out, formatter, context, indentLevel);
                         out.print(":");
-                        if (isComplexType(val)) {
+                        if (isComplexType(val) && !isAlias(val)) {
                             out.print("\n");
                             formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
@@ -214,6 +267,10 @@ public class YamlFormat {
                 break;
             }
             case ARRAY: {
+                if (value.asArray().get().isEmpty()) {
+                    out.print("[]");
+                    break;
+                }
                 boolean first = true;
                 for (NElement a : value.asArray().get()) {
                     if (!first) {
@@ -223,7 +280,7 @@ public class YamlFormat {
 
                     out.print(indent);
                     out.print("- ");
-                    if (a.type() == NElementType.OBJECT || a.type() == NElementType.ARRAY) {
+                    if (isComplexType(a) && !isAlias(a)) {
                         out.print("\n");
                         formatNode(a, out, formatter, context, indentLevel + 1);
                     } else {
@@ -233,14 +290,113 @@ public class YamlFormat {
                 break;
             }
             default: {
-                out.print(value.toString());
+                if (value.isAnyString()) {
+                    out.print(quoteYaml(value.asStringValue().get()));
+                } else {
+                    out.print(value.toString());
+                }
                 break;
             }
         }
     }
 
+    private void formatKey(NElement key, NPrintStream out, NElementFormatter formatter,
+                           NElementFactoryContext context, int indentLevel) {
+        if (key.type() == NElementType.NAME) {
+            formatName(key.asStringValue().get(), out);
+        } else if (key.isAnyString()) {
+            out.print(quoteYaml(key.asStringValue().get()));
+        } else {
+            formatNode(key, out, formatter, context, indentLevel);
+        }
+    }
+
+    private void formatName(String name, NPrintStream out) {
+        if (name.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")
+                && !name.equalsIgnoreCase("null")
+                && !name.equalsIgnoreCase("true")
+                && !name.equalsIgnoreCase("false")) {
+            out.print(name);
+        } else {
+            out.print("!<tag:thevpc.net,nuts/name> ");
+            out.print(quoteYaml(name));
+        }
+    }
+
+    private String annotationValue(NElement element, String name) {
+        for (NElementAnnotation annotation : element.annotations()) {
+            if (name.equals(annotation.name()) && annotation.param(0).isPresent()) {
+                return annotation.param(0).get().asStringValue().get();
+            }
+        }
+        return null;
+    }
+
+    private String quoteYaml(String value) {
+        StringBuilder result = new StringBuilder("\"");
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '\\': result.append("\\\\"); break;
+                case '"': result.append("\\\""); break;
+                case '\0': result.append("\\0"); break;
+                case '\u0007': result.append("\\a"); break;
+                case '\b': result.append("\\b"); break;
+                case '\t': result.append("\\t"); break;
+                case '\n': result.append("\\n"); break;
+                case '\u000b': result.append("\\v"); break;
+                case '\f': result.append("\\f"); break;
+                case '\r': result.append("\\r"); break;
+                case '\u001b': result.append("\\e"); break;
+                case '\u0085': result.append("\\N"); break;
+                case '\u00a0': result.append("\\_"); break;
+                case '\u2028': result.append("\\L"); break;
+                case '\u2029': result.append("\\P"); break;
+                default:
+                    if (c < 0x20 || c == 0x7f) {
+                        result.append(String.format("\\u%04X", (int) c));
+                    } else {
+                        result.append(c);
+                    }
+            }
+        }
+        return result.append('"').toString();
+    }
+
     private boolean isComplexType(NElement value) {
-        return value.type() == NElementType.ARRAY || value.type() == NElementType.OBJECT;
+        return value.isArray() || value.isObject();
+    }
+
+    private boolean isAlias(NElement value) {
+        return annotationValue(value, "yamlAlias") != null;
+    }
+
+    private void formatFlowNode(NElement value, NPrintStream out, NElementFormatter formatter,
+                                NElementFactoryContext context) {
+        value = ensureYaml(value);
+        if (value.type() == NElementType.ARRAY) {
+            out.print("[");
+            boolean first = true;
+            for (NElement child : value.asArray().get()) {
+                if (!first) out.print(", ");
+                first = false;
+                formatFlowNode(child, out, formatter, context);
+            }
+            out.print("]");
+        } else if (value.type() == NElementType.OBJECT) {
+            out.print("{");
+            boolean first = true;
+            for (NPairElement pair : value.asObject().get().pairs()) {
+                if (!first) out.print(", ");
+                first = false;
+                formatFlowNode(pair.key(), out, formatter, context);
+                out.print(": ");
+                formatFlowNode(pair.value(), out, formatter, context);
+            }
+            out.print("}");
+        } else {
+            formatNode(value, out, formatter, context, 0);
+        }
     }
 
 
