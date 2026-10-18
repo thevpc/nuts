@@ -71,6 +71,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NArgCompleteResolver autoCompleteResolver;
     private NCmdLineHistory commandHistory;
     private NTerminalFormatter commandHighlighter;
+    private volatile Runnable interruptHandler;
     protected boolean lastWasProgress = false;
 
     public NJLineTerminal() {
@@ -233,6 +234,28 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             Thread.currentThread().setContextClassLoader(original);
         }
 
+        // Ctrl+C while nothing is reading: the line reader installs its own INT
+        // handler for the duration of readLine() and restores this one afterwards,
+        // so this callback is reached exactly when the application is busy rather
+        // than prompting -- a streamed response in particular. Registering it is
+        // also what replaces the default reaction (terminate the process).
+        terminal.handle(Terminal.Signal.INT, signal -> {
+            Runnable handler = interruptHandler;
+            if (handler != null) {
+                try {
+                    handler.run();
+                } catch (Throwable ex) {
+                    // runs on the signal dispatch thread: it must not take that
+                    // thread down with it, and it must not swallow the interrupt
+                    // either -- just make the failure visible
+                    NLog nLog = NLog.of(NJLineTerminal.class);
+                    if (nLog.isLoggable(Level.FINEST)) {
+                        nLog.log(NMsg.ofC("interrupt handler failed: %s", ex).asFinestFail(ex));
+                    }
+                }
+            }
+        });
+
         NSession session = NSession.of();
         reader = LineReaderBuilder.builder()
                 .completer(new NJLineCompleter(this))
@@ -373,6 +396,17 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     public NJLineTerminal commandHighlighter(NTerminalFormatter commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
+        return this;
+    }
+
+    @Override
+    public Runnable interruptHandler() {
+        return interruptHandler;
+    }
+
+    @Override
+    public NJLineTerminal interruptHandler(Runnable interruptHandler) {
+        this.interruptHandler = interruptHandler;
         return this;
     }
 

@@ -145,6 +145,37 @@ public interface NSystemTerminalBase extends NComponent {
     NSystemTerminalBase commandHighlighter(NTerminalFormatter commandHighlighter);
 
     /**
+     * Callback run when the user presses the interrupt key (Ctrl+C) while no line
+     * is being read.
+     *
+     * <p>While {@link #readLine(NPrintStream, NMsg)} is active the reader owns the
+     * key: Ctrl+C aborts the line being typed and never reaches this callback. In
+     * between reads -- while the application is busy with something else -- the key
+     * arrives as an interrupt signal, and that is what runs this callback.
+     *
+     * <p>It runs on the signal dispatch thread, so it must return quickly and must
+     * not read from or write to the terminal.
+     *
+     * <p>Terminals with no signal support ignore the registration, which leaves the
+     * callback unset and the interrupt at its default behaviour.
+     *
+     * @param interruptHandler callback to run, {@code null} to clear it
+     * @return {@code this} instance
+     */
+    default NSystemTerminalBase interruptHandler(Runnable interruptHandler) {
+        return this;
+    }
+
+    /**
+     * The callback registered by {@link #interruptHandler(Runnable)}.
+     *
+     * @return the current interrupt callback, or {@code null} when none is set
+     */
+    default Runnable interruptHandler() {
+        return null;
+    }
+
+    /**
      * Run.
      *
      * @param command command
