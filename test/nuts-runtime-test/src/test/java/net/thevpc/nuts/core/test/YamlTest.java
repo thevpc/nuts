@@ -29,6 +29,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.text.NTableModel;
 import net.thevpc.nuts.text.NText;
@@ -111,6 +112,10 @@ public class YamlTest {
                 "quoted: \"A\\u0064a\"\n" +
                 "flow: [plain, 'two:three', {empty: null}]\n" +
                 "explicit: !!str 12\n" +
+                "hex: !!int 0x2A\n" +
+                "date: !!timestamp 2020-09-23\n" +
+                "binary: !!binary SGVsbG8=\n" +
+                "custom: !<tag:example.com,2020:thing> value\n" +
                 "block: |-\n" +
                 "  alpha\n" +
                 "  beta\n";
@@ -123,6 +128,11 @@ public class YamlTest {
         Assertions.assertTrue(copy.annotations().stream().anyMatch(a -> "yamlAlias".equals(a.name())));
         Assertions.assertEquals("Ada", value.asObject().get().get("quoted").get().asStringValue().get());
         Assertions.assertEquals("12", value.asObject().get().get("explicit").get().asStringValue().get());
+        Assertions.assertEquals("42", value.asObject().get().get("hex").get().toString());
+        Assertions.assertEquals(NElementType.LOCAL_DATE, value.asObject().get().get("date").get().type());
+        Assertions.assertTrue(value.asObject().get().get("binary").get().isBinaryStream());
+        Assertions.assertTrue(value.asObject().get().get("custom").get().annotations().stream()
+                .anyMatch(a -> "yamlTag".equals(a.name())));
         Assertions.assertEquals("alpha\nbeta", value.asObject().get().get("block").get().asStringValue().get());
 
         String formatted = NElementWriter.ofYaml()
@@ -132,6 +142,10 @@ public class YamlTest {
         Assertions.assertTrue(reparsed.isObject());
         Assertions.assertEquals("Ada", reparsed.asObject().get().get("quoted").get().asStringValue().get());
         Assertions.assertTrue(reparsed.asObject().get().get("copy").get().isObject());
+        Assertions.assertEquals(NElementType.LOCAL_DATE, reparsed.asObject().get().get("date").get().type());
+        Assertions.assertTrue(reparsed.asObject().get().get("binary").get().isBinaryStream());
+        Assertions.assertTrue(reparsed.asObject().get().get("custom").get().annotations().stream()
+                .anyMatch(a -> "yamlTag".equals(a.name())));
     }
 
     @Test
@@ -139,6 +153,46 @@ public class YamlTest {
         NElement value = NElementReader.ofYaml().read("--- one\n--- two\n", NElement.class);
         Assertions.assertTrue(value.isFragment());
         Assertions.assertEquals(2, value.asFragment().get().size());
+        String formatted = NElementWriter.ofYaml().formatPlain(value);
+        Assertions.assertEquals(2, NElementReader.ofYaml().read(formatted, NElement.class).asFragment().get().size());
+    }
+
+    @Test
+    public void testExplicitYamlFloatTypes() {
+        NElement integerSpelledFloat = NElementReader.ofYaml().read("!!float 1", NElement.class);
+        Assertions.assertEquals(NElementType.DOUBLE, integerSpelledFloat.type());
+        Assertions.assertEquals(1.0d, ((Number) integerSpelledFloat.asPrimitive().get().value()).doubleValue());
+
+        NElement notANumber = NElementReader.ofYaml().read("!!float .nan", NElement.class);
+        Assertions.assertTrue(Double.isNaN(((Number) notANumber.asPrimitive().get().value()).doubleValue()));
+        String formatted = NElementWriter.ofYaml().formatPlain(notANumber);
+        NElement reparsed = NElementReader.ofYaml().read(formatted, NElement.class);
+        Assertions.assertTrue(Double.isNaN(((Number) reparsed.asPrimitive().get().value()).doubleValue()));
+    }
+
+    @Test
+    public void testYamlTagHandleAndDuplicateAnchorValidation() {
+        NElement tagged = NElementReader.ofYaml().read("%TAG !e! tag:example.com,2020:\n" +
+                "---\n" +
+                "value: !e!thing text\n", NElement.class);
+        Assertions.assertTrue(tagged.asObject().get().get("value").get().annotations().stream()
+                .anyMatch(a -> "yamlTag".equals(a.name())));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("first: &value one\nsecond: &value two\n", NElement.class));
+    }
+
+    @Test
+    public void testExplicitComplexMappingKeyRoundTrip() {
+        NElement value = NElementReader.ofYaml().read("?\n" +
+                "  [one, two]\n" +
+                ": value\n", NElement.class);
+        Assertions.assertTrue(value.isObject());
+        Assertions.assertEquals(NElementType.ARRAY, value.asObject().get().pairs().get(0).key().type());
+
+        String formatted = NElementWriter.ofYaml().formatPlain(value);
+        NElement reparsed = NElementReader.ofYaml().read(formatted, NElement.class);
+        Assertions.assertEquals(NElementType.ARRAY, reparsed.asObject().get().pairs().get(0).key().type());
     }
 
     private void display(NElement e) {

@@ -119,7 +119,7 @@ Note: The API supports a massive NOperatorSymbol enum, including standard math (
 
 ## 4. NElement as a Pivot Format
 
-Because `NElement` abstracts the underlying syntax, you can use it to translate between formats. While `TSON`/`JSON` roundtrip is fully supported today, the model is designed to accommodate `XML` and `YAML` as they are integrated.
+Because `NElement` abstracts the underlying syntax, you can use it to translate between formats. It provides a common value model for JSON, TSON, XML, and YAML; format-specific syntax and unsupported NElement types may require a mapping when converting.
 
 ```java
 // 1. Parse from JSON
@@ -135,6 +135,26 @@ NElement enhanced = NElement.ofObjectBuilder()
 // 3. Serialize to TSON (or future XML/YAML writers)
 String tsonOutput = NElementWriter.ofTson().formatPlain(enhanced);
 ```
+
+## YAML mapping and fidelity
+
+`NElementReader.ofYaml()` and `NElementWriter.ofYaml()` use Nuts' dependency-free YAML implementation. It handles common YAML 1.2 block and flow mappings/sequences, quoted and plain scalars, block scalars, explicit core tags, anchors/aliases, and document streams. Formatting normalizes the source; it does not promise byte-for-byte source reproduction.
+
+The YAML value mapping is:
+
+| YAML node | NElement representation |
+|---|---|
+| Mapping / sequence | `OBJECT` / `ARRAY` |
+| Null / boolean / integer / float | `NULL` / `BOOLEAN` / numeric element |
+| Quoted or non-resolving plain string | String element; a YAML plain identifier may be represented as `NAME` |
+| `!!timestamp` / `!!binary` | Temporal element / binary stream |
+| Multiple documents | `FRAGMENT`, one child per document |
+| Unknown explicit tag | `yamlTag` annotation |
+| Anchor / alias | `yamlAnchor` / `yamlAlias` annotations; aliases resolve to their anchored value |
+
+`NElement` is a value tree, not YAML's full representation graph. In particular, recursive aliases cannot be represented as cyclic `NElement` values, and alias identity is not retained as shared mutable identity. Comments, whitespace, escape spelling, and scalar presentation choices are also not all represented by `NElement`; writing a parsed value can therefore preserve its supported data semantics without reproducing the original source. Use TSON's verbatim formatting when source-level edit preservation is required.
+
+The YAML reader is implemented in Nuts itself and adds no runtime dependency. It is not yet a claim of complete YAML 1.2 conformance: coverage against the YAML Test Suite and support for the remaining representation-graph and presentation details are still required.
 
 
 ## 4. Creating Elements (The Builder Pattern)
@@ -368,4 +388,3 @@ NElementWriter.ofNtfTson().format(iterable, NPrintStream.of(System.out));
 - Use NOptional: Rely on as*Value() and as*() methods for fail-safe navigation.
 - Mix Structured and Custom Data: Don't be afraid to use NCustomElement to embed rich Java objects directly into the tree, preventing destructive reflection mapping.
 - Attach, Don't Throw: Use NElementDiagnostic and isErrorTree() to handle parsing anomalies gracefully without tearing down the application.
-

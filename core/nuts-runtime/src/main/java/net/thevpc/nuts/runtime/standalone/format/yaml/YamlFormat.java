@@ -12,11 +12,17 @@ import java.util.List;
 
 public class YamlFormat {
     private NElement str(String any) {
-        StringBuilder sb = new StringBuilder();
-        for (char c : any.toCharArray()) {
-            sb.append(NStringUtils.escapeChar(c));
+        return NElement.ofString(any);
+    }
+
+    private NElement stringify(NElement value) {
+        if (value.isAnyString()) {
+            return str(value.asStringValue().get());
         }
-        return NElement.ofString(sb.toString());
+        if (value.isPrimitive() && value.asPrimitive().get().value() != null) {
+            return str(value.asPrimitive().get().value().toString());
+        }
+        return str(value.toString());
     }
 
     private NElement ensureYaml(NElement value) {
@@ -35,7 +41,7 @@ public class YamlFormat {
             case TRIPLE_SINGLE_QUOTED_STRING:
             case INSTANT:
             case CUSTOM: {
-                return str(value.toString());
+                return stringify(value);
             }
             case OPERATOR_SYMBOL:{
                 NOperatorSymbolElement ope = (NOperatorSymbolElement) value;
@@ -61,9 +67,7 @@ public class YamlFormat {
                 value1.name(null);
                 return value1.build();
             }
-            case SINGLE_QUOTED_STRING: {
-                return value;
-            }
+            case SINGLE_QUOTED_STRING:
             case DOUBLE_QUOTED_STRING: {
                 return value;
             }
@@ -201,14 +205,17 @@ public class YamlFormat {
                 break;
             }
             case BOOLEAN:
-            case FLOAT:
-            case DOUBLE:
             case INT:
             case BYTE:
             case LONG:
             case BIG_INT:
             case BIG_DECIMAL: {
                 out.print(value.toString());
+                break;
+            }
+            case FLOAT:
+            case DOUBLE: {
+                out.print(formatFloating(value));
                 break;
             }
             case DOUBLE_QUOTED_STRING: {
@@ -242,9 +249,10 @@ public class YamlFormat {
                         out.print(indent);
                         out.print("?\n");
                         formatNode(key, out, formatter, context, indentLevel + 1);
+                        out.print("\n");
                         out.print(indent);
                         out.print(":");
-                        if (isComplexType(val) && !isAlias(val)) {
+                        if (isComplexBlockValue(val)) {
                             out.print("\n");
                             formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
@@ -255,7 +263,7 @@ public class YamlFormat {
                         out.print(indent);
                         formatKey(key, out, formatter, context, indentLevel);
                         out.print(":");
-                        if (isComplexType(val) && !isAlias(val)) {
+                        if (isComplexBlockValue(val)) {
                             out.print("\n");
                             formatNode(val, out, formatter, context, indentLevel + 1);
                         } else {
@@ -280,7 +288,7 @@ public class YamlFormat {
 
                     out.print(indent);
                     out.print("- ");
-                    if (isComplexType(a) && !isAlias(a)) {
+                    if (isComplexBlockValue(a)) {
                         out.print("\n");
                         formatNode(a, out, formatter, context, indentLevel + 1);
                     } else {
@@ -363,12 +371,20 @@ public class YamlFormat {
         return result.append('"').toString();
     }
 
+    private String formatFloating(NElement value) {
+        double number = ((Number) value.asPrimitive().get().value()).doubleValue();
+        if (Double.isNaN(number)) return ".nan";
+        if (number == Double.POSITIVE_INFINITY) return ".inf";
+        if (number == Double.NEGATIVE_INFINITY) return "-.inf";
+        return Double.toString(number);
+    }
+
     private boolean isComplexType(NElement value) {
         return value.isArray() || value.isObject();
     }
 
-    private boolean isAlias(NElement value) {
-        return annotationValue(value, "yamlAlias") != null;
+    private boolean isComplexBlockValue(NElement value) {
+        return isComplexType(value) && annotationValue(value, "yamlAlias") == null;
     }
 
     private void formatFlowNode(NElement value, NPrintStream out, NElementFormatter formatter,
