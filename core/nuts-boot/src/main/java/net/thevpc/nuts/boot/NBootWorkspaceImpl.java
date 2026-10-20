@@ -687,6 +687,8 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     newWorkspace = true;
                     Path t = null;
                     try {
+                        // Do not clean this up on JVM exit: an application launched by the
+                        // runtime may still be using the sandbox after the boot process exits.
                         t = Files.createTempDirectory("nuts-sandbox-" + Instant.now().toString().replace(':', '-'));
                     } catch (IOException e) {
                         throw new NBootException(NBootMsg.ofPlain(NBootI18n.of("unable to create temporary/sandbox folder")), e);

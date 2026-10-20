@@ -32,7 +32,7 @@ The bootstrapper determines the active workspace directory and storage layout:
 - **Isolation Modes**:
   - `SYSTEM`: Global shared workspace (`/etc/opt/nuts` on Linux/Unix, `C:\Program Files\nuts` on Windows).
   - `USER`: Per-user isolated workspace (`~/.nuts` or standard XDG directories).
-  - `SANDBOX`: Completely isolated temporary directory (`nuts-sandbox-...`), using `STANDALONE` storage and deleted upon JVM termination.
+  - `SANDBOX`: Completely isolated temporary directory (`nuts-sandbox-...`) under the OS temporary directory, using `STANDALONE` storage. It is intentionally not deleted when the boot JVM exits because an application launched by the runtime may still be using it; temporary-directory cleanup is left to the OS.
   - `MEMORY`: In-memory temporary workspace.
 - **Store Location Mapping**:
   Computes physical paths for each functional store based on the active strategy (`EXPLODED` or `STANDALONE`):
