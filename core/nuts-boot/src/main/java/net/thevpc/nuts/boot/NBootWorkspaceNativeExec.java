@@ -42,6 +42,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
             this.complete = unparsedOptions.complete();
         }
         this.bLog = new NBootLog(userOptions);
+        NBootWorkspaceCmdLineParser.denullProperties(userOptions);
         List<String> allArgs = new ArrayList<>();
         if (unparsedOptions.optionArgs() != null) {
             allArgs.addAll(Arrays.asList(unparsedOptions.optionArgs()));

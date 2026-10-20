@@ -131,6 +131,7 @@ public class NBootWorkspaceHelper {
             showError = new ArrayList<>();
         }
         showError.add(err.toString());
+        options.errors(showError);
     }
 
     public static void runCommandHelp(NBootOptionsInfo options, NBootCompleteCmdlineRequest complete) {
