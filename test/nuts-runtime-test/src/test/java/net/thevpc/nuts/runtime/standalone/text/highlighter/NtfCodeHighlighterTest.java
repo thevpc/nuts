@@ -34,7 +34,7 @@ class NtfCodeHighlighterTest {
     @Test
     void testItalicText() {
         NCodeHighlighter highlighter = NCodeHighlighter.of("ntf");
-        NText result = highlighter.stringToText("This is *italic* text");
+        NText result = highlighter.stringToText("This is ##:italic:italic## text");
         assertNotNull(result);
         assertEquals("This is italic text", result.filteredText());
     }
@@ -42,7 +42,7 @@ class NtfCodeHighlighterTest {
     @Test
     void testBoldText() {
         NCodeHighlighter highlighter = NCodeHighlighter.of("ntf");
-        NText result = highlighter.stringToText("This is **bold** text");
+        NText result = highlighter.stringToText("This is ##:bold:bold## text");
         assertNotNull(result);
         assertEquals("This is bold text", result.filteredText());
     }
@@ -50,7 +50,7 @@ class NtfCodeHighlighterTest {
     @Test
     void testInlineCode() {
         NCodeHighlighter highlighter = NCodeHighlighter.of("ntf");
-        NText result = highlighter.stringToText("This is `code` text");
+        NText result = highlighter.stringToText("This is ```code``` text");
         assertNotNull(result);
         assertEquals("This is code text", result.filteredText());
     }
@@ -58,7 +58,7 @@ class NtfCodeHighlighterTest {
     @Test
     void testMultipleFormats() {
         NCodeHighlighter highlighter = NCodeHighlighter.of("ntf");
-        NText result = highlighter.stringToText("This is *italic*, **bold**, and `code`");
+        NText result = highlighter.stringToText("This is ##:italic:italic##, ##:bold:bold##, and ```code```");
         assertNotNull(result);
         assertEquals("This is italic, bold, and code", result.filteredText());
     }
@@ -68,12 +68,12 @@ class NtfCodeHighlighterTest {
         NCodeHighlighter highlighter = NCodeHighlighter.of("ntf");
         
         // First use
-        NText result1 = highlighter.stringToText("First *italic*");
+        NText result1 = highlighter.stringToText("First ##:italic:italic##");
         assertNotNull(result1);
         assertEquals("First italic", result1.filteredText());
         
         // Second use - should not be affected by first
-        NText result2 = highlighter.stringToText("Second **bold**");
+        NText result2 = highlighter.stringToText("Second ##:bold:bold##");
         assertNotNull(result2);
         assertEquals("Second bold", result2.filteredText());
     }

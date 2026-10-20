@@ -157,9 +157,8 @@ class MTFParserTest {
         NText result = assertParses("This is `code` text", "This is code text");
         List<NText> all = children(result);
         assertEquals(3, all.size());
-        assertTrue(all.get(1) instanceof NTextStyled);
-        assertEquals(NTextStyle.string(),
-                ((NTextStyled) all.get(1)).styles().get(0));
+        assertTrue(all.get(1) instanceof NTextCode);
+        assertEquals("code", ((NTextCode) all.get(1)).value());
     }
 
     @Test

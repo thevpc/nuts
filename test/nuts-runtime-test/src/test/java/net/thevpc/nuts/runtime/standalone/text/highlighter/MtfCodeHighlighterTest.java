@@ -85,9 +85,8 @@ class MtfCodeHighlighterTest {
     @Test
     void testInlineCode() {
         NText result = highlighter().stringToText("a `b` c");
-        assertTrue(((NTextList) result).get(1) instanceof NTextStyled);
-        assertEquals(NTextStyle.string(),
-                ((NTextStyled) ((NTextList) result).get(1)).styles().get(0));
+        assertTrue(((NTextList) result).get(1) instanceof NTextCode);
+        assertEquals("b", ((NTextCode) ((NTextList) result).get(1)).value());
     }
 
     @Test

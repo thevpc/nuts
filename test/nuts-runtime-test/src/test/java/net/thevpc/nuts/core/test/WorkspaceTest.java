@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -26,6 +27,7 @@ import net.thevpc.nuts.io.*;
 
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.artifact.NDependencySolver;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,9 +58,9 @@ public class WorkspaceTest {
                 NPath.of(new File(wsPath, "cache")),
                 NPath.of(NStoreKey.ofCache()));
         Assertions.assertEquals(0, NWorkspace.of().repositories().size());
-        Assertions.assertEquals("1.0.0", NWorkspace.of().apiId().version().toString());
-        Assertions.assertEquals("1.0.0", NWorkspace.of().appId().version().toString());
-        Assertions.assertEquals("1.0.0.0", NWorkspace.of().runtimeId().version().toString());
+        Assertions.assertEquals(Nuts.version().toString(), NWorkspace.of().apiId().version().toString());
+        Assertions.assertEquals(Nuts.version().toString(), NWorkspace.of().appId().version().toString());
+        Assertions.assertEquals(DefaultNWorkspace.RUNTIME_VERSION, NWorkspace.of().runtimeId().version().toString());
 
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of().getRepositories()[0].getName() +

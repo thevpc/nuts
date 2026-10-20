@@ -171,6 +171,71 @@ public class YamlTest {
     }
 
     @Test
+    public void testYamlNumericResolutionAndExplicitTagValidation() {
+        NElement leadingDecimal = NElementReader.ofYaml().read(".5", NElement.class);
+        Assertions.assertEquals(NElementType.DOUBLE, leadingDecimal.type());
+        Assertions.assertEquals(0.5d, ((Number) leadingDecimal.asPrimitive().get().value()).doubleValue());
+        NElement leadingZeroInteger = NElementReader.ofYaml().read("012", NElement.class);
+        Assertions.assertEquals(12L, ((Number) leadingZeroInteger.asPrimitive().get().value()).longValue());
+
+        NElement malformedNumber = NElementReader.ofYaml().read("1__2", NElement.class);
+        Assertions.assertTrue(malformedNumber.isAnyString());
+        Assertions.assertEquals("1__2", malformedNumber.asStringValue().get());
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("!!int 1.5", NElement.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("!!float nan", NElement.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("!!float 1__2", NElement.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("!!null false", NElement.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                NElementReader.ofYaml().read("!!str [value]", NElement.class));
+    }
+
+    @Test
+    public void testYamlDocumentEndMarkerWithComment() {
+        NElement value = NElementReader.ofYaml().read("--- first\n... # end of first document\n--- second\n", NElement.class);
+        Assertions.assertTrue(value.isFragment());
+        Assertions.assertEquals(2, value.asFragment().get().size());
+    }
+
+    @Test
+    public void testInlineBlockContentAfterDocumentStart() {
+        NElement value = NElementReader.ofYaml().read("--- first: value\nsecond: value\n", NElement.class);
+        Assertions.assertTrue(value.isObject());
+        Assertions.assertEquals("value", value.asObject().get().get("second").get().asStringValue().get());
+    }
+
+    @Test
+    public void testFoldedBlockScalarBlankLineFolding() {
+        NElement value = NElementReader.ofYaml().read("text: >-\n" +
+                "  line one\n" +
+                "  line two\n" +
+                "\n" +
+                "  line four\n", NElement.class);
+        Assertions.assertEquals("line one line two\nline four",
+                value.asObject().get().get("text").get().asStringValue().get());
+    }
+
+    @Test
+    public void testFoldedBlockScalarPreservesMoreIndentedLines() {
+        NElement value = NElementReader.ofYaml().read("text: >-\n" +
+                "  folded\n" +
+                "    indented\n" +
+                "  folded again\n", NElement.class);
+        Assertions.assertEquals("folded\n  indented\nfolded again",
+                value.asObject().get().get("text").get().asStringValue().get());
+    }
+
+    @Test
+    public void testKeepChompingDoesNotCountSyntheticEndLine() {
+        NElement value = NElementReader.ofYaml().read("text: |+\n  line\n", NElement.class);
+        Assertions.assertEquals("line\n", value.asObject().get().get("text").get().asStringValue().get());
+    }
+
+    @Test
     public void testYamlTagHandleAndDuplicateAnchorValidation() {
         NElement tagged = NElementReader.ofYaml().read("%TAG !e! tag:example.com,2020:\n" +
                 "---\n" +

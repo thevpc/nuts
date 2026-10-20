@@ -549,8 +549,13 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 
     @Override
     public void reset() {
-        q.clear();
-        stackedStyles.clear();
+        synchronized (q) {
+            q.clear();
+            q.eof(false);
+            buffer.setLength(0);
+            stackedStyles.clear();
+            wasNewLine = true;
+        }
     }
 
     @Override

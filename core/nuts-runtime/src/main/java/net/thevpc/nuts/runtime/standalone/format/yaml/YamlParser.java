@@ -69,7 +69,11 @@ class YamlParser {
 
         SourceParser(String source) {
             String[] split = source.split("\\r\\n|\\n|\\r", -1);
-            for (int i = 0; i < split.length; i++) {
+            int lineCount = split.length;
+            if (source.endsWith("\n") || source.endsWith("\r")) {
+                lineCount--;
+            }
+            for (int i = 0; i < lineCount; i++) {
                 lines.add(new Line(split[i], i + 1));
             }
             tagHandles.put("!!", "tag:yaml.org,2002:");
@@ -89,23 +93,35 @@ class YamlParser {
                     line++;
                     continue;
                 }
-                NElement inlineDocument = null;
-                if (current.content.equals("---") || current.content.startsWith("--- ")) {
+                String inlineDocument = null;
+                Line documentStart = null;
+                if (isDocumentStart(current)) {
                     String afterMarker = stripComment(current.content.substring(3)).trim();
+                    documentStart = current;
+                    inlineDocument = afterMarker;
                     line++;
-                    skipTrivia();
-                    if (!afterMarker.isEmpty()) {
-                        inlineDocument = parseInline(afterMarker, current.number);
-                    }
                 }
                 anchors.clear();
-                if (inlineDocument != null) {
-                    documents.add(inlineDocument);
-                } else if (line < lines.size() && !isDocumentEnd(lines.get(line))) {
-                    int indent = lines.get(line).indent;
-                    documents.add(parseBlock(indent));
+                if (inlineDocument != null && !inlineDocument.isEmpty()) {
+                    if (isBlockNode(inlineDocument)) {
+                        int markerIndex = line - 1;
+                        lines.add(line, new Line(inlineDocument, documentStart.number));
+                        documents.add(parseBlock(0));
+                        lines.remove(markerIndex);
+                        line--;
+                    } else {
+                        documents.add(parseInline(inlineDocument, documentStart.number));
+                    }
                 } else {
-                    documents.add(NElement.ofNull());
+                    if (documentStart != null) {
+                        skipTrivia();
+                    }
+                    if (line < lines.size() && !isDocumentEnd(lines.get(line))) {
+                        int indent = lines.get(line).indent;
+                        documents.add(parseBlock(indent));
+                    } else {
+                        documents.add(NElement.ofNull());
+                    }
                 }
                 skipTrivia();
                 if (line < lines.size() && isDocumentEnd(lines.get(line))) {
@@ -443,8 +459,7 @@ class YamlParser {
                 } else {
                     String plain = readPlain(inFlow);
                     String explicitTag = explicitStandardTag(prefixes, sourceLine);
-                    result = "str".equals(explicitTag)
-                            ? NElement.ofString(plain) : resolvePlain(plain);
+                    result = explicitTag != null ? NElement.ofString(plain) : resolvePlain(plain);
                 }
                 return applyPrefixes(result, prefixes, sourceLine);
             }
@@ -690,11 +705,21 @@ class YamlParser {
             String shortTag = tag.startsWith("tag:yaml.org,2002:")
                     ? tag.substring("tag:yaml.org,2002:".length()) : null;
             if (shortTag != null) {
+                if (("str".equals(shortTag) || "null".equals(shortTag) || "bool".equals(shortTag)
+                        || "int".equals(shortTag) || "float".equals(shortTag)
+                        || "timestamp".equals(shortTag) || "binary".equals(shortTag))
+                        && !element.isPrimitive()) {
+                    throw error(sourceLine, "!!" + shortTag + " requires a scalar node");
+                }
                 Object rawValue = element.isPrimitive() ? element.asPrimitive().get().value() : null;
                 String value = rawValue == null ? null : rawValue.toString();
                 switch (shortTag) {
                     case "str": return NElement.ofString(value == null ? "" : value);
-                    case "null": return NElement.ofNull();
+                    case "null":
+                        if (value == null || "~".equals(value) || "null".equalsIgnoreCase(value)) {
+                            return NElement.ofNull();
+                        }
+                        throw error(sourceLine, "invalid !!null value");
                     case "bool":
                         if ("true".equalsIgnoreCase(value)) return NElement.ofTrue();
                         if ("false".equalsIgnoreCase(value)) return NElement.ofFalse();
@@ -776,33 +801,44 @@ class YamlParser {
 
         private NElement numberOrNull(String value) {
             try {
-                if (value.matches("[-+]?0[xX][0-9a-fA-F_]+")) {
+                if (value.matches("[-+]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*")) {
                     BigInteger integer = new BigInteger(value.replace("_", "").replaceFirst("^[-+]?0[xX]", ""), 16)
                             .multiply(value.startsWith("-") ? BigInteger.valueOf(-1) : BigInteger.ONE);
                     return integerElement(integer);
                 }
-                if (value.matches("[-+]?0[oO][0-7_]+")) {
+                if (value.matches("[-+]?0[oO][0-7](?:_?[0-7])*")) {
                     String digits = value.replace("_", "").replaceFirst("^[-+]?0[oO]", "");
                     BigInteger v = new BigInteger(digits, 8);
                     return integerElement(value.startsWith("-") ? v.negate() : v);
                 }
-                if (value.matches("[-+]?(0|[1-9][0-9_]*)(\\.[0-9_]*)?([eE][-+]?[0-9]+)?")
+                if (isFloatScalar(value)
                         && (value.indexOf('.') >= 0 || value.indexOf('e') >= 0 || value.indexOf('E') >= 0)) {
                     return NElement.ofDouble(Double.parseDouble(value.replace("_", "")));
                 }
-                if (value.matches("[-+]?(0|[1-9][0-9_]*)")) {
+                if (isIntegerScalar(value)) {
                     return integerElement(new BigInteger(value.replace("_", "")));
                 }
                 if (value.matches("[-+]?\\.(inf|Inf|INF)")) {
                     return NElement.ofDouble(value.startsWith("-") ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY);
                 }
-                if (value.matches("\\.(nan|NaN|NAN)")) {
+                if (value.matches("(?i)\\.(nan)")) {
                     return NElement.ofDouble(Double.NaN);
                 }
             } catch (NumberFormatException ignored) {
                 return null;
             }
             return null;
+        }
+
+        private boolean isIntegerScalar(String value) {
+            return value.matches("[-+]?(?:0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*"
+                    + "|0[oO][0-7](?:_?[0-7])*|[0-9](?:_?[0-9])*)");
+        }
+
+        private boolean isFloatScalar(String value) {
+            String digits = "[0-9](?:_?[0-9])*";
+            return value.matches("[-+]?(?:(?:" + digits + ")(?:\\.(?:" + digits + ")?)?"
+                    + "|\\.(?:" + digits + "))(?:[eE][-+]?(?:" + digits + "))?");
         }
 
         private NElement integerElement(BigInteger value) {
@@ -816,7 +852,10 @@ class YamlParser {
         }
 
         private NElement integer(String value, int sourceLine) {
-            NElement n = numberOrNull(value == null ? "" : value);
+            if (value == null || !isIntegerScalar(value)) {
+                throw error(sourceLine, "invalid numeric tag value");
+            }
+            NElement n = numberOrNull(value);
             if (n == null) {
                 throw error(sourceLine, "invalid numeric tag value");
             }
@@ -827,24 +866,22 @@ class YamlParser {
             if (value == null) {
                 throw error(sourceLine, "invalid numeric tag value");
             }
-            switch (value.toLowerCase()) {
-                case ".nan":
-                case "nan":
-                    return NElement.ofDouble(Double.NaN);
-                case ".inf":
-                case "+.inf":
-                case "inf":
-                case "+inf":
-                    return NElement.ofDouble(Double.POSITIVE_INFINITY);
-                case "-.inf":
-                case "-inf":
-                    return NElement.ofDouble(Double.NEGATIVE_INFINITY);
-                default:
-                    try {
-                        return NElement.ofDouble(Double.parseDouble(value.replace("_", "")));
-                    } catch (NumberFormatException e) {
-                        throw error(sourceLine, "invalid numeric tag value");
-                    }
+            if (".nan".equalsIgnoreCase(value)) {
+                return NElement.ofDouble(Double.NaN);
+            }
+            if (".inf".equalsIgnoreCase(value) || "+.inf".equalsIgnoreCase(value)) {
+                return NElement.ofDouble(Double.POSITIVE_INFINITY);
+            }
+            if ("-.inf".equalsIgnoreCase(value)) {
+                return NElement.ofDouble(Double.NEGATIVE_INFINITY);
+            }
+            if (!isFloatScalar(value)) {
+                throw error(sourceLine, "invalid numeric tag value");
+            }
+            try {
+                return NElement.ofDouble(Double.parseDouble(value.replace("_", "")));
+            } catch (NumberFormatException e) {
+                throw error(sourceLine, "invalid numeric tag value");
             }
         }
 
@@ -864,13 +901,18 @@ class YamlParser {
                     && Character.isWhitespace(content.charAt(1)));
         }
 
+        private boolean isBlockNode(String content) {
+            return isSequenceEntry(content) || isExplicitKey(content) || mappingColon(content) >= 0
+                    || content.startsWith("|") || content.startsWith(">");
+        }
+
         private boolean isDocumentStart(Line current) {
             return current.indent == 0 && current.content.startsWith("---")
                     && (current.content.length() == 3 || Character.isWhitespace(current.content.charAt(3)));
         }
 
         private boolean isDocumentEnd(Line current) {
-            return current.indent == 0 && current.content.equals("...");
+            return current.indent == 0 && stripComment(current.content).trim().equals("...");
         }
 
         private int mappingColon(String text) {
@@ -950,10 +992,27 @@ class YamlParser {
                 b.append(current);
                 if (i + 1 < lines.size()) {
                     String next = lines.get(i + 1);
-                    b.append(current.isEmpty() || next.isEmpty() ? '\n' : ' ');
+                    if (!current.isEmpty() && !next.isEmpty()) {
+                        b.append(isMoreIndented(current) || isMoreIndented(next) ? '\n' : ' ');
+                    } else if (current.isEmpty() || !hasNonEmptyLineAfter(lines, i + 1)) {
+                        b.append('\n');
+                    }
                 }
             }
             return b.append('\n').toString();
+        }
+
+        private boolean isMoreIndented(String line) {
+            return !line.isEmpty() && line.charAt(0) == ' ';
+        }
+
+        private boolean hasNonEmptyLineAfter(List<String> lines, int index) {
+            for (int i = index + 1; i < lines.size(); i++) {
+                if (!lines.get(i).isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private String stripTrailingNewlines(String value) {

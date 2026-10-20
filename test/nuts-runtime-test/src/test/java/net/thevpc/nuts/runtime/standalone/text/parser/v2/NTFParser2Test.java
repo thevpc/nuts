@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.text.NText;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,6 +11,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NTFParser2Test {
+
+    @BeforeAll
+    static void setUp() {
+        TestUtils.openNewMinTestWorkspace();
+    }
 
     @Test
     void testParserDoesNotInfiniteLoopOnSimpleInput() throws Exception {
@@ -28,8 +35,8 @@ class NTFParser2Test {
         List<NText> results = new ArrayList<>();
         long count = parser.parseRemaining(results::add);
 
-        // We should have parsed something without infinite looping
-        assertTrue(count >= 0);
+        assertEquals(1, count);
+        assertEquals("hello", results.get(0).filteredText());
     }
 
     @Test
@@ -51,7 +58,23 @@ class NTFParser2Test {
         List<NText> results = new ArrayList<>();
         long count = parser.parseRemaining(results::add);
 
-        assertTrue(count >= 0);
+        assertEquals(1, count);
+        assertEquals("test", results.get(0).filteredText());
+    }
+
+    @Test
+    void testResetDiscardsUnconsumedParserState() {
+        NTFParser2 parser = new NTFParser2();
+        parser.offer("Hello #World#");
+        assertNull(parser.read());
+
+        parser.eof(true);
+        parser.reset();
+        parser.offer("fresh");
+        NText result = parser.readFully();
+
+        assertNotNull(result);
+        assertEquals("fresh", result.filteredText());
     }
 
     @Test
