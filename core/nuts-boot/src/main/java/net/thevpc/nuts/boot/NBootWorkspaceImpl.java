@@ -323,11 +323,14 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
             NBootContext.log().log(Level.FINE, NBootLog.INTENT_START, NBootMsg.ofC("start new process : %s", new NBootCmdLine(processCmdLine)));
 //            }
             result = new ProcessBuilder(processCmdLine).inheritIO().start().waitFor();
-        } catch (IOException | InterruptedException ex) {
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new NBootException(NBootMsg.ofPlain(NBootI18n.of("interrupted while waiting for new nuts process")), ex);
+        } catch (IOException ex) {
             throw new NBootException(NBootMsg.ofPlain(NBootI18n.of("failed to run new nuts process")), ex);
         }
         if (result != 0) {
-            throw new NBootException(NBootMsg.ofC(NBootI18n.of("failed to exec new process. returned %s"), result));
+            throw new NBootException(NBootMsg.ofC(NBootI18n.of("failed to exec new process. returned %s"), result), result);
         }
     }
 
@@ -629,14 +632,13 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean prepareWorkspace() {
+    private synchronized boolean prepareWorkspace() {
         return bContext.callWith(() -> {
             boolean resetHardFlag = NBootUtils.firstNonNull(options.resetHard(), false);
             boolean dryFlag = NBootUtils.firstNonNull(options.dry(), false);
             boolean resetFlag = NBootUtils.firstNonNull(options.reset(), false);
             NBootLog log = NBootContext.log();
             if (!preparedWorkspace) {
-                preparedWorkspace = true;
                 String isolationLevel = NBootUtils.firstNonBlank(options.isolationLevel(), "SYSTEM");
                 if (log.isLoggable(Level.CONFIG)) {
                     log.log(Level.CONFIG, NBootLog.INTENT_START, NBootMsg.ofC(NBootI18n.of("bootstrap Nuts version %s %s digest %s..."), NBootWorkspaceImpl.NUTS_BOOT_VERSION,
@@ -1022,6 +1024,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     options.javaCommand(null);
                     options.javaOptions(null);
                 }
+                preparedWorkspace = true;
                 return true;
             }
             return false;
@@ -1049,7 +1052,7 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
      * @return NWorkspace instance as object
      */
     @Override
-    public NWorkspaceBase workspace() {
+    public synchronized NWorkspaceBase workspace() {
         return bContext.callWith(() -> {
             if (loadedWorkspace != null) {
                 return loadedWorkspace;
