@@ -63,6 +63,8 @@ import java.util.zip.ZipFile;
  * @since 0.5.4
  */
 public final class NBootUtils {
+    private static final int MAX_TYPO_SUGGESTION_INPUT_LENGTH = 256;
+
     public static final String[] DATE_FORMATS = {
             "yyyy-MM-dd HH:mm:ss.SSS",
             "yyyy-MM-dd HH:mm:ss",
@@ -3081,6 +3083,9 @@ public final class NBootUtils {
         if (str1 == null) {
             str1 = "";
         }
+        if (str1.length() > MAX_TYPO_SUGGESTION_INPUT_LENGTH) {
+            return null;
+        }
         for (String s : dictionary) {
             if (s == null) {
                 s = "";
@@ -3098,27 +3103,39 @@ public final class NBootUtils {
 
     // Damerau-Levenshtein distance function
     public static int damerauLevenshtein(String s1, String s2) {
+        if (s1.length() < s2.length()) {
+            String t = s1;
+            s1 = s2;
+            s2 = t;
+        }
         int len1 = s1.length();
         int len2 = s2.length();
-        int[][] dp = new int[len1 + 1][len2 + 1];
-
-        for (int i = 0; i <= len1; i++) dp[i][0] = i;
-        for (int j = 0; j <= len2; j++) dp[0][j] = j;
+        int[] previousPrevious = new int[len2 + 1];
+        int[] previous = new int[len2 + 1];
+        int[] current = new int[len2 + 1];
+        for (int j = 0; j <= len2; j++) {
+            previous[j] = j;
+        }
 
         for (int i = 1; i <= len1; i++) {
+            current[0] = i;
             for (int j = 1; j <= len2; j++) {
                 int cost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
-                dp[i][j] = Math.min(Math.min(
-                                dp[i - 1][j] + 1,      // Deletion
-                                dp[i][j - 1] + 1),     // Insertion
-                        dp[i - 1][j - 1] + cost // Substitution
+                current[j] = Math.min(Math.min(
+                                previous[j] + 1,      // Deletion
+                                current[j - 1] + 1),  // Insertion
+                        previous[j - 1] + cost      // Substitution
                 );
                 if (i > 1 && j > 1 && s1.charAt(i - 1) == s2.charAt(j - 2) && s1.charAt(i - 2) == s2.charAt(j - 1)) {
-                    dp[i][j] = Math.min(dp[i][j], dp[i - 2][j - 2] + cost);
+                    current[j] = Math.min(current[j], previousPrevious[j - 2] + cost);
                 }
             }
+            int[] oldPreviousPrevious = previousPrevious;
+            previousPrevious = previous;
+            previous = current;
+            current = oldPreviousPrevious;
         }
-        return dp[len1][len2];
+        return previous[len2];
     }
 
 
@@ -3153,6 +3170,9 @@ public final class NBootUtils {
 
         Set<String> set1 = new HashSet<>(Arrays.asList(tokens1));
         Set<String> set2 = new HashSet<>(Arrays.asList(tokens2));
+        if (set1.equals(set2)) {
+            return 1.0;
+        }
         double intersection = 0;
         double union = set1.size() + set2.size();
         for (String token1 : set1) {
