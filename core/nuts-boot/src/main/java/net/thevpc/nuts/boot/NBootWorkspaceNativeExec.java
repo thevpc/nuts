@@ -782,9 +782,18 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     }
 
 
-    public void runWorkspace0() {
+    private void runWorkspace0() {
+        NBootContext context = new NBootContext();
+        context.log = bLog;
+        context.runWith(this::runWorkspace0InContext);
+    }
+
+    private void runWorkspace0InContext() {
         if (complete != null) {
-            NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, Arrays.asList(unparsedOptions.optionArgs())));
+            List<String> optionArgs = unparsedOptions.optionArgs() == null
+                    ? Collections.emptyList()
+                    : Arrays.asList(unparsedOptions.optionArgs());
+            NBootCompleteRequestOrResult r = NBootWorkspaceCmdLineParser.complete(new NBootCompleteCmdlineRequest(complete, optionArgs));
             if (r instanceof NBootCompleteResult) {
                 NBootContext.context().log.out().println(((NBootCompleteResult) r).format());
                 return;
@@ -835,6 +844,7 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
                     showDebugLine(NBootI18n.of("WAITING..."));
                     Thread.sleep(waitTime);
                 } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                     throw new NBootException(NBootMsg.ofC(NBootI18n.of("PROCESS INTERRUPTED, exit with : %s"), i), i);
                 }
             }
@@ -846,17 +856,16 @@ public class NBootWorkspaceNativeExec implements NBootWorkspace {
     }
 
     private int execCommand() {
-        int i = 1;
         try {
-            final Process p;
             ProcessBuilder pb = new ProcessBuilder(options.applicationArguments());
             pb.inheritIO();
-            p = pb.start();
-            i = p.waitFor();
-        } catch (Exception ex) {
-            showErrorLine(ex.toString());
+            return pb.start().waitFor();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new NBootException(NBootMsg.ofPlain(NBootI18n.of("interrupted while waiting for native command")), ex);
+        } catch (java.io.IOException ex) {
+            throw new NBootException(NBootMsg.ofC(NBootI18n.of("failed to start native command: %s"), ex.getMessage()), ex);
         }
-        return i;
     }
 
     private void showDebugLine(String err) {
