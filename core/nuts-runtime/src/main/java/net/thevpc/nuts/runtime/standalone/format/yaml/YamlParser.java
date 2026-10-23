@@ -743,12 +743,16 @@ class YamlParser {
                 }
                 return tagged(element, tag);
             }
-            if ("tag:thevpc.net,nuts/name".equals(tag) && element.isAnyStringOrName()) {
-                String value = element.asStringValue().get();
-                if (!value.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")) {
-                    throw error(sourceLine, "Nuts name tag requires a valid name");
+            if ("tag:thevpc.net,nuts/name".equals(tag)) {
+                if (element.isAnyStringOrName()) {
+                    String value = element.asStringValue().get();
+                    // The writer only adds this tag for names that are not plain identifiers
+                    // (for instance '$ref' or 'x-something'); such names round-trip as strings.
+                    if (value.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")) {
+                        return NElement.ofName(value);
+                    }
                 }
-                return NElement.ofName(value);
+                return element;
             }
             return element.builder().addAnnotation("yamlTag", NElement.ofString(tag)).build();
         }

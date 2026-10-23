@@ -233,6 +233,7 @@ public class YamlFormat {
             }
             case OBJECT: {
                 if (value.asObject().get().pairs().isEmpty()) {
+                    out.print(indent);
                     out.print("{}");
                     break;
                 }
@@ -276,6 +277,7 @@ public class YamlFormat {
             }
             case ARRAY: {
                 if (value.asArray().get().isEmpty()) {
+                    out.print(indent);
                     out.print("[]");
                     break;
                 }
