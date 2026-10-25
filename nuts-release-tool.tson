@@ -11,22 +11,22 @@ trace:true
 verbose:true
 
 // enable nuts-app-full and installer fat jars
-build-jars:false
+build-jars:true
 
 // enable native executable generation
-build-native:false
+build-native:true
 
 // build documentation website and github readme.md
 build-site:true
 
 // build nuts-public and preview repo indexes
-build-repos:false
+build-repos:true
 
 // generate version compatibility html file, requires 'japi-compliance-checker' to be installed
-build-compat:false
+build-compat:true
 
 // publish (push) binaries to production server (thevpc.net)
-publish:false
+publish:true
 
 //update-version:false
 //keep-stamp:false

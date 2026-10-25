@@ -1,11 +1,11 @@
 /* nuts-download.js — 3-step download wizard (templated by nsite) */
-// var latestJarLocation = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar";
-// var apiVersion = "1.1.0";
-// var runtimeVersion = "1.1.0.0";
+// var latestJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar";
+// var apiVersion = "$1.1.0";
+// var runtimeVersion = "$1.1.0.0";
 //
-// var stableJarLocation = "https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
-// var stableApiVersion = "1.0.0";
-// var stableRuntimeVersion = "1.0.0.0";
+// var stableJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
+// var stableApiVersion = "$1.0.0";
+// var stableRuntimeVersion = "$1.0.0.0";
 
 (function () {
     'use strict';

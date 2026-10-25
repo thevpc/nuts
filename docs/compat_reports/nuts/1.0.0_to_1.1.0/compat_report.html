@@ -1,5 +1,5 @@
-<!-- kind:binary;verdict:compatible;affected:0;added:5;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:14378;checked_types:998;tool_version:2.4 -->
-<!-- kind:source;verdict:incompatible;affected:0.8;added:5;removed:0;type_problems_high:4;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:14378;checked_types:998;tool_version:2.4 -->
+<!-- kind:binary;verdict:compatible;affected:0;added:66;removed:0;type_problems_high:0;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:14439;checked_types:999;tool_version:2.4 -->
+<!-- kind:source;verdict:incompatible;affected:1.6;added:66;removed:0;type_problems_high:29;type_problems_medium:0;type_problems_low:0;method_problems_high:0;method_problems_medium:0;method_problems_low:0;checked_methods:14439;checked_types:999;tool_version:2.4 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -374,7 +374,7 @@ else if (window.attachEvent) window.attachEvent('onload', initTabs);
 <h2>Test Results</h2><hr/>
 <table class='summary'>
 <tr><th>Total Java Modules</th><td><a href='#Checked_Archives' style='color:Blue;'>1</a></td></tr>
-<tr><th>Total Methods / Classes</th><td>14378 / 998</td></tr>
+<tr><th>Total Methods / Classes</th><td>14439 / 999</td></tr>
 <tr><th>Compatibility</th>
 <td class='compatible'>100%</td>
 </tr>
@@ -382,7 +382,7 @@ else if (window.attachEvent) window.attachEvent('onload', initTabs);
 <h2>Problem Summary</h2><hr/>
 <table class='summary'>
 <tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>
-<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Binary_Added' style='color:Blue;'>5</a></td></tr>
+<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Binary_Added' style='color:Blue;'>66</a></td></tr>
 <tr><th>Removed Methods</th><td>High</td><td>0</td></tr>
 <tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td>0</td></tr>
 <tr><td>Medium</td><td>0</td></tr>
@@ -390,58 +390,656 @@ else if (window.attachEvent) window.attachEvent('onload', initTabs);
 <tr><th rowspan='3'>Problems with<br/>Methods</th><td>High</td><td>0</td></tr>
 <tr><td>Medium</td><td>0</td></tr>
 <tr><td>Low</td><td>0</td></tr>
-<tr><th>Other Changes<br/>in Data Types</th><td>-</td><td class='passed'><a href='#Other_Binary_Changes_In_Types' style='color:Blue;'>4</a></td></tr>
+<tr><th>Other Changes<br/>in Data Types</th><td>-</td><td class='passed'><a href='#Other_Binary_Changes_In_Types' style='color:Blue;'>29</a></td></tr>
 </table>
 
-<a name='Binary_Added'></a><h2>Added Methods <span class='new'>&nbsp;5&nbsp;</span></h2><hr/>
-<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NHttpRequest.class</span><br/>
-<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.net</span><br/>
+<a name='Binary_Added'></a><h2>Added Methods <span class='new'>&nbsp;66&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>BigAtan.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
 <span class="section" onclick="sC(this, 'c_1')">
-NHttpRequest.cookie&#160;<span class='sym_p'><span>(&#160;NHttpCookie <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
+BigAtan.atan&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>t</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
 <br/>
 <div id="c_1" style="display:none;">
-<span class='mngl'>net/thevpc/nuts/net/NHttpRequest.cookie:(Lnet/thevpc/nuts/net/NHttpCookie;)Lnet/thevpc/nuts/net/NHttpRequest;</span><br/><br/></div>
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.atan:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
 
 <span class="section" onclick="sC(this, 'c_2')">
-NHttpRequest.cookies&#160;<span class='sym_p'><span>(&#160;NHttpCookie... <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
+BigAtan.atan2&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>y</span></span>, <span>BigDecimal <span class='color_p'>x</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
 <br/>
 <div id="c_2" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.atan2:(Ljava/math/BigDecimal;Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_3')">
+BigAtan.pi&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_3" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.pi:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_4')">
+BigAtan.sqrt&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>x</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_4" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.sqrt:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NBigComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_5')">
+NBigComplex.addBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_5" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.addBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_6')">
+NBigComplex.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_6" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.addDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_7')">
+NBigComplex.argBigDecimal&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_7" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.argBigDecimal:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_8')">
+NBigComplex.divideBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_8" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.divideBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_9')">
+NBigComplex.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_9" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.divideDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_10')">
+NBigComplex.multiplyBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_10" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.multiplyBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_11')">
+NBigComplex.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_11" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.multiplyDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_12')">
+NBigComplex.subtractBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_12" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.subtractBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_13')">
+NBigComplex.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_13" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.subtractDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_14')">
+NBigComplex.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_14" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_15')">
+NBigComplex.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_15" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NBigComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_16')">
+NBigComplexImpl.addBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_16" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.addBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_17')">
+NBigComplexImpl.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_17" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.addDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_18')">
+NBigComplexImpl.argBigDecimal&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_18" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.argBigDecimal:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_19')">
+NBigComplexImpl.divideBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_19" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.divideBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_20')">
+NBigComplexImpl.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_20" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.divideDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_21')">
+NBigComplexImpl.multiplyBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_21" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.multiplyBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_22')">
+NBigComplexImpl.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_22" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.multiplyDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_23')">
+NBigComplexImpl.subtractBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_23" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.subtractBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_24')">
+NBigComplexImpl.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_24" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.subtractDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_25')">
+NBigComplexImpl.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_25" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_26')">
+NBigComplexImpl.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_26" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDefinitionFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_27')">
+NDefinitionFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NDefinition&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDefinitionFilter</span></span>
+<br/>
+<div id="c_27" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NDefinitionFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NDefinitionFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDependencyFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_28')">
+NDependencyFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NDependency&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDependencyFilter</span></span>
+<br/>
+<div id="c_28" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NDependencyFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NDependencyFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDoubleComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_29')">
+NDoubleComplex.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_29" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.addDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_30')">
+NDoubleComplex.argDouble&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_30" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.argDouble:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_31')">
+NDoubleComplex.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_31" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.divideDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_32')">
+NDoubleComplex.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_32" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.multiplyDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_33')">
+NDoubleComplex.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_33" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.subtractDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_34')">
+NDoubleComplex.toBigComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_34" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_35')">
+NDoubleComplex.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_35" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDoubleComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_36')">
+NDoubleComplexImpl.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_36" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.addDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_37')">
+NDoubleComplexImpl.argDouble&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_37" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.argDouble:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_38')">
+NDoubleComplexImpl.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_38" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.divideDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_39')">
+NDoubleComplexImpl.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_39" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.multiplyDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_40')">
+NDoubleComplexImpl.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_40" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.subtractDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_41')">
+NDoubleComplexImpl.toBigComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_41" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_42')">
+NDoubleComplexImpl.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_42" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NFloatComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_43')">
+NFloatComplex.addFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_43" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.addFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_44')">
+NFloatComplex.argFloat&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;float</span></span>
+<br/>
+<div id="c_44" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.argFloat:()F</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_45')">
+NFloatComplex.divideFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_45" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.divideFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_46')">
+NFloatComplex.multiplyFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_46" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.multiplyFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_47')">
+NFloatComplex.subtractFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_47" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.subtractFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_48')">
+NFloatComplex.toBigComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_48" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_49')">
+NFloatComplex.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_49" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NFloatComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_50')">
+NFloatComplexImpl.addFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_50" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.addFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_51')">
+NFloatComplexImpl.argFloat&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;float</span></span>
+<br/>
+<div id="c_51" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.argFloat:()F</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_52')">
+NFloatComplexImpl.divideFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_52" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.divideFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_53')">
+NFloatComplexImpl.multiplyFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_53" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.multiplyFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_54')">
+NFloatComplexImpl.subtractFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_54" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.subtractFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_55')">
+NFloatComplexImpl.toBigComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_55" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_56')">
+NFloatComplexImpl.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_56" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NHttpRequest.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.net</span><br/>
+<span class="section" onclick="sC(this, 'c_57')">
+NHttpRequest.cookie&#160;<span class='sym_p'><span>(&#160;NHttpCookie <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
+<br/>
+<div id="c_57" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/net/NHttpRequest.cookie:(Lnet/thevpc/nuts/net/NHttpCookie;)Lnet/thevpc/nuts/net/NHttpRequest;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_58')">
+NHttpRequest.cookies&#160;<span class='sym_p'><span>(&#160;NHttpCookie... <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
+<br/>
+<div id="c_58" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/net/NHttpRequest.cookies:([Lnet/thevpc/nuts/net/NHttpCookie;)Lnet/thevpc/nuts/net/NHttpRequest;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NIdFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_59')">
+NIdFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NId&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NIdFilter</span></span>
+<br/>
+<div id="c_59" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NIdFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NIdFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NRepositoryFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.core</span><br/>
+<span class="section" onclick="sC(this, 'c_60')">
+NRepositoryFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NRepository&gt; <span class='color_p'>filter</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRepositoryFilter</span></span>
+<br/>
+<div id="c_60" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/core/NRepositoryFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/core/NRepositoryFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NSystemTerminalBase.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.spi.base</span><br/>
+<span class="section" onclick="sC(this, 'c_61')">
+NSystemTerminalBase.interruptHandler&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Runnable</span></span>
+<br/>
+<div id="c_61" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/spi/base/NSystemTerminalBase.interruptHandler:()Ljava/lang/Runnable;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_62')">
+NSystemTerminalBase.interruptHandler&#160;<span class='sym_p'><span>(&#160;Runnable <span class='color_p'>interruptHandler</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NSystemTerminalBase</span></span>
+<br/>
+<div id="c_62" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/spi/base/NSystemTerminalBase.interruptHandler:(Ljava/lang/Runnable;)Lnet/thevpc/nuts/spi/base/NSystemTerminalBase;</span><br/><br/></div>
 
 <br/>
 <span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NText.class</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_3')">
+<span class="section" onclick="sC(this, 'c_63')">
 NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>start</span></span>, <span>String <span class='color_p'>kind</span></span>, <span>String <span class='color_p'>separator</span></span>, <span>String <span class='color_p'>end</span></span>, <span>String <span class='color_p'>text</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NTextCode</span></span>
 <br/>
-<div id="c_3" style="display:none;">
+<div id="c_63" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NText.ofCode:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/thevpc/nuts/text/NTextCode;</span><br/><br/></div>
 
 <br/>
 <span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NTextCode.class</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_4')">
+<span class="section" onclick="sC(this, 'c_64')">
 NTextCode.end&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
 <br/>
-<div id="c_4" style="display:none;">
+<div id="c_64" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NTextCode.end:()Ljava/lang/String;</span><br/><br/></div>
 
-<span class="section" onclick="sC(this, 'c_5')">
+<span class="section" onclick="sC(this, 'c_65')">
 NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
 <br/>
-<div id="c_5" style="display:none;">
+<div id="c_65" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NTextCode.start:()Ljava/lang/String;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NVersionFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_66')">
+NVersionFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NVersion&gt; <span class='color_p'>version</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NVersionFilter</span></span>
+<br/>
+<div id="c_66" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NVersionFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NVersionFilter;</span><br/><br/></div>
 
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='Other_Binary_Changes'></a><a name='Other_Binary_Changes_In_Types'></a>
-<h2>Other Changes in Data Types <span class='passed'>&nbsp;4&nbsp;</span></h2><hr/>
+<h2>Other Changes in Data Types <span class='passed'>&nbsp;29&nbsp;</span></h2><hr/>
 <span class='jar'>nuts-1.0.0.jar</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_67')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NBigComplex <span class='passed'>&nbsp;11&nbsp;</span></span>
+<br/>
+<div id="c_67" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> addBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>BigDecimal</b> argBigDecimal&#160;<span class='sym_pd'><span>(&#160;MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> divideBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> multiplyBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> subtractBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>10</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_68')">
+[+] affected methods: 41 (0.3%)</span>
+<div id="c_68" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.addBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.divideBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>, <span>MathContext <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.invBigComplex&#160;<span class='sym_p'><span>(&#160;MathContext <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.isReal&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.multiplyBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>, <span>MathContext <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.negateBigComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.of&#160;<span class='sym_p'><span>(&#160;String <i>any</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NBigComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_69')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NDoubleComplex <span class='passed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_69" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>double</b> argDouble&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_70')">
+[+] affected methods: 30 (0.2%)</span>
+<div id="c_70" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.absDouble&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.addDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.divideDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.doubleValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.floatValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.intValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.invDoubleComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_71')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NFloatComplex <span class='passed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_71" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> addFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>float</b> argFloat&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> divideFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> multiplyFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> subtractFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>No effect.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_72')">
+[+] affected methods: 43 (0.3%)</span>
+<div id="c_72" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.absFloat&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.addFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.divideFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.invFloatComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.isReal&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.multiplyFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.negateFloatComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<br/><span class='jar'>nuts-1.0.0.jar</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.net</span><br/>
-<span class="section" onclick="sC(this, 'c_6')">
+<span class="section" onclick="sC(this, 'c_73')">
 <span class='ext'>[+]</span> <span class='ttype'>interface</span> NHttpRequest <span class='passed'>&nbsp;2&nbsp;</span></span>
 <br/>
-<div id="c_6" style="display:none;">
+<div id="c_73" style="display:none;">
 <table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
 <th>1</th>
 <td>Abstract method <span class='iname_b'><b>NHttpRequest</b> cookie&#160;<span class='sym_pd'><span>(&#160;NHttpCookie</span>&#160;)</span></span> has been added to this interface.</td>
@@ -452,9 +1050,9 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 <td>Abstract method <span class='iname_b'><b>NHttpRequest</b> cookies&#160;<span class='sym_pd'><span>(&#160;NHttpCookie...</span>&#160;)</span></span> has been added to this interface.</td>
 <td>No effect.</td>
 </tr>
-</table><span class="sect_aff" onclick="sC(this, 'c_7')">
+</table><span class="sect_aff" onclick="sC(this, 'c_74')">
 [+] affected methods: 107 (0.7%)</span>
-<div id="c_7" style="display:none;">
+<div id="c_74" style="display:none;">
 <div class='affected'><span class='iname_a'>NHttpClient.CONNECT&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
 <span class='iname_a'>NHttpClient.CONNECT&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
 <span class='iname_a'>NHttpClient.DELETE&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
@@ -472,10 +1070,10 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 
 <br/><span class='jar'>nuts-1.0.0.jar</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_8')">
+<span class="section" onclick="sC(this, 'c_75')">
 <span class='ext'>[+]</span> <span class='ttype'>interface</span> NTextCode <span class='passed'>&nbsp;2&nbsp;</span></span>
 <br/>
-<div id="c_8" style="display:none;">
+<div id="c_75" style="display:none;">
 <table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
 <th>1</th>
 <td>Abstract method <span class='iname_b'><b>String</b> end&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
@@ -486,9 +1084,9 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 <td>Abstract method <span class='iname_b'><b>String</b> start&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
 <td>No effect.</td>
 </tr>
-</table><span class="sect_aff" onclick="sC(this, 'c_9')">
+</table><span class="sect_aff" onclick="sC(this, 'c_76')">
 [+] affected methods: 6 (0.04%)</span>
-<div id="c_9" style="display:none;">
+<div id="c_76" style="display:none;">
 <div class='affected'><span class='iname_a'>NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <i>lang</i></span>, <span>String <i>text</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this method is of type 'NTextCode'.</div>
 <span class='iname_a'>NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <i>lang</i></span>, <span>String <i>text</i></span>, <span>String <i>sep</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this method is of type 'NTextCode'.</div>
 <span class='iname_a'>NTextCode.highlight&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NTextCode' interface.</div>
@@ -514,17 +1112,17 @@ nuts-1.0.0.jar<br/>
 <h2>Test Results</h2><hr/>
 <table class='summary'>
 <tr><th>Total Java Modules</th><td><a href='#Checked_Archives' style='color:Blue;'>1</a></td></tr>
-<tr><th>Total Methods / Classes</th><td>14378 / 998</td></tr>
+<tr><th>Total Methods / Classes</th><td>14439 / 999</td></tr>
 <tr><th>Compatibility</th>
-<td class='warning'>99.2%</td>
+<td class='warning'>98.4%</td>
 </tr>
 </table>
 <h2>Problem Summary</h2><hr/>
 <table class='summary'>
 <tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>
-<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Source_Added' style='color:Blue;'>5</a></td></tr>
+<tr><th>Added Methods</th><td>-</td><td class='new'><a href='#Source_Added' style='color:Blue;'>66</a></td></tr>
 <tr><th>Removed Methods</th><td>High</td><td>0</td></tr>
-<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td class='failed'><a href='#Type_Source_Problems_High' style='color:Blue;'>4</a></td></tr>
+<tr><th rowspan='3'>Problems with<br/>Data Types</th><td>High</td><td class='failed'><a href='#Type_Source_Problems_High' style='color:Blue;'>29</a></td></tr>
 <tr><td>Medium</td><td>0</td></tr>
 <tr><td>Low</td><td>0</td></tr>
 <tr><th rowspan='3'>Problems with<br/>Methods</th><td>High</td><td>0</td></tr>
@@ -532,55 +1130,653 @@ nuts-1.0.0.jar<br/>
 <tr><td>Low</td><td>0</td></tr>
 </table>
 
-<a name='Source_Added'></a><h2>Added Methods <span class='new'>&nbsp;5&nbsp;</span></h2><hr/>
+<a name='Source_Added'></a><h2>Added Methods <span class='new'>&nbsp;66&nbsp;</span></h2><hr/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>BigAtan.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_77')">
+BigAtan.atan&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>t</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_77" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.atan:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_78')">
+BigAtan.atan2&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>y</span></span>, <span>BigDecimal <span class='color_p'>x</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_78" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.atan2:(Ljava/math/BigDecimal;Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_79')">
+BigAtan.pi&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_79" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.pi:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_80')">
+BigAtan.sqrt&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>x</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_80" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/BigAtan.sqrt:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NBigComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_81')">
+NBigComplex.addBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_81" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.addBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_82')">
+NBigComplex.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_82" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.addDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_83')">
+NBigComplex.argBigDecimal&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_83" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.argBigDecimal:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_84')">
+NBigComplex.divideBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_84" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.divideBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_85')">
+NBigComplex.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_85" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.divideDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_86')">
+NBigComplex.multiplyBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_86" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.multiplyBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_87')">
+NBigComplex.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>, <span>MathContext <span class='color_p'>p2</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_87" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.multiplyDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_88')">
+NBigComplex.subtractBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_88" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.subtractBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_89')">
+NBigComplex.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_89" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.subtractDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_90')">
+NBigComplex.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_90" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_91')">
+NBigComplex.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_91" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplex.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NBigComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_92')">
+NBigComplexImpl.addBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_92" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.addBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_93')">
+NBigComplexImpl.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_93" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.addDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_94')">
+NBigComplexImpl.argBigDecimal&#160;<span class='sym_p'><span>(&#160;MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;BigDecimal</span></span>
+<br/>
+<div id="c_94" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.argBigDecimal:(Ljava/math/MathContext;)Ljava/math/BigDecimal;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_95')">
+NBigComplexImpl.divideBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_95" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.divideBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_96')">
+NBigComplexImpl.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_96" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.divideDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_97')">
+NBigComplexImpl.multiplyBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_97" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.multiplyBigDecimal:(Ljava/math/BigDecimal;Ljava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_98')">
+NBigComplexImpl.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>, <span>MathContext <span class='color_p'>mc</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_98" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.multiplyDouble:(DLjava/math/MathContext;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_99')">
+NBigComplexImpl.subtractBigDecimal&#160;<span class='sym_p'><span>(&#160;BigDecimal <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_99" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.subtractBigDecimal:(Ljava/math/BigDecimal;)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_100')">
+NBigComplexImpl.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_100" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.subtractDouble:(D)Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_101')">
+NBigComplexImpl.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_101" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_102')">
+NBigComplexImpl.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_102" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NBigComplexImpl.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDefinitionFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_103')">
+NDefinitionFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NDefinition&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDefinitionFilter</span></span>
+<br/>
+<div id="c_103" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NDefinitionFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NDefinitionFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDependencyFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_104')">
+NDependencyFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NDependency&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDependencyFilter</span></span>
+<br/>
+<div id="c_104" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NDependencyFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NDependencyFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDoubleComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_105')">
+NDoubleComplex.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_105" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.addDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_106')">
+NDoubleComplex.argDouble&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_106" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.argDouble:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_107')">
+NDoubleComplex.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_107" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.divideDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_108')">
+NDoubleComplex.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_108" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.multiplyDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_109')">
+NDoubleComplex.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_109" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.subtractDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_110')">
+NDoubleComplex.toBigComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_110" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_111')">
+NDoubleComplex.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_111" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplex.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NDoubleComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_112')">
+NDoubleComplexImpl.addDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_112" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.addDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_113')">
+NDoubleComplexImpl.argDouble&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;double</span></span>
+<br/>
+<div id="c_113" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.argDouble:()D</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_114')">
+NDoubleComplexImpl.divideDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_114" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.divideDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_115')">
+NDoubleComplexImpl.multiplyDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_115" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.multiplyDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_116')">
+NDoubleComplexImpl.subtractDouble&#160;<span class='sym_p'><span>(&#160;double <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_116" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.subtractDouble:(D)Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_117')">
+NDoubleComplexImpl.toBigComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_117" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_118')">
+NDoubleComplexImpl.toFloatComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_118" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NDoubleComplexImpl.toFloatComplex:()Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NFloatComplex.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_119')">
+NFloatComplex.addFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_119" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.addFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_120')">
+NFloatComplex.argFloat&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;float</span></span>
+<br/>
+<div id="c_120" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.argFloat:()F</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_121')">
+NFloatComplex.divideFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_121" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.divideFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_122')">
+NFloatComplex.multiplyFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_122" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.multiplyFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_123')">
+NFloatComplex.subtractFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_123" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.subtractFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_124')">
+NFloatComplex.toBigComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_124" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_125')">
+NFloatComplex.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_125" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplex.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NFloatComplexImpl.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_126')">
+NFloatComplexImpl.addFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_126" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.addFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_127')">
+NFloatComplexImpl.argFloat&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;float</span></span>
+<br/>
+<div id="c_127" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.argFloat:()F</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_128')">
+NFloatComplexImpl.divideFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_128" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.divideFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_129')">
+NFloatComplexImpl.multiplyFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_129" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.multiplyFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_130')">
+NFloatComplexImpl.subtractFloat&#160;<span class='sym_p'><span>(&#160;float <span class='color_p'>other</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NFloatComplex</span></span>
+<br/>
+<div id="c_130" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.subtractFloat:(F)Lnet/thevpc/nuts/math/NFloatComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_131')">
+NFloatComplexImpl.toBigComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NBigComplex</span></span>
+<br/>
+<div id="c_131" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.toBigComplex:()Lnet/thevpc/nuts/math/NBigComplex;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_132')">
+NFloatComplexImpl.toDoubleComplex&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NDoubleComplex</span></span>
+<br/>
+<div id="c_132" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/math/NFloatComplexImpl.toDoubleComplex:()Lnet/thevpc/nuts/math/NDoubleComplex;</span><br/><br/></div>
+
+<br/>
 <span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NHttpRequest.class</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.net</span><br/>
-<span class="section" onclick="sC(this, 'c_10')">
+<span class="section" onclick="sC(this, 'c_133')">
 NHttpRequest.cookie&#160;<span class='sym_p'><span>(&#160;NHttpCookie <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
 <br/>
-<div id="c_10" style="display:none;">
+<div id="c_133" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/net/NHttpRequest.cookie:(Lnet/thevpc/nuts/net/NHttpCookie;)Lnet/thevpc/nuts/net/NHttpRequest;</span><br/><br/></div>
 
-<span class="section" onclick="sC(this, 'c_11')">
+<span class="section" onclick="sC(this, 'c_134')">
 NHttpRequest.cookies&#160;<span class='sym_p'><span>(&#160;NHttpCookie... <span class='color_p'>p1</span></span>&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NHttpRequest</span></span>
 <br/>
-<div id="c_11" style="display:none;">
+<div id="c_134" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/net/NHttpRequest.cookies:([Lnet/thevpc/nuts/net/NHttpCookie;)Lnet/thevpc/nuts/net/NHttpRequest;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NIdFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_135')">
+NIdFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NId&gt; <span class='color_p'>predicate</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NIdFilter</span></span>
+<br/>
+<div id="c_135" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NIdFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NIdFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NRepositoryFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.core</span><br/>
+<span class="section" onclick="sC(this, 'c_136')">
+NRepositoryFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NRepository&gt; <span class='color_p'>filter</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NRepositoryFilter</span></span>
+<br/>
+<div id="c_136" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/core/NRepositoryFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/core/NRepositoryFilter;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NSystemTerminalBase.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.spi.base</span><br/>
+<span class="section" onclick="sC(this, 'c_137')">
+NSystemTerminalBase.interruptHandler&#160;<span class='sym_p'>(&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;Runnable</span></span>
+<br/>
+<div id="c_137" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/spi/base/NSystemTerminalBase.interruptHandler:()Ljava/lang/Runnable;</span><br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_138')">
+NSystemTerminalBase.interruptHandler&#160;<span class='sym_p'><span>(&#160;Runnable <span class='color_p'>interruptHandler</span></span>&#160;)</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NSystemTerminalBase</span></span>
+<br/>
+<div id="c_138" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/spi/base/NSystemTerminalBase.interruptHandler:(Ljava/lang/Runnable;)Lnet/thevpc/nuts/spi/base/NSystemTerminalBase;</span><br/><br/></div>
 
 <br/>
 <span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NText.class</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_12')">
+<span class="section" onclick="sC(this, 'c_139')">
 NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <span class='color_p'>start</span></span>, <span>String <span class='color_p'>kind</span></span>, <span>String <span class='color_p'>separator</span></span>, <span>String <span class='color_p'>end</span></span>, <span>String <span class='color_p'>text</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NTextCode</span></span>
 <br/>
-<div id="c_12" style="display:none;">
+<div id="c_139" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NText.ofCode:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/thevpc/nuts/text/NTextCode;</span><br/><br/></div>
 
 <br/>
 <span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NTextCode.class</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_13')">
+<span class="section" onclick="sC(this, 'c_140')">
 NTextCode.end&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
 <br/>
-<div id="c_13" style="display:none;">
+<div id="c_140" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NTextCode.end:()Ljava/lang/String;</span><br/><br/></div>
 
-<span class="section" onclick="sC(this, 'c_14')">
+<span class="section" onclick="sC(this, 'c_141')">
 NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abstract]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;String</span></span>
 <br/>
-<div id="c_14" style="display:none;">
+<div id="c_141" style="display:none;">
 <span class='mngl'>net/thevpc/nuts/text/NTextCode.start:()Ljava/lang/String;</span><br/><br/></div>
+
+<br/>
+<span class='jar'>nuts-1.1.0.jar</span>, <span class='cname'>NVersionFilter.class</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.artifact</span><br/>
+<span class="section" onclick="sC(this, 'c_142')">
+NVersionFilter.ofPredicate&#160;<span class='sym_p'><span>(&#160;Predicate&lt;NVersion&gt; <span class='color_p'>version</span></span>&#160;)</span> <span class='attr'>[static]</span><span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;NVersionFilter</span></span>
+<br/>
+<div id="c_142" style="display:none;">
+<span class='mngl'>net/thevpc/nuts/artifact/NVersionFilter.ofPredicate:(Ljava/util/function/Predicate;)Lnet/thevpc/nuts/artifact/NVersionFilter;</span><br/><br/></div>
 
 <br/>
 <a class='top_ref' href='#Top'>to the top</a><br/>
 <a name='High_Risk_Source_Problems'></a><a name='Type_Source_Problems_High'></a>
-<h2>Problems with Data Types, High Severity <span class='failed'>&nbsp;4&nbsp;</span></h2><hr/>
+<h2>Problems with Data Types, High Severity <span class='failed'>&nbsp;29&nbsp;</span></h2><hr/>
 <span class='jar'>nuts-1.0.0.jar</span><br/>
+<span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.math</span><br/>
+<span class="section" onclick="sC(this, 'c_143')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NBigComplex <span class='failed'>&nbsp;11&nbsp;</span></span>
+<br/>
+<div id="c_143" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> addBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>addBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>BigDecimal</b> argBigDecimal&#160;<span class='sym_pd'><span>(&#160;MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>argBigDecimal&#160;<span class='sym_pd'><span>(&#160;MathContext</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> divideBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>divideBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> multiplyBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>multiplyBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>, <span>MathContext</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>, <span>MathContext</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>8</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> subtractBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>subtractBigDecimal&#160;<span class='sym_pd'><span>(&#160;BigDecimal</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>10</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NBigComplex</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_144')">
+[+] affected methods: 41 (0.3%)</span>
+<div id="c_144" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.addBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.divideBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>, <span>MathContext <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.invBigComplex&#160;<span class='sym_p'><span>(&#160;MathContext <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.isReal&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.multiplyBigComplex&#160;<span class='sym_p'><span>(&#160;NBigComplex <span class='focus_p'>p1</span></span>, <span>MathContext <i>p2</i></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NBigComplex'.</div>
+<span class='iname_a'>NBigComplex.negateBigComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NBigComplex' interface.</div>
+<span class='iname_a'>NBigComplex.of&#160;<span class='sym_p'><span>(&#160;String <i>any</i></span>&#160;)</span></span><br/><div class='affect'>This method is from 'NBigComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_145')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NDoubleComplex <span class='failed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_145" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>addDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>double</b> argDouble&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>argDouble&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>divideDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>multiplyDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>subtractDouble&#160;<span class='sym_pd'><span>(&#160;double</span>&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toFloatComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NDoubleComplex</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_146')">
+[+] affected methods: 30 (0.2%)</span>
+<div id="c_146" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.absDouble&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.addDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.divideDoubleComplex&#160;<span class='sym_p'><span>(&#160;NDoubleComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NDoubleComplex'.</div>
+<span class='iname_a'>NDoubleComplex.doubleValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.floatValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.intValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.invDoubleComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+<span class='iname_a'>NDoubleComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NDoubleComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<span class="section" onclick="sC(this, 'c_147')">
+<span class='ext'>[+]</span> <span class='ttype'>interface</span> NFloatComplex <span class='failed'>&nbsp;7&nbsp;</span></span>
+<br/>
+<div id="c_147" style="display:none;">
+<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
+<th>1</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> addFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>addFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Abstract method <span class='iname_b'><b>float</b> argFloat&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>argFloat&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> divideFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>divideFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> multiplyFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>multiplyFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>5</th>
+<td>Abstract method <span class='iname_b'><b>NFloatComplex</b> subtractFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>subtractFloat&#160;<span class='sym_pd'><span>(&#160;float</span>&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>6</th>
+<td>Abstract method <span class='iname_b'><b>NBigComplex</b> toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toBigComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+<tr>
+<th>7</th>
+<td>Abstract method <span class='iname_b'><b>NDoubleComplex</b> toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
+<td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>toDoubleComplex&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NFloatComplex</b>.</td>
+</tr>
+</table><span class="sect_aff" onclick="sC(this, 'c_148')">
+[+] affected methods: 43 (0.3%)</span>
+<div id="c_148" style="display:none;">
+<div class='affected'><span class='iname_a'>net.thevpc.nuts.elem.NPrimitiveElementBuilder.setFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.absFloat&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.addFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.divideFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.imagValue&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.invFloatComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.isImaginary&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.isReal&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+<span class='iname_a'>NFloatComplex.multiplyFloatComplex&#160;<span class='sym_p'><span>(&#160;NFloatComplex <span class='focus_p'>p1</span></span>&#160;)</span></span><br/><div class='affect'>1st parameter 'p1'  of this abstract method is of type 'NFloatComplex'.</div>
+<span class='iname_a'>NFloatComplex.negateFloatComplex&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NFloatComplex' interface.</div>
+ <b>...</b>
+<br/>
+</div></div>
+<br/><br/></div>
+
+<br/><span class='jar'>nuts-1.0.0.jar</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.net</span><br/>
-<span class="section" onclick="sC(this, 'c_15')">
+<span class="section" onclick="sC(this, 'c_149')">
 <span class='ext'>[+]</span> <span class='ttype'>interface</span> NHttpRequest <span class='failed'>&nbsp;2&nbsp;</span></span>
 <br/>
-<div id="c_15" style="display:none;">
+<div id="c_149" style="display:none;">
 <table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
 <th>1</th>
 <td>Abstract method <span class='iname_b'><b>NHttpRequest</b> cookie&#160;<span class='sym_pd'><span>(&#160;NHttpCookie</span>&#160;)</span></span> has been added to this interface.</td>
@@ -591,9 +1787,9 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 <td>Abstract method <span class='iname_b'><b>NHttpRequest</b> cookies&#160;<span class='sym_pd'><span>(&#160;NHttpCookie...</span>&#160;)</span></span> has been added to this interface.</td>
 <td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>cookies&#160;<span class='sym_pd'><span>(&#160;NHttpCookie...</span>&#160;)</span></span> in <b>NHttpRequest</b>.</td>
 </tr>
-</table><span class="sect_aff" onclick="sC(this, 'c_16')">
+</table><span class="sect_aff" onclick="sC(this, 'c_150')">
 [+] affected methods: 107 (0.7%)</span>
-<div id="c_16" style="display:none;">
+<div id="c_150" style="display:none;">
 <div class='affected'><span class='iname_a'>NHttpClient.CONNECT&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
 <span class='iname_a'>NHttpClient.CONNECT&#160;<span class='sym_p'><span>(&#160;String <i>p1</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
 <span class='iname_a'>NHttpClient.DELETE&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>Return value  of this abstract method is of type 'NHttpRequest'.</div>
@@ -611,10 +1807,10 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 
 <br/><span class='jar'>nuts-1.0.0.jar</span><br/>
 <span class='pkg_t'>package</span> <span class='pkg'>net.thevpc.nuts.text</span><br/>
-<span class="section" onclick="sC(this, 'c_17')">
+<span class="section" onclick="sC(this, 'c_151')">
 <span class='ext'>[+]</span> <span class='ttype'>interface</span> NTextCode <span class='failed'>&nbsp;2&nbsp;</span></span>
 <br/>
-<div id="c_17" style="display:none;">
+<div id="c_151" style="display:none;">
 <table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr><tr>
 <th>1</th>
 <td>Abstract method <span class='iname_b'><b>String</b> end&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
@@ -625,9 +1821,9 @@ NTextCode.start&#160;<span class='sym_p'>(&#160;)</span> <span class='attr'>[abs
 <td>Abstract method <span class='iname_b'><b>String</b> start&#160;<span class='sym_pd'>(&#160;)</span></span> has been added to this interface.</td>
 <td>Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <span class='iname_b'>start&#160;<span class='sym_pd'>(&#160;)</span></span> in <b>NTextCode</b>.</td>
 </tr>
-</table><span class="sect_aff" onclick="sC(this, 'c_18')">
+</table><span class="sect_aff" onclick="sC(this, 'c_152')">
 [+] affected methods: 6 (0.04%)</span>
-<div id="c_18" style="display:none;">
+<div id="c_152" style="display:none;">
 <div class='affected'><span class='iname_a'>NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <i>lang</i></span>, <span>String <i>text</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this method is of type 'NTextCode'.</div>
 <span class='iname_a'>NText.ofCode&#160;<span class='sym_p'><span>(&#160;String <i>lang</i></span>, <span>String <i>text</i></span>, <span>String <i>sep</i></span>&#160;)</span></span><br/><div class='affect'>Return value  of this method is of type 'NTextCode'.</div>
 <span class='iname_a'>NTextCode.highlight&#160;<span class='sym_p'>(&#160;)</span></span><br/><div class='affect'>This abstract method is from 'NTextCode' interface.</div>

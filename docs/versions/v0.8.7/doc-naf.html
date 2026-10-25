@@ -420,16 +420,8 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#U0fec2408d09d51f08a73faa0e90975a0ce40ef3c">
-                                7.6 IO: Working with files
-                            </a>
-                            
-                            
-                        </li>
-                        
-                        <li class="nav-item">
                             <a class="nav-link" href="#filesystem">
-                                7.7 File system
+                                7.6 File system
                             </a>
                             
                             
@@ -1770,66 +1762,11 @@ List&lt;NPath&gt; files = dir.stream()
                     </section>
                     <hr class="divider">
                     
-                    <section id="U0fec2408d09d51f08a73faa0e90975a0ce40ef3c">
-
-                        <h3 class="main-section2">
-                            <a href="#U0fec2408d09d51f08a73faa0e90975a0ce40ef3c">
-                                7.6 IO: Working with files
-                            </a>
-                        </h3>
-
-                        <div class="text-card">
-                            <p class="md-phrase"><b class="md-bold">nuts</b> Library allows multiple variants of string interpolation</p><H4 class="md-title-2">NCp</H4><pre><code class="language-java">NCp.of()
-        .from(&quot;http://my-server.com/file.pdf&quot;)
-        .to(&quot;/home/my-file&quot;)
-        .setProgressMonitor(true)
-        .setValidator((in)-&gt;checkSHA1Hash(in))
-        .run();
-
-    NPs ps=NPs.of()
-        if(ps.isSupportedKillProcess()){
-            ps.killProcess(&quot;1234&quot;);
-        }
-</code></pre><H4 class="md-title-2">NCompress/NUncompress</H4><pre><code class="language-java">NCompress aa = NCompress.of()
-        .setTarget(options.outZip);
-        for (NPath file : options.files) {
-        aa.addSource(file);
-        }
-        aa.run();
-        
-</code></pre><pre><code class="language-java">NUncompress.of()
-                    .from(is)
-                    .visit(new NUncompressVisitor() {
-    @Override
-    public boolean visitFolder(String path) {
-        return true;
-    }
-
-    @Override
-    public boolean visitFile(String path, InputStream inputStream) {
-        if (&quot;META-INF/MANIFEST.MF&quot;.equals(path)) {
-            ...
-        } else) {
-            ...
-        }
-        return true;
-    }
-}).run();
-</code></pre><H4 class="md-title-2">NDigest</H4><pre><code class="language-java">String digest=NDigest.of().setSource(x.getPath().getBytes()).computeString();
-}).run();
-</code></pre>
-                        </div>
-
-                        
-
-                    </section>
-                    <hr class="divider">
-                    
                     <section id="filesystem">
 
                         <h3 class="main-section2">
                             <a href="#filesystem">
-                                7.7 File system
+                                7.6 File system
                             </a>
                         </h3>
 
