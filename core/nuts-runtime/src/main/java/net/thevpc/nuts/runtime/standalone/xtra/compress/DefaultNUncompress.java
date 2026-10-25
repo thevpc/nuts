@@ -67,6 +67,7 @@ public class DefaultNUncompress implements NUncompress {
         if (NBlankable.isBlank(packaging)) {
             packaging = "zip";
         }
+        this.packaging = packaging;
         this.packagingImpl = NWorkspaceExt.of().getModel().extensionCatalogManager.createSupported(NUncompressPackaging.class, packaging,"net.thevpc.nuts.spi.compression", packaging.toLowerCase()).get();
         return this;
     }
@@ -199,7 +200,6 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress run() {
-        CompressType compressType = toCompressType(packaging());
         NAssert.requireNamedNonNull(source, "source");
 
         NInputSource _source = source;
@@ -220,7 +220,7 @@ public class DefaultNUncompress implements NUncompress {
         } else if (visitor != null && target != null) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid target %s when visitor is specified", target));
         } else if (visitor != null) {
-            return runVisitor(_source, compressType);
+            return runVisitor(_source);
         }
 
         _LOG()
@@ -258,7 +258,8 @@ public class DefaultNUncompress implements NUncompress {
         throw new NUnsupportedArgumentException(NMsg.ofC("unsupported format %s", format));
     }
 
-    private NUncompress runVisitor(NInputSource source, CompressType format) {
+    private NUncompress runVisitor(NInputSource source) {
+        CompressType format = toCompressType(packaging());
         switch (format) {
             case ZIP: {
                 new NUncompressZip().visitPackage(this, source, visitor);
