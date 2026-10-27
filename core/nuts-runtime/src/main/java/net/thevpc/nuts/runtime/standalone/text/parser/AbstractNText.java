@@ -23,6 +23,11 @@ public abstract class AbstractNText implements NText {
 
     @Override
     public String toString() {
+        return ntfText();
+    }
+
+    @Override
+    public String ntfText() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out);
         ss.writeNode(this);

@@ -659,6 +659,17 @@ public interface NText extends NBlankable, NElementSimple {
      */
     String filteredText();
 
+    /**
+     * ntf text
+     * @return ntf text
+     * @since 1.1.0
+     */
+    String ntfText();
+
+    /**
+     * equivalent to ntf text
+     * @return ntf text
+     */
     String toString();
 
     /**
