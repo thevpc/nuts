@@ -832,7 +832,7 @@ public class NStringBuilderImpl implements NStringBuilder {
      */
     @Override
     public char last() {
-        return data.charAt(data.length());
+        return data.charAt(data.length() - 1);
     }
 
     /**

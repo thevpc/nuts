@@ -132,6 +132,36 @@ public class DefaultNTextBuilder extends AbstractNText implements NTextBuilder {
     }
 
     @Override
+    public NTextBuilder println(Object text, NTextStyle style) {
+        return append(text, style).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(Object text, NTextStyles styles) {
+        return append(text, styles).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(Object node) {
+        return append(node).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(NText node) {
+        return append(node).newLine();
+    }
+
+    @Override
+    public NTextBuilder append(NMsg node) {
+        return append(NText.of(node));
+    }
+
+    @Override
+    public NTextBuilder println(NMsg node) {
+        return append(node).newLine();
+    }
+
+    @Override
     public NText substring(int start, int end) {
         if (start < 0 || end < start || end > length()) {
             throw new IndexOutOfBoundsException("Invalid start or end");

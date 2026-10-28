@@ -116,6 +116,11 @@ public interface NTextBuilder extends NText, Iterable<NText> {
     NTextBuilder append(Object text, NTextStyle style);
 
     /**
+     * @since 1.1.0
+     */
+    NTextBuilder println(Object text, NTextStyle style);
+
+    /**
      * Append.
      *
      * @param text text
@@ -123,6 +128,11 @@ public interface NTextBuilder extends NText, Iterable<NText> {
      * @return append result
      */
     NTextBuilder append(Object text, NTextStyles styles);
+
+    /**
+     * @since 1.1.0
+     */
+    NTextBuilder println(Object text, NTextStyles styles);
 
     /**
      * Append.
@@ -133,12 +143,35 @@ public interface NTextBuilder extends NText, Iterable<NText> {
     NTextBuilder append(Object node);
 
     /**
+     * @since 1.1.0
+     */
+    NTextBuilder println(Object node);
+
+    /**
      * Append.
      *
      * @param node node
      * @return append result
      */
     NTextBuilder append(NText node);
+
+    /**
+     * @since 1.1.0
+     */
+    NTextBuilder println(NText node);
+
+    /**
+     * Append.
+     *
+     * @param node node
+     * @return append result
+     */
+    NTextBuilder append(NMsg node);
+
+    /**
+     * @since 1.1.0
+     */
+    NTextBuilder println(NMsg node);
 
     /**
      * Append joined.

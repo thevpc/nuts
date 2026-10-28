@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.pipeline.NStream;
@@ -47,6 +48,68 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public String toString() {
+        return ntfText();
+    }
+
+    /**
+     * Applies NTF escaping to the given raw text, mirroring
+     * {@code NTextNodeWriterStringer.writeEscaped}.
+     *
+     * @param rawString raw text
+     * @return escaped NTF text
+     */
+    public static String escapeNtf(String rawString) {
+        if (rawString == null) {
+            return null;
+        }
+        char[] cc = rawString.toCharArray();
+        StringBuilder sb = new StringBuilder(rawString.length());
+        for (int i = 0; i < cc.length; i++) {
+            switch (cc[i]) {
+                case '\\':
+                case NConstants.Ntf.SILENT: {
+                    sb.append('\\');
+                    sb.append(cc[i]);
+                    break;
+                }
+                case '`': {
+                    if (i < cc.length - 2) {
+                        if (cc[i] == '`' && cc[i + 1] == '`' && cc[i + 2] == '`') {
+                            sb.append('\\');
+                            sb.append(cc[i]);
+                            sb.append(cc[i + 1]);
+                            sb.append(cc[i + 2]);
+                            i += 2;
+                        } else {
+                            sb.append(cc[i]);
+                        }
+                    } else if (i < cc.length - 1) {
+                        if (cc[i] == '`' && cc[i + 1] == '`') {
+                            sb.append('\\');
+                            sb.append(cc[i]);
+                        } else {
+                            sb.append(cc[i]);
+                        }
+                    } else {
+                        sb.append('\\');
+                        sb.append(cc[i]);
+                    }
+                    break;
+                }
+                case '#': {
+                    if (i < cc.length - 1 && cc[i + 1] != cc[i]) {
+                        sb.append(cc[i]);
+                    } else {
+                        sb.append('\\');
+                        sb.append(cc[i]);
+                    }
+                    break;
+                }
+                default: {
+                    sb.append(cc[i]);
+                }
+            }
+        }
         return sb.toString();
     }
 
@@ -347,7 +410,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public List<NText> split(Pattern separator, boolean returnSeparator) {
-        return build().split(separator,returnSeparator);
+        return build().split(separator, returnSeparator);
     }
 
     @Override
@@ -470,6 +533,11 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public String filteredText() {
         return sb.toString();
+    }
+
+    @Override
+    public String ntfText() {
+        return escapeNtf(sb.toString());
     }
 
     @Override
@@ -619,7 +687,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
         String old = sb.toString();
         sb.delete(0, sb.length());
-        sb.append(NStringUtils.indent(old,prefix.filteredText(), skipFirstLine));
+        sb.append(NStringUtils.indent(old, prefix.filteredText(), skipFirstLine));
         return null;
     }
 
@@ -652,6 +720,37 @@ public class NTextBuilderPlain implements NTextBuilder {
         return this;
     }
 
+    @Override
+    public NTextBuilder println(Object text, NTextStyle style) {
+        return append(text, style).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(Object text, NTextStyles styles) {
+        return append(text, styles).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(Object node) {
+        return append(node).newLine();
+    }
+
+    @Override
+    public NTextBuilder println(NText node) {
+        return append(node).newLine();
+    }
+
+    @Override
+    public NTextBuilder append(NMsg node) {
+        sb.append(node == null ? "" : node.toString());
+        return this;
+    }
+
+    @Override
+    public NTextBuilder println(NMsg node) {
+        return append(node).newLine();
+    }
+
     @NImmutable
     private static class ImmutableNTextPlain implements NTextPlain, NToElement {
 
@@ -681,6 +780,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         public NStream<NNormalizedText> normalizeStream(NTextTransformer transformer, NTextTransformConfig config) {
             return NStream.ofSingleton(this);
         }
+
         @Override
         public NText traverseDFS(NTextVisitor visitor) {
             visitor.enter(this);
@@ -694,6 +794,7 @@ public class NTextBuilderPlain implements NTextBuilder {
             visitor.exit(this);
             return this;
         }
+
         @Override
         public NElement toElement() {
             return NElement.ofString(str);
@@ -717,6 +818,16 @@ public class NTextBuilderPlain implements NTextBuilder {
         @Override
         public String filteredText() {
             return str;
+        }
+
+        @Override
+        public String ntfText() {
+            return escapeNtf(str);
+        }
+
+        @Override
+        public String toString() {
+            return ntfText();
         }
 
         @Override
@@ -774,7 +885,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public List<NPrimitiveText> toPrimitiveList() {
-            return Arrays.asList(this);
+            return Collections.singletonList(this);
         }
 
         @Override
@@ -821,7 +932,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         /**
          * Split.
          *
-         * @param separator separator
+         * @param separator       separator
          * @param returnSeparator return separator
          * @return split result
          */
@@ -946,6 +1057,7 @@ public class NTextBuilderPlain implements NTextBuilder {
         public boolean isString(String anyString) {
             return anyString != null && anyString.equals(str);
         }
+
 
     }
 }
