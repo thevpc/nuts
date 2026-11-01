@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NEmptyOptionalException;
+import net.thevpc.nuts.util.NOptional;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -269,6 +270,7 @@ public class CmdLineTest {
         boolean verbose;
         String license;
         String example;
+        String notes;
         List<String> paths = new ArrayList<>();
         List<String> positionals = new ArrayList<>();
     }
@@ -678,6 +680,74 @@ public class CmdLineTest {
         Assertions.assertEquals(Arrays.asList("./src"), o.paths);
         Assertions.assertEquals(Arrays.asList("leftover"), o.positionals);
         Assertions.assertTrue(c.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // 16. The BASH tokenizer: a quote is a quoting mechanism inside a word,
+    //     not a word separator. Every expectation below was measured against
+    //     `bash -c 'printf "<%s> " …'` before being written down.
+    // ---------------------------------------------------------------
+    private static List<String> tokens(String line) {
+        NCmdLine c = NCmdLine.parse(line, NShellFamily.BASH, false).get();
+        return Arrays.stream(c.toArgumentArray()).map(NArg::image).collect(Collectors.toList());
+    }
+
+    @Test
+    void testQuotedOptionValueIsOneArgument() {
+        // the shape that used to fail with "illegal char "" : the value is quoted because it
+        // contains a space, which is exactly what a shell does
+        Assertions.assertEquals(Arrays.asList("--notes=asked the reviewer"),
+                tokens("--notes=\"asked the reviewer\""));
+        Assertions.assertEquals(Arrays.asList("--notes=a b"),
+                tokens("--notes='a b'"));
+    }
+
+    @Test
+    void testQuoteInMiddleOfWordKeepsTheWordWhole() {
+        Assertions.assertEquals(Arrays.asList("ab c"), tokens("a\"b c\""));
+        // and a word resumes after the closing quote rather than starting a new argument
+        Assertions.assertEquals(Arrays.asList("a bc"), tokens("\"a b\"c"));
+    }
+
+    @Test
+    void testEmptyQuotedArgumentIsPreserved() {
+        Assertions.assertEquals(Arrays.asList("empty", ""), tokens("empty \"\""));
+    }
+
+    @Test
+    void testEscapesInsideDoubleQuotesStillWork() {
+        Assertions.assertEquals(Arrays.asList("say", "hello \"world\""),
+                tokens("say \"hello \\\"world\\\"\""));
+    }
+
+    @Test
+    void testUnterminatedQuoteIsAnErrorNotADroppedArgument() {
+        NCmdLine unterminated = NCmdLine.parse("x \"unterminated", NShellFamily.BASH, false)
+                .orNull();
+        Assertions.assertNull(unterminated, "a half-written double quote must not silently lose an argument");
+        NOptional<NCmdLine> r = NCmdLine.parse("x \"unterminated", NShellFamily.BASH, false);
+        Assertions.assertTrue(r.isNotPresent());
+        Assertions.assertTrue(String.valueOf(r.message().get()).contains("expected"),
+                String.valueOf(r.message().get()));
+    }
+
+    @Test
+    void testTrailingBackslashIsKeptLiterally() {
+        // bash keeps it, and the tokenizer used to run off the end of the array
+        Assertions.assertEquals(Arrays.asList("trail\\"), tokens("trail\\"));
+    }
+
+    @Test
+    void testQuotedOptionValueReachesTheMatcher() {
+        Opts o = new Opts();
+        NCmdLine c = NCmdLine.parse("edit item-1 --notes=\"asked the reviewer, twice\"",
+                NShellFamily.BASH, false).get();
+        c.matcher()
+                .when("--notes").asEntry(a -> o.notes = a.stringValue())
+                .whenNonOption().asArg(a -> o.positionals.add(a.image()))
+                .requireAll();
+        Assertions.assertEquals("asked the reviewer, twice", o.notes);
+        Assertions.assertEquals(Arrays.asList("edit", "item-1"), o.positionals);
     }
 
 }

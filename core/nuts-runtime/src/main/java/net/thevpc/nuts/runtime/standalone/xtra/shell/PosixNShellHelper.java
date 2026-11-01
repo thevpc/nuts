@@ -143,7 +143,11 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                         case '\\': {
                             status = IN_WORD;
                             i++;
-                            sb.append(charArray[i]);
+                            if (i >= charArray.length) {
+                                sb.append('\\');
+                            } else {
+                                sb.append(charArray[i]);
+                            }
                             break;
                         }
                         default: {
@@ -163,28 +167,22 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                             break;
                         }
                         case '\'': {
-                            if(lenient) {
-                                args.add(sb.toString());
-                                sb.delete(0, sb.length());
-                                status = IN_QUOTED_WORD;
-                            }else {
-                                throw new NParseException(NMsg.ofC("illegal char %s", c));
-                            }
+                            // bash keeps the word whole across a quote in the middle:
+                            // --notes='a b' is one argument, not an error and not two tokens
+                            status = IN_QUOTED_WORD;
                             break;
                         }
                         case '"': {
-                            if(lenient) {
-                                args.add(sb.toString());
-                                sb.delete(0, sb.length());
-                                status = IN_DBQUOTED_WORD;
-                            }else {
-                                throw new NParseException(NMsg.ofC("illegal char %s", c));
-                            }
+                            status = IN_DBQUOTED_WORD;
                             break;
                         }
                         case '\\': {
                             i++;
-                            sb.append(charArray[i]);
+                            if (i >= charArray.length) {
+                                sb.append('\\');
+                            } else {
+                                sb.append(charArray[i]);
+                            }
                             break;
                         }
                         default: {
@@ -197,10 +195,8 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                 case IN_QUOTED_WORD: {
                     switch (c) {
                         case '\'': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
+                            // the word continues after the closing quote: 'a b'c is one token
+                            status = IN_WORD;
                             break;
                         }
                         default: {
@@ -214,14 +210,16 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                 case IN_DBQUOTED_WORD: {
                     switch (c) {
                         case '"': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
+                            status = IN_WORD;
                             break;
                         }
                         case '\\': {
-                            i = readEscapedBash(charArray, i + 1, sb);
+                            if (i + 1 >= charArray.length) {
+                                sb.append('\\');
+                                i++;
+                            } else {
+                                i = readEscapedBash(charArray, i + 1, sb);
+                            }
                             //ignore
                             break;
                         }
@@ -231,6 +229,7 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
                             break;
                         }
                     }
+                    break;
                 }
             }
         }
@@ -246,6 +245,14 @@ public abstract class PosixNShellHelper extends AbstractPosixNShellHelper {
             case IN_QUOTED_WORD: {
                 if(!lenient) {
                     throw new NParseException(NMsg.ofP("expected '"));
+                }
+                break;
+            }
+            case IN_DBQUOTED_WORD: {
+                // an unterminated double quote is a syntax error, the way the single quote above
+                // already was; silently dropping the argument lost text from the command line
+                if (!lenient) {
+                    throw new NParseException(NMsg.ofP("expected \""));
                 }
                 break;
             }
