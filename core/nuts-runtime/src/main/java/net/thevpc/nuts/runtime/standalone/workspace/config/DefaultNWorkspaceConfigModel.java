@@ -170,7 +170,7 @@ public class DefaultNWorkspaceConfigModel {
     public void onDiscoverType(Class componentType) {
         if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (workspace.getModel().extensionModel.getObjectFactory());
-            onDiscoverInstance(NPathFactorySPI.class,aa.newInstance(componentType, NPathFactorySPI.class));
+            onDiscoverInstance(NPathFactorySPI.class,(NPathFactorySPI)aa.newInstance(componentType, NPathFactorySPI.class));
         }
         if (NMsgCustomFormatter.class.isAssignableFrom(componentType)) {
             NWorkspaceExt we = NWorkspaceExt.of();

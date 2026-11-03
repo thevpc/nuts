@@ -88,11 +88,10 @@ class JavaNTypeNameDomain implements NTypeNamePlatformDomain {
         return false;
     }
 
-
     @Override
-    public List<NTypeName> getInterfaces(NTypeName any) {
+    public List<NTypeName<?>> getInterfaces(NTypeName<?> any) {
         Class[] interfaces = getTypeClass(any).getInterfaces();
-        List<NTypeName> typeReferences = new ArrayList<>(interfaces.length);
+        List<NTypeName<?>> typeReferences = new ArrayList<>(interfaces.length);
         for (int i = 0; i < interfaces.length; i++) {
             typeReferences.add(NTypeName.of(interfaces[i]));
         }
