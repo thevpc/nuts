@@ -59,7 +59,7 @@ public class DefaultNPrepare extends AbstractNPrepare {
             LOG.debug(NMsg.ofC("Remote user home: %s, workspace: %s", rc.remoteUserHome, rc.remoteWorkspace));
             provisionJava(rc);
 
-            rc.companionRepository = rc.remoteUserHome + "/nuts-companion-respository-" + UUID.randomUUID();
+            rc.companionRepository = rc.remoteUserHome + "/.nuts/nuts-companion-repository/nuts-companion-repository-" + UUID.randomUUID();
             LOG.debug(NMsg.ofC("Using remote companion repository: %s", rc.companionRepository));
 
             NWorkspace workspace = NWorkspace.of();

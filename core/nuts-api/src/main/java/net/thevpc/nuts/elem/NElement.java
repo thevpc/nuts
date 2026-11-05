@@ -103,6 +103,28 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementRPI.of().getSharedElements().doWithMapperStore(doWith);
     }
 
+    /**
+     *
+     * @param o element
+     * @return default element
+     * @since 1.1.0
+     */
+    static NElement defaultToElement(Object o) {
+        return NElementRPI.of().getSharedElements().defaultToElement(o);
+    }
+
+
+    /**
+     *
+     * @param any element
+     * @param to  expected type
+     * @param <T> Type
+     * @return default object
+     * @since 1.1.0
+     */
+    static <T> NOptional<T> defaultFromElement(NElement any, Class<T> to) {
+        return NElementRPI.of().getSharedElements().defaultFromElement(any, to);
+    }
 
     /// ///////////////////////////////////////////////////////////////////////////////////
 
@@ -1851,6 +1873,7 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
     static NElement ofFragment(NElement... elements) {
         return NElementRPI.of().createFragment(elements);
     }
+
 
     /**
      * Any matches.

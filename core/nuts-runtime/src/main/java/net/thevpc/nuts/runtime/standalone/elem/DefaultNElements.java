@@ -1,23 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.function.Consumer;
 
-import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.expr.NOperatorAssociativity;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepAnnotationParam;
-import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepChild;
-import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepParam;
-import net.thevpc.nuts.runtime.standalone.elem.steps.NElementStepSubList;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
-import net.thevpc.nuts.runtime.standalone.elem.path.NElementSelectorFilters;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
@@ -26,22 +16,23 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElements implements NElements {
 
-    private UserElementMapperStore userElementMapperStore;
+    private final UserElementMapperStore userElementMapperStore;
     private boolean ntf;
-    private boolean readOnly;
+    private final boolean readOnly;
 
     public DefaultNElements() {
-        this(false,false);
+        this(false, false);
     }
 
-    public DefaultNElements(boolean ntf,boolean readOnly) {
-        this.ntf=ntf;
-        this.readOnly=readOnly;
+    public DefaultNElements(boolean ntf, boolean readOnly) {
+        this.ntf = ntf;
+        this.readOnly = readOnly;
         this.userElementMapperStore = new UserElementMapperStore(readOnly);
         this.userElementMapperStore.setReflectRepository(NReflectRepository.of());
     }
-    private void checkReadOnly(){
-        if(readOnly){
+
+    private void checkReadOnly() {
+        if (readOnly) {
             throw new NReadOnlyException(NMsg.ofC("mapper store is readonly"));
         }
     }
@@ -52,7 +43,7 @@ public class DefaultNElements implements NElements {
 
     @Override
     public NElements setNtf(boolean ntf) {
-        if(ntf!=this.ntf) {
+        if (ntf != this.ntf) {
             checkReadOnly();
             this.ntf = ntf;
         }
@@ -76,8 +67,8 @@ public class DefaultNElements implements NElements {
 
     @Override
     public NElement toElement(Object o) {
-        if(o instanceof NElement){
-            return  (NElement) o;
+        if (o instanceof NElement) {
+            return (NElement) o;
         }
         return createFactoryContext().toElement(o);
     }
@@ -85,6 +76,29 @@ public class DefaultNElements implements NElements {
     @Override
     public <T> T fromElement(NElement o, Class<T> to) {
         return convert(o, to);
+    }
+
+    @Override
+    public NElement defaultToElement(Object o) {
+        if (o instanceof NElement) {
+            return (NElement) o;
+        }
+        return createFactoryContext().defaultCreateElement(o, null);
+    }
+
+
+    @Override
+    public <T> NOptional<T> defaultFromElement(NElement any, Class<T> to) {
+        if (to == null || to.isInstance(any)) {
+            return NOptional.of((T) any);
+        }
+        try {
+            return NOptional.ofNamed(createFactoryContext().defaultToObject(any, to), to.getSimpleName());
+        } catch (NException e) {
+            return NOptional.ofError(e.formattedMessage());
+        } catch (Exception e) {
+            return NOptional.ofError(NMsg.ofP(e.getMessage()));
+        }
     }
 
 

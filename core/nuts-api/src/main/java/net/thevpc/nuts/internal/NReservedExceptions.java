@@ -276,6 +276,17 @@ public class NReservedExceptions {
      * Returns the error message.
      *
      * @param ex ex
+     * @return get error message result
+     * @since 1.1.0
+     */
+    public static NMsg getErrorFormattedMessage(Throwable ex) {
+        return getErrorFormattedMessage(ex, 128);
+    }
+
+    /**
+     * Returns the error message.
+     *
+     * @param ex ex
      * @param maxDepth max depth
      * @return get error message result
      */
@@ -296,6 +307,39 @@ public class NReservedExceptions {
             m = ex.toString();
         }
         return m;
+    }
+
+    /**
+     * Returns the error message.
+     *
+     * @param ex ex
+     * @param maxDepth max depth
+     * @return get error message result
+     * @since 1.1.0
+     */
+    private static NMsg getErrorFormattedMessage(Throwable ex, int maxDepth) {
+        if(ex==null){
+            return null;
+        }
+        if (ex instanceof NException) {
+            return ((NException) ex).formattedMessage();
+        }
+        if (ex instanceof NAnyFormattedExceptionBase) {
+            return ((NAnyFormattedExceptionBase) ex).formattedMessage();
+        }
+        if (ex instanceof InvocationTargetException) {
+            if (maxDepth > 0) {
+                NMsg e = getErrorFormattedMessage(((InvocationTargetException) ex).getTargetException(), maxDepth - 1);
+                if (e != null) {
+                    return e;
+                }
+            }
+        }
+        String m = ex.getMessage();
+        if (m == null || m.length() < 5) {
+            m = ex.toString();
+        }
+        return NMsg.ofP(m);
     }
 
     /**

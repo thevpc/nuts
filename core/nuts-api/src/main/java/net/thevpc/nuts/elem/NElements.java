@@ -27,8 +27,8 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NOptional;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -127,4 +127,24 @@ public interface NElements extends NComponent {
      * @return mapper store result
      */
     NElementMapperStore mapperStore();
+
+
+    /**
+     *
+     * @param o element
+     * @return default element
+     * @since 1.1.0
+     */
+    NElement defaultToElement(Object o) ;
+
+
+    /**
+     *
+     * @param any element
+     * @param to expected type
+     * @return default object
+     * @param <T> Type
+     * @since 1.1.0
+     */
+    <T> NOptional<T> defaultFromElement(NElement any, Class<T> to) ;
 }

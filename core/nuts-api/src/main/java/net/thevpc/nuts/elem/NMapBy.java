@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
  * <p>
  * Allows specifying a custom mapper class or overriding the target property name
  * used when converting between Java objects and Nuts elements (JSON, TSON, YAML).
+ * For records, a parameter annotation on the canonical constructor can rename its component
+ * in the mapped object.
  *
  * @author thevpc
  * @since 0.8.0

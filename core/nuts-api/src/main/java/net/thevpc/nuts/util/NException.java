@@ -229,6 +229,17 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return NReservedExceptions.getErrorMessage(th);
     }
 
+    /**
+     * Returns the error message.
+     *
+     * @param th th
+     * @return get error message result
+     * @since 1.1.0
+     */
+    public static NMsg getErrorFormattedMessage(Throwable th) {
+        return NReservedExceptions.getErrorFormattedMessage(th);
+    }
+
 
     /**
      * Creates a new instance of unchecked exception.
