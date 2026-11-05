@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NCreator;
+import net.thevpc.nuts.elem.NProperty;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.io.NStreamTokenizer;
 import net.thevpc.nuts.text.NMsg;
@@ -26,18 +27,18 @@ public class NMemorySize implements Serializable{
     private final long KB;
     private final boolean iec;
 
-    @NMapBy
+    @NCreator
     public NMemorySize(
-            @NMapBy(name = "bits") long bits,
-            @NMapBy(name = "bytes") long bytes,
-            @NMapBy(name = "kiloBytes") long kiloBytes,
-            @NMapBy(name = "megaBytes") long megaBytes,
-            @NMapBy(name = "teraBytes") long teraBytes,
-            @NMapBy(name = "petaBytes") long petaBytes,
-            @NMapBy(name = "zetaBytes") long zetaBytes,
-            @NMapBy(name = "smallestUnit") NMemoryUnit smallestUnit,
-            @NMapBy(name = "largestUnit") NMemoryUnit largestUnit,
-            @NMapBy(name = "iec") boolean iec
+            @NProperty("bits") long bits,
+            @NProperty("bytes") long bytes,
+            @NProperty("kiloBytes") long kiloBytes,
+            @NProperty("megaBytes") long megaBytes,
+            @NProperty("teraBytes") long teraBytes,
+            @NProperty("petaBytes") long petaBytes,
+            @NProperty("zetaBytes") long zetaBytes,
+            @NProperty("smallestUnit") NMemoryUnit smallestUnit,
+            @NProperty("largestUnit") NMemoryUnit largestUnit,
+            @NProperty("iec") boolean iec
     ) {
         this.iec = iec;
         this.KB = iec ? 1000 : 1024;

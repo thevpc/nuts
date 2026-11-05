@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NProperty;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class ElementRecordMappingTest {
     }
 
     @Test
-    void defaultMapperSupportsRecordsWithAndWithoutNMapBy() throws Exception {
+    void defaultMapperSupportsRecordsWithAndWithoutNProperty() throws Exception {
         Assumptions.assumeTrue(hasRecordSupport(),
                 "Record mapping requires a JDK with record support");
         compileFixtures();
@@ -74,6 +74,52 @@ class ElementRecordMappingTest {
         }
     }
 
+    @Test
+    void propertyAnnotationRenamesRecordComponent() throws Exception {
+        Assumptions.assumeTrue(hasRecordSupport(),
+                "Record mapping requires a JDK with record support");
+        compileFixtures();
+        String fixtures = "net.thevpc.nuts.core.test.RecordFixtures";
+        try (URLClassLoader loader = new URLClassLoader(
+                new URL[]{tempDir.resolve("classes").toUri().toURL()},
+                Thread.currentThread().getContextClassLoader())) {
+            Class<?> type = Class.forName(fixtures + "$PropRecord", true, loader);
+            Object value = type.getConstructor(long.class, String.class).newInstance(9L, "n");
+            NElement element = NElement.defaultToElement(value);
+            assertEquals(9L, element.asObject().get().getLongValue("user_id").get());
+            assertEquals("n", element.asObject().get().getStringValue("name").get());
+            Object copy = NElement.defaultFromElement(element, (Class) type).get();
+            assertEquals(9L, type.getMethod("taskId").invoke(copy));
+            assertEquals("n", type.getMethod("name").invoke(copy));
+        }
+    }
+
+    @Test
+    void componentNamesSurviveAnExplicitCanonicalConstructor() throws Exception {
+        Assumptions.assumeTrue(hasRecordSupport(),
+                "Record mapping requires a JDK with record support");
+        compileFixtures();
+        String fixtures = "net.thevpc.nuts.core.test.RecordFixtures";
+        try (URLClassLoader loader = new URLClassLoader(
+                new URL[]{tempDir.resolve("classes").toUri().toURL()},
+                Thread.currentThread().getContextClassLoader())) {
+            assertRenamingRoundTrip(Class.forName(fixtures + "$ExplicitPlainCtorRecord", true, loader),
+                    "user_id", "name");
+            assertRenamingRoundTrip(Class.forName(fixtures + "$ExplicitCreatorRecord", true, loader),
+                    "user_id", "display_name");
+        }
+    }
+
+    private void assertRenamingRoundTrip(Class<?> type, String idName, String secondName) throws Exception {
+        Object value = type.getConstructor(long.class, String.class).newInstance(11L, "n");
+        NElement element = NElement.defaultToElement(value);
+        assertEquals(11L, element.asObject().get().getLongValue(idName).get());
+        assertEquals("n", element.asObject().get().getStringValue(secondName).get());
+        Object copy = NElement.defaultFromElement(element, (Class) type).get();
+        assertEquals(11L, type.getMethod("taskId").invoke(copy));
+        assertEquals("n", type.getMethod("name").invoke(copy));
+    }
+
     private void compileFixtures() throws Exception {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         assertNotNull(compiler, "record mapping test requires a JDK compiler");
@@ -84,20 +130,33 @@ class ElementRecordMappingTest {
         Path source = sourceRoot.resolve("RecordFixtures.java");
         Files.write(source, (
                 "package net.thevpc.nuts.core.test;\n" +
-                "import net.thevpc.nuts.elem.NMapBy;\n" +
+                "import net.thevpc.nuts.elem.NCreator;\n" +
+                "import net.thevpc.nuts.elem.NProperty;\n" +
                 "import net.thevpc.nuts.elem.NElement;\n" +
                 "import net.thevpc.nuts.elem.NToElement;\n" +
                 "public class RecordFixtures {\n" +
                 "  public record PlainRecord(long taskId, String prompt) {}\n" +
-                "  public record NamedRecord(@NMapBy(name = \"user_id\") long taskId, " +
-                "@NMapBy(name = \"display_name\") String name) implements NToElement {\n" +
+                "  public record NamedRecord(@NProperty( \"user_id\") long taskId, " +
+                "@NProperty( \"display_name\") String name) implements NToElement {\n" +
                 "    public NElement toElement() { return NElement.defaultToElement(this).asObject().get()" +
                 ".builder().name(\"NamedRecord\").build(); }\n" +
+                "  }\n" +
+                "  public record PropRecord(@NProperty(\"user_id\") long taskId, String name) {}\n" +
+                "  public record ExplicitPlainCtorRecord(@NProperty(\"user_id\") long taskId, String name) {\n" +
+                "    public ExplicitPlainCtorRecord(long taskId, String name) {\n" +
+                "      this.taskId = taskId; this.name = name;\n" +
+                "    }\n" +
+                "  }\n" +
+                "  public record ExplicitCreatorRecord(@NProperty(\"user_id\") long taskId, " +
+                "@NProperty(\"display_name\") String name) {\n" +
+                "    @NCreator public ExplicitCreatorRecord(long taskId, String name) {\n" +
+                "      this.taskId = taskId; this.name = name;\n" +
+                "    }\n" +
                 "  }\n" +
                 "  public record NestedRecord(java.util.List<String> labels, PlainRecord item) {}\n" +
                 "}\n"
         ).getBytes(StandardCharsets.UTF_8));
-        URL apiLocation = NMapBy.class.getProtectionDomain().getCodeSource().getLocation();
+        URL apiLocation = NProperty.class.getProtectionDomain().getCodeSource().getLocation();
         int exitCode = compiler.run(null, null, null,
                 "-classpath", new File(apiLocation.toURI()).getAbsolutePath(),
                 "-d", outputRoot.toString(),

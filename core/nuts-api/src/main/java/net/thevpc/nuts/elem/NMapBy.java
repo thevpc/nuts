@@ -7,17 +7,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Customizes object-to-element mapping and serialization for fields, parameters, and types.
+ * Declares the custom mapper class responsible for converting a type to and from an
+ * {@link NElement} (JSON, TSON, YAML).
  * <p>
- * Allows specifying a custom mapper class or overriding the target property name
- * used when converting between Java objects and Nuts elements (JSON, TSON, YAML).
- * For records, a parameter annotation on the canonical constructor can rename its component
- * in the mapped object.
+ * This annotation only carries the mapper class. Its two other roles are now declared elsewhere :
+ * property renaming is {@link NProperty} and creator selection is {@link NCreator}.
+ * <p>
+ * Note that {@link #mapClass()} is not read by the element mapper yet : declaring it records the intent
+ * for a custom mapping without changing how the type is currently converted.
  *
  * @author thevpc
  * @since 0.8.0
+ * @see NCreator
+ * @see NProperty
  */
-@Target({ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NMapBy {
     /**
@@ -26,11 +30,4 @@ public @interface NMapBy {
      * @return custom mapper class
      */
     Class<?> mapClass() default void.class;
-
-    /**
-     * Target property name in the serialized element representation.
-     *
-     * @return serialized property name
-     */
-    String name() default "";
 }

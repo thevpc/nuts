@@ -8,6 +8,7 @@ import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -174,6 +175,10 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         if (Modifier.isAbstract(mod)) {
             throw new NIllegalArgumentException(NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
         }
+        Object created = NElementCreatorResolver.create(element, c, context);
+        if (created != NElementCreatorResolver.NO_CREATOR) {
+            return created;
+        }
         if (isRecord(c)) {
             return createRecord(c, element, context);
         }
@@ -192,7 +197,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         return instance;
     }
 
-    private static boolean isRecord(Class<?> type) {
+    static boolean isRecord(Class<?> type) {
         try {
             return Boolean.TRUE.equals(Class.class.getMethod("isRecord").invoke(type));
         } catch (NoSuchMethodException ex) {
@@ -217,8 +222,8 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             RecordComponentData[] result = new RecordComponentData[components.length];
             for (int i = 0; i < components.length; i++) {
                 String name = (String) getName.invoke(components[i]);
-                NMapBy mapBy = parameters[i].getAnnotation(NMapBy.class);
-                String elementName = mapBy == null || mapBy.name().trim().isEmpty() ? name : mapBy.name();
+                String declared = declaredElementName(parameters[i], type, name);
+                String elementName = declared == null ? name : declared;
                 Method accessor = (Method) getAccessor.invoke(components[i]);
                 accessor.setAccessible(true);
                 result[i] = new RecordComponentData(
@@ -232,6 +237,75 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             return result;
         } catch (ReflectiveOperationException ex) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to inspect record type %s", type.getName()), ex);
+        }
+    }
+
+    /**
+     * The element property name explicitly declared for a creator parameter, or null when the member
+     * keeps its java name.
+     * <p>
+     * A record component declaration writes its annotations on the backing field, on the accessor and,
+     * only when the canonical constructor is the implicit one, on the matching constructor parameter.
+     * Reading the parameter alone would lose the declared name of a record that writes its canonical
+     * constructor by hand, so the component field is used as a fallback.
+     *
+     * @param parameter     the creator parameter, may be null
+     * @param owner         the declaring class of the creator
+     * @param componentName the java name of the record component, null for a non record parameter
+     * @return the declared name or null
+     */
+    static String declaredElementName(AnnotatedElement parameter, Class<?> owner, String componentName) {
+        String name = declaredNameOn(parameter);
+        if (name == null && componentName != null) {
+            try {
+                name = declaredNameOn(owner.getDeclaredField(componentName));
+            } catch (NoSuchFieldException ex) {
+                name = null;
+            }
+        }
+        return name;
+    }
+
+    private static String declaredNameOn(AnnotatedElement element) {
+        if (element == null) {
+            return null;
+        }
+        NProperty property = element.getAnnotation(NProperty.class);
+        return property != null && !property.value().trim().isEmpty() ? property.value() : null;
+    }
+
+    /**
+     * The component names of the record whose canonical constructor matches the given signature, or null
+     * when the declaring class is not a record or the signature is not the canonical one.
+     *
+     * @param owner          the declaring class of the creator
+     * @param parameterTypes the creator parameter types
+     * @return the component names or null
+     */
+    static String[] canonicalComponentNames(Class<?> owner, Class<?>[] parameterTypes) {
+        if (!isRecord(owner)) {
+            return null;
+        }
+        try {
+            Object[] components = (Object[]) Class.class.getMethod("getRecordComponents").invoke(owner);
+            if (components.length != parameterTypes.length) {
+                return null;
+            }
+            String[] names = new String[components.length];
+            if (components.length == 0) {
+                return names;
+            }
+            Method getName = components[0].getClass().getMethod("getName");
+            Method getType = components[0].getClass().getMethod("getType");
+            for (int i = 0; i < components.length; i++) {
+                if (!getType.invoke(components[i]).equals(parameterTypes[i])) {
+                    return null;
+                }
+                names[i] = (String) getName.invoke(components[i]);
+            }
+            return names;
+        } catch (ReflectiveOperationException ex) {
+            return null;
         }
     }
 
@@ -286,7 +360,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         }
     }
 
-    private static Object primitiveDefault(Class<?> type) {
+    static Object primitiveDefault(Class<?> type) {
         if (!type.isPrimitive()) {
             return null;
         }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NCreator;
+import net.thevpc.nuts.elem.NProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +41,11 @@ public class NNameFormat {
     private NWordFormat next;
     private String sep;
 
-    @NMapBy
+    @NCreator
     public NNameFormat(
-            @NMapBy(name = "leading") NWordFormat leading,
-            @NMapBy(name = "next") NWordFormat next,
-            @NMapBy(name = "sep") String sep) {
+            @NProperty("leading") NWordFormat leading,
+            @NProperty("next") NWordFormat next,
+            @NProperty("sep") String sep) {
         NAssert.requireNamedNonNull(leading, "leading");
         NAssert.requireNamedNonNull(next, "next");
         this.leading = leading;

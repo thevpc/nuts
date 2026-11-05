@@ -1572,6 +1572,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NPrimitiveElement> asBoolean() {
+        return NOptional.ofEmpty(_expected("number"));
+    }
+
+    @Override
     public NOptional<BigDecimal> asBigDecimalValue() {
         return asLiteral().asBigDecimal();
     }

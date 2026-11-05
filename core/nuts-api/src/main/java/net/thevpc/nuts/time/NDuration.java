@@ -1,7 +1,8 @@
 package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.elem.NElementSimple;
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NCreator;
+import net.thevpc.nuts.elem.NProperty;
 import net.thevpc.nuts.mon.NDurationFormatMode;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -109,20 +110,20 @@ public class NDuration implements Serializable, NElementSimple {
      * @param smallestUnit the smallest temporal unit considered in calculations
      * @param largestUnit  the largest temporal unit considered in calculations
      */
-    @NMapBy
+    @NCreator
     public NDuration(
-            @NMapBy(name = "years") long years,
-            @NMapBy(name = "months") long months,
-            @NMapBy(name = "weeks") long weeks,
-            @NMapBy(name = "days") long days,
-            @NMapBy(name = "hours") long hours,
-            @NMapBy(name = "minutes") long minutes,
-            @NMapBy(name = "seconds") long seconds,
-            @NMapBy(name = "milliSeconds") long milliSeconds,
-            @NMapBy(name = "micros") long micros,
-            @NMapBy(name = "nanos") long nanos,
-            @NMapBy(name = "smallestUnit") ChronoUnit smallestUnit,
-            @NMapBy(name = "largestUnit") ChronoUnit largestUnit
+            @NProperty("years") long years,
+            @NProperty("months") long months,
+            @NProperty("weeks") long weeks,
+            @NProperty("days") long days,
+            @NProperty("hours") long hours,
+            @NProperty("minutes") long minutes,
+            @NProperty("seconds") long seconds,
+            @NProperty("milliSeconds") long milliSeconds,
+            @NProperty("micros") long micros,
+            @NProperty("nanos") long nanos,
+            @NProperty("smallestUnit") ChronoUnit smallestUnit,
+            @NProperty("largestUnit") ChronoUnit largestUnit
     ) {
         this.nanos = nanos;
         this.micros = micros;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NCreator;
+import net.thevpc.nuts.elem.NProperty;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -27,10 +28,10 @@ public class NClock {
         );
     }
 
-    @NMapBy
+    @NCreator
     public NClock(
-            @NMapBy(name = "timeMillis") long timeMillis,
-            @NMapBy(name = "nanos") long nanos) {
+            @NProperty("timeMillis") long timeMillis,
+            @NProperty("nanos") long nanos) {
         this.timeMillis = timeMillis;
         this.nanos = nanos;
     }

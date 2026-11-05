@@ -57,6 +57,14 @@ public class DefaultNPrimitiveElement extends AbstractNElement implements NPrimi
     }
 
     @Override
+    public NOptional<NPrimitiveElement> asBoolean() {
+        if(value() instanceof Boolean){
+            return NOptional.of(this);
+        }
+        return asBooleanValue().map(NElement::ofBoolean);
+    }
+
+    @Override
     public List<NElement> resolveAll(String pattern) {
         pattern = NStringUtils.stripToNull(pattern);
         if (pattern == null || pattern.equals(".")) {

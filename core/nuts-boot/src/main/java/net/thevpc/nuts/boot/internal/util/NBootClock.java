@@ -14,10 +14,10 @@ public class NBootClock {
         );
     }
 
-//    @NMapBy
+//    @NCreator
     public NBootClock(
-            /*@NMapBy(name = "timeMillis")*/ long timeMillis,
-            /*@NMapBy(name = "nanos")*/ long nanos) {
+            /*@NProperty("timeMillis")*/ long timeMillis,
+            /*@NProperty("nanos")*/ long nanos) {
         this.timeMillis = timeMillis;
         this.nanos = nanos;
     }

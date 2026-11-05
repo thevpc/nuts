@@ -5,7 +5,8 @@
  */
 package net.thevpc.nuts.mon;
 
-import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.elem.NCreator;
+import net.thevpc.nuts.elem.NProperty;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.time.NDuration;
 
@@ -126,16 +127,16 @@ public class NChronometer implements Serializable {
         );
     }
 
-    @NMapBy
+    @NCreator
     public NChronometer(
-            @NMapBy(name = "name") String name,
-            @NMapBy(name = "startClock") NClock startClock,
-            @NMapBy(name = "endClock") NClock endClock,
-            @NMapBy(name = "accumulatedNanos") long accumulatedNanos,
-            @NMapBy(name = "lastNanos") long lastNanos,
-            @NMapBy(name = "running") boolean running,
-            @NMapBy(name = "smallestUnit") ChronoUnit smallestUnit,
-            @NMapBy(name = "largestUnit") ChronoUnit largestUnit) {
+            @NProperty("name") String name,
+            @NProperty("startClock") NClock startClock,
+            @NProperty("endClock") NClock endClock,
+            @NProperty("accumulatedNanos") long accumulatedNanos,
+            @NProperty("lastNanos") long lastNanos,
+            @NProperty("running") boolean running,
+            @NProperty("smallestUnit") ChronoUnit smallestUnit,
+            @NProperty("largestUnit") ChronoUnit largestUnit) {
         this.accumulatedNanos = accumulatedNanos;
         this.startClock = startClock;
         this.endClock = endClock;

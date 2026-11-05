@@ -113,6 +113,22 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
         return NElementRPI.of().getSharedElements().defaultToElement(o);
     }
 
+    /**
+     *
+     * @param o element
+     * @return default element
+     * @since 1.1.0
+     */
+    static NElement defaultToNamedElement(Object o) {
+        if (o == null) {
+            return ofNull();
+        }
+        return NElement.defaultToElement(o).asObject().get().builder()
+                .name(o.getClass().getSimpleName())
+                .build()
+                ;
+    }
+
 
     /**
      *
@@ -2822,6 +2838,13 @@ public interface NElement extends NDescribable, NBlankable, NElementSimple {
      * @return as boolean value result
      */
     NOptional<Boolean> asBooleanValue();
+
+    /**
+     *
+     * @return boolean primitive
+     * @since 1.1.0
+     */
+    NOptional<NPrimitiveElement> asBoolean();
 
     /**
      * As number value.
