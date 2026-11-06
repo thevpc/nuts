@@ -127,8 +127,12 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
                     refreshed = !REFRESHED.add(id());
                     if (!refreshed) {
                         out.println(NMsg.ofC("[expire] installed artifact %s is stale (deployed before %s), reinstalling...", def.id().longName(), installInfo.lastModifiedInstant()));
-                        NInstall.of(def.id())
+                        // "--reinstall" must be configured BEFORE adding the id: addId() snapshots the current
+                        // install flags, so an id added first would not be forced and its required
+                        // dependencies would be redeployed from the (stale) installed copies
+                        NInstall.of()
                                 .configure(true, "--reinstall")
+                                .addId(def.id())
                                 .run();
                     }
                 }
