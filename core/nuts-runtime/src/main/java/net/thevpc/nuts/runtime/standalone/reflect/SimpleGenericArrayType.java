@@ -43,14 +43,15 @@ public class SimpleGenericArrayType implements GenericArrayType {
         return genericComponentType;
     }
 
+    @Override
+    public String getTypeName() {
+        return toString();
+    }
+
     public String toString() {
         Type componentType = this.getGenericComponentType();
         StringBuilder sb = new StringBuilder();
-        if (componentType instanceof Class) {
-            sb.append(((Class)componentType).getName());
-        } else {
-            sb.append(componentType.toString());
-        }
+        sb.append(componentType.getTypeName());
 
         sb.append("[]");
         return sb.toString();

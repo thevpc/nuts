@@ -64,6 +64,18 @@ public class DefaultNElements implements NElements {
     }
 
     @Override
+    public <T> T convert(Object any, Type to) {
+        if (to instanceof Class) {
+            return (T) convert(any, (Class) to);
+        }
+        if (to == null) {
+            return (T) any;
+        }
+        NElement e = toElement(any);
+        return (T) elementToObject(e, to);
+    }
+
+    @Override
     public Object toSimple(Object any) {
         return createFactoryContext().toSimple(any, null);
     }
@@ -78,6 +90,11 @@ public class DefaultNElements implements NElements {
 
     @Override
     public <T> T fromElement(NElement o, Class<T> to) {
+        return convert(o, to);
+    }
+
+    @Override
+    public <T> T fromElement(NElement o, Type to) {
         return convert(o, to);
     }
 

@@ -45,6 +45,7 @@ public class DefaultElementMapperStore {
     public static final NElementMapper F_PATH = new NElementMapperPath();
     public static final NElementMapper F_FILE = new NElementMapperFile();
     public static final NElementMapper F_ITERATOR = new NElementMapperIterator();
+    public static final NElementMapper F_ITERABLE = new NElementMapperIterable();
     //    public static final NElementMapper F_NPAIR_ELEM = new NElementMapperPairElement();
     public static final NElementMapper F_MAPENTRY = new NElementMapperMapEntry();
     public static final NElementMapper F_XML_ELEMENT = new NElementFactoryXmlElement();
@@ -125,6 +126,7 @@ public class DefaultElementMapperStore {
         addDefaultMapper(java.time.Instant.class, F_INSTANT);
         addDefaultMapper(Enum.class, F_ENUMS);
         addDefaultMapper(Collection.class, F_COLLECTION);
+        addDefaultMapper(Iterable.class, F_ITERABLE);
         addDefaultMapper(Iterator.class, F_ITERATOR);
         addDefaultMapper(Map.class, F_MAP);
         addDefaultMapper(Map.Entry.class, F_MAPENTRY);

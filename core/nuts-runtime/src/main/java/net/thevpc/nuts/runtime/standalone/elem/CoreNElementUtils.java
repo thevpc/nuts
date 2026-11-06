@@ -4,6 +4,9 @@ import net.thevpc.nuts.elem.NElementSimple;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NFragmentElement;
 import net.thevpc.nuts.elem.NPairElement;
+import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.reflect.NReflectType;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.text.NFormatted;
 import net.thevpc.nuts.text.NText;
@@ -695,5 +698,76 @@ public class CoreNElementUtils {
                 }
             }
         }
+    }
+
+    /**
+     * a deserialization target that can be instantiated/dispatched : type variables are replaced by
+     * their first bound, wildcards by their lower bound ({@code ? super X}) or else their upper bound.
+     */
+    public static Type normalizeTargetType(Type type) {
+        int guard = 0;
+        while (guard++ < 32) {
+            if (type instanceof TypeVariable) {
+                Type[] b = ((TypeVariable<?>) type).getBounds();
+                type = b.length == 0 ? Object.class : b[0];
+            } else if (type instanceof WildcardType) {
+                WildcardType w = (WildcardType) type;
+                Type[] lo = w.getLowerBounds();
+                if (lo.length > 0) {
+                    type = lo[0];
+                } else {
+                    Type[] up = w.getUpperBounds();
+                    type = up.length == 0 ? Object.class : up[0];
+                }
+            } else {
+                return type;
+            }
+        }
+        return type;
+    }
+
+    /**
+     * the serialization type to use : declared types that carry no information beyond the runtime class
+     * ({@code Object}, type variables and wildcards) are replaced by the runtime class.
+     */
+    public static Type normalizeSourceType(Object value, Type expectedType) {
+        if (value == null) {
+            return expectedType;
+        }
+        if (expectedType == null || expectedType instanceof TypeVariable || expectedType instanceof WildcardType
+                || Object.class.equals(expectedType)) {
+            return value.getClass();
+        }
+        return expectedType;
+    }
+
+    /**
+     * type arguments of {@code type} when viewed as {@code superClass}, for instance the key and value types
+     * of a {@code class Props extends HashMap<String,Integer>} viewed as {@code Map}.
+     *
+     * @return an array of {@code superClass} type parameters count where unknown (raw) arguments are null
+     */
+    public static Type[] resolveTypeArguments(Type type, Class<?> superClass, NReflectRepository repo) {
+        Type[] result = new Type[superClass.getTypeParameters().length];
+        if (type == null) {
+            return result;
+        }
+        NReflectType view = repo.getType(type).findSuperType(superClass).orNull();
+        if (view != null && view.isParametrizedType()) {
+            List<NReflectType> args = view.actualTypeArguments();
+            for (int i = 0; i < result.length && i < args.size(); i++) {
+                Type a = args.get(i).javaType();
+                // unresolved variables bring no information
+                result[i] = (a instanceof TypeVariable) ? null : a;
+            }
+        }
+        return result;
+    }
+
+    public static Class<?> rawClass(Type type, Class<?> defaultClass) {
+        if (type == null) {
+            return defaultClass;
+        }
+        return NReflectUtils.getRawClass(type).orElse((Class) defaultClass);
     }
 }

@@ -105,6 +105,7 @@ public class DefaultNReflectType implements NReflectType {
             if (a == null || a.isEmpty()) {
                 return NReflectPropertyAccessStrategy.all();
             }
+            return a;
         }
 
         // BFS queue: class before interfaces at each level
@@ -171,11 +172,16 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public NOptional<NReflectProperty> getDeclaredProperty(String name) {
+        build();
         return NOptional.ofNamed(propertiesDeclaredMap.get(name), "property " + name);
     }
 
     public boolean isInterface() {
-        return javaType instanceof Class && ((Class<?>) javaType).isInterface();
+        if (javaType instanceof Class || javaType instanceof ParameterizedType) {
+            Class<?> c = javaClass().orNull();
+            return c != null && c.isInterface();
+        }
+        return false;
     }
 
 
@@ -269,15 +275,106 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public boolean isAssignableFrom(NReflectType type) {
-        if (javaType instanceof Class<?>) {
-            if (type instanceof DefaultNReflectType) {
-                DefaultNReflectType d = (DefaultNReflectType) type;
-                if (d.javaType instanceof Class<?>) {
-                    return ((Class<?>) javaType).isAssignableFrom((Class<?>) d.javaType);
-                }
+        if (type == null) {
+            return false;
+        }
+        Class<?> me = javaClass().orNull();
+        Class<?> other = type.javaClass().orNull();
+        if (me == null || other == null) {
+            return false;
+        }
+        if (me.isPrimitive() || other.isPrimitive()) {
+            return me.equals(other);
+        }
+        if (!me.isAssignableFrom(other)) {
+            return false;
+        }
+        if (!(javaType instanceof ParameterizedType)) {
+            // raw types accept any parametrization
+            return true;
+        }
+        NReflectType view = type.findSuperType(me).orNull();
+        if (view == null || !view.isParametrizedType()) {
+            // other is raw (unchecked conversion)
+            return true;
+        }
+        List<NReflectType> mine = actualTypeArguments();
+        List<NReflectType> theirs = view.actualTypeArguments();
+        if (mine.size() != theirs.size()) {
+            return false;
+        }
+        for (int i = 0; i < mine.size(); i++) {
+            if (!typeArgumentContains(mine.get(i).javaType(), theirs.get(i).javaType())) {
+                return false;
             }
         }
+        return true;
+    }
+
+    private boolean typeArgumentContains(Type mine, Type theirs) {
+        if (mine.equals(theirs) || mine instanceof TypeVariable) {
+            return true;
+        }
+        if (mine instanceof WildcardType) {
+            WildcardType w = (WildcardType) mine;
+            for (Type lower : w.getLowerBounds()) {
+                if (!repo.getType(theirs).isAssignableFrom(repo.getType(lower))) {
+                    return false;
+                }
+            }
+            for (Type upper : w.getUpperBounds()) {
+                if (!repo.getType(upper).isAssignableFrom(repo.getType(theirs))) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public NOptional<NReflectType> findSuperType(Class<?> rawClass) {
+        if (rawClass == null) {
+            return NOptional.ofNamedEmpty("super type of " + name());
+        }
+        if (javaType instanceof TypeVariable || javaType instanceof WildcardType) {
+            Class<?> bound = javaClass().orNull();
+            return bound == null ? NOptional.ofNamedEmpty(rawClass.getName() + " super type of " + name())
+                    : repo.getType(firstUpperBound(javaType)).findSuperType(rawClass);
+        }
+        Class<?> me = javaClass().orNull();
+        if (me == null || !rawClass.isAssignableFrom(me)) {
+            return NOptional.ofNamedEmpty(rawClass.getName() + " super type of " + name());
+        }
+        if (me.equals(rawClass)) {
+            return NOptional.of(this);
+        }
+        NReflectType s = superType();
+        if (s != null) {
+            NOptional<NReflectType> r = s.findSuperType(rawClass);
+            if (r.isPresent()) {
+                return r;
+            }
+        }
+        for (NReflectType i : interfaces()) {
+            NOptional<NReflectType> r = i.findSuperType(rawClass);
+            if (r.isPresent()) {
+                return r;
+            }
+        }
+        return NOptional.ofNamedEmpty(rawClass.getName() + " super type of " + name());
+    }
+
+    private static Type firstUpperBound(Type t) {
+        if (t instanceof TypeVariable) {
+            Type[] b = ((TypeVariable<?>) t).getBounds();
+            return b.length == 0 ? Object.class : b[0];
+        }
+        if (t instanceof WildcardType) {
+            Type[] b = ((WildcardType) t).getUpperBounds();
+            return b.length == 0 ? Object.class : b[0];
+        }
+        return t;
     }
 
     @Override
@@ -306,10 +403,14 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public NReflectType rawType() {
+        if (javaType instanceof Class) {
+            return this;
+        }
         if (javaType instanceof ParameterizedType) {
             return repo.getType(((ParameterizedType) javaType).getRawType());
         }
-        return null;
+        Class<?> c = javaClass().orNull();
+        return c == null ? null : repo.getType(c);
     }
 
     @Override
@@ -327,10 +428,19 @@ public class DefaultNReflectType implements NReflectType {
             return superclass == null ? null : repo.getType(superclass);
         }
         if (javaType instanceof ParameterizedType) {
-            Type rt = ((ParameterizedType) javaType).getRawType();
-            return repo.getType(rt).replaceVars(x -> getActualTypeArgument(x).orElse(x));
+            Class<?> rc = javaClass().orNull();
+            Type superclass = rc == null ? null : rc.getGenericSuperclass();
+            return superclass == null ? null : resolveInContext(superclass);
         }
         return null;
+    }
+
+    /**
+     * resolve type variables of {@code type} declared by this type (or its owners) to
+     * this type actual arguments
+     */
+    private NReflectType resolveInContext(Type type) {
+        return repo.getType(type).replaceVars(x -> getActualTypeArgument(x).orElse(x));
     }
 
     @Override
@@ -339,10 +449,12 @@ public class DefaultNReflectType implements NReflectType {
             Type[] all = ((Class<?>) javaType).getGenericInterfaces();
             return Arrays.stream(all).map(x -> repo.getType(x)).collect(Collectors.toList());
         }
-//        if (javaType instanceof ParameterizedType) {
-//            Type rt = ((ParameterizedType) javaType).getRawType();
-//            return repo.getType(rt).replaceVars(x -> getActualTypeArgument(x).orElse(x));
-//        }
+        if (javaType instanceof ParameterizedType) {
+            Class<?> rc = javaClass().orNull();
+            if (rc != null) {
+                return Arrays.stream(rc.getGenericInterfaces()).map(this::resolveInContext).collect(Collectors.toList());
+            }
+        }
         return Collections.emptyList();
     }
 
@@ -364,7 +476,7 @@ public class DefaultNReflectType implements NReflectType {
         return cleanInstance;
     }
 
-    private void build() {
+    private synchronized void build() {
         if (propertiesDeclaredMap == null) {
             Supplier<Object> cleanInstance = () -> _cleanInstance();
             LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods = new LinkedHashMap<>();
@@ -466,6 +578,7 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public List<NReflectMethod> declaredMethods() {
+        build();
         return Collections.unmodifiableList(methodsDeclaredList);
     }
 
@@ -546,14 +659,18 @@ public class DefaultNReflectType implements NReflectType {
     public NOptional<NReflectType> getActualTypeArgument(NReflectType type) {
         List<NReflectType> typeParameters = typeParameters();
         List<NReflectType> r = actualTypeArguments();
-        if (r.isEmpty()) {
-            return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
-        }
-        for (int i = 0; i < typeParameters.size(); i++) {
-            NReflectType typeParameter = typeParameters.get(i);
-            if (typeParameter.equals(type)) {
-                return NOptional.ofNamed(r.get(i), NMsg.ofC("actual type argument %s", type).toString());
+        if (!r.isEmpty()) {
+            for (int i = 0; i < typeParameters.size() && i < r.size(); i++) {
+                NReflectType typeParameter = typeParameters.get(i);
+                if (typeParameter.equals(type)) {
+                    return NOptional.ofNamed(r.get(i), NMsg.ofC("actual type argument %s", type).toString());
+                }
             }
+        }
+        // variables of an enclosing class (non static inner classes)
+        NReflectType owner = getOwnerType();
+        if (owner != null && owner.isParametrizedType()) {
+            return owner.getActualTypeArgument(type);
         }
         return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
     }
@@ -731,56 +848,85 @@ public class DefaultNReflectType implements NReflectType {
     public NReflectType replaceVars(Function<NReflectType, NReflectType> mapper) {
         if (javaType instanceof TypeVariable<?>) {
             NReflectType t = mapper.apply(this);
-            if (t != null) {
-                return t;
-            }
-            return this;
+            return t == null ? this : t;
         }
-        if (javaType instanceof Class<?>) {
-            return this;
+        Type r = replaceVars(javaType, mapper);
+        return r == javaType ? this : repo.getType(r);
+    }
+
+    /**
+     * replace type variables at any depth : type arguments, owner type, array components and
+     * wildcard bounds. Type variable bounds are not traversed (recursive bounds such as
+     * {@code R extends Comparable<R>} would otherwise loop).
+     *
+     * @return the very same instance when nothing changed
+     */
+    private Type replaceVars(Type type, Function<NReflectType, NReflectType> mapper) {
+        if (type instanceof TypeVariable<?>) {
+            NReflectType t = mapper.apply(repo.getType(type));
+            return t == null ? type : t.javaType();
         }
-        if (javaType instanceof ParameterizedType) {
-            NReflectType[] actualTypeArguments = actualTypeArguments().toArray(new NReflectType[0]);
-            NReflectType[] typeParameters = typeParameters().toArray(new NReflectType[0]);
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) type;
+            Type[] args = pt.getActualTypeArguments();
             boolean someUpdates = false;
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                NReflectType r = typeParameters[i];
-                NReflectType a = actualTypeArguments[i];
-                if (a.isTypeVariable()) {
-                    NReflectType aa = a.replaceVars(mapper);
-                    if (aa != a && aa != null) {
-                        actualTypeArguments[i] = aa;
-                        someUpdates = true;
-                    }
+            for (int i = 0; i < args.length; i++) {
+                Type a = replaceVars(args[i], mapper);
+                if (a != args[i]) {
+                    args[i] = a;
+                    someUpdates = true;
                 }
             }
-            if (someUpdates) {
-                DefaultNReflectType ownerType = (DefaultNReflectType) getOwnerType();
-                Type c2 = NReflectUtils.getRawClass(javaType).orNull();
-                if (c2 == null) {
-                    c2 = javaType;
+            Type owner = pt.getOwnerType();
+            if (owner != null) {
+                Type o = replaceVars(owner, mapper);
+                if (o != owner) {
+                    owner = o;
+                    someUpdates = true;
                 }
-                return repo.getParametrizedType(c2,
-                        ownerType == null ? null : ownerType.javaType,
-                        Arrays.stream(actualTypeArguments)
-                                .map(x -> ((DefaultNReflectType) x).javaType)
-                                .toArray(Type[]::new)
-                );
             }
-            return this;
+            return someUpdates ? new SimpleParametrizedType(pt.getRawType(), args, owner) : type;
         }
-        if (javaType instanceof GenericArrayType) {
-            NReflectType a = componentType();
-            NReflectType b = a.replaceVars(mapper);
-            if (a != b && b != null) {
-                return b.toArray();
+        if (type instanceof GenericArrayType) {
+            Type c = ((GenericArrayType) type).getGenericComponentType();
+            Type c2 = replaceVars(c, mapper);
+            if (c2 == c) {
+                return type;
             }
-            return this;
+            return arrayOf(c2);
         }
-        if (javaType instanceof WildcardType) {
-            return this;
+        if (type instanceof WildcardType) {
+            WildcardType w = (WildcardType) type;
+            Type[] up = w.getUpperBounds();
+            Type[] lo = w.getLowerBounds();
+            boolean someUpdates = false;
+            for (int i = 0; i < up.length; i++) {
+                Type a = replaceVars(up[i], mapper);
+                if (a != up[i]) {
+                    up[i] = a;
+                    someUpdates = true;
+                }
+            }
+            for (int i = 0; i < lo.length; i++) {
+                Type a = replaceVars(lo[i], mapper);
+                if (a != lo[i]) {
+                    lo[i] = a;
+                    someUpdates = true;
+                }
+            }
+            return someUpdates ? new SimpleWildcardType(up, lo) : type;
         }
-        return this;
+        return type;
+    }
+
+    /**
+     * array of the given component, as a {@link Class} whenever the component is a class (as the jdk does)
+     */
+    private static Type arrayOf(Type component) {
+        if (component instanceof Class) {
+            return Array.newInstance((Class<?>) component, 0).getClass();
+        }
+        return new SimpleGenericArrayType(component);
     }
 
     @Override
@@ -847,19 +993,10 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public NReflectType toArray() {
-        if (javaType instanceof Class) {
-            Class c = (Class) javaType;
-            try {
-                Class<?> c2 = Class.forName(
-                        "[L" + c.getCanonicalName() + ";"
-                        , false, c.getClassLoader()
-                );
-                return repo.getType(c2);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        if (javaType instanceof Class && javaType == void.class) {
+            throw new NIllegalArgumentException(NMsg.ofC("cannot create array of %s", javaType));
         }
-        return repo.getType(new SimpleGenericArrayType(javaType));
+        return repo.getType(arrayOf(javaType));
     }
 
     public NReflectType componentType() {
@@ -893,6 +1030,19 @@ public class DefaultNReflectType implements NReflectType {
     @Override
     public String toString() {
         return String.valueOf(javaType);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNReflectType that = (DefaultNReflectType) o;
+        return repo == that.repo && Objects.equals(javaType, that.javaType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(javaType);
     }
 
     public Type javaType() {

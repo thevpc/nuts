@@ -2,7 +2,9 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NProperty;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -110,6 +113,40 @@ class ElementRecordMappingTest {
         }
     }
 
+    @Test
+    void genericRecordComponentsAreResolved() throws Exception {
+        Assumptions.assumeTrue(hasRecordSupport(),
+                "Record mapping requires a JDK with record support");
+        compileFixtures();
+        String fixtures = "net.thevpc.nuts.core.test.RecordFixtures";
+        try (URLClassLoader loader = new URLClassLoader(
+                new URL[]{tempDir.resolve("classes").toUri().toURL()},
+                Thread.currentThread().getContextClassLoader())) {
+            Class<?> boxType = Class.forName(fixtures + "$GenericRecord", true, loader);
+            Class<?> holderType = Class.forName(fixtures + "$GenericHolderRecord", true, loader);
+            Object box = boxType.getConstructor(Object.class, List.class)
+                    .newInstance(5L, java.util.Arrays.asList(1L, 2L));
+            Object holder = holderType.getConstructor(boxType).newInstance(box);
+
+            // type argument bound by the declaring component (GenericRecord<Long>)
+            Object copy = NElement.convertAny(NElement.of(holder), (Class) holderType);
+            Object boxCopy = holderType.getMethod("box").invoke(copy);
+            assertEquals(5L, boxType.getMethod("value").invoke(boxCopy));
+            assertEquals(java.util.Arrays.asList(1L, 2L), boxType.getMethod("values").invoke(boxCopy));
+
+            // type argument given by the caller
+            Type longBox = NWorkspaceUtils.of().getReflectRepository()
+                    .getParametrizedType(boxType, null, new Type[]{Long.class}).javaType();
+            Object direct = NElements.of().fromElement(NElement.of(box), longBox);
+            assertEquals(5L, boxType.getMethod("value").invoke(direct));
+
+            // a component typed by a variable is serialized after its runtime value
+            Object listBox = boxType.getConstructor(Object.class, List.class)
+                    .newInstance(java.util.Arrays.asList("a", "b"), java.util.Collections.emptyList());
+            assertTrue(NElement.of(listBox).asObject().get().get("value").get().isAnyArray());
+        }
+    }
+
     private void assertRenamingRoundTrip(Class<?> type, String idName, String secondName) throws Exception {
         Object value = type.getConstructor(long.class, String.class).newInstance(11L, "n");
         NElement element = NElement.defaultToElement(value);
@@ -154,6 +191,8 @@ class ElementRecordMappingTest {
                 "    }\n" +
                 "  }\n" +
                 "  public record NestedRecord(java.util.List<String> labels, PlainRecord item) {}\n" +
+                "  public record GenericRecord<T>(T value, java.util.List<T> values) {}\n" +
+                "  public record GenericHolderRecord(GenericRecord<Long> box) {}\n" +
                 "}\n"
         ).getBytes(StandardCharsets.UTF_8));
         URL apiLocation = NProperty.class.getProtectionDomain().getCodeSource().getLocation();

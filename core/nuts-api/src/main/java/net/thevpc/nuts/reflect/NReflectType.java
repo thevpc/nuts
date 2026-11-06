@@ -101,17 +101,19 @@ public interface NReflectType {
     boolean isInterface();
 
     /**
-     * Super type.
+     * Generic super class, with this type actual type arguments substituted.
+     * For instance the super type of {@code ArrayList<String>} is {@code AbstractList<String>}.
      *
-     * @return super type result
+     * @return generic super class or null for interfaces, primitives, type variables, wildcards and {@code Object}
      */
     @NGetter
     NReflectType superType();
 
     /**
-     * Interfaces.
+     * Generic interfaces directly implemented by this type, with this type actual type arguments substituted.
+     * For instance {@code ArrayList<String>} implements {@code List<String>}.
      *
-     * @return interfaces result
+     * @return directly implemented generic interfaces
      */
     @NGetter
     List<NReflectType> interfaces();
@@ -153,12 +155,23 @@ public interface NReflectType {
     List<NReflectType> actualTypeArguments();
 
     /**
-     * Replace vars.
+     * Replace type variables at any depth (type arguments, owner type, generic array components and wildcard bounds).
      *
-     * @param mapper mapper
-     * @return replace vars result
+     * @param mapper maps a type variable to its replacement, returning null or the variable itself keeps it unchanged
+     * @return this very instance when nothing was replaced
      */
     NReflectType replaceVars(Function<NReflectType, NReflectType> mapper);
+
+    /**
+     * The view of this type as the given super class or interface, with type arguments resolved.
+     * For instance {@code findSuperType(Map.class)} on a {@code class Props extends HashMap<String,Integer>}
+     * returns {@code Map<String,Integer>}.
+     *
+     * @param rawClass super class or interface
+     * @return the (possibly parametrized) super type or empty if this type does not extend {@code rawClass}
+     * @since 1.1.0
+     */
+    NOptional<NReflectType> findSuperType(Class<?> rawClass);
 
     /**
      * all methods including super (if not overridden)
@@ -225,10 +238,11 @@ public interface NReflectType {
     NOptional<NReflectProperty> getDeclaredProperty(String name);
 
     /**
-     * Checks if is assignable from.
+     * Checks if a value of {@code type} can be assigned to this type, honoring type arguments
+     * (including wildcards) when this type is parametrized. Raw types accept any parametrization.
      *
      * @param type type
-     * @return is assignable from result
+     * @return true if assignable
      */
     boolean isAssignableFrom(NReflectType type);
 
@@ -247,9 +261,10 @@ public interface NReflectType {
     boolean hasSpecialConstructor();
 
     /**
-     * Raw type.
+     * Raw type (erasure) : the type itself for a class, {@code List} for {@code List<String>},
+     * the bound class for type variables and wildcards and the array class for generic arrays.
      *
-     * @return raw type result
+     * @return raw type
      */
     NReflectType rawType();
 

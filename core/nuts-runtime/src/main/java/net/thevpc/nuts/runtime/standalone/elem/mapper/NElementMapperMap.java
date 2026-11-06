@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNPairElement;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNObjectElement;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnsupportedEnumException;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -75,31 +75,26 @@ public class NElementMapperMap implements NElementMapper<Map> {
     public Map toObject(NElementDeserializerContext context) {
         Type to = context.instanceType();
         NElement element = context.element();
-        Class cls = Map.class;
-        Type elemType1 = null;//Object.class;
-        Type elemType2 = null;//Object.class;
-        if (to instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) to;
-            Type rawType = pt.getRawType();
-            if (rawType instanceof Class) {
-                cls = (Class) rawType;
-            }
-            elemType1 = pt.getActualTypeArguments()[0];
-            elemType2 = pt.getActualTypeArguments()[1];
-        }
+        Class cls = CoreNElementUtils.rawClass(to, Map.class);
+        // key/value types resolved through the hierarchy : Map<K,V>, but also class Props extends HashMap<K,V>
+        Type[] kv = CoreNElementUtils.resolveTypeArguments(to, Map.class, context.typesRepository());
+        Type elemType1 = kv[0];
+        Type elemType2 = kv[1];
         if (cls == null) {
             throw new NIllegalArgumentException(NMsg.ofP("class is null"));
         }
+        int size = element instanceof NListContainerElement ? ((NListContainerElement) element).size() : 16;
         switch (cls.getName()) {
             case "java.util.Map":
             case "java.util.LinkedHashMap": {
-                return fillObject(element, new LinkedHashMap(element.asObject().get().size()), elemType1, elemType2, to, context);
+                return fillObject(element, new LinkedHashMap(size), elemType1, elemType2, to, context);
             }
             case "java.util.HashMap": {
-                return fillObject(element, new HashMap(element.asObject().get().size()), elemType1, elemType2, to, context);
+                return fillObject(element, new HashMap(size), elemType1, elemType2, to, context);
             }
             case "java.util.SortedMap":
-            case "java.util.NavigableMap": {
+            case "java.util.NavigableMap":
+            case "java.util.TreeMap": {
                 return fillObject(element, new TreeMap(), elemType1, elemType2, to, context);
             }
             default: {

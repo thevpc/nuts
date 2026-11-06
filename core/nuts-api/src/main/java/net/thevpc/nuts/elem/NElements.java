@@ -29,6 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
 
+import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
 /**
@@ -80,6 +81,19 @@ public interface NElements extends NComponent {
     <T> T convert(Object any, Class<T> to);
 
     /**
+     * convert {@code any} to the given generic type (for instance {@code List<MyBean>}) or throw an exception.
+     * Type arguments are honored for collections, maps, arrays and reflected beans.
+     * Use {@code new NTypeReference<List<MyBean>>(){}.type()} to obtain such a type.
+     *
+     * @param <T> return type
+     * @param any value to convert
+     * @param to  target type
+     * @return instance of type {@code to}
+     * @since 1.1.0
+     */
+    <T> T convert(Object any, Type to);
+
+    /**
      * simplify an object is to convert it to a simple object composed only of :
      * <ul>
      * <li>boxed primitives</li>
@@ -111,6 +125,16 @@ public interface NElements extends NComponent {
      * @return from element result
      */
     <T> T fromElement(NElement o, Class<T> to);
+
+    /**
+     * convert element to the given generic type (for instance {@code Map<String, List<MyBean>>}).
+     *
+     * @param o  element
+     * @param to target type
+     * @return instance of type {@code to}
+     * @since 1.1.0
+     */
+    <T> T fromElement(NElement o, Type to);
 
 
     /**

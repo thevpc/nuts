@@ -34,32 +34,24 @@ import java.util.Objects;
  */
 public class SimpleParametrizedType implements ParameterizedType {
 
-    private String typeName;
-    private Type[] actualTypeArguments;
-    private Type rawType;
-    private Type ownerType;
+    private final Type[] actualTypeArguments;
+    private final Type rawType;
+    private final Type ownerType;
 
     public SimpleParametrizedType(Type rawType, Type[] actualTypeArguments, Type ownerType) {
-        this.actualTypeArguments = actualTypeArguments;
+        this.actualTypeArguments = actualTypeArguments == null ? new Type[0] : actualTypeArguments.clone();
         this.rawType = rawType;
-        this.ownerType = ownerType;
-        StringBuilder sb = new StringBuilder();
-        sb.append(rawType);
-        sb.append("<");
-        for (int i = 0; i < actualTypeArguments.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            Type actualTypeArgument = actualTypeArguments[i];
-            sb.append(actualTypeArgument);
+        // same as the jdk : a member class always has its declaring class as owner
+        // so that equals/hashCode match the jdk ParameterizedType implementation
+        if (ownerType == null && rawType instanceof Class) {
+            ownerType = ((Class<?>) rawType).getDeclaringClass();
         }
-        sb.append(">");
-        typeName = sb.toString();
+        this.ownerType = ownerType;
     }
 
     @Override
     public Type[] getActualTypeArguments() {
-        return actualTypeArguments;
+        return actualTypeArguments.clone();
     }
 
     @Override
@@ -74,7 +66,7 @@ public class SimpleParametrizedType implements ParameterizedType {
 
     @Override
     public String getTypeName() {
-        return typeName;
+        return toString();
     }
 
     @Override
@@ -107,23 +99,29 @@ public class SimpleParametrizedType implements ParameterizedType {
                         Objects.hashCode(rawType);
     }
 
+    /**
+     * same format as the jdk ParameterizedType implementation
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
         if (ownerType != null) {
-            if (ownerType instanceof Class) {
-                sb.append(((Class) ownerType).getName());
-            } else {
-                sb.append(ownerType.toString());
-            }
+            sb.append(ownerType.getTypeName());
             sb.append("$");
-            sb.append(rawType.getTypeName());
+            if (ownerType instanceof ParameterizedType && rawType instanceof Class) {
+                Type ownerRaw = ((ParameterizedType) ownerType).getRawType();
+                String prefix = (ownerRaw instanceof Class ? ((Class<?>) ownerRaw).getName() : ownerRaw.getTypeName()) + "$";
+                sb.append(((Class<?>) rawType).getName().replace(prefix, ""));
+            } else if (rawType instanceof Class) {
+                sb.append(((Class<?>) rawType).getSimpleName());
+            } else {
+                sb.append(rawType.getTypeName());
+            }
         } else {
             sb.append(rawType.getTypeName());
         }
 
-        if (actualTypeArguments != null &&
-                actualTypeArguments.length > 0) {
+        if (actualTypeArguments.length > 0) {
             sb.append("<");
             boolean first = true;
             for (Type t : actualTypeArguments) {

@@ -6,9 +6,9 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementSerializerContext;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.reflect.NReflectUtils;
+import net.thevpc.nuts.runtime.standalone.elem.CoreNElementUtils;
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -49,22 +49,23 @@ public class NElementMapperCollection implements NElementMapper<Collection> {
             to=ArrayList.class;
         }
         Class cls = NReflectUtils.getRawClass(to).get();
-        Type elemType = Object.class;
-        if (to instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) to;
-            elemType = pt.getActualTypeArguments()[0];
+        // element type resolved through the hierarchy : List<X>, but also class XList extends ArrayList<X>
+        Type elemType = CoreNElementUtils.resolveTypeArguments(to, Iterable.class, context.typesRepository())[0];
+        if (elemType == null) {
+            elemType = Object.class;
         }
         switch (cls.getName()) {
+            case "java.lang.Iterable":
             case "java.util.Collection":
             case "java.util.List":
             case "java.util.ArrayList": {
                 return fillObject(element, new ArrayList(element.asArray().get().size()), elemType, to, context);
             }
             case "java.util.Set":
-            case "java.util.LinkedHashset": {
+            case "java.util.LinkedHashSet": {
                 return fillObject(element, new LinkedHashSet(), elemType, to, context);
             }
-            case "java.util.Hashset": {
+            case "java.util.HashSet": {
                 return fillObject(element, new HashSet(), elemType, to, context);
             }
             case "java.util.SortedSet":
@@ -72,17 +73,22 @@ public class NElementMapperCollection implements NElementMapper<Collection> {
             case "java.util.TreeSet": {
                 return fillObject(element, new TreeSet(), elemType, to, context);
             }
-            case "java.util.Queue": {
+            case "java.util.Queue":
+            case "java.util.Deque":
+            case "java.util.LinkedList": {
+                // LinkedList is a Queue, a Deque and a List and accepts null elements
                 return fillObject(element, new LinkedList(), elemType, to, context);
             }
-            case "java.util.BlockingQueue": {
+            case "java.util.ArrayDeque": {
+                return fillObject(element, new ArrayDeque(), elemType, to, context);
+            }
+            case "java.util.concurrent.BlockingQueue":
+            case "java.util.concurrent.LinkedBlockingQueue": {
                 return fillObject(element, new LinkedBlockingQueue(), elemType, to, context);
             }
-            case "java.util.TransferQueue": {
+            case "java.util.concurrent.TransferQueue":
+            case "java.util.concurrent.LinkedTransferQueue": {
                 return fillObject(element, new LinkedTransferQueue(), elemType, to, context);
-            }
-            case "java.util.Deque": {
-                return fillObject(element, new ArrayList(), elemType, to, context);
             }
             default: {
                 NReflectType m = context.typesRepository().getType(to);

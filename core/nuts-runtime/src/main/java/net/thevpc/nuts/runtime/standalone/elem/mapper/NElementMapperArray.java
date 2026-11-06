@@ -4,8 +4,10 @@ import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.text.NMsg;
+import net.thevpc.nuts.reflect.NReflectUtils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 
 public class NElementMapperArray implements NElementMapper<Object> {
@@ -22,8 +24,17 @@ public class NElementMapperArray implements NElementMapper<Object> {
             if (typeOfResult == null) {
                 typeOfResult = Object[].class;
             }
-            Class arrType = (Class) typeOfResult;
-            Class componentType = arrType.getComponentType();
+            // generic component (List<String>[], T[]) : the array is created from the erasure,
+            // elements are deserialized with the generic type
+            Type genericComponentType;
+            Class componentType;
+            if (typeOfResult instanceof GenericArrayType) {
+                genericComponentType = ((GenericArrayType) typeOfResult).getGenericComponentType();
+                componentType = NReflectUtils.getRawClass(genericComponentType).orElse(Object.class);
+            } else {
+                componentType = ((Class) typeOfResult).getComponentType();
+                genericComponentType = componentType;
+            }
             switch (componentType.getName()) {
                 case "boolean": {
                     boolean[] x = new boolean[e.size()];
@@ -77,7 +88,7 @@ public class NElementMapperArray implements NElementMapper<Object> {
                 default: {
                     Object[] x = (Object[]) Array.newInstance(componentType, e.size());
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = context.toObject(e.get(i).get(), componentType);
+                        x[i] = context.toObject(e.get(i).get(), genericComponentType);
                     }
                     return x;
                 }

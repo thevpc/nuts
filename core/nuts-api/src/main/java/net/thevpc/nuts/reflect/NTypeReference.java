@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * This is super type token implementation as described in
@@ -57,11 +58,18 @@ public abstract class NTypeReference<T> implements Serializable {
      * @return of result
      */
     public static <T> NTypeReference<T> of(Type type, Type... args) {
-        if (type instanceof ParameterizedType) {
-            ParameterizedType ptype = (ParameterizedType) type;
-            ParameterizedType ptype2 = new MyParameterizedType(ptype, args);
-            return new NTypeReference<T>(ptype2) {
-            };
+        if (args != null && args.length > 0) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType ptype = (ParameterizedType) type;
+                return new NTypeReference<T>(new MyParameterizedType(ptype.getRawType(), ptype.getOwnerType(), args)) {
+                };
+            }
+            if (type instanceof Class) {
+                // of(List.class, String.class) is List<String>
+                Class<?> c = (Class<?>) type;
+                return new NTypeReference<T>(new MyParameterizedType(c, c.getDeclaringClass(), args)) {
+                };
+            }
         }
         return new NTypeReference<T>(type) {
         };
@@ -76,10 +84,7 @@ public abstract class NTypeReference<T> implements Serializable {
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, InstantiationException {
         if (constructor == null) {
-            Class<?> rawType = type instanceof Class<?>
-                    ? (Class<?>) type
-                    : (Class<?>) ((ParameterizedType) type).getRawType();
-            constructor = rawType.getConstructor();
+            constructor = typeClass().getConstructor();
         }
         return (T) constructor.newInstance();
     }
@@ -88,15 +93,7 @@ public abstract class NTypeReference<T> implements Serializable {
      * Gets the referenced type.
      */
     public Class typeClass() {
-        try {
-            Type tt = type;
-            while (tt instanceof ParameterizedType) {
-                tt = ((ParameterizedType) tt).getRawType();
-            }
-            return (Class) tt;
-        } catch (ClassCastException ex) {
-            throw ex;
-        }
+        return NReflectUtils.getRawClass(type).get();
     }
 
     /**
@@ -118,10 +115,14 @@ public abstract class NTypeReference<T> implements Serializable {
         return typeClass().isAssignableFrom(cls.typeClass());
     }
 
+    /**
+     * two references are equal when they denote the same type, whatever their (usually anonymous) class is :
+     * {@code new NTypeReference<List<String>>(){}} equals {@code NTypeReference.of(List.class, String.class)}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof NTypeReference)) return false;
 
         NTypeReference<?> that = (NTypeReference<?>) o;
 
@@ -179,54 +180,69 @@ public abstract class NTypeReference<T> implements Serializable {
         return typeClass().isInstance(t);
     }
 
-    private static class MyParameterizedType implements ParameterizedType {
-        private final ParameterizedType ptype;
+    /**
+     * equals/hashCode compatible with the jdk ParameterizedType implementation
+     */
+    private static class MyParameterizedType implements ParameterizedType, Serializable {
+        private final Type rawType;
+        private final Type ownerType;
         private final Type[] args;
 
-        /**
-         * My parameterized type.
-         *
-         * @param ptype ptype
-         * @param args args
-         * @return my parameterized type result
-         */
-        public MyParameterizedType(ParameterizedType ptype, Type... args) {
-            this.ptype = ptype;
-            this.args = args;
+        public MyParameterizedType(Type rawType, Type ownerType, Type... args) {
+            this.rawType = rawType;
+            this.ownerType = ownerType;
+            this.args = args.clone();
         }
 
         @Override
         public Type[] getActualTypeArguments() {
-            return args;
+            return args.clone();
         }
 
         @Override
         public Type getRawType() {
-            return ptype.getRawType();
+            return rawType;
         }
 
         @Override
         public Type getOwnerType() {
-            return ptype.getOwnerType();
+            return ownerType;
+        }
+
+        @Override
+        public String getTypeName() {
+            return toString();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder(rawType.getTypeName());
+            if (args.length > 0) {
+                sb.append("<");
+                for (int i = 0; i < args.length; i++) {
+                    if (i > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(args[i].getTypeName());
+                }
+                sb.append(">");
+            }
+            return sb.toString();
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            MyParameterizedType that = (MyParameterizedType) o;
-
-            if (ptype != null ? !ptype.equals(that.ptype) : that.ptype != null) return false;
-            // Probably incorrect - comparing Object[] arrays with Arrays.equals
-            return Arrays.equals(args, that.args);
+            if (!(o instanceof ParameterizedType)) return false;
+            ParameterizedType that = (ParameterizedType) o;
+            return Objects.equals(ownerType, that.getOwnerType())
+                    && Objects.equals(rawType, that.getRawType())
+                    && Arrays.equals(args, that.getActualTypeArguments());
         }
 
         @Override
         public int hashCode() {
-            int result = ptype != null ? ptype.hashCode() : 0;
-            result = 31 * result + Arrays.hashCode(args);
-            return result;
+            return Arrays.hashCode(args) ^ Objects.hashCode(ownerType) ^ Objects.hashCode(rawType);
         }
     }
 }

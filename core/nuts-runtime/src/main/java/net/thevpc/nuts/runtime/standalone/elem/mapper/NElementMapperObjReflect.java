@@ -13,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -97,61 +98,61 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             }
             case BOOLEAN: {
                 if (c.isAssignableFrom(Boolean.class)) {
-                    return element.asLiteral().asBoolean();
+                    return element.asLiteral().asBoolean().orNull();
                 }
                 break;
             }
             case DOUBLE: {
                 if (c.isAssignableFrom(Double.class)) {
-                    return element.asLiteral().asDouble();
+                    return element.asLiteral().asDouble().orNull();
                 }
                 break;
             }
             case FLOAT: {
                 if (c.isAssignableFrom(Float.class)) {
-                    return element.asLiteral().asFloat();
+                    return element.asLiteral().asFloat().orNull();
                 }
                 break;
             }
             case BYTE: {
                 if (c.isAssignableFrom(Byte.class)) {
-                    return element.asLiteral().asByte();
+                    return element.asLiteral().asByte().orNull();
                 }
                 break;
             }
             case BIG_DECIMAL: {
                 if (c.isAssignableFrom(BigDecimal.class)) {
-                    return element.asLiteral().asNumber();
+                    return element.asLiteral().asNumber().orNull();
                 }
                 break;
             }
             case BIG_INT: {
                 if (c.isAssignableFrom(BigInteger.class)) {
-                    return element.asLiteral().asNumber();
+                    return element.asLiteral().asNumber().orNull();
                 }
                 break;
             }
             case LONG: {
                 if (c.isAssignableFrom(Long.class)) {
-                    return element.asLiteral().asLong();
+                    return element.asLiteral().asLong().orNull();
                 }
                 break;
             }
             case SHORT: {
                 if (c.isAssignableFrom(Short.class)) {
-                    return element.asLiteral().asShort();
+                    return element.asLiteral().asShort().orNull();
                 }
                 break;
             }
             case INT: {
                 if (c.isAssignableFrom(Integer.class)) {
-                    return element.asLiteral().asInt();
+                    return element.asLiteral().asInt().orNull();
                 }
                 break;
             }
             case INSTANT: {
                 if (c.isAssignableFrom(Instant.class)) {
-                    return element.asLiteral().asInstant();
+                    return element.asLiteral().asInstant().orNull();
                 }
                 break;
             }
@@ -180,7 +181,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             return created;
         }
         if (isRecord(c)) {
-            return createRecord(c, element, context);
+            return createRecord(c, typeOfResult, element, context);
         }
         NReflectType m = context.typesRepository().getType(typeOfResult);
         Object instance = m.newInstance();
@@ -320,7 +321,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         }
     }
 
-    private static Object createRecord(Class<?> type, NElement element, NElementDeserializerContext context) {
+    private static Object createRecord(Class<?> type, Type typeOfResult, NElement element, NElementDeserializerContext context) {
         if (!(element instanceof NObjectElement)) {
             throw new NIllegalArgumentException(NMsg.ofC(
                     "expected an object to create record %s, got %s",
@@ -332,6 +333,8 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         Class<?>[] parameterTypes = new Class<?>[components.length];
         Object[] arguments = new Object[components.length];
         NObjectElement object = (NObjectElement) element;
+        // generic records : resolve component types against the requested parametrization (Box<String>)
+        NReflectType recordType = typeOfResult instanceof ParameterizedType ? context.typesRepository().getType(typeOfResult) : null;
         for (int i = 0; i < components.length; i++) {
             RecordComponentData component = components[i];
             parameterTypes[i] = component.type;
@@ -345,7 +348,13 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                         type.getName()
                 ));
             } else {
-                arguments[i] = context.toObject(value, component.genericType);
+                Type componentType = component.genericType;
+                if (recordType != null) {
+                    componentType = context.typesRepository().getType(componentType)
+                            .replaceVars(x -> recordType.getActualTypeArgument(x).orElse(x))
+                            .javaType();
+                }
+                arguments[i] = context.toObject(value, componentType);
             }
         }
         try {

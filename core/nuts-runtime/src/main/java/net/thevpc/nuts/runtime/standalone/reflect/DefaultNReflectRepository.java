@@ -29,8 +29,8 @@ import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.reflect.NScorable;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -39,7 +39,7 @@ import java.util.Map;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNReflectRepository implements NReflectRepository {
 
-    private final Map<Type, NReflectType> beans = new HashMap<>();
+    private final Map<Type, NReflectType> beans = new ConcurrentHashMap<>();
     private NReflectConfiguration configuration;
 
     public DefaultNReflectRepository() {
@@ -60,7 +60,11 @@ public class DefaultNReflectRepository implements NReflectRepository {
         NReflectType v = beans.get(clz);
         if (v == null) {
             v = create(clz);
-            beans.put(clz, v);
+            // keep a single instance per type, even when racing
+            NReflectType old = beans.putIfAbsent(clz, v);
+            if (old != null) {
+                v = old;
+            }
         }
         return v;
     }

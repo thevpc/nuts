@@ -146,3 +146,6 @@ To re-compile `documentation/website/src/` into the static `docs/` website and s
    ```
 
 3. The updated static website will be written to `docs/`, ready for push to GitHub Pages.
+
+## Change Trace
+always add meaningful info on $NUTS_REPO/documentation/website/src/include/blog/2026/2026-10-05-1.1.0-updates.md (or equivalent depending on the version) for any feature or fix done

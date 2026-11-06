@@ -51,6 +51,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
 
     protected Object createObject(NElement o, Type to, NElementFactoryContext context, boolean defaultOnly) {
+        to = CoreNElementUtils.normalizeTargetType(to);
         if (o == null || o.type() == NElementType.NULL) {
             return DefaultElementMapperStore.F_NULL.toObject(NElementDeserializerContextImpl.of(o, to, context));
         }
@@ -79,9 +80,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (o == null) {
             return null;
         }
-        if (expectedType == null) {
-            expectedType = o.getClass();
-        }
+        expectedType = CoreNElementUtils.normalizeSourceType(o, expectedType);
         if (context.isSimpleObject(o)) {
             return o;
         }
@@ -102,9 +101,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (o == null) {
             return NElement.ofNull();
         }
-        if (expectedType == null) {
-            expectedType = o.getClass();
-        }
+        expectedType = CoreNElementUtils.normalizeSourceType(o, expectedType);
         if (context.isSimpleObject(o)) {
             return createUndestructableElement(o, expectedType, context);
         }
