@@ -196,7 +196,10 @@ public class DefaultNExprsCommonOps {
                             return NNumberUtils.addNumbers(aa.asNumber().get(), bb.asNumber().get());
                         }
                         if (aa.isString() || bb.isString()) {
-                            return String.valueOf(a) + b;
+                            // the literals' values rather than the operands: an element operand
+                            // would render as its TSON text here, quotes and all, and a
+                            // concatenation would inherit them
+                            return String.valueOf(aa.asObject().orNull()) + bb.asObject().orNull();
                         }
                         throw new NIllegalArgumentException(NMsg.ofC("unable to operate '+' operator for %s %s", a, b));
                     }
