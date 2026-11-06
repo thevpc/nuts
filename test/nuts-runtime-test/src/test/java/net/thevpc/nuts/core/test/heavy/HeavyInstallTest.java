@@ -99,13 +99,14 @@ public class HeavyInstallTest {
         if (!NPath.ofUserHome().resolve(".nuts/local-urls").isDirectory()) {
             return;
         }
-        NExec ee = NExec.of("org.jedit:jedit", "--version");
+        // jEdit only knows the single dash form, "--version" prints the usage
+        NExec ee = NExec.of("org.jedit:jedit", "-version");
         ee.grabAll();
-        int e = ee.run().exitCode();
+        ee.failFast(false);
+        ee.run();
         String str = ee.grabbedAll();
-        Assertions.assertTrue(str.contains("Apache Maven"));
-        Assertions.assertTrue(str.contains("Maven home"));
-        Assertions.assertEquals(0, e);
+        // jEdit exits with code 1 after printing its version, so the exit code is not checked
+        Assertions.assertTrue(str.contains("jEdit "), str);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.artifact.NDependency;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NCreator;
 import net.thevpc.nuts.elem.NElement;
@@ -8,6 +9,7 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.elem.NProperty;
+import net.thevpc.nuts.elem.NToElement;
 import net.thevpc.nuts.mon.NChronometer;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.time.NDuration;
@@ -417,6 +419,55 @@ class ElementCreatorMappingTest {
         @NCreator
         public static NOptional<DecliningElementThenProperty> of(NElement e) {
             return NOptional.ofEmpty();
+        }
+    }
+
+    @Test
+    void builtinMappersStillHonorNToElementOnTheDefaultPath() {
+        // NElementMapperNDependency serializes through the default path with an NText; a plain NText is
+        // an NToElement and must stay a string, not a reflective dump of the text (this corrupted
+        // eff-nuts.cache and dropped every dependency on reload)
+        NDependency dependency = NDependency.get("net.thevpc.nuts:nuts#1.1.0").get();
+        NElement element = NElement.of(dependency);
+        assertTrue(element.type().isAnyString(), String.valueOf(element));
+        assertEquals(dependency, NDependency.get(element.asStringValue().get()).get());
+    }
+
+    @Test
+    void defaultToNamedElementInsideToElementDoesNotRecurse() {
+        SelfMapped original = new SelfMapped(3, "x");
+        NElement element = original.toElement();
+        NObjectElement object = element.asObject().get();
+        assertEquals("SelfMapped", object.name().orNull());
+        assertEquals(3, object.getIntValue("a").get());
+        assertEquals("x", object.getStringValue("b").get());
+        assertEquals(element.toString(), NElement.of(original).toString());
+        SelfMapped copy = NElement.defaultFromElement(element, SelfMapped.class).get();
+        assertEquals(3, copy.a);
+        assertEquals("x", copy.b);
+    }
+
+    public static class SelfMapped implements NToElement {
+        final int a;
+        final String b;
+
+        @NCreator
+        public SelfMapped(@NProperty("a") int a, @NProperty("b") String b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public int getA() {
+            return a;
+        }
+
+        public String getB() {
+            return b;
+        }
+
+        @Override
+        public NElement toElement() {
+            return NElement.defaultToNamedElement(this);
         }
     }
 

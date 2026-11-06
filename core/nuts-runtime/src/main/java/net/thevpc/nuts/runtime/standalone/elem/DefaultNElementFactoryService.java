@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.elem.*;
 
 import net.thevpc.nuts.runtime.standalone.elem.item.DefaultNArrayElement;
-import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapperObjReflect;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementDeserializerContextImpl;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.DefaultElementMapperStore;
@@ -46,8 +45,6 @@ import net.thevpc.nuts.util.NUnsupportedEnumException;
  * @author thevpc
  */
 public class DefaultNElementFactoryService implements NElementFactoryService {
-
-    private static final NElementMapperObjReflect DEFAULT_OBJECT_MAPPER = new NElementMapperObjReflect();
 
     public DefaultNElementFactoryService() {
     }
@@ -107,11 +104,6 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         }
         if (expectedType == null) {
             expectedType = o.getClass();
-        }
-        if (defaultOnly && o instanceof NToElement) {
-            return DEFAULT_OBJECT_MAPPER.toElement(
-                    NElementSerializerContextImpl.of(o, expectedType, context)
-            );
         }
         if (context.isSimpleObject(o)) {
             return createUndestructableElement(o, expectedType, context);

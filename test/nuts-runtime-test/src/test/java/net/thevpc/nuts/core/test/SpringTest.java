@@ -53,7 +53,8 @@ public class SpringTest {
             }
         }
 
-        NExec exec = NExec.of("net.thevpc.samples.springnuts:springnuts-app-jar")
+        // random free port : the default 8080 may be taken by any local server
+        NExec exec = NExec.of("net.thevpc.samples.springnuts:springnuts-app-jar", "--server.port=0")
 //                .embedded()
                 .executorOption("--show-command")
                 .spawn()

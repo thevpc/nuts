@@ -7,6 +7,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.NElementMapperObjReflect;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.builder.NElementSerializerContextImpl;
 import net.thevpc.nuts.runtime.standalone.elem.parser.mapperstore.UserElementMapperStore;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NMsg;
@@ -16,6 +18,7 @@ import net.thevpc.nuts.reflect.NReflectRepository;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNElements implements NElements {
 
+    private static final NElementMapperObjReflect DEFAULT_OBJECT_MAPPER = new NElementMapperObjReflect();
     private final UserElementMapperStore userElementMapperStore;
     private boolean ntf;
     private final boolean readOnly;
@@ -83,7 +86,14 @@ public class DefaultNElements implements NElements {
         if (o instanceof NElement) {
             return (NElement) o;
         }
-        return createFactoryContext().defaultCreateElement(o, null);
+        DefaultNElementFactoryContext context = createFactoryContext();
+        if (o instanceof NToElement) {
+            // the default form of an NToElement is its reflective mapping, not its own toElement().
+            // this bypass must stay here : the internal default path (defaultCreateElement) is used
+            // by the builtin mappers (NDependency, NText, ...) and must keep honoring NToElement
+            return DEFAULT_OBJECT_MAPPER.toElement(NElementSerializerContextImpl.of(o, o.getClass(), context));
+        }
+        return context.defaultCreateElement(o, null);
     }
 
 
