@@ -16,6 +16,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.xtra.time.NProgressUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.runtime.standalone.xtra.time.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -47,6 +49,10 @@ public class DefaultNCp implements NCp {
     private NCpValidator checker;
     private boolean skipRoot = false;
     private final int maxRepeatCount = 3;
+    private Boolean segmented;
+    private int segmentedConnections;
+    private long segmentedChunkSize;
+    private long segmentedMinSize = -1;
     private NInputSource source;
     private NOutputTarget target;
     private NProgressFactory progressMonitorFactory;
@@ -406,6 +412,50 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
+    public Boolean segmented() {
+        return segmented;
+    }
+
+    @Override
+    public NCp segmented(Boolean segmented) {
+        this.segmented = segmented;
+        return this;
+    }
+
+    @Override
+    public int segmentedConnections() {
+        return segmentedConnections;
+    }
+
+    @Override
+    public NCp segmentedConnections(int connections) {
+        this.segmentedConnections = Math.max(0, connections);
+        return this;
+    }
+
+    @Override
+    public long segmentedChunkSize() {
+        return segmentedChunkSize;
+    }
+
+    @Override
+    public NCp segmentedChunkSize(long chunkSize) {
+        this.segmentedChunkSize = Math.max(0, chunkSize);
+        return this;
+    }
+
+    @Override
+    public long segmentedMinSize() {
+        return segmentedMinSize;
+    }
+
+    @Override
+    public NCp segmentedMinSize(long minSize) {
+        this.segmentedMinSize = minSize < 0 ? -1 : minSize;
+        return this;
+    }
+
+    @Override
     public boolean isSkipRoot() {
         return skipRoot;
     }
@@ -755,21 +805,9 @@ public class DefaultNCp implements NCp {
         if (options.contains(NPathOption.LOG)) {
             session.terminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
         }
-        if (options.contains(NPathOption.LOG)
-                || options.contains(NPathOption.TRACE)
-                || progressFactory() != null
-        ) {
-            NInputStreamMonitor monitor = NInputStreamMonitor.of();
-            monitor.source(_source2.source);
-            monitor.logProgress(options.contains(NPathOption.LOG));
-            monitor.traceProgress(options.contains(NPathOption.TRACE));
-            monitor.origin(sourceOrigin());
-            monitor.sourceTypeName(sourceTypeName());
-            _source2.source = NInputSource.of(
-                    monitor.progressFactory(progressFactory())
-                            .length(_source2.source.metaData().contentLength().orElse(-1L))
-                            .logProgress(options.contains(NPathOption.LOG))
-                            .create());
+        NSegmentedHttpDownload.Options segmented = (safe && _target2.jpath != null) ? segmentedDownloadOptions(_source2) : null;
+        if (segmented == null) {
+            monitorSource(_source2);
         }
         NChronometer chrono = NChronometer.of();
         if (_LOG().isLoggable(Level.FINEST)) {
@@ -788,7 +826,16 @@ public class DefaultNCp implements NCp {
                     temp = NPath.ofTempFile("temp~").toPath().get();
                 }
                 try {
-                    if (_source2.jpath != null) {
+                    boolean copied = false;
+                    if (segmented != null) {
+                        copied = copySegmented(_source2, temp, segmented);
+                        if (!copied) {
+                            monitorSource(_source2);
+                        }
+                    }
+                    if (copied) {
+                        // already in temp
+                    } else if (_source2.jpath != null) {
                         copy(_source2.jpath, temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
                         try (InputStream ins = _source2.source.inputStream()) {
@@ -879,6 +926,133 @@ public class DefaultNCp implements NCp {
         }
     }
 
+
+    private boolean isMonitored() {
+        return options.contains(NPathOption.LOG)
+                || options.contains(NPathOption.TRACE)
+                || progressFactory() != null;
+    }
+
+    private void monitorSource(NInputSource2 s) {
+        if (isMonitored()) {
+            NInputStreamMonitor monitor = NInputStreamMonitor.of();
+            monitor.source(s.source);
+            monitor.logProgress(options.contains(NPathOption.LOG));
+            monitor.traceProgress(options.contains(NPathOption.TRACE));
+            monitor.origin(sourceOrigin());
+            monitor.sourceTypeName(sourceTypeName());
+            s.source = NInputSource.of(
+                    monitor.progressFactory(progressFactory())
+                            .length(s.source.metaData().contentLength().orElse(-1L))
+                            .logProgress(options.contains(NPathOption.LOG))
+                            .create());
+        }
+    }
+
+    /**
+     * segmented download options when {@code s} is a large enough http(s)
+     * resource and segmenting is enabled, null otherwise. Values set on this
+     * instance ({@link #segmented(Boolean)}, {@link #segmentedConnections(int)},
+     * ...) win over the workspace defaults, given by the custom options
+     * {@code ---download-connections} (default 4, 1 disables),
+     * {@code ---download-chunk-size} (default 4m) and
+     * {@code ---download-min-size} (default 8m).
+     */
+    private NSegmentedHttpDownload.Options segmentedDownloadOptions(NInputSource2 s) {
+        if (Boolean.FALSE.equals(segmented) || s.path == null || !s.path.isHttp()) {
+            return null;
+        }
+        NWorkspace ws = NWorkspace.of();
+        NSegmentedHttpDownload.Options o = new NSegmentedHttpDownload.Options();
+        int builtinConnections = o.connections;
+        if (segmentedConnections > 0) {
+            o.connections = segmentedConnections;
+        } else {
+            o.connections = ws.getCustomBootOption("---download-connections")
+                    .flatMap(NLiteral::asInt).orElse(o.connections);
+            if (o.connections < 2 && Boolean.TRUE.equals(segmented)) {
+                // disabled by default but explicitly requested
+                o.connections = builtinConnections;
+            }
+        }
+        if (o.connections < 2) {
+            return null;
+        }
+        o.chunkSize = segmentedChunkSize > 0 ? segmentedChunkSize
+                : NSegmentedHttpDownload.parseSize(ws.getCustomBootOption("---download-chunk-size")
+                .flatMap(NLiteral::asString).orNull(), o.chunkSize);
+        o.minSize = segmentedMinSize >= 0 ? segmentedMinSize
+                : NSegmentedHttpDownload.parseSize(ws.getCustomBootOption("---download-min-size")
+                .flatMap(NLiteral::asString).orNull(), o.minSize);
+        URL url = s.path.toURL().orNull();
+        long length;
+        try {
+            length = s.path.contentLength();
+        } catch (Exception ex) {
+            return null;
+        }
+        if (!NSegmentedHttpDownload.isCandidate(url, length, o)) {
+            return null;
+        }
+        NDuration ct = DefaultNHttpClient.getGlobalConnectionTimeoutOrDefault();
+        NDuration rt = DefaultNHttpClient.getGlobalReadConnectionTimeoutOrDefault();
+        o.connectTimeoutMs = ct == null ? 0 : (int) Math.min(Integer.MAX_VALUE, ct.toMillis());
+        o.readTimeoutMs = rt == null ? 0 : (int) Math.min(Integer.MAX_VALUE, rt.toMillis());
+        o.userAgent = "nhttpclient/" + ws.runtimeId().version();
+        return o;
+    }
+
+    /**
+     * @return false when the server does not support (or stopped honouring)
+     * ranges and a plain download is needed
+     */
+    private boolean copySegmented(NInputSource2 s, Path temp, NSegmentedHttpDownload.Options o) throws IOException {
+        URL url = s.path.toURL().get();
+        NProgressListener listener = isMonitored()
+                ? NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, s.source, sourceOrigin(), NWorkspace.of(),
+                options.contains(NPathOption.LOG),
+                options.contains(NPathOption.TRACE),
+                progressFactory())
+                : null;
+        NMsg name = NMsg.ofNtf(NText.of(s.source));
+        Object src = s.source;
+        NSegmentedHttpDownload.Result r = NSegmentedHttpDownload.download(url, temp, o, new NSegmentedHttpDownload.Progress() {
+            long startTime;
+            long lastTime;
+            long lastCount;
+
+            @Override
+            public void onStart(long length) {
+                startTime = lastTime = System.nanoTime();
+                if (listener != null) {
+                    listener.onProgress(NProgressEvent.ofStart(src, name, length));
+                }
+            }
+
+            @Override
+            public void onProgress(long done, long length) {
+                long now = System.nanoTime();
+                if (listener != null && listener.onProgress(NProgressEvent.ofProgress(src, name,
+                        done, now - startTime, null, done - lastCount, now - lastTime, length, null))) {
+                    lastCount = done;
+                    lastTime = now;
+                }
+            }
+
+            @Override
+            public void onComplete(long done, long length, Throwable error) {
+                long now = System.nanoTime();
+                if (listener != null) {
+                    listener.onProgress(NProgressEvent.ofComplete(src, name,
+                            done, now - startTime, null, done - lastCount, now - lastTime, length, error));
+                }
+            }
+        });
+        if (_LOG().isLoggable(Level.FINEST)) {
+            _LOG().log(NMsg.ofC("download %s : %s", url, r).asFinest());
+        }
+        return r != NSegmentedHttpDownload.Result.FALLBACK;
+    }
 
     private void _validate(Path temp) {
         if (checker != null) {

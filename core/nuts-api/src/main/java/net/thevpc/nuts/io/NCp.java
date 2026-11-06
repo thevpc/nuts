@@ -513,4 +513,83 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      */
     NCp sourceTypeName(String sourceTypeName) ;
+
+    /**
+     * segmented download mode : when enabled, large http(s) resources copied
+     * with {@link NPathOption#SAFE} to a local file are fetched over several
+     * parallel connections, each downloading a byte range ({@code Range}
+     * requests), as long as the server supports it (falling back to a plain
+     * download otherwise).
+     *
+     * @return true when forced, false when disabled, null when the workspace
+     * default applies (custom option {@code ---download-connections}, enabled
+     * unless set to 1)
+     * @since 1.1.0
+     */
+    Boolean segmented();
+
+    /**
+     * enable, disable or reset (null : workspace default) segmented download.
+     *
+     * @param segmented true to enable, false to disable, null for the
+     *                  workspace default
+     * @return {@code this} instance
+     * @since 1.1.0
+     */
+    NCp segmented(Boolean segmented);
+
+    /**
+     * max parallel connections of a segmented download.
+     *
+     * @return max parallel connections, 0 when the workspace default applies
+     * (custom option {@code ---download-connections}, default 4)
+     * @since 1.1.0
+     */
+    int segmentedConnections();
+
+    /**
+     * update max parallel connections of a segmented download.
+     *
+     * @param connections max parallel connections, 0 for the workspace default
+     * @return {@code this} instance
+     * @since 1.1.0
+     */
+    NCp segmentedConnections(int connections);
+
+    /**
+     * size in bytes of each range request of a segmented download.
+     *
+     * @return chunk size, 0 when the workspace default applies (custom option
+     * {@code ---download-chunk-size}, default 4m)
+     * @since 1.1.0
+     */
+    long segmentedChunkSize();
+
+    /**
+     * update the size in bytes of each range request of a segmented download.
+     *
+     * @param chunkSize chunk size, 0 for the workspace default
+     * @return {@code this} instance
+     * @since 1.1.0
+     */
+    NCp segmentedChunkSize(long chunkSize);
+
+    /**
+     * minimum size in bytes of a resource for it to be downloaded segmented.
+     *
+     * @return min size, -1 when the workspace default applies (custom option
+     * {@code ---download-min-size}, default 8m)
+     * @since 1.1.0
+     */
+    long segmentedMinSize();
+
+    /**
+     * update the minimum size in bytes of a resource for it to be downloaded
+     * segmented.
+     *
+     * @param minSize min size, -1 for the workspace default
+     * @return {@code this} instance
+     * @since 1.1.0
+     */
+    NCp segmentedMinSize(long minSize);
 }
