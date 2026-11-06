@@ -142,7 +142,7 @@ search for artifacts
         version actually resolved for that dependency (nearest wins), e.g.
         ```sh --depends-on=net.thevpc.ntexup:ntexup-api#[1.1,1.2[```.
         Can be repeated (all must match). With ```sh --latest```, returns the
-        latest version that matches. Results are cached per artifact version.
+        latest version that matches.
 
     ```sh -l```
     ```sh --long```

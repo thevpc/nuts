@@ -2,12 +2,8 @@ package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.NFetch;
-import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.core.NWorkspace;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.platform.NStoreType;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
@@ -28,11 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>the {@code nuts.depends.<groupId>.<artifactId>} descriptor property,
  *     when the artifact declares the resolved version itself (no walk);</li>
  *     <li>an in-memory cache, per workspace;</li>
- *     <li>a persistent cache in the workspace cache folder : the dependency
- *     graph of a released version never changes, so its result is kept until
- *     {@code -N}/{@code --expire} obsoletes it (snapshots are never
- *     persisted).</li>
+ *     <li>the descriptor caching of the workspace, which the walk relies on.</li>
  * </ul>
+ * Results are deliberately not persisted : artifacts are often rebuilt with
+ * an unchanged version, and validating a persisted result would mean reading
+ * the very descriptors the walk reads. Staleness is therefore exactly that of
+ * the workspace descriptors (refreshed by {@code -N}/{@code --expire}).
  */
 public final class NDependsOnResolver {
 
@@ -84,7 +81,7 @@ public final class NDependsOnResolver {
         Map<String, String> memory = memoryCache();
         String v = memory.get(key);
         if (v == null) {
-            v = loadOrCompute(root, dependencyShortName);
+            v = compute(root, dependencyShortName);
             if (v == null) {
                 // unresolvable for now (descriptor not available) : retry next time
                 return null;
@@ -98,47 +95,6 @@ public final class NDependsOnResolver {
     private static Map<String, String> memoryCache() {
         return NWorkspace.of().getOrComputeProperty(NDependsOnResolver.class.getName() + ".cache",
                 ConcurrentHashMap::new);
-    }
-
-    private static String loadOrCompute(NId root, String dependencyShortName) {
-        boolean persistent = root.version() != null && root.version().isSingleValue()
-                && !root.version().isBlank() && !root.version().isSnapshot();
-        NPath cacheFile = persistent ? cacheFile(root, dependencyShortName) : null;
-        if (cacheFile != null && cacheFile.isRegularFile() && !CoreIOUtils.isObsoletePath(cacheFile)) {
-            try {
-                String s = NStringUtils.strip(cacheFile.readString());
-                if (!s.isEmpty()) {
-                    return s;
-                }
-            } catch (Exception ex) {
-                // recompute
-            }
-        }
-        String v = compute(root, dependencyShortName);
-        if (v != null && cacheFile != null) {
-            try {
-                cacheFile.mkParentDirs().writeString(v);
-            } catch (Exception ex) {
-                LOG.log(NMsg.ofC("unable to cache depends-on result of %s : %s", root, ex).asWarning());
-            }
-        }
-        return v;
-    }
-
-    private static NPath cacheFile(NId root, String dependencyShortName) {
-        try {
-            return NPath.of(NStoreKey.ofWorkspace(NStoreType.CACHE))
-                    .resolve("depends-on")
-                    .resolve(safeName(dependencyShortName))
-                    .resolve(safeName(root.shortName()))
-                    .resolve(safeName(root.version().toString()));
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    private static String safeName(String s) {
-        return s.replaceAll("[^A-Za-z0-9._-]", "_");
     }
 
     /**

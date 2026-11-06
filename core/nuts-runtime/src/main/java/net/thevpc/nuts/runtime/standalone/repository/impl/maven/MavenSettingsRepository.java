@@ -50,6 +50,12 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
+import net.thevpc.nuts.artifact.NDescriptor;
+import net.thevpc.nuts.artifact.NId;
+import net.thevpc.nuts.artifact.NArtifactNotFoundException;
+import net.thevpc.nuts.command.NFetchMode;
+import net.thevpc.nuts.spi.NRepositorySPI;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +73,14 @@ public class MavenSettingsRepository extends NRepositoryList {
     private static final long METADATA_CACHE_TTL_MS = 24L * 3600 * 1000;
 
     private NMavenSettings settings;
+    /**
+     * {@code --repos} selectors, parsed once for all sub-repositories
+     */
+    private NRepositorySelectorList selectors;
+    /**
+     * children backed by a local folder, such as {@code ~/.m2/repository}
+     */
+    private final List<NRepository> localFolderChildren = new ArrayList<>();
     private NLog LOG;
 
     public MavenSettingsRepository(NRepositorySpec options, NRepository parentRepository) {
@@ -75,6 +89,10 @@ public class MavenSettingsRepository extends NRepositoryList {
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
         Set<String> usedNames = new HashSet<>();
+        this.selectors = NRepositoryUtils
+                .createRepositorySelectorList(
+                        NCollections.nonNullList(NWorkspace.of().bootOptions().repositories().orElseGet(java.util.Collections::emptyList)))
+                .orNull();
 
         addChild(base, options, usedNames, MavenUtils.LOCAL_MAVEN_REPO_NAME,
                 MavenUtils.LOCAL_MAVEN_REPO_NAME, settings.getLocalRepository());
@@ -88,7 +106,7 @@ public class MavenSettingsRepository extends NRepositoryList {
             addChild(base, options, usedNames, MavenUtils.EXTRA_MAVEN_REPO_NAME,
                     name() + "-" + id.trim(), activeRepository.path());
         }
-        this.repoItems = base.toArray(base.toArray(new NRepository[0]));
+        this.repoItems = base.toArray(new NRepository[0]);
     }
 
     /**
@@ -119,10 +137,6 @@ public class MavenSettingsRepository extends NRepositoryList {
      * @return true if the sub-repository must not be created
      */
     private boolean isExcluded(String childName) {
-        NRepositorySelectorList selectors = NRepositoryUtils
-                .createRepositorySelectorList(
-                        NCollections.nonNullList(NWorkspace.of().bootOptions().repositories().orElseGet(java.util.Collections::emptyList)))
-                .orNull();
         if (selectors == null) {
             return false;
         }
@@ -194,6 +208,7 @@ public class MavenSettingsRepository extends NRepositoryList {
             }
             default: {
                 mavenChild = new MavenFolderRepository(options, null);
+                localFolderChildren.add(mavenChild);
             }
         }
         mavenChild.getCache().setReadEnabled(false);
@@ -202,6 +217,56 @@ public class MavenSettingsRepository extends NRepositoryList {
         mavenChild.getLib().setWriteEnabled(false);
         mavenChild.setLockEnabled(false);
         return mavenChild;
+    }
+
+    /**
+     * Local folder children (such as {@code ~/.m2/repository}) are read
+     * before this repository cache : reading them costs as much as reading the
+     * cache, and a cached copy would hide artifacts rebuilt with an unchanged
+     * version ({@code mvn install} while iterating on a fixed version).
+     */
+    @Override
+    public NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        if (fetchMode != NFetchMode.REMOTE) {
+            for (NRepository child : localFolderChildren) {
+                try {
+                    NPath p = ((NRepositorySPI) child).fetchContent()
+                            .id(id)
+                            .descriptor(descriptor)
+                            .fetchMode(fetchMode)
+                            .getResult();
+                    if (p != null) {
+                        return p;
+                    }
+                } catch (NArtifactNotFoundException e) {
+                    //ignore
+                }
+            }
+        }
+        return super.fetchContentImpl(id, descriptor, fetchMode);
+    }
+
+    /**
+     * @see #fetchContentImpl(NId, NDescriptor, NFetchMode)
+     */
+    @Override
+    public NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode) {
+        if (fetchMode != NFetchMode.REMOTE) {
+            for (NRepository child : localFolderChildren) {
+                try {
+                    NDescriptor d = ((NRepositorySPI) child).fetchDescriptor()
+                            .id(id)
+                            .fetchMode(fetchMode)
+                            .getResult();
+                    if (d != null) {
+                        return d;
+                    }
+                } catch (NArtifactNotFoundException e) {
+                    //ignore
+                }
+            }
+        }
+        return super.fetchDescriptorImpl(id, fetchMode);
     }
 
     /**

@@ -310,8 +310,16 @@ public class URLPath implements NPathSPI {
         try {
             CacheInfo a = cachedHeader().get();
             if (a != null) {
-                int r = a.responseCode;
-                return r >= 200 && r < 300;
+                if (a.failure == null) {
+                    int r = a.responseCode;
+                    if (r != HttpURLConnection.HTTP_BAD_METHOD && r != HttpURLConnection.HTTP_NOT_IMPLEMENTED) {
+                        return r >= 200 && r < 300;
+                    }
+                    // HEAD not supported by the server : check with GET
+                } else if (isConnectivityFailure(a.failure)) {
+                    // a GET would wait for the very same timeout again
+                    return false;
+                }
             }
         } catch (Exception e) {
             //
@@ -334,7 +342,7 @@ public class URLPath implements NPathSPI {
         }
         try {
             CacheInfo a = cachedHeader().get();
-            if (a != null) {
+            if (a != null && a.failure == null) {
                 return a.contentLength;
             }
         } catch (Exception e) {
@@ -346,7 +354,7 @@ public class URLPath implements NPathSPI {
     public String getContentEncoding(NPath basePath) {
         try {
             CacheInfo a = cachedHeader().get();
-            if (a != null) {
+            if (a != null && a.failure == null) {
                 return a.contentEncoding;
             }
         } catch (Exception e) {
@@ -365,7 +373,7 @@ public class URLPath implements NPathSPI {
         }
         try {
             CacheInfo a = cachedHeader().get();
-            if (a != null) {
+            if (a != null && a.failure == null) {
                 return a.contentType;
             }
         } catch (Exception e) {
@@ -385,7 +393,7 @@ public class URLPath implements NPathSPI {
         }
         try {
             CacheInfo a = cachedHeader().get();
-            if (a != null) {
+            if (a != null && a.failure == null) {
                 return a.contentEncoding;
             }
         } catch (Exception e) {
@@ -474,7 +482,7 @@ public class URLPath implements NPathSPI {
         }
         try {
             CacheInfo a = cachedHeader().get();
-            if (a != null) {
+            if (a != null && a.failure == null) {
                 return a.lastModified;
             }
         } catch (Exception e) {
@@ -701,7 +709,9 @@ public class URLPath implements NPathSPI {
                         );
             }
         }
-        return null;
+        // keep the failure : exists() must not retry when the host is unreachable
+        cc.failure = err;
+        return cc;
     }
 
     private String _parent(String p) {
@@ -768,12 +778,29 @@ public class URLPath implements NPathSPI {
         }).orNull();
     }
 
+    private static boolean isConnectivityFailure(Throwable t) {
+        while (t != null) {
+            if (t instanceof java.net.SocketTimeoutException
+                    || t instanceof java.net.ConnectException
+                    || t instanceof java.net.UnknownHostException
+                    || t instanceof java.net.NoRouteToHostException) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
+    }
+
     private static class CacheInfo {
         long contentLength;
         String contentEncoding;
         String contentType;
         int responseCode;
         Instant lastModified;
+        /**
+         * non null when the HEAD request failed with an exception
+         */
+        Exception failure;
     }
 
     private static class MyPathFormat implements NObjectWriterSPI {

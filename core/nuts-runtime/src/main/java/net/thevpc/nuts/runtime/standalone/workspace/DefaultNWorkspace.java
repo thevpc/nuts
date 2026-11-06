@@ -961,6 +961,32 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return wsModel.apiDigest;
     }
 
+    /**
+     * one {@code <id> <sha1>} line for the raw descriptor and for each of its
+     * parents, recursively, in resolution order.
+     */
+    private String effectiveSourcesFingerprint(NDescriptor descriptor) {
+        StringBuilder sb = new StringBuilder();
+        fillEffectiveSourcesFingerprint(descriptor, sb, new HashSet<>());
+        return sb.toString();
+    }
+
+    private void fillEffectiveSourcesFingerprint(NDescriptor descriptor, StringBuilder sb, Set<String> visited) {
+        if (!visited.add(descriptor.id().longName())) {
+            return;
+        }
+        sb.append(descriptor.id().longName()).append(' ')
+                .append(NDigest.of().sha1().source(descriptor).computeString())
+                .append('\n');
+        for (NId parent : descriptor.parents()) {
+            fillEffectiveSourcesFingerprint(
+                    NFetch.of(parent)
+                            .dependencyFilter(NDependencyFilter.ofRunnable())
+                            .getResultDescriptor(),
+                    sb, visited);
+        }
+    }
+
     protected NDescriptor _applyParentDescriptors(NDescriptor descriptor) {
         List<NId> parents = descriptor.parents();
         List<NDescriptor> parentDescriptors = new ArrayList<>();
@@ -1460,16 +1486,29 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             effectiveNDescriptorConfig = new NDescriptorEffectiveConfig();
         }
         String cacheId = null;
+        // fingerprint of the raw descriptors (the artifact and its parents) the
+        // cached effective one was computed from : an artifact or a parent
+        // rebuilt with an unchanged version (a common development workflow)
+        // must not be served stale
+        String sourceCacheId = null;
+        String sourcesFingerprint = null;
         if (effectiveNDescriptorConfig.equals(new NDescriptorEffectiveConfig())) {
             cacheId = "eff-nuts.cache";
+            sourceCacheId = "eff-nuts-src.cache";
         }
         if (cacheId != null) {
             if (!descriptor.id().version().isBlank() && descriptor.id().version().isSingleValue()
                     && descriptor.id().toString().indexOf('$') < 0) {
                 try {
-                    NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, cacheId), NDescriptor.class);
-                    if (d != null) {
-                        return d;
+                    String src = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, sourceCacheId), String.class);
+                    sourcesFingerprint = effectiveSourcesFingerprint(descriptor);
+                    if (src != null && src.equals(sourcesFingerprint)) {
+                        NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, cacheId), NDescriptor.class);
+                        if (d != null) {
+                            return d;
+                        }
+                    } else {
+                        wsModel.LOG.log(NMsg.ofC("eff-nuts.cache of %s is missing or stale, recompute it", descriptor.id()).asFine());
                     }
                 } catch (Exception ex) {
                     wsModel.LOG.log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.id()).asError(ex));
@@ -1484,6 +1523,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (cacheId != null) {
             try {
                 store().saveLocationKey(NStoreKey.ofCacheFaced(effectiveDescriptor.id(), null, cacheId), effectiveDescriptor);
+                if (sourcesFingerprint == null) {
+                    sourcesFingerprint = effectiveSourcesFingerprint(descriptor);
+                }
+                store().saveLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, sourceCacheId), sourcesFingerprint);
             } catch (Exception ex) {
                 wsModel.LOG
                         .log(NMsg.ofC("failed to save eff-nuts.cache for %s", effectiveDescriptor.id()).asError(ex));

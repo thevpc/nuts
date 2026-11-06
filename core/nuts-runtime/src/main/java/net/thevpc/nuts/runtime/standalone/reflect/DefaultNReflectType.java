@@ -585,6 +585,8 @@ public class DefaultNReflectType implements NReflectType {
     private void fillMethods(int hierarchyIndex, Type javaType, LinkedHashMap<String, IndexedItem<NReflectMethod>> declaredMethods) {
         Method[] declaredMethods2 = NReflectPropertyFiller._getMethods(javaType);
         for (Method m : declaredMethods2) {
+            // compiler/agent generated : bridges, lambda bodies, jacoco's $jacocoInit, ...
+            if (m.isSynthetic()) continue;
             DefaultNReflectMethod rm = new DefaultNReflectMethod(m, this);
             declaredMethods.put(normalizeSig(m.getName(), rm.signature()), new IndexedItem<>(hierarchyIndex, rm));
         }

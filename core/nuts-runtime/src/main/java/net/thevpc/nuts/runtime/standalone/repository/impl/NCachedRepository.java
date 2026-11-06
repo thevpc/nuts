@@ -274,7 +274,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+    public NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         if (fetchMode != NFetchMode.REMOTE) {
             NPath c = lib.fetchContentImpl(id);
             if (c != null) {

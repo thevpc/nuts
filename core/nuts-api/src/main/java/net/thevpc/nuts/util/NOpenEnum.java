@@ -23,9 +23,12 @@ public abstract class NOpenEnum implements NEnum{
      * @return values result
      */
     public static <T extends NOpenEnum> List<T> values(Class<T> type) {
-        return (List<T>) Collections.unmodifiableList(
-                VALUES_REGISTRY.getOrDefault(type, Collections.emptyList())
-        );
+        // snapshot : values may be registered at any time, from any thread
+        synchronized (VALUES_REGISTRY) {
+            return (List<T>) Collections.unmodifiableList(
+                    new ArrayList<>(VALUES_REGISTRY.getOrDefault(type, Collections.emptyList()))
+            );
+        }
     }
 
     /**
@@ -48,14 +51,17 @@ public abstract class NOpenEnum implements NEnum{
     protected NOpenEnum(String id) {
         this.id = NAssert.requireNamedNonNull(id, "id");
         this.name = NNameFormat.CONST_NAME.format(id);  // mirrors Java enum name() convention
-        Map<String, NOpenEnum> byId = ID_REGISTRY.computeIfAbsent(getClass(), k -> new LinkedHashMap<>());
-        if (byId.containsKey(id)) {
-            throw new NIllegalArgumentException(NMsg.ofC("duplicate id '%s' in %s",id,getClass().getSimpleName()));
+        // both registries are guarded by VALUES_REGISTRY
+        synchronized (VALUES_REGISTRY) {
+            Map<String, NOpenEnum> byId = ID_REGISTRY.computeIfAbsent(getClass(), k -> new LinkedHashMap<>());
+            if (byId.containsKey(id)) {
+                throw new NIllegalArgumentException(NMsg.ofC("duplicate id '%s' in %s", id, getClass().getSimpleName()));
+            }
+            List<NOpenEnum> valuesList = VALUES_REGISTRY.computeIfAbsent(getClass(), k -> new ArrayList<>());
+            this.ordinal = valuesList.size();  // assigned at registration time, like Java enum
+            byId.put(id, this);
+            valuesList.add(this);
         }
-        List<NOpenEnum> valuesList = VALUES_REGISTRY.computeIfAbsent(getClass(), k -> new ArrayList<>());
-        this.ordinal = valuesList.size();  // assigned at registration time, like Java enum
-        byId.put(id, this);
-        VALUES_REGISTRY.computeIfAbsent(getClass(), k -> new ArrayList<>()).add(this);
     }
 
     @Override

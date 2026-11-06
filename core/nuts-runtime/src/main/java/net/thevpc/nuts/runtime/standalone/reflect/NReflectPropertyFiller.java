@@ -428,6 +428,7 @@ public class NReflectPropertyFiller {
             NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy, NReflectType THIS) {
 
         for (Field f : fields) {
+            if (f.isSynthetic()) continue; // such as this$0 of inner classes
             if (Modifier.isStatic(f.getModifiers())) continue;
             if (Modifier.isTransient(f.getModifiers())) continue;
             if (out.containsKey(f.getName())) continue;
