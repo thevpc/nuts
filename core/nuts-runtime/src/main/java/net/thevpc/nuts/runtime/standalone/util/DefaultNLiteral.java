@@ -44,7 +44,41 @@ public class DefaultNLiteral implements NLiteral {
         if (any instanceof NLiteral) {
             return (NLiteral) any;
         }
+        if (any instanceof NElement) {
+            NLiteral scalar = scalarElementLiteral((NElement) any);
+            if (scalar != null) {
+                return scalar;
+            }
+        }
         return new DefaultNLiteral(any);
+    }
+
+    /**
+     * The literal of a scalar element, or null when the element is structured.
+     *
+     * <p>resolveType() matches concrete JDK classes, so an element wrapped as-is reported
+     * isNumber() false while asNumber() succeeded, and arithmetic on a variable holding an
+     * element fell through to string concatenation. Reading the element's own value restores
+     * that. Only scalars are unwrapped: a string element stays a String, so "41" + 1 keeps
+     * concatenating rather than quietly becoming 42.
+     */
+    private static NLiteral scalarElementLiteral(NElement element) {
+        NElementType t = element.type();
+        if (t == NElementType.NULL) {
+            return NULL;
+        }
+        // the element's declared type, not its predicates: isNumber() is true for a string
+        // element holding "41", which would make "41" + 1 add instead of concatenating
+        if (t.isAnyString()) {
+            return new DefaultNLiteral(element.asStringValue().orNull());
+        }
+        if (t.isAnyNumber()) {
+            return new DefaultNLiteral(element.asNumberValue().orNull());
+        }
+        if (t == NElementType.BOOLEAN) {
+            return new DefaultNLiteral(element.asBooleanValue().orNull());
+        }
+        return null;
     }
 
     public static final DateTimeFormatter[] DATE_TIME_FORMATS = {
