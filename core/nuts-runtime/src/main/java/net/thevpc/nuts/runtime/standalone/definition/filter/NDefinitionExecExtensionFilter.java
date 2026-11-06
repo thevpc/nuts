@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.filter;
 
+import net.thevpc.nuts.core.NConstants;
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -27,7 +28,7 @@ public class NDefinitionExecExtensionFilter extends DefinitionFilterBase {
             return false;
         }
         for (NDependency dependency : other.descriptor().dependencies()) {
-            if(dependency.toId().shortName().equals(this.apiId.shortName())){
+            if(dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)){
                 if(apiId==null){
                     return true;
                 }

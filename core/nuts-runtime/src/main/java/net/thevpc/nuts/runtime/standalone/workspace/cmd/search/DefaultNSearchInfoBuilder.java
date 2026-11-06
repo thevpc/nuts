@@ -121,17 +121,18 @@ public class DefaultNSearchInfoBuilder {
                     break;
                 }
             }
-        } else {
-            if (defaultNSearchCmd.targetApiVersion() != null) {
-                _defFilter = _defFilter.and(d.byApiVersion(defaultNSearchCmd.targetApiVersion()));
-            }
+        }
+        List<NId> dependsOn = new ArrayList<>(defaultNSearchCmd.dependsOn());
+        if (defaultNSearchCmd.execType() == null && defaultNSearchCmd.targetApiVersion() != null) {
+            dependsOn.add(NId.get(NConstants.Ids.NUTS_API).get().builder().version(defaultNSearchCmd.targetApiVersion()).build());
         }
         return new DefaultNSearchInfo(
                 regularIds.toArray(new DefaultNSearchInfo.RegularId[0]),
                 NRepositoryFilter.ofAlways()
                         .and(defaultNSearchCmd.repositoryFilter())
                         .and(NDefinitionFilterUtils.toRepositoryFilter(_defFilter)),
-                _defFilter
+                _defFilter,
+                dependsOn
         );
     }
 

@@ -32,7 +32,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,7 +45,7 @@ import java.util.Objects;
  * @since 0.8.3
  */
 public class NHomeLocation implements NEnum {
-    private static final Map<String, NHomeLocation> CACHE = new HashMap<>();
+    private static final Map<String, NHomeLocation> CACHE = new ConcurrentHashMap<>();
     private final NOsFamily osFamily;
     private final NStoreType storeType;
 

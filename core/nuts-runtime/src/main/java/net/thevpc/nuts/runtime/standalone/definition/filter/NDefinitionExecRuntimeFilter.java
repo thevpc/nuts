@@ -35,7 +35,7 @@ public class NDefinitionExecRuntimeFilter extends DefinitionFilterBase {
                 return true;
             }
             for (NDependency dependency : other.descriptor().dependencies()) {
-                if (dependency.toId().shortName().equals(this.apiId.shortName())) {
+                if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
                     if (apiId.version().equals(dependency.toId().version())) {
                         return true;
                     }
@@ -48,7 +48,7 @@ public class NDefinitionExecRuntimeFilter extends DefinitionFilterBase {
                 return false;
             }
             for (NDependency dependency : other.descriptor().dependencies()) {
-                if (dependency.toId().shortName().equals(this.apiId.shortName())) {
+                if (dependency.toId().shortName().equals(NConstants.Ids.NUTS_API)) {
                     if (apiId == null) {
                         return true;
                     }

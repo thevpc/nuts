@@ -125,7 +125,9 @@ public class NSysExecUtils {
     ) {
         NSession session = NSession.of();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
-                NEnv.of().desktopEnvironmentFamilies(),
+                // resolved lazily by the su/sudo helpers : the detection loads
+                // AWT and is useless for plain (non run-as) commands
+                null,
                 n -> {
                     Path path = NSysExecUtils.sysWhich(n);
                     if (path != null) {

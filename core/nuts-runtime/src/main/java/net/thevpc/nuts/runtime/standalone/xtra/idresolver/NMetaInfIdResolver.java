@@ -147,7 +147,9 @@ public class NMetaInfIdResolver {
         if (url != null) {
             Properties p = new Properties();
             try {
-                p.load(url.openStream());
+                try (InputStream is = url.openStream()) {
+                    p.load(is);
+                }
             } catch (IOException e) {
                 //
             }
@@ -165,7 +167,9 @@ public class NMetaInfIdResolver {
         if (url != null) {
             Properties p = new Properties();
             try {
-                p.load(url.openStream());
+                try (InputStream is = url.openStream()) {
+                    p.load(is);
+                }
             } catch (IOException e) {
                 //
             }

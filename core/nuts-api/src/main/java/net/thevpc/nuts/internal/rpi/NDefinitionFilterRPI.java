@@ -340,6 +340,15 @@ public interface NDefinitionFilterRPI extends NTypedFilters<NDefinitionFilter> {
     NDefinitionFilter byApiVersion(NVersion apiVersion);
 
     /**
+     * By dependency, direct or transitive.
+     *
+     * @param dependency dependency id, its version (if any) being a version filter
+     * @return depends-on filter
+     * @since 1.1.0
+     */
+    NDefinitionFilter byDependsOn(NId dependency);
+
+    /**
      * By boot version.
      *
      * @param apiVersion api version

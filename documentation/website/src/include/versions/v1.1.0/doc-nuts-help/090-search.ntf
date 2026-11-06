@@ -136,6 +136,14 @@ search for artifacts
     ```sh --api-version```
         find artifacts compatible with the given api-version
 
+    ```sh --depends-on=<id>```
+        find artifacts depending, directly or transitively, on <id>.
+        The version of <id>, if any, is a version filter matched against the
+        version actually resolved for that dependency (nearest wins), e.g.
+        ```sh --depends-on=net.thevpc.ntexup:ntexup-api#[1.1,1.2[```.
+        Can be repeated (all must match). With ```sh --latest```, returns the
+        latest version that matches. Results are cached per artifact version.
+
     ```sh -l```
     ```sh --long```
     ```sh --display-long```

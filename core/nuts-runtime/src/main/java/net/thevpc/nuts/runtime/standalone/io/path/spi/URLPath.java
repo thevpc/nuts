@@ -43,7 +43,12 @@ public class URLPath implements NPathSPI {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
     protected URL url;
-    protected static final NLRUMapImpl<URL, NCachedValue<CacheInfo>> cacheManager = new NLRUMapImpl<URL, NCachedValue<CacheInfo>>(1024);
+    /**
+     * keyed by the url external form : {@link URL#hashCode()} and {@link URL#equals(Object)}
+     * resolve the host name (blocking DNS lookup). Guarded by itself : the
+     * access-ordered LRU map is mutated by {@code get}.
+     */
+    protected static final NLRUMapImpl<String, NCachedValue<CacheInfo>> cacheManager = new NLRUMapImpl<String, NCachedValue<CacheInfo>>(1024);
 
 
     public URLPath(URL url) {
@@ -65,14 +70,17 @@ public class URLPath implements NPathSPI {
     }
 
     private NCachedValue<CacheInfo> cachedHeader() {
-        NCachedValue<CacheInfo> o = cacheManager.get(url);
-        if (o == null) {
-            o = NCachedValue.of(
-                    () -> loadCacheInfo(url)
-            ).expiry(NDuration.ofMillis(5000));
-            cacheManager.put(url, o);
+        String key = url.toExternalForm();
+        synchronized (cacheManager) {
+            NCachedValue<CacheInfo> o = cacheManager.get(key);
+            if (o == null) {
+                o = NCachedValue.of(
+                        () -> loadCacheInfo(url)
+                ).expiry(NDuration.ofMillis(5000));
+                cacheManager.put(key, o);
+            }
+            return o;
         }
-        return o;
     }
 
 
@@ -127,7 +135,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public int hashCode() {
-        return Objects.hash(url);
+        return url == null ? 0 : url.toExternalForm().hashCode();
     }
 
     @Override
@@ -139,7 +147,9 @@ public class URLPath implements NPathSPI {
             return false;
         }
         URLPath urlPath = (URLPath) o;
-        return Objects.equals(url, urlPath.url);
+        //avoid URL.equals that resolves host names
+        return Objects.equals(url == null ? null : url.toExternalForm(),
+                urlPath.url == null ? null : urlPath.url.toExternalForm());
     }
 
     @Override

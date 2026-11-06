@@ -187,7 +187,8 @@ public class InternalNDependencyFilterRPI extends InternalNTypedFilters<NDepende
 
     @Override
     public NDependencyFilter byCurrentDesktop() {
-        return byDesktop(NEnv.of().desktopEnvironmentFamilies());
+        // lazy : desktop detection loads AWT and is rarely needed
+        return new NDependencyCurrentDEFilter();
     }
 
     public NDependencyFilter byCurrentArch() {

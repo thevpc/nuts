@@ -44,6 +44,13 @@ import net.thevpc.nuts.collections.NCollections;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
+import net.thevpc.nuts.command.NFetchStrategy;
+import net.thevpc.nuts.core.NSession;
+import net.thevpc.nuts.core.NStoreKey;
+import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +61,10 @@ import java.util.Set;
  * Created by vpc on 1/15/17.
  */
 public class MavenSettingsRepository extends NRepositoryList {
+    /**
+     * how long a cached {@code .nuts-repository} probe result stays valid
+     */
+    private static final long METADATA_CACHE_TTL_MS = 24L * 3600 * 1000;
 
     private NMavenSettings settings;
     private NLog LOG;
@@ -167,37 +178,13 @@ public class MavenSettingsRepository extends NRepositoryList {
             case "http":
             case "https": {
                 if(MavenUtils.EXTRA_MAVEN_REPO_NAME.equals(type)){
-                    NPath nr = NPath.of(url).resolve(".nuts-repository");
-                    LOG.log(NMsg.ofC("check repository metadata at %s",nr).asDebug());
-                    NChronometer c = NChronometer.of();
-                    if(nr.exists()) {
-                        c.stop();
-                        LOG.log(NMsg.ofC("check repository metadata at %s took %s",nr,c.duration()).asDebug());
-                        NElement e=null;
-                        String repositoryType = null;
-                        String repositoryName = null;
-                        String repositoryLayout = null;
-                        try {
-                            e = NElementReader.ofJson().read(nr);
-                        }catch (Exception ex) {
-                            // just ignore
+                    RepositoryMetadata m = loadRepositoryMetadata(id, url);
+                    if(m.found) {
+                        if(!NBlankable.isBlank(m.layout)) {
+                            options.sourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.strip(m.layout)+"+"+url));
                         }
-                        if(e!=null && e.isAnyObject()) {
-                            NObjectElement o = e.asObject().get();
-                            repositoryType = o.getStringValue("repositoryType").orNull();
-                            repositoryName = o.getStringValue("repositoryName").orNull();
-                            repositoryLayout = o.getStringValue("repositoryLayout").orNull();
-                        }
-                        if(!NBlankable.isBlank(repositoryLayout)) {
-                            options.sourceLocation(new NRepositoryLocation(id, "maven", NStringUtils.strip(repositoryLayout)+"+"+url));
-                        }
-//                        if(!NBlankable.isBlank(repositoryName)) {
-//                            config.setName(repositoryName);
-//                        }
                         mavenChild = new MavenFolderRepository(options, null);
                     }else{
-                        c.stop();
-                        LOG.log(NMsg.ofC("check repository metadata at %s took %s",nr,c.duration()).asDebug());
                         mavenChild = new MavenRemoteXmlRepository(options, null);
                     }
                 }else {
@@ -215,5 +202,97 @@ public class MavenSettingsRepository extends NRepositoryList {
         mavenChild.getLib().setWriteEnabled(false);
         mavenChild.setLockEnabled(false);
         return mavenChild;
+    }
+
+    /**
+     * Resolves the {@code .nuts-repository} metadata of a remote settings
+     * repository. This runs on every workspace boot, so the result is kept in
+     * the workspace cache and the remote is only probed when that entry is
+     * missing, older than {@link #METADATA_CACHE_TTL_MS} or obsoleted by
+     * {@code -N}/{@code --expire}. When offline, the remote is never probed.
+     *
+     * @param id  sub-repository name
+     * @param url sub-repository url
+     * @return resolved metadata, never null
+     */
+    private RepositoryMetadata loadRepositoryMetadata(String id, String url) {
+        NPath cacheFile = null;
+        try {
+            cacheFile = NPath.of(NStoreKey.ofWorkspace(NStoreType.CACHE))
+                    .resolve("maven-settings")
+                    .resolve(id + "-" + Integer.toHexString(url.hashCode()) + ".nuts-repository");
+        } catch (Exception ex) {
+            // no cache available
+        }
+        if (cacheFile != null && cacheFile.isRegularFile()) {
+            Instant lm = cacheFile.lastModifiedInstant();
+            boolean fresh = lm != null
+                    && lm.isAfter(Instant.now().minusMillis(METADATA_CACHE_TTL_MS))
+                    && !CoreIOUtils.isObsoletePath(cacheFile);
+            if (fresh || isOffline()) {
+                try {
+                    List<String> lines = NStringUtils.splitLines(cacheFile.readString());
+                    if (!lines.isEmpty()) {
+                        RepositoryMetadata m = new RepositoryMetadata(
+                                "found".equals(lines.get(0).trim()),
+                                lines.size() > 1 ? NStringUtils.stripToNull(lines.get(1)) : null
+                        );
+                        LOG.log(NMsg.ofC("repository metadata of %s loaded from cache %s", url, cacheFile).asDebug());
+                        return m;
+                    }
+                } catch (Exception ex) {
+                    // reload
+                }
+            }
+        }
+        if (isOffline()) {
+            LOG.log(NMsg.ofC("offline, skip repository metadata check for %s", url).asDebug());
+            return new RepositoryMetadata(false, null);
+        }
+        NPath nr = NPath.of(url).resolve(".nuts-repository");
+        LOG.log(NMsg.ofC("check repository metadata at %s", nr).asDebug());
+        NChronometer c = NChronometer.of();
+        RepositoryMetadata m = new RepositoryMetadata(false, null);
+        if (nr.exists()) {
+            String repositoryLayout = null;
+            try {
+                NElement e = NElementReader.ofJson().read(nr);
+                if (e != null && e.isAnyObject()) {
+                    NObjectElement o = e.asObject().get();
+                    repositoryLayout = o.getStringValue("repositoryLayout").orNull();
+                }
+            } catch (Exception ex) {
+                // just ignore
+            }
+            m = new RepositoryMetadata(true, NStringUtils.stripToNull(repositoryLayout));
+        }
+        c.stop();
+        LOG.log(NMsg.ofC("check repository metadata at %s took %s", nr, c.duration()).asDebug());
+        if (cacheFile != null) {
+            try {
+                cacheFile.mkParentDirs().writeString((m.found ? "found" : "missing") + "\n" + (m.layout == null ? "" : m.layout) + "\n");
+            } catch (Exception ex) {
+                LOG.log(NMsg.ofC("unable to cache repository metadata of %s : %s", url, ex).asWarning());
+            }
+        }
+        return m;
+    }
+
+    private static boolean isOffline() {
+        try {
+            return NSession.of().fetchStrategy().orDefault() == NFetchStrategy.OFFLINE;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private static class RepositoryMetadata {
+        private final boolean found;
+        private final String layout;
+
+        RepositoryMetadata(boolean found, String layout) {
+            this.found = found;
+            this.layout = layout;
+        }
     }
 }

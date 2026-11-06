@@ -49,6 +49,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetch;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
+import net.thevpc.nuts.runtime.standalone.dependency.util.NDependsOnResolver;
+
 import java.util.*;
 
 /**
@@ -145,7 +147,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(filter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
-                                            z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                            z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false, search.getDependsOn());
                                             idLookup.add(z);
                                         }
                                     } else {
@@ -163,7 +165,7 @@ public class DefaultNSearch extends AbstractNSearch {
                                                                     .set("filter", NDescribables.describeResolveOrSimplify(restrictedFilter))
                                                                     .build()
                                                     ).safeIgnore().iterator();
-                                            z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
+                                            z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false, search.getDependsOn());
                                             idLookup.add(z);
                                         }
                                     }
@@ -216,7 +218,7 @@ public class DefaultNSearch extends AbstractNSearch {
         NIterator<NId> baseIterator = NIteratorUtils.concat(allResults);
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
-            baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);
+            baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false, search.getDependsOn());
             //now include dependencies
             NIterator<NId> curr = baseIterator;
             baseIterator = NIteratorBuilder.of(curr)
@@ -239,11 +241,29 @@ public class DefaultNSearch extends AbstractNSearch {
                     )
                     .build();
         }
-        return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), isSorted());
+        // depends-on applies to the searched artifacts, not to their inlined dependencies
+        return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), isSorted(),
+                inlineDependencies ? null : search.getDependsOn());
     }
 
 
-    private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator, boolean latest, boolean distinct, boolean sort) {
+    private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator0, boolean latest0, boolean distinct, boolean sort, List<NId> dependsOn) {
+        NIterator<NId> baseIterator0f = baseIterator0;
+        boolean latest = latest0;
+        if (dependsOn != null && !dependsOn.isEmpty()) {
+            if (latest) {
+                // latest matching version (newest first, stops at the first match)
+                // rather than matching the latest version
+                baseIterator0f = latestDependingOn(baseIterator0, dependsOn, distinct);
+                latest = false;
+            } else {
+                baseIterator0f = NIteratorBuilder.of(baseIterator0).filter(
+                        NPredicate.of((NId x) -> acceptDependsOn(x, dependsOn),
+                                NElement.ofString("dependsOn(" + dependsOn + ")"))
+                ).iterator();
+            }
+        }
+        final NIterator<NId> baseIterator = baseIterator0f;
         //ff ft tt tf
         NIterator<NId> r;
         if (!latest && !distinct) {
@@ -300,5 +320,53 @@ public class DefaultNSearch extends AbstractNSearch {
             r = NIteratorUtils.sort(r, comparator, false);
         }
         return r;
+    }
+
+    private static boolean acceptDependsOn(NId id, List<NId> dependsOn) {
+        for (NId d : dependsOn) {
+            if (!NDependsOnResolver.accept(id, d)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * for each artifact, the ids of its newest version depending on all of
+     * {@code dependsOn}. Versions are evaluated newest first and the
+     * evaluation stops at the first one that matches, so older versions are
+     * never resolved.
+     */
+    private NIterator<NId> latestDependingOn(NIterator<NId> baseIterator, List<NId> dependsOn, boolean distinct) {
+        return NIteratorBuilder.ofSupplier(() -> {
+                    Map<String, List<NId>> byShortName = new LinkedHashMap<>();
+                    while (baseIterator.hasNext()) {
+                        NId id = baseIterator.next();
+                        byShortName.computeIfAbsent(id.shortName(), k -> new ArrayList<>()).add(id);
+                    }
+                    List<NId> result = new ArrayList<>();
+                    for (List<NId> candidates : byShortName.values()) {
+                        candidates.sort((a, b) -> b.version().compareTo(a.version()));
+                        int i = 0;
+                        while (i < candidates.size()) {
+                            NVersion v = candidates.get(i).version();
+                            int j = i;
+                            while (j < candidates.size() && candidates.get(j).version().compareTo(v) == 0) {
+                                j++;
+                            }
+                            if (acceptDependsOn(candidates.get(i), dependsOn)) {
+                                result.addAll(distinct ? candidates.subList(i, i + 1) : candidates.subList(i, j));
+                                break;
+                            }
+                            i = j;
+                        }
+                    }
+                    return result.iterator();
+                }, () -> NDescribables.describeResolveOrSimplifyAsObject(baseIterator)
+                        .builder()
+                        .set("latest", true)
+                        .set("dependsOn", dependsOn.toString())
+                        .build()
+        ).build();
     }
 }

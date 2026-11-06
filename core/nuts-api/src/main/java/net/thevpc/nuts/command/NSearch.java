@@ -538,6 +538,69 @@ public interface NSearch extends NWorkspaceCmd {
     NSearch targetApiVersion(NVersion targetApiVersion);
 
     /**
+     * artifacts that the result must depend on, directly or transitively
+     * (all of them). Each entry is an id whose version, if any, is a version
+     * filter (such as {@code net.thevpc.ntexup:ntexup-api#[1.1,1.2[}) matched
+     * against the version actually resolved for that dependency (nearest
+     * wins, as in maven). Combined with {@link #isLatest()}, the result is
+     * the latest version that matches rather than the latest version filtered
+     * afterwards.
+     *
+     * @return depends-on ids, never null
+     * @since 1.1.0
+     */
+    @NGetter
+    List<NId> dependsOn();
+
+    /**
+     * replace depends-on ids
+     *
+     * @param ids depends-on ids such as {@code net.thevpc.ntexup:ntexup-api#1.1.0}
+     * @return {@code this} instance
+     * @see #dependsOn()
+     * @since 1.1.0
+     */
+    NSearch dependsOn(String... ids);
+
+    /**
+     * replace depends-on ids
+     *
+     * @param ids depends-on ids
+     * @return {@code this} instance
+     * @see #dependsOn()
+     * @since 1.1.0
+     */
+    NSearch dependsOn(NId... ids);
+
+    /**
+     * add a depends-on id
+     *
+     * @param id depends-on id such as {@code net.thevpc.ntexup:ntexup-api#1.1.0}
+     * @return {@code this} instance
+     * @see #dependsOn()
+     * @since 1.1.0
+     */
+    NSearch addDependsOn(String id);
+
+    /**
+     * add a depends-on id
+     *
+     * @param id depends-on id
+     * @return {@code this} instance
+     * @see #dependsOn()
+     * @since 1.1.0
+     */
+    NSearch addDependsOn(NId id);
+
+    /**
+     * remove all depends-on ids
+     *
+     * @return {@code this} instance
+     * @since 1.1.0
+     */
+    NSearch clearDependsOn();
+
+    /**
      * true if base package flag is armed.
      *
      * @return true if base package flag is armed.

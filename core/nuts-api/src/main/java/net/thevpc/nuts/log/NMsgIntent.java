@@ -29,7 +29,7 @@ package net.thevpc.nuts.log;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NGetter;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,7 +39,7 @@ import java.util.Objects;
  * @app.category Logging
  */
 public final class NMsgIntent {
-    private static final Map<String, NMsgIntent> cached = new HashMap<>();
+    private static final Map<String, NMsgIntent> cached = new ConcurrentHashMap<>();
 
     public static final NMsgIntent NOTICE = of("NOTICE");
     public static final NMsgIntent DEBUG = of("DEBUG");
@@ -113,6 +113,7 @@ public final class NMsgIntent {
      * @return of result
      */
     public static NMsgIntent of(String name) {
+        NAssert.requireNamedNonBlank(name, "log verb");
         NMsgIntent t = cached.get(name);
         if (t == null) {
             synchronized (cached) {

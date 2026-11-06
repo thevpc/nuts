@@ -12,15 +12,15 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NLogUtils {
-    private static final Map<Level, String> logLevelCache = new HashMap<>();
-    private static final Map<String, String> logVerbCache = new HashMap<>();
-    private static final Map<String, String> classNameCache = new HashMap<>();
+    private static final Map<Level, String> logLevelCache = new ConcurrentHashMap<>();
+    private static final Map<String, String> logVerbCache = new ConcurrentHashMap<>();
+    private static final Map<String, String> classNameCache = new ConcurrentHashMap<>();
 
     //    public static LogRecord toPlainRecord(LogRecord record) {
 //        LogRecord h=null;
@@ -101,6 +101,9 @@ public class NLogUtils {
     }
 
     public static String logLevel(Level l) {
+        if (l == null) {
+            return "";
+        }
         String v = logLevelCache.get(l);
         if (v == null) {
             StringBuilder sb = new StringBuilder(l.getName());

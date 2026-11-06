@@ -219,9 +219,15 @@ public class InternalNDefinitionFilterRPI extends InternalNTypedFilters<NDefinit
         if (apiVersion == null) {
             apiVersion = NWorkspace.of().apiVersion();
         }
-        return new NutsAPIDefinitionFilter(
-                apiVersion
-        );
+        return byDependsOn(NId.get(NConstants.Ids.NUTS_API).get().builder().version(apiVersion).build());
+    }
+
+    @Override
+    public NDefinitionFilter byDependsOn(NId dependency) {
+        if (dependency == null) {
+            return always();
+        }
+        return new NDefinitionDependsOnFilter(dependency);
     }
 
     @Override

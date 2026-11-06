@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.platform;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.io.NPath;
@@ -42,9 +44,11 @@ public class NEnvLocal extends NEnvBase {
             // extend as needed
     );
 
-    protected boolean initialized;
+    protected volatile boolean initialized;
+    // re-entrance guard : probing the shell runs NExec, which may query this env
+    private boolean initializing;
+    private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)+");
     protected boolean nativeImage;
-    protected boolean gui;
     private static final MethodHandle TOTAL_MEM_HANDLE;
     private static final MethodHandle FREE_MEM_HANDLE;
 
@@ -88,7 +92,25 @@ public class NEnvLocal extends NEnvBase {
     }
 
     private void init() {
-        if (!this.initialized) {
+        if (this.initialized) {
+            return;
+        }
+        synchronized (this) {
+            if (this.initialized || this.initializing) {
+                return;
+            }
+            this.initializing = true;
+            try {
+                init0();
+                this.initialized = true;
+            } finally {
+                this.initializing = false;
+            }
+        }
+    }
+
+    private void init0() {
+        {
             this.os = NId.get(CorePlatformUtils.getPlatformOs()).get();
             NId platformOsDist = CorePlatformUtils.getPlatformOsDist();
             if (platformOsDist == null) {
@@ -98,8 +120,6 @@ public class NEnvLocal extends NEnvBase {
             this.java = NJavaSdkUtils.of().createJdkId(System.getProperty("java.version"));
             this.arch = NId.get(System.getProperty("os.arch")).get();
             this.archFamily = NArchFamily.current();
-            this.gui = CoreNUtilGui.isGraphicalDesktopEnvironment();
-            this.initialized = true;
             this.userHome = System.getProperty("user.home");
             this.userName = System.getProperty("user.name");
             this.nativeImage = "runtime".equals(System.getProperty("org.graalvm.nativeimage.imagecode"));
@@ -173,9 +193,9 @@ public class NEnvLocal extends NEnvBase {
 
                     if (!NBlankable.isBlank(result)) {
                         List<String> cols = NStringUtils.split(result, "|", false, false);
-                        if (cols.size() >= 6) {
+                        if (cols.size() >= 7) {
                             shellFamily = NShellFamily.parse(cols.get(5)).orElse(NShellFamily.SH);
-                            shell = NId.of(null, shellFamily.id(), cols.get(6));
+                            shell = NId.of(null, shellFamily.id(), resolvePosixShellVersion(cols));
                         }
                     }
                 } catch (Exception ex) {
@@ -397,7 +417,27 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public NId getShell0() {
+        init();
         return shell;
+    }
+
+    /**
+     * The {@code *_VERSION} column (6) describes the {@code sh} running the
+     * probe, not the user {@code $SHELL} (a zsh user would get bash's version,
+     * or nothing where sh is dash). Column 7 is the first line of
+     * {@code $SHELL --version}, so it is preferred unless it confirms column 6.
+     */
+    private static String resolvePosixShellVersion(List<String> cols) {
+        String shVersion = NStringUtils.strip(cols.get(6));
+        String shellVersionLine = cols.size() > 7 ? NStringUtils.strip(cols.get(7)) : "";
+        if (!shVersion.isEmpty() && shellVersionLine.contains(shVersion)) {
+            return shVersion;
+        }
+        Matcher m = VERSION_PATTERN.matcher(shellVersionLine);
+        if (m.find()) {
+            return m.group();
+        }
+        return shVersion;
     }
 
 
@@ -478,7 +518,8 @@ public class NEnvLocal extends NEnvBase {
 
     @Override
     public boolean isGraphicalDesktopEnvironment0() {
-        return gui;
+        // resolved lazily (and cached by NEnvBase) : the check loads AWT/Swing
+        return CoreNUtilGui.isGraphicalDesktopEnvironment();
     }
 
 

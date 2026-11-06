@@ -517,6 +517,33 @@ public interface NDefinitionFilter extends NFilter {
     }
 
     /**
+     * Accepts artifacts depending, directly or transitively, on the given
+     * artifact. The version of {@code dependency}, if any, is a version filter
+     * matched against the version resolved for that dependency (nearest wins).
+     * Prefer {@code NSearch::dependsOn}, which also evaluates it lazily
+     * (newest first) when searching the latest version.
+     *
+     * @param dependency dependency id such as {@code net.thevpc.ntexup:ntexup-api#[1.1,1.2[}
+     * @return depends-on filter
+     * @since 1.1.0
+     */
+    static NDefinitionFilter ofDependsOn(NId dependency){
+        return NDefinitionFilterRPI.of().byDependsOn(dependency);
+    }
+
+    /**
+     * Accepts artifacts depending, directly or transitively, on the given artifact.
+     *
+     * @param dependency dependency id such as {@code net.thevpc.ntexup:ntexup-api#1.1.0}
+     * @return depends-on filter
+     * @see #ofDependsOn(NId)
+     * @since 1.1.0
+     */
+    static NDefinitionFilter ofDependsOn(String dependency){
+        return NDefinitionFilterRPI.of().byDependsOn(NId.get(dependency).get());
+    }
+
+    /**
      * Creates a new instance of boot version.
      *
      * @param value value

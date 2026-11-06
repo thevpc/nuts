@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 public class NElementMapperEnum implements NElementMapper<Enum> {
@@ -69,7 +70,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
         throw new NUnsupportedEnumException(element.type());
     }
 
-    private static Map<Class, LenientParser> cache = new HashMap<>();
+    private static final Map<Class, LenientParser> cache = new ConcurrentHashMap<>();
 
     private static class LenientParser {
         Map<String, Object> fields_exact = new HashMap<>();

@@ -77,6 +77,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     protected boolean describe;
     protected SearchExecType execType = null;
     protected NVersion targetApiVersion = null;
+    protected final List<NId> dependsOn = new ArrayList<>();
 
     public AbstractNSearch() {
         super("search");
@@ -264,6 +265,8 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             this.sorted = o.isSorted();
             this.ids.clear();
             this.ids.addAll(o.ids());
+            this.dependsOn.clear();
+            this.dependsOn.addAll(o.dependsOn());
         }
         return this;
     }
@@ -359,6 +362,55 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
     @Override
     public NSearch targetApiVersion(NVersion targetApiVersion) {
         this.targetApiVersion = targetApiVersion;
+        return this;
+    }
+
+    @Override
+    public List<NId> dependsOn() {
+        return Collections.unmodifiableList(dependsOn);
+    }
+
+    @Override
+    public NSearch dependsOn(String... ids) {
+        clearDependsOn();
+        if (ids != null) {
+            for (String id : ids) {
+                addDependsOn(id);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NSearch dependsOn(NId... ids) {
+        clearDependsOn();
+        if (ids != null) {
+            for (NId id : ids) {
+                addDependsOn(id);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NSearch addDependsOn(String id) {
+        if (!NBlankable.isBlank(id)) {
+            addDependsOn(NId.get(id).get());
+        }
+        return this;
+    }
+
+    @Override
+    public NSearch addDependsOn(NId id) {
+        if (id != null && !dependsOn.contains(id)) {
+            dependsOn.add(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NSearch clearDependsOn() {
+        dependsOn.clear();
         return this;
     }
 
@@ -714,6 +766,9 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
             case "--runtime": {
                 return cmdLine.matcher().whenAny().asFlag((v) -> this.runtime(v.booleanValue())).anyMatch();
             }
+            case "--depends-on": {
+                return cmdLine.matcher().whenAny().asEntry((v) -> this.addDependsOn(v.stringValue())).anyMatch();
+            }
             case "--api-version": {
                 return cmdLine.matcher().whenAny().asEntry((v) -> this.targetApiVersion(NVersion.get(v.stringValue()).get())).anyMatch();
             }
@@ -785,6 +840,7 @@ public abstract class AbstractNSearch extends DefaultNQueryBaseOptions<NSearch> 
                 + ", ids=" + ids()
                 + ", execType='" + execType() + '\''
                 + ", targetApiVersion='" + targetApiVersion() + '\''
+                + ", dependsOn=" + dependsOn()
                 + '}';
     }
 
