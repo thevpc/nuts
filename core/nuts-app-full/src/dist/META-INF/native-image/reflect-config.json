@@ -82,12 +82,16 @@
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
 },
 {
+  "name":"java.io.IOException",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"java.io.Serializable",
   "methods":[{"name":"authenticationAgent","parameterTypes":[] }, {"name":"credential","parameterTypes":[] }, {"name":"deployWeight","parameterTypes":[] }, {"name":"env","parameterTypes":[] }, {"name":"executionEngineFamily","parameterTypes":[] }, {"name":"getExecutionEngineFamily","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getPackaging","parameterTypes":[] }, {"name":"getPath","parameterTypes":[] }, {"name":"getProduct","parameterTypes":[] }, {"name":"getVariant","parameterTypes":[] }, {"name":"getVendor","parameterTypes":[] }, {"name":"getVersion","parameterTypes":[] }, {"name":"groups","parameterTypes":[] }, {"name":"id","parameterTypes":[] }, {"name":"location","parameterTypes":[] }, {"name":"name","parameterTypes":[] }, {"name":"packaging","parameterTypes":[] }, {"name":"path","parameterTypes":[] }, {"name":"priority","parameterTypes":[] }, {"name":"product","parameterTypes":[] }, {"name":"storeLocations","parameterTypes":[] }, {"name":"storeStrategy","parameterTypes":[] }, {"name":"tags","parameterTypes":[] }, {"name":"userName","parameterTypes":[] }, {"name":"uuid","parameterTypes":[] }, {"name":"variant","parameterTypes":[] }, {"name":"vendor","parameterTypes":[] }, {"name":"version","parameterTypes":[] }]
 },
 {
   "name":"java.lang.Class",
-  "methods":[{"name":"getRecordComponents","parameterTypes":[] }]
+  "methods":[{"name":"getRecordComponents","parameterTypes":[] }, {"name":"isRecord","parameterTypes":[] }]
 },
 {
   "name":"java.lang.ClassLoader",

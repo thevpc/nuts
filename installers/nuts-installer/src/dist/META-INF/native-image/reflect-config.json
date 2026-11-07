@@ -182,6 +182,10 @@
   "name":"java.io.Reader"
 },
 {
+  "name":"java.lang.Class",
+  "methods":[{"name":"getRecordComponents","parameterTypes":[] }, {"name":"isRecord","parameterTypes":[] }]
+},
+{
   "name":"java.lang.String"
 },
 {
@@ -191,6 +195,10 @@
 {
   "name":"java.lang.reflect.AccessibleObject",
   "fields":[{"name":"override"}]
+},
+{
+  "name":"java.lang.reflect.RecordComponent",
+  "methods":[{"name":"getName","parameterTypes":[] }, {"name":"getType","parameterTypes":[] }]
 },
 {
   "name":"java.nio.ByteBuffer"
