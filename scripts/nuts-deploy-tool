@@ -1,0 +1,13 @@
+#!/bin/bash
+# Publishes all modules listed in central-bundle/pom.xml to Maven Central as ONE deployment.
+# Versions already on Central are skipped (ignorePublishedComponents).
+# Extra arguments are passed to maven, e.g. :
+#   nuts-deploy-tool -DwaitUntil=validated
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MVN_CMD="${MVN_CMD:-/home/groups/ctsgroup/programs/dev/maven/bin/mvn}"
+
+"$MVN_CMD" -f "$SCRIPT_DIR/central-bundle/pom.xml" \
+  -Pdeploy -DskipTests -DignorePublishedComponents=true \
+  clean deploy "$@"

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Release aggregator publishing all listed modules to Maven Central as ONE deployment.
+    The central-publishing-maven-plugin stages every module of the reactor and uploads
+    a single bundle when the last module is built.
+
+    Usage : scripts/nuts-deploy-tool
+    or (from nuts root) :
+        mvn -f scripts/central-bundle/pom.xml -Pdeploy -DskipTests -DignorePublishedComponents=true clean deploy
+    Dry run (builds and stages the bundle in target/central-staging, nothing is uploaded) :
+        mvn -f scripts/central-bundle/pom.xml -Pdeploy -DskipTests -DskipPublishing=true clean deploy
+
+    Only list modules that declare central-publishing-maven-plugin (same version) in their
+    deploy profile. Modules still on nexus-staging-maven-plugin (nmvn, ...) must not be
+    added here or the whole bundle falls back to legacy deploy.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.thevpc.xprojects.builders</groupId>
+    <artifactId>nuts-central-bundle</artifactId>
+    <name>Nuts Maven Central Bundle</name>
+    <version>1.1.0.0</version>
+    <packaging>pom</packaging>
+    <properties>
+        <!-- override with -DwaitUntil=validated to return as soon as Central accepts the bundle -->
+        <waitUntil>published</waitUntil>
+    </properties>
+    <modules>
+        <!-- nuts core -->
+        <module>../../core/nuts-boot</module>
+        <module>../../core/nuts-api</module>
+        <module>../../core/nuts-runtime</module>
+        <module>../../core/nuts-app</module>
+        <module>../../core/nuts-app-full</module>
+        <!-- nuts extensions -->
+        <module>../../extensions/nuts-compression</module>
+        <module>../../extensions/nuts-ssh</module>
+        <module>../../extensions/nuts-term</module>
+        <!-- nuts libraries -->
+        <module>../../libraries/nuts-slf4j</module>
+        <module>../../libraries/nuts-spring-boot</module>
+        <module>../../libraries/nuts-swing</module>
+        <module>../../libraries/nuts-tomcat-classloader</module>
+        <!-- nuts installers -->
+        <module>../../installers/nuts-installer</module>
+        <!-- companions -->
+        <module>../../../nuts-companions/nsh/nsh-lib</module>
+        <module>../../../nuts-companions/nsh/nsh</module>
+    </modules>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>${waitUntil}</waitUntil>
+                            <deploymentName>nuts-${project.version}</deploymentName>
+                            <!-- this aggregator is a build helper, never publish it -->
+                            <excludeArtifacts>
+                                <excludeArtifact>nuts-central-bundle</excludeArtifact>
+                            </excludeArtifacts>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
