@@ -44,7 +44,6 @@ public class ExtraApiUtils {
     }
 
     public static String resolveNutsIdDigest() {
-        //TODO COMMIT TO 0.8.4
         return resolveNutsIdDigest(NId.getApi(Nuts.version()).get(), resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
