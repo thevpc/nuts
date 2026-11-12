@@ -21,12 +21,14 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.mon.NProgressEvent;
 import net.thevpc.nuts.mon.NProgressListener;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Tag;
 import net.thevpc.nuts.core.test.utils.*;
 
 /**
  *
  * @author thevpc
  */
+@Tag("local-only")
 public class CpTest {
 
     @BeforeAll

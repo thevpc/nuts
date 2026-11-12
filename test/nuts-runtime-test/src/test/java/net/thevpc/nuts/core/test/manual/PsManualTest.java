@@ -12,12 +12,14 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JClassVersion;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Tag("local-only")
 public class PsManualTest {
     @BeforeAll
     public static void init() {

@@ -28,10 +28,12 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  * @author thevpc
  */
+@Tag("local-only")
 public class PerfTest {
     int nbr = 10;
 

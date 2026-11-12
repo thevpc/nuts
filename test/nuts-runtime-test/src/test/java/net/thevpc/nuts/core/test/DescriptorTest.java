@@ -11,11 +11,13 @@ import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Tag;
 
 /**
  *
  * @author thevpc
  */
+@Tag("local-only")
 public class DescriptorTest {
 
     @BeforeAll

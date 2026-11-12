@@ -12,12 +12,14 @@ import net.thevpc.nuts.io.NOut;
 import net.thevpc.nuts.text.NVersionWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 
 
 /**
  *
  * @author thevpc
  */
+@Tag("local-only")
 public class TestSpecial_ExecURLTest {
     @BeforeAll
     public static void init() {

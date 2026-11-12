@@ -11,9 +11,11 @@ import net.thevpc.nuts.runtime.standalone.reflect.NSignatureMapImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.lang.reflect.Type;
 
+@Tag("local-only")
 public class SpringTest {
     @BeforeAll
     public static void init() {

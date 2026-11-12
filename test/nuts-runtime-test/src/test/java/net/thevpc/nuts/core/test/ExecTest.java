@@ -26,6 +26,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Tag;
 
 import java.io.*;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
+@Tag("local-only")
 public class ExecTest {
 
     @BeforeAll

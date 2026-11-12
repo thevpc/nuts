@@ -6,7 +6,9 @@ import net.thevpc.nuts.artifact.NDependencyTreeNode;
 import net.thevpc.nuts.command.NFetch;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
+@Tag("local-only")
 public class FetchTest {
 
     @Test

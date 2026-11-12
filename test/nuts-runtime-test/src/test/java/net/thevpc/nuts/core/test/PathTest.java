@@ -37,6 +37,7 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,7 @@ import java.util.Set;
  *
  * @author thevpc
  */
+@Tag("local-only")
 public class PathTest {
 
     @BeforeAll
