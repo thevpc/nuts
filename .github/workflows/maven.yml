@@ -1,18 +1,38 @@
 name: Java CI
 
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-
+    name: JDK ${{ matrix.java }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # 8 is the oldest supported runtime, 25 the newest the build is known to work with.
+        java: [ '8', '17', '21', '25' ]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK 17
-      uses: actions/setup-java@v1
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v4
       with:
-        java-version: 17
-    - name: Build with Maven
-      run: mvn -B install --file pom.xml -Dmaven.test.skip=true
-#      run: mvn -B install --file pom.xml
+        distribution: temurin
+        java-version: ${{ matrix.java }}
+        cache: maven
+
+    - name: Build and test
+      # tests tagged "local-only" need the maintainer's machine (network downloads,
+      # installs, external tools) and are excluded here; run them locally with a plain `mvn install`.
+      run: mvn -B -ntp install -Dexcluded.groups=local-only

@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- 22-Nov-2011 AYA : BDT 26587 update profile for the Jenkins build. --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.xprojects.builders</groupId>
     <artifactId>nuts-libraries-builder</artifactId>
     <name>Nuts Community Libraries Build Project</name>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts-tomcat-classloader</module>
@@ -11,9 +13,4 @@
         <module>nuts-swing</module>
         <module>nuts-slf4j</module>
     </modules>
-    <properties>
-    </properties>
-    <build>
-
-    </build>
 </project>

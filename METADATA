@@ -1,4 +1,4 @@
-buildTime=2026-11-07-151313
+buildTime=2026-11-10-000000
 
 stableApiId=
 stableApiVersion=1.0.0
@@ -8,20 +8,19 @@ stableRuntimeId=net.thevpc.nuts:nuts-runtime#1.0.0.0
 stableRuntimeVersion=1.0.0.0
 stableJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar
 
-latestApiId=net.thevpc.nuts:nuts#1.1.0
-latestApiVersion=1.1.0
-latestAppId=net.thevpc.nuts:nuts-app#1.1.0
-latestAppVersion=1.1.0
-latestRuntimeId=net.thevpc.nuts:nuts-runtime#1.1.0.0
-latestRuntimeVersion=1.1.0.0
-latestJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar
+latestApiId=net.thevpc.nuts:nuts#1.2.0
+latestApiVersion=1.2.0
+latestAppId=net.thevpc.nuts:nuts-app#1.2.0
+latestAppVersion=1.2.0
+latestRuntimeId=net.thevpc.nuts:nuts-runtime#1.2.0.0
+latestRuntimeVersion=1.2.0.0
+latestJarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.2.0/nuts-app-1.2.0.jar
 
 
-apiId=net.thevpc.nuts:nuts#1.1.0
-apiVersion=1.1.0
-appId=net.thevpc.nuts:nuts-app#1.1.0
-appVersion=1.1.0
-runtimeId=net.thevpc.nuts:nuts-runtime#1.1.0.0
-runtimeVersion=1.1.0.0
-jarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar
-
+apiId=net.thevpc.nuts:nuts#1.2.0
+apiVersion=1.2.0
+appId=net.thevpc.nuts:nuts-app#1.2.0
+appVersion=1.2.0
+runtimeId=net.thevpc.nuts:nuts-runtime#1.2.0.0
+runtimeVersion=1.2.0.0
+jarLocation=https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.2.0/nuts-app-1.2.0.jar

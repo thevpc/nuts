@@ -1,5 +1,13 @@
 # Project exclude paths
 /.idea/
+# NetBeans per-user project metadata
+nb-configuration.xml
+nbactions.xml
+# personal scratch notes
+/dev.md
+# rewritten by the shade plugin on every build
+/dependency-reduced-pom.xml
+/core/nuts-app/dependency-reduced-pom.xml
 /toolbox/ndoc/target
 /toolbox/ndiff/target
 /core/nuts-runtime-test/runtime

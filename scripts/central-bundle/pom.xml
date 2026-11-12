@@ -20,13 +20,15 @@
     <groupId>net.thevpc.xprojects.builders</groupId>
     <artifactId>nuts-central-bundle</artifactId>
     <name>Nuts Maven Central Bundle</name>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <packaging>pom</packaging>
     <properties>
         <!-- override with -DwaitUntil=validated to return as soon as Central accepts the bundle -->
         <waitUntil>published</waitUntil>
     </properties>
     <modules>
+        <!-- shared parent pom, every module references it -->
+        <module>../../parent</module>
         <!-- nuts core -->
         <module>../../core/nuts-boot</module>
         <module>../../core/nuts-api</module>
