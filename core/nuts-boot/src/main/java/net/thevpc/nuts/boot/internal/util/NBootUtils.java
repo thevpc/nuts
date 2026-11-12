@@ -745,7 +745,6 @@ public final class NBootUtils {
     }
 
     public static String resolveNutsIdDigest() {
-        //TODO COMMIT TO 0.8.4
         return resolveNutsIdDigest(NBootDependency.ofApi(NBootWorkspace.NUTS_BOOT_VERSION), resolveClasspathURLs(NBootWorkspaceImpl.class.getClassLoader(), true));
     }
 
