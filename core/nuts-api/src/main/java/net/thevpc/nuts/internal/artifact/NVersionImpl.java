@@ -27,6 +27,7 @@ package net.thevpc.nuts.internal.artifact;
 
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.NConstants;
+import net.thevpc.nuts.internal.NReservedMavenVersionComparator;
 import net.thevpc.nuts.internal.rpi.NVersionFilterRPI;
 import net.thevpc.nuts.text.NI18n;
 import net.thevpc.nuts.text.NMsg;
@@ -46,6 +47,7 @@ public class NVersionImpl implements NVersion {
     private static final long serialVersionUID = 1L;
     protected String expression;
     private VersionParts parts;
+    private transient volatile List<NVersionPart> comparisonParts;
 
     /**
      * Default n version.
@@ -113,7 +115,24 @@ public class NVersionImpl implements NVersion {
      * @return parts result
      */
     public List<NVersionPart> parts() {
-        return new ArrayList<>(splitVersionParts2(NStringUtils.strip(expression)).all);
+        // use the cached parts instead of re-splitting the expression on every call
+        return new ArrayList<>(getParts().all);
+    }
+
+    /**
+     * Parts normalized the way the Maven-style comparator expects (separators
+     * and trailing zeroes removed, suffixes/prefixes treated as qualifiers).
+     * Cached because the version is immutable.
+     *
+     * @return normalized parts
+     */
+    public List<NVersionPart> comparisonParts() {
+        List<NVersionPart> p = comparisonParts;
+        if (p == null) {
+            p = Collections.unmodifiableList(NReservedMavenVersionComparator.normalizeForComparison(getParts().all));
+            comparisonParts = p;
+        }
+        return p;
     }
 
     /**

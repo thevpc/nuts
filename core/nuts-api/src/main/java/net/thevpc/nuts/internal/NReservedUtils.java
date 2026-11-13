@@ -478,16 +478,22 @@ public final class NReservedUtils {
                 artifact = group;
                 group = null;
             }
-            LinkedHashSet<String> condArch = new LinkedHashSet<>();
-            LinkedHashSet<String> condOs = new LinkedHashSet<>();
-            LinkedHashSet<String> condDist = new LinkedHashSet<>();
-            LinkedHashSet<String> condPlatform = new LinkedHashSet<>();
-            LinkedHashSet<String> condDE = new LinkedHashSet<>();
-            List<String> condProfiles = new ArrayList<>();
+            if (query == null) {
+                // common shape group:artifact[:classifier][#version]: no query
+                // means no conditions/properties, so avoid building 7 empty
+                // collections and an NEnvConditionImpl for it
+                return NOptional.of(new NIdImpl(group, artifact, classifier, NVersion.of(version)));
+            }
+            LinkedHashSet<String> condArch = null;
+            LinkedHashSet<String> condOs = null;
+            LinkedHashSet<String> condDist = null;
+            LinkedHashSet<String> condPlatform = null;
+            LinkedHashSet<String> condDE = null;
+            List<String> condProfiles = null;
             Map<String, String> queryMap = NStringMapFormat.DEFAULT.parse(query).get();
 
-            Map<String, String> idProperties = new LinkedHashMap<>();
-            Map<String, String> condProperties = new LinkedHashMap<>();
+            Map<String, String> idProperties = null;
+            Map<String, String> condProperties = null;
             for (Iterator<Map.Entry<String, String>> iterator = queryMap.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
@@ -498,44 +504,73 @@ public final class NReservedUtils {
                         break;
                     }
                     case NConstants.IdProperties.PROFILE: {
+                        if (condProfiles == null) {
+                            condProfiles = new ArrayList<>();
+                        }
                         condProfiles.addAll(NReservedLangUtils.splitDefault(value));
                         break;
                     }
                     case NConstants.IdProperties.PLATFORM: {
+                        if (condPlatform == null) {
+                            condPlatform = new LinkedHashSet<>();
+                        }
                         condPlatform.addAll(NStringUtils.parsePropertyIdList(value).get());
                         break;
                     }
                     case NConstants.IdProperties.OS_DIST: {
+                        if (condDist == null) {
+                            condDist = new LinkedHashSet<>();
+                        }
                         condDist.addAll(NStringUtils.parsePropertyIdList(value).get());
                         break;
                     }
                     case NConstants.IdProperties.ARCH: {
+                        if (condArch == null) {
+                            condArch = new LinkedHashSet<>();
+                        }
                         condArch.addAll(NStringUtils.parsePropertyIdList(value).get());
                         break;
                     }
                     case NConstants.IdProperties.OS: {
+                        if (condOs == null) {
+                            condOs = new LinkedHashSet<>();
+                        }
                         condOs.addAll(NStringUtils.parsePropertyIdList(value).get());
                         break;
                     }
                     case NConstants.IdProperties.DESKTOP: {
+                        if (condDE == null) {
+                            condDE = new LinkedHashSet<>();
+                        }
                         condDE.addAll(NStringUtils.parsePropertyIdList(value).get());
                         break;
                     }
                     case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
+                        if (condProperties == null) {
+                            condProperties = new LinkedHashMap<>();
+                        }
                         condProperties.putAll(NStringMapFormat.COMMA_FORMAT.parse(value).get());
                         break;
                     }
                     default: {
+                        if (idProperties == null) {
+                            idProperties = new LinkedHashMap<>();
+                        }
                         idProperties.put(key, value);
                     }
                 }
             }
             return NOptional.of(new NIdImpl(
                     group, artifact, classifier, NVersion.of(version),
-                    idProperties, new NEnvConditionImpl(
-                    new ArrayList<>(condArch), new ArrayList<>(condOs), new ArrayList<>(condDist), new ArrayList<>(condPlatform), new ArrayList<>(condDE),
-                    new ArrayList<>(condProfiles), condProperties
-            )
+                    idProperties == null ? Collections.emptyMap() : idProperties,
+                    new NEnvConditionImpl(
+                            condArch == null ? null : new ArrayList<>(condArch),
+                            condOs == null ? null : new ArrayList<>(condOs),
+                            condDist == null ? null : new ArrayList<>(condDist),
+                            condPlatform == null ? null : new ArrayList<>(condPlatform),
+                            condDE == null ? null : new ArrayList<>(condDE),
+                            condProfiles, condProperties
+                    )
             ));
         }
         return NOptional.ofError(NMsg.ofC("invalid id format : %s", nutsId));
@@ -757,48 +792,56 @@ public final class NReservedUtils {
      */
     public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
+        if (condition.isBlank()) {
+            // nothing but blank entries; filtering below would drop them all anyway
+            return m;
+        }
         String s;
-        if (condition.arch() != null) {
-            s = condition.arch().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        List<String> arch = condition.arch();
+        if (arch != null && !arch.isEmpty()) {
+            s = arch.stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.ARCH, s);
             }
         }
-        if (condition.os() != null) {
-            s = condition.os().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        List<String> os = condition.os();
+        if (os != null && !os.isEmpty()) {
+            s = os.stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS, s);
             }
         }
-        if (condition.osDist() != null) {
-            s = condition.osDist().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        List<String> osDist = condition.osDist();
+        if (osDist != null && !osDist.isEmpty()) {
+            s = osDist.stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.OS_DIST, s);
             }
         }
-        if (condition.platform() != null) {
-            s = formatStringIdList(condition.platform());
+        List<String> platform = condition.platform();
+        if (platform != null && !platform.isEmpty()) {
+            s = formatStringIdList(platform);
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PLATFORM, s);
             }
         }
-        if (condition.desktopEnvironment() != null) {
-            s = condition.desktopEnvironment().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        List<String> desktopEnvironment = condition.desktopEnvironment();
+        if (desktopEnvironment != null && !desktopEnvironment.isEmpty()) {
+            s = desktopEnvironment.stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.DESKTOP, s);
             }
         }
-        if (condition.profiles() != null) {
-            s = condition.profiles().stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        List<String> profiles = condition.profiles();
+        if (profiles != null && !profiles.isEmpty()) {
+            s = profiles.stream().map(NStringUtils::strip).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PROFILE, s);
             }
         }
-        if (condition.properties() != null) {
-            Map<String, String> properties = condition.properties();
-            if (!properties.isEmpty()) {
-                m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.DEFAULT.format(properties));
-            }
+        Map<String, String> properties = condition.properties();
+        if (properties != null && !properties.isEmpty()) {
+            m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.DEFAULT.format(properties));
         }
         return m;
     }

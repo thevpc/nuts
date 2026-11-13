@@ -80,6 +80,19 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     }
 
     /**
+     * Returns the current workspace, or {@code null} when none is bound.
+     * <p>
+     * Unlike {@link #get()} this variant does not allocate an {@link NOptional}
+     * and is intended for hot internal paths that only need the workspace
+     * instance (or a null test).
+     *
+     * @return current workspace or {@code null}
+     */
+    static NWorkspace getOrNull() {
+        return NScopedWorkspace.currentWorkspaceOrNull();
+    }
+
+    /**
      * Run.
      *
      * @param runnable runnable

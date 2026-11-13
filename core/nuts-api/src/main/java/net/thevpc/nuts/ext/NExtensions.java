@@ -46,6 +46,18 @@ import java.util.Set;
  */
 public interface NExtensions extends NComponent {
     static <T> T of(Class<T> type) {
+        NWorkspace ws = NWorkspace.getOrNull();
+        if (ws != null) {
+            NExtensions extensions = ws.extensions();
+            if (extensions != null) {
+                T component = extensions.createComponentOrNull(type);
+                if (component != null) {
+                    return component;
+                }
+                // reproduce the usual missing-component error
+                return extensions.createComponent(type).get();
+            }
+        }
         return of().createComponent(type).get();
     }
 
@@ -54,10 +66,24 @@ public interface NExtensions extends NComponent {
     }
 
     static NExtensions of() {
+        NWorkspace ws = NWorkspace.getOrNull();
+        if (ws != null) {
+            NExtensions extensions = ws.extensions();
+            if (extensions != null) {
+                return extensions;
+            }
+        }
         return get().get();
     }
 
     static NOptional<NExtensions> get() {
+        NWorkspace ws = NWorkspace.getOrNull();
+        if (ws != null) {
+            NExtensions extensions = ws.extensions();
+            if (extensions != null) {
+                return NOptional.of(extensions);
+            }
+        }
         return NWorkspace.get().map(x -> x.extensions());
     }
 
@@ -81,6 +107,21 @@ public interface NExtensions extends NComponent {
      * @return valid instance or null if no extension implementation was found
      */
     <T> NOptional<T> createComponent(Class<T> type);
+
+    /**
+     * Creates a supported component or returns {@code null} when none is
+     * available.
+     * <p>
+     * The default implementation allocates a {@link NOptional}; implementations
+     * should override it when they can resolve cached components directly.
+     *
+     * @param <T>  extension type
+     * @param type extension type
+     * @return component or {@code null}
+     */
+    default <T> T createComponentOrNull(Class<T> type) {
+        return createComponent(type).orNull();
+    }
     <T extends NScorable> NScorableQuery<T> ofScorableQuery();
 
     /**

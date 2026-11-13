@@ -18,7 +18,7 @@ public class NFailSafeHelper {
         NFailSafeHelper.log(err -> {
             err.println(msg.toString() + ":");
             if(any!=null) {
-                any.printStackTrace();
+                any.printStackTrace(err);
             }
         });
     }

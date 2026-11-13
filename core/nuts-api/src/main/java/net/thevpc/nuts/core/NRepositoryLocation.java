@@ -46,6 +46,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     private final String name;
     private final String locationType;
     private final String path;
+    private volatile String cachedString;
 
     /**
      * Create a new NutsRepositoryLocation
@@ -233,6 +234,10 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      */
     @Override
     public String toString() {
+        String s = cachedString;
+        if (s != null) {
+            return s;
+        }
         StringBuilder sb = new StringBuilder();
         if (!NBlankable.isBlank(name)) {
             sb.append(name);
@@ -245,7 +250,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         if (!NBlankable.isBlank(path)) {
             sb.append(path);
         }
-        return sb.toString();
+        s = sb.toString();
+        cachedString = s;
+        return s;
     }
 
     /**

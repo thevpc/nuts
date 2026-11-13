@@ -48,6 +48,8 @@ public class NIdImpl implements NId {
     private final NVersion version;
     private final String properties;
     private final NEnvCondition condition;
+    private transient volatile String cachedMavenFolder;
+    private transient volatile String cachedString;
 
     /**
      * Default n id.
@@ -76,6 +78,24 @@ public class NIdImpl implements NId {
         this.artifactId = NStringUtils.stripToNull(artifactId);
         this.version = version == null ? NVersion.BLANK : version;
         this.classifier = null;
+        this.condition = NEnvCondition.BLANK;
+        this.properties = "";
+    }
+
+    /**
+     * Default n id.
+     *
+     * @param groupId group id
+     * @param artifactId artifact id
+     * @param classifier classifier
+     * @param version version
+     * @return default n id result
+     */
+    public NIdImpl(String groupId, String artifactId, String classifier, NVersion version) {
+        this.groupId = NStringUtils.stripToNull(groupId);
+        this.artifactId = NStringUtils.stripToNull(artifactId);
+        this.version = version == null ? NVersion.BLANK : version;
+        this.classifier = NStringUtils.stripToNull(classifier);
         this.condition = NEnvCondition.BLANK;
         this.properties = "";
     }
@@ -122,7 +142,12 @@ public class NIdImpl implements NId {
 
     @Override
     public boolean isBlank() {
-        return toString().isEmpty();
+        return NBlankable.isBlank(groupId)
+                && NBlankable.isBlank(artifactId)
+                && NBlankable.isBlank(classifier)
+                && NBlankable.isBlank(version)
+                && NBlankable.isBlank(properties)
+                && NBlankable.isBlank(condition);
     }
 
     /**
@@ -131,6 +156,10 @@ public class NIdImpl implements NId {
      * @return maven folder result
      */
     public String mavenFolder() {
+        String cached = cachedMavenFolder;
+        if (cached != null) {
+            return cached;
+        }
         StringBuilder sb = new StringBuilder();
         if (!NBootUtils.isBlank(groupId)) {
             sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
@@ -145,7 +174,9 @@ public class NIdImpl implements NId {
                 sb.append(version);
             }
         }
-        return sb.toString();
+        cached = sb.toString();
+        cachedMavenFolder = cached;
+        return cached;
     }
 
     @Override
@@ -306,6 +337,10 @@ public class NIdImpl implements NId {
 
     @Override
     public String toString() {
+        String cached = cachedString;
+        if (cached != null) {
+            return cached;
+        }
         StringBuilder sb = new StringBuilder();
         if (NBlankable.isBlank(classifier)) {
             if (!NBlankable.isBlank(groupId)) {
@@ -324,15 +359,23 @@ public class NIdImpl implements NId {
         }
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         m.putAll(NReservedUtils.toMap(condition));
-        for (Map.Entry<String, String> e : NStringMapFormat.DEFAULT.parse(properties).get().entrySet()) {
-            if (!m.containsKey(e.getKey())) {
-                m.put(e.getKey(), e.getValue());
+        if (!NBlankable.isBlank(properties)) {
+            for (Map.Entry<String, String> e : NStringMapFormat.DEFAULT.parse(properties).get().entrySet()) {
+                if (!m.containsKey(e.getKey())) {
+                    m.put(e.getKey(), e.getValue());
+                }
             }
         }
         if (!m.isEmpty()) {
             sb.append("?").append(NStringMapFormat.DEFAULT.format(m));
         }
-        return sb.toString();
+        String s = sb.toString();
+        if (condition == null || condition instanceof NEnvConditionImpl) {
+            // our own condition implementation is effectively immutable, so the
+            // string representation cannot change
+            cachedString = s;
+        }
+        return s;
     }
 
     @Override

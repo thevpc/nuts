@@ -36,6 +36,8 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 5/23/17.
@@ -63,6 +65,24 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain, NToE
     @Override
     public String value() {
         return text;
+    }
+
+    @Override
+    public List<NText> split(Pattern regex, boolean returnSeparator) {
+        // a plain node has no styled children; splitting it is a plain string
+        // scan instead of AbstractNText's normalize + offset-map machinery
+        Matcher m = regex.matcher(text);
+        List<NText> all = new ArrayList<>();
+        int last = 0;
+        while (m.find()) {
+            all.add(new DefaultNTextPlain(text.substring(last, m.start())));
+            if (returnSeparator) {
+                all.add(new DefaultNTextPlain(m.group()));
+            }
+            last = m.end();
+        }
+        all.add(new DefaultNTextPlain(text.substring(last)));
+        return all;
     }
 
     public boolean isNewLine() {

@@ -206,15 +206,17 @@ public class NNameFormat {
             return new String[]{""};
         }
         String aValue = NStringUtils.strip(value);
-        List<String> all = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        int length = aValue.length();
+        List<String> all = new ArrayList<>(4);
+        StringBuilder sb = new StringBuilder(Math.min(length, 16));
 
         final int wasSep = 1;
         final int wasUpper = 2;
         final int wasLower = 3;
         final int wasOther = 4;
         int was = wasSep;
-        for (char c : aValue.toCharArray()) {
+        for (int i = 0; i < length; i++) {
+            char c = aValue.charAt(i);
             int t = Character.getType(c);
             if (isSeparator(c,t)) {
                 if (sb.length() > 0) {
@@ -275,7 +277,53 @@ public class NNameFormat {
      * @return format result
      */
     public String format(String value) {
+        if (value != null && isAlreadyFormatted(value)) {
+            return value;
+        }
         return format(parse(value));
+    }
+
+    /**
+     * true when formatting {@code value} would return it unchanged: a single, canonical,
+     * separator joined list of words already in the leading/next format. Parsing is the
+     * expensive part of formatting, so names that are already kebab/snake/space cased
+     * (the common case for ids) skip it entirely.
+     *
+     * @param value value
+     * @return true if value is already formatted
+     */
+    private boolean isAlreadyFormatted(String value) {
+        if (sep == null || sep.isEmpty() || value.isEmpty() || leading != next) {
+            return false;
+        }
+        final boolean upper;
+        if (leading == NWordFormat.UPPERCASE) {
+            upper = true;
+        } else if (leading == NWordFormat.LOWERCASE) {
+            upper = false;
+        } else {
+            return false;
+        }
+        int len = value.length();
+        boolean expectWord = true;
+        int i = 0;
+        while (i < len) {
+            if (!expectWord && value.startsWith(sep, i)) {
+                i += sep.length();
+                expectWord = true;
+                continue;
+            }
+            char c = value.charAt(i);
+            boolean ok = upper
+                    ? ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+                    : ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'));
+            if (!ok) {
+                return false;
+            }
+            expectWord = false;
+            i++;
+        }
+        return !expectWord;
     }
 
     /**
@@ -295,15 +343,17 @@ public class NNameFormat {
      * @return format result
      */
     public String format(String[] value) {
-        StringBuilder sb = new StringBuilder();
-        if (value.length > 0) {
-            sb.append(leading.formatWord(value[0]));
-            for (int i = 1; i < value.length; i++) {
-                if (sep != null) {
-                    sb.append(sep);
-                }
-                sb.append(next.formatWord(value[i]));
+        int len = value.length;
+        if (len == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(len * 6 + 4);
+        sb.append(leading.formatWord(value[0]));
+        for (int i = 1; i < len; i++) {
+            if (sep != null) {
+                sb.append(sep);
             }
+            sb.append(next.formatWord(value[i]));
         }
         return sb.toString();
     }

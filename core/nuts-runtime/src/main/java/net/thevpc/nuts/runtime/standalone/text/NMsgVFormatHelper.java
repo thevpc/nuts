@@ -6,7 +6,6 @@ import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
 
@@ -44,22 +43,25 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
         if (ss == null) {
             return NText.ofBlank();
         }
-        List<NText> dd = NStringUtils.parseDollarPlaceHolder(ss)
-                .map(t -> {
-                    switch (t.ttype) {
-                        case NToken.TT_DOLLAR:
-                        case NToken.TT_DOLLAR_BRACE: {
-                            NText x = mapper.apply(t.sval);
-                            if (x == null) {
-                                throw new IllegalArgumentException("msg var not found " + t.sval);
-                            }
-                            return x;
-                        }
-                    }
-                    return NText.ofPlain(t.sval);
-                }).collect(Collectors.toList());
         NTextBuilder sb = NTextBuilder.of();
-        sb.appendAll(dd);
+        NStringUtils.parseDollarPlaceHolder(ss).forEach(t -> {
+            switch (t.ttype) {
+                case NToken.TT_DOLLAR:
+                case NToken.TT_DOLLAR_BRACE: {
+                    NText x = mapper.apply(t.sval);
+                    if (x == null) {
+                        // unknown variable: keep the literal text, as NMsg.toString() does
+                        sb.append(NText.ofPlain(t.image));
+                    } else {
+                        // NText values are preserved as-is (including their styles)
+                        sb.append(x);
+                    }
+                    break;
+                }
+                default:
+                    sb.append(NText.ofPlain(t.sval));
+            }
+        });
         return sb.build();
     }
 }

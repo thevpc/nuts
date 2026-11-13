@@ -937,7 +937,21 @@ public class NTextBuilderPlain implements NTextBuilder {
          * @return split result
          */
         public List<NText> split(String separator, boolean returnSeparator) {
-            return split(Pattern.compile(Pattern.quote(separator)), returnSeparator);
+            if (separator == null || separator.isEmpty()) {
+                return split(Pattern.compile(Pattern.quote(separator)), returnSeparator);
+            }
+            List<NText> all = new ArrayList<>();
+            int last = 0;
+            int pos;
+            while ((pos = str.indexOf(separator, last)) >= 0) {
+                all.add(new ImmutableNTextPlain(str.substring(last, pos))); // before separator
+                if (returnSeparator) {
+                    all.add(new ImmutableNTextPlain(separator)); // the separator itself
+                }
+                last = pos + separator.length();
+            }
+            all.add(new ImmutableNTextPlain(str.substring(last))); // remainder, even if empty
+            return all;
         }
 
         /**
@@ -947,7 +961,21 @@ public class NTextBuilderPlain implements NTextBuilder {
          * @return split lines result
          */
         public List<NText> splitLines(boolean returnSeparator) {
-            return split(Pattern.compile("\\r?\\n"), returnSeparator);
+            List<NText> all = new ArrayList<>();
+            int last = 0;
+            int len = str.length();
+            for (int i = 0; i < len; i++) {
+                if (str.charAt(i) == '\n') {
+                    int sepStart = (i > last && str.charAt(i - 1) == '\r') ? i - 1 : i;
+                    all.add(new ImmutableNTextPlain(str.substring(last, sepStart))); // before separator
+                    if (returnSeparator) {
+                        all.add(new ImmutableNTextPlain(str.substring(sepStart, i + 1))); // \n or \r\n
+                    }
+                    last = i + 1;
+                }
+            }
+            all.add(new ImmutableNTextPlain(str.substring(last))); // remainder, even if empty
+            return all;
         }
 
         @Override

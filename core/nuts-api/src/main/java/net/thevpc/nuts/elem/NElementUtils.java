@@ -107,35 +107,66 @@ public final class NElementUtils {
      * @return is element name result
      */
     public static boolean isElementName(String name) {
-        if (name == null) {
+        if (name == null || name.isEmpty()) {
             return false;
         }
-        if (name.isEmpty()) {
-            return false;
-        }
-        char[] charArray = name.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
+        int len = name.length();
+        for (int i = 0; i < len; i++) {
+            char c = name.charAt(i);
             if (i == 0) {
-                if (!Character.isJavaIdentifierStart(c)
-                        && c != '.'
-                        && c != '@'
-                        && c != ':'
-                ) {
+                if (!isElementNameStart(c, true, true)) {
                     return false;
                 }
             } else {
-                if (!Character.isJavaIdentifierPart(c)
-                        && c != '.'
-                        && c != '-'
-                        && c != '@'
-                        && c != ':'
-                ) {
+                if (!isElementNamePart(c, true, true)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * true when {@code c} can start an element name. ASCII letters, '_' and '$'
+     * are handled inline; other characters fall back to the JDK identifier rules.
+     */
+    private static boolean isElementNameStart(char c, boolean allowAt, boolean allowColon) {
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$') {
+            return true;
+        }
+        if (c == '.') {
+            return true;
+        }
+        if (allowAt && c == '@') {
+            return true;
+        }
+        if (allowColon && c == ':') {
+            return true;
+        }
+        return c >= 128 && Character.isJavaIdentifierStart(c);
+    }
+
+    /**
+     * true when {@code c} can continue an element name. ASCII letters, digits,
+     * '_' and '$' are handled inline; other characters fall back to the JDK
+     * identifier rules.
+     */
+    private static boolean isElementNamePart(char c, boolean allowAt, boolean allowColon) {
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '$') {
+            return true;
+        }
+        if (c == '.' || c == '-') {
+            return true;
+        }
+        if (allowAt && c == '@') {
+            return true;
+        }
+        if (allowColon && c == ':') {
+            return true;
+        }
+        // preserve Character.isJavaIdentifierPart semantics for the remaining
+        // chars (notably identifier-ignorable ASCII control chars, and Unicode)
+        return Character.isJavaIdentifierPart(c);
     }
 
     /**
@@ -149,31 +180,21 @@ public final class NElementUtils {
         if (contentType == null) {
             return isElementName(name);
         }
-        if (name == null) {
+        if (name == null || name.isEmpty()) {
             return false;
         }
-        if (name.isEmpty()) {
-            return false;
-        }
-        char[] charArray = name.toCharArray();
+        int len = name.length();
         switch (contentType) {
             case XML: {
                 //wont call isValidElementNameChar for performance
-                for (int i = 0; i < charArray.length; i++) {
-                    char c = charArray[i];
+                for (int i = 0; i < len; i++) {
+                    char c = name.charAt(i);
                     if (i == 0) {
-                        if (!Character.isJavaIdentifierStart(c)
-                                && c != '.'
-                                && c != ':'
-                        ) {
+                        if (!isElementNameStart(c, false, true)) {
                             return false;
                         }
                     } else {
-                        if (!Character.isJavaIdentifierPart(c)
-                                && c != '.'
-                                && c != '-'
-                                && c != ':'
-                        ) {
+                        if (!isElementNamePart(c, false, true)) {
                             return false;
                         }
                     }
@@ -182,21 +203,14 @@ public final class NElementUtils {
             }
             case JSON: {
                 //wont call isValidElementNameChar for performance
-                for (int i = 0; i < charArray.length; i++) {
-                    char c = charArray[i];
+                for (int i = 0; i < len; i++) {
+                    char c = name.charAt(i);
                     if (i == 0) {
-                        if (!Character.isJavaIdentifierStart(c)
-                                && c != '.'
-                                && c != '@'
-                        ) {
+                        if (!isElementNameStart(c, true, false)) {
                             return false;
                         }
                     } else {
-                        if (!Character.isJavaIdentifierPart(c)
-                                && c != '.'
-                                && c != '-'
-                                && c != '@'
-                        ) {
+                        if (!isElementNamePart(c, true, false)) {
                             return false;
                         }
                     }

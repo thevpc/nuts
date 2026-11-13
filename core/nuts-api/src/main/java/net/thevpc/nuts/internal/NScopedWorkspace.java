@@ -56,16 +56,28 @@ public class NScopedWorkspace {
      * @return current workspace result
      */
     public static NOptional<NWorkspace> currentWorkspace() {
-        NWorkspace ws = workspaceScopes.get();
-        if (ws==null) {
-            NWorkspace shw = defaultSharedWorkspaceInstance;
-            if(shw !=null){
-                return NOptional.of(shw);
-            }
-            NMsg emptyMessage = NMsg.ofP("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
-            return NOptional.ofEmpty(emptyMessage);
+        NWorkspace ws = currentWorkspaceOrNull();
+        if (ws != null) {
+            return NOptional.of(ws);
         }
-        return NOptional.of(ws);
+        NMsg emptyMessage = NMsg.ofP("missing workspace in the current context. If not sure what does this mean, just call 'Nuts.require()'");
+        return NOptional.ofEmpty(emptyMessage);
+    }
+
+    /**
+     * Current workspace or null.
+     * <p>
+     * Allocation-free variant of {@link #currentWorkspace()} for hot paths that
+     * only need the workspace instance (or a null test) and not a message.
+     *
+     * @return current workspace or {@code null}
+     */
+    public static NWorkspace currentWorkspaceOrNull() {
+        NWorkspace ws = workspaceScopes.get();
+        if (ws == null) {
+            ws = defaultSharedWorkspaceInstance;
+        }
+        return ws;
     }
 
     /**

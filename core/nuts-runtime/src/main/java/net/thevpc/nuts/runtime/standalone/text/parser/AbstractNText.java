@@ -194,6 +194,17 @@ public abstract class AbstractNText implements NText {
     }
 
     public List<NPrimitiveText> toPrimitiveList() {
+        if (this instanceof NTextPlain) {
+            return Collections.singletonList((NPrimitiveText) this);
+        }
+        if (this instanceof NTextStyled) {
+            NText child = ((NTextStyled) this).child();
+            if (child == null || child.type() == NTextType.PLAIN) {
+                // already a flat style over plain text: normalization would
+                // return this very node
+                return Collections.singletonList((NPrimitiveText) this);
+            }
+        }
         NNormalizedText normalizeOne = normalize();
         List<NPrimitiveText> primitiveList = new ArrayList<>();
         if (normalizeOne instanceof NPrimitiveText || normalizeOne instanceof NTextPlain) {
@@ -207,19 +218,17 @@ public abstract class AbstractNText implements NText {
     public List<NText> split(Pattern regex, boolean returnSeparator) {
         List<NPrimitiveText> normalizedList = toPrimitiveList();
         // step 1: build offset map
-        List<int[]> offsets = new ArrayList<>();
-        List<NTextStyles> styles = new ArrayList<>();
+        int size = normalizedList.size();
+        int[] starts = new int[size];
+        int[] ends = new int[size];
+        NTextStyles[] styles = new NTextStyles[size];
         StringBuilder full = new StringBuilder();
-        for (NText child : normalizedList) {
-            int start = full.length();
-            String t = child.filteredText();
-            full.append(t);
-            offsets.add(new int[]{start, full.length()});
-            if (child instanceof NTextStyled) {
-                styles.add(((NTextStyled) child).styles());
-            } else {
-                styles.add(null);
-            }
+        for (int i = 0; i < size; i++) {
+            NPrimitiveText child = (NPrimitiveText) normalizedList.get(i);
+            starts[i] = full.length();
+            full.append(child.filteredText());
+            ends[i] = full.length();
+            styles[i] = child instanceof NTextStyled ? ((NTextStyled) child).styles() : null;
         }
 
         // step 2: split the full string
@@ -227,21 +236,22 @@ public abstract class AbstractNText implements NText {
         Matcher m = regex.matcher(s);
 
         List<NText> result = new ArrayList<>();
+        NTextBuilder tb = NTextBuilder.of();
         int last = 0;
         while (m.find()) {
             if (m.start() > last) {
-                result.add(slice(s, styles, offsets, last, m.start()));
+                result.add(slice(s, styles, starts, ends, last, m.start(), tb));
             } else {
                 result.add(NText.ofPlain(""));
             }
             if (returnSeparator) {
-                result.add(slice(s, styles, offsets, m.start(), m.end()));
+                result.add(slice(s, styles, starts, ends, m.start(), m.end(), tb));
             }
             last = m.end();
         }
         // remainder
         if (last < s.length()) {
-            result.add(slice(s, styles, offsets, last, s.length()));
+            result.add(slice(s, styles, starts, ends, last, s.length(), tb));
         } else if (last == s.length() && last > 0 && !returnSeparator) {
             // trailing empty — drop it
         }
@@ -250,15 +260,30 @@ public abstract class AbstractNText implements NText {
     }
 
     // reconstruct a styled NText from a substring range [from, to)
-    private NText slice(String full, List<NTextStyles> styles, List<int[]> offsets, int from, int to) {
-        NTextBuilder tb = NTextBuilder.of();
-        for (int i = 0; i < offsets.size(); i++) {
-            int cStart = offsets.get(i)[0];
-            int cEnd = offsets.get(i)[1];
-            int overlapStart = Math.max(from, cStart);
-            int overlapEnd = Math.min(to, cEnd);
+    private NText slice(String full, NTextStyles[] styles, int[] starts, int[] ends, int from, int to, NTextBuilder tb) {
+        int single = -1;
+        for (int i = 0; i < starts.length; i++) {
+            if (Math.max(from, starts[i]) < Math.min(to, ends[i])) {
+                if (single >= 0) {
+                    single = -2; // more than one child: use the builder path
+                    break;
+                }
+                single = i;
+            }
+        }
+        if (single >= 0) {
+            int s = Math.max(from, starts[single]);
+            int e = Math.min(to, ends[single]);
+            NTextStyles si = styles[single];
+            String part = full.substring(s, e);
+            return si == null ? NText.ofPlain(part) : NText.ofStyled(part, si);
+        }
+        tb.clear();
+        for (int i = 0; i < starts.length; i++) {
+            int overlapStart = Math.max(from, starts[i]);
+            int overlapEnd = Math.min(to, ends[i]);
             if (overlapStart < overlapEnd) {
-                NTextStyles si = styles.get(i);
+                NTextStyles si = styles[i];
                 if (si == null) {
                     tb.append(full.substring(overlapStart, overlapEnd));
                 } else {

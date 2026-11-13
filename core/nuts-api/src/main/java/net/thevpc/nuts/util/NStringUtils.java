@@ -58,6 +58,8 @@ public class NStringUtils {
 
     public static final String DEFAULT_VAR_NAME = "var";
 
+    private static final Pattern COMBINING_DIACRITICAL_MARKS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+
     /**
      * N string utils.
      *
@@ -76,9 +78,23 @@ public class NStringUtils {
         if (value == null) {
             return null;
         }
+        // pure ascii cannot hold combining diacritical marks, so NFD normalization is
+        // a no-op for it; skip both the normalization pass and the regex match
+        if (isAscii(value)) {
+            return value;
+        }
         String nfdNormalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(nfdNormalizedString).replaceAll("");
+        return COMBINING_DIACRITICAL_MARKS.matcher(nfdNormalizedString).replaceAll("");
+    }
+
+    private static boolean isAscii(String value) {
+        int len = value.length();
+        for (int i = 0; i < len; i++) {
+            if (value.charAt(i) >= 128) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -371,6 +387,27 @@ public class NStringUtils {
      */
     public static String firstNonNull(String... values) {
         return firstNonNull(values == null ? null : Arrays.asList(values));
+    }
+
+    /**
+     * fast First non null.
+     *
+     * @param a first string
+     * @param b second string
+     * @return first non null result
+     */
+    public static String firstNonNull(String a, String b) {
+        return a == null ? b : a;
+    }
+
+    /**
+     * fast First non null.
+     *
+     * @param a first string
+     * @return first non null result
+     */
+    public static String nonNull(String a) {
+        return a == null ? "" : a;
     }
 
     /**
@@ -1017,97 +1054,55 @@ public class NStringUtils {
      * @return parse dollar place holder result
      */
     public static Stream<NToken> parseDollarPlaceHolder(String text) {
+        if (text == null || text.isEmpty()) {
+            return Stream.empty();
+        }
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_DOLLAR_BRACE);
         final String TT_DOLLAR_STR = NToken.typeString(NToken.TT_DOLLAR);
-        return iterToStream(new Iterator<NToken>() {
-            final char[] t = (text == null ? new char[0] : text.toCharArray());
-            int p = 0;
-            final int length = t.length;
-            final StringBuilder sb = new StringBuilder(length);
-            final StringBuilder n = new StringBuilder(length);
-            final StringBuilder ni = new StringBuilder(length);
-            final List<NToken> buffer = new ArrayList<>(2);
-
-            private boolean ready() {
-                return !buffer.isEmpty();
-            }
-
-            @Override
-            public boolean hasNext() {
-                if (ready()) {
-                    return true;
+        final int length = text.length();
+        List<NToken> tokens = new ArrayList<>();
+        int p = 0;
+        int last = 0;
+        while (p < length) {
+            char c = text.charAt(p);
+            if (c == '$' && p + 1 < length && text.charAt(p + 1) == '{') {
+                if (p > last) {
+                    String s = text.substring(last, p);
+                    tokens.add(NToken.of(NToken.TT_DEFAULT, s, 0, 0, s, TT_DEFAULT_STR));
                 }
-                while (p < length) {
-                    fillOnce();
-                    if (ready()) {
-                        return true;
-                    }
+                int start = p + 2;
+                int end = start;
+                while (end < length && text.charAt(end) != '}') {
+                    end++;
                 }
-                if (sb.length() > 0) {
-                    buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
-                    sb.setLength(0);
+                String value = text.substring(start, end);
+                String image = text.substring(p, end < length ? end + 1 : length);
+                tokens.add(NToken.of(NToken.TT_DOLLAR_BRACE, value, 0, 0, image, TT_DOLLAR_BRACE_STR));
+                p = end < length ? end + 1 : length;
+                last = p;
+            } else if (c == '$' && p + 1 < length && isValidVarStart(text.charAt(p + 1))) {
+                if (p > last) {
+                    String s = text.substring(last, p);
+                    tokens.add(NToken.of(NToken.TT_DEFAULT, s, 0, 0, s, TT_DEFAULT_STR));
                 }
-                return ready();
-            }
-
-            private void fillOnce() {
-                char c = t[p];
-                if (c == '$' && p + 1 < length && t[p + 1] == '{') {
-                    p += 2;
-                    n.setLength(0);
-                    ni.setLength(0);
-                    ni.append(c).append('{');
-                    while (p < length) {
-                        c = t[p];
-                        if (c != '}') {
-                            n.append(c);
-                            ni.append(c);
-                            p++;
-                        } else {
-                            ni.append(c);
-                            break;
-                        }
-                    }
-                    if (sb.length() > 0) {
-                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
-                        sb.setLength(0);
-                    }
-                    buffer.add(NToken.of(NToken.TT_DOLLAR_BRACE, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
-                } else if (c == '$' && p + 1 < length && isValidVarStart(t[p + 1])) {
-                    p++;
-                    n.setLength(0);
-                    ni.setLength(0);
-                    ni.append(c);
-                    while (p < length) {
-                        c = t[p];
-                        if (isValidVarPart(c)) {
-                            n.append(c);
-                            ni.append(c);
-                            p++;
-                        } else {
-                            p--;
-                            break;
-                        }
-                    }
-                    if (sb.length() > 0) {
-                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
-                        sb.setLength(0);
-                    }
-                    buffer.add(NToken.of(NToken.TT_DOLLAR, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_STR));
-                } else {
-                    sb.append(c);
+                int start = p;
+                int end = p + 1;
+                while (end < length && isValidVarPart(text.charAt(end))) {
+                    end++;
                 }
+                tokens.add(NToken.of(NToken.TT_DOLLAR, text.substring(start + 1, end), 0, 0, text.substring(start, end), TT_DOLLAR_STR));
+                p = end;
+                last = p;
+            } else {
                 p++;
             }
-
-            @Override
-            public NToken next() {
-                NAssert.requireNamedTrue(ready(), "token ready");
-                return buffer.remove(0);
-            }
-        });
-
+        }
+        if (last < length) {
+            String s = text.substring(last);
+            tokens.add(NToken.of(NToken.TT_DEFAULT, s, 0, 0, s, TT_DEFAULT_STR));
+        }
+        return tokens.stream();
     }
 
 
@@ -1488,10 +1483,34 @@ public class NStringUtils {
         if (data == null) {
             return new ArrayList<>();
         }
+        // scan once and clear the builder once. calling readLine in a loop would
+        // delete the head of the builder for every line, shifting the whole
+        // remaining buffer and making the whole operation quadratic.
+        int len = data.length();
         List<String> all = new ArrayList<>();
-        while (data.length() > 0) {
-            all.add(readLine(data));
+        int start = 0;
+        int i = 0;
+        while (i < len) {
+            char c = data.charAt(i);
+            if (c == '\n') {
+                all.add(data.substring(start, i));
+                i++;
+                start = i;
+            } else if (c == '\r') {
+                all.add(data.substring(start, i));
+                i++;
+                if (i < len && data.charAt(i) == '\n') {
+                    i++;
+                }
+                start = i;
+            } else {
+                i++;
+            }
         }
+        if (start < len) {
+            all.add(data.substring(start, len));
+        }
+        data.setLength(0);
         return all;
     }
 

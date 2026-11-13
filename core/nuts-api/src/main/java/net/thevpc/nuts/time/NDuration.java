@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * NDuration represents a comprehensive and precise time duration
@@ -63,6 +66,11 @@ public class NDuration implements Serializable, NElementSimple {
      * A constant representing a duration of zero.
      */
     public static final NDuration ZERO = ofMillis(0);
+
+    /**
+     * Matches number-unit pairs such as "1mn 32s", "1h 30m 15s", "2d 5h".
+     */
+    private static final Pattern DURATION_UNIT_PATTERN = Pattern.compile("(\\d+(?:\\.\\d+)?)\\s*([a-z]+)");
 
     // ----------------------
     // Internal Fields
@@ -1698,7 +1706,7 @@ public class NDuration implements Serializable, NElementSimple {
             return NOptional.ofEmpty();
         }
 
-        String input = NStringUtils.strip(any).toLowerCase();
+        String input = NStringUtils.strip(any).toLowerCase(Locale.ROOT);
 
         try {
             // Try parsing as ISO-8601 duration format first
@@ -1732,9 +1740,7 @@ public class NDuration implements Serializable, NElementSimple {
 
             // Pattern to match number-unit pairs with optional spaces
             // This handles: "1mn 32s", "1h 30m 15s", "2d 5h", etc.
-            String pattern = "(\\d+(?:\\.\\d+)?)\\s*([a-z]+)";
-            java.util.regex.Pattern regex = java.util.regex.Pattern.compile(pattern);
-            java.util.regex.Matcher matcher = regex.matcher(input);
+            Matcher matcher = DURATION_UNIT_PATTERN.matcher(input);
 
             boolean found = false;
 

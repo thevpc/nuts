@@ -3,6 +3,8 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.text.NMsg;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -12,6 +14,25 @@ import java.util.function.Function;
  * @since 0.8.0
  */
 public class NEnumUtils {
+    /**
+     * Per-enum-type map of constant name to constant. Enum.valueOf uses a
+     * linear scan plus an exception for unknown names; a cached map makes the
+     * lookup allocation-free and exception-free on the failure path too.
+     */
+    private static final ClassValue<Map<String, ? extends Enum>> ENUM_BY_NAME = new ClassValue<Map<String, ? extends Enum>>() {
+        @Override
+        protected Map<String, ? extends Enum> computeValue(Class<?> type) {
+            Map<String, Enum> m = new HashMap<>();
+            Object[] constants = type.getEnumConstants();
+            if (constants != null) {
+                for (Object o : constants) {
+                    Enum e = (Enum) o;
+                    m.put(e.name(), e);
+                }
+            }
+            return m;
+        }
+    };
     /**
      * N enum utils.
      *
@@ -31,11 +52,11 @@ public class NEnumUtils {
             return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
         }
         String normalizedValue = NNameFormat.CONST_NAME.format(value);
-        try {
-            return NOptional.of((T) Enum.valueOf(type, normalizedValue));
-        } catch (Exception notFound) {
-            return NOptional.ofError(() -> NMsg.ofC(type.getSimpleName() + " invalid value : %s", value));
+        T v = enumValueByName(type, normalizedValue);
+        if (v != null) {
+            return NOptional.of(v);
         }
+        return NOptional.ofError(() -> NMsg.ofC(type.getSimpleName() + " invalid value : %s", value));
     }
 
     /**
@@ -66,11 +87,13 @@ public class NEnumUtils {
                 //just ignore
             }
         }
-        try {
-            return NOptional.of((T) Enum.valueOf(type, normalizedValue));
-        } catch (Exception notFound) {
-            return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value), notFound);
+        T v = enumValueByName(type, normalizedValue);
+        if (v != null) {
+            return NOptional.of(v);
         }
+        return NOptional.ofError(
+                () -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value),
+                new IllegalArgumentException("No enum constant " + type.getName() + "." + normalizedValue));
     }
     /**
      * Parse enum.
@@ -107,6 +130,15 @@ public class NEnumUtils {
             }
         }
         return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value));
+    }
+
+    /**
+     * Exact-name lookup equivalent to {@link Enum#valueOf(Class, String)} but
+     * without throwing on unknown names.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T extends Enum> T enumValueByName(Class<T> type, String name) {
+        return (T) ENUM_BY_NAME.get(type).get(name);
     }
 
     /**

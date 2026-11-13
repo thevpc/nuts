@@ -869,6 +869,19 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
      * closing fence is written.
      */
     public static String toFencedString(String value, char c, int N, boolean unterminated) {
+        if (!unterminated && value.indexOf(c) < 0) {
+            // common case: no delimiter chars inside, so no escaping or
+            // boundary-space logic is needed
+            StringBuilder sb = new StringBuilder(value.length() + Math.max(0, N) * 2);
+            for (int i = 0; i < N; i++) {
+                sb.append(c);
+            }
+            sb.append(value);
+            for (int i = 0; i < N; i++) {
+                sb.append(c);
+            }
+            return sb.toString();
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(repeatChar(c, N));
         if (hasQuoteBoundary(value, c, true)) {

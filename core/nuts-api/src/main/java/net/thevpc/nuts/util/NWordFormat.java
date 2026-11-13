@@ -60,6 +60,9 @@ public enum NWordFormat implements NEnum {
                     return value.toLowerCase();
                 case CAPITALIZED: {
                     if (!value.isEmpty()) {
+                        if (isCapitalized(value)) {
+                            return value;
+                        }
                         char[] c = value.toCharArray();
                         c[0] = Character.toUpperCase(c[0]);
                         for (int i = 1; i < value.length(); i++) {
@@ -71,6 +74,9 @@ public enum NWordFormat implements NEnum {
                 }
                 case UNCAPITALIZED: {
                     if (!value.isEmpty()) {
+                        if (Character.toLowerCase(value.charAt(0)) == value.charAt(0)) {
+                            return value;
+                        }
                         char[] c = value.toCharArray();
                         c[0] = Character.toLowerCase(c[0]);
                         return new String(c);
@@ -80,5 +86,24 @@ public enum NWordFormat implements NEnum {
             }
         }
         throw new UnsupportedOperationException("unsupported NWordFormat "+this);
+    }
+
+    /**
+     * true when {@code value} is already in CAPITALIZED form, so {@link #formatWord(String)}
+     * can return it as is instead of copying the whole char array.
+     */
+    private static boolean isCapitalized(String value) {
+        int len = value.length();
+        char c0 = value.charAt(0);
+        if (Character.toUpperCase(c0) != c0) {
+            return false;
+        }
+        for (int i = 1; i < len; i++) {
+            char c = value.charAt(i);
+            if (Character.toLowerCase(c) != c) {
+                return false;
+            }
+        }
+        return true;
     }
 }

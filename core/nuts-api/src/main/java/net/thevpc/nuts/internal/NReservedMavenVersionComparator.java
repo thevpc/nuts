@@ -1,10 +1,10 @@
 package net.thevpc.nuts.internal;
 
 import net.thevpc.nuts.artifact.*;
+import net.thevpc.nuts.internal.artifact.NVersionImpl;
 import net.thevpc.nuts.internal.artifact.NVersionPartImpl;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +30,13 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
         if (v1.equals(v2)) {
             return 0;
         }
-        return compareVersionParts(
-                version1.parts(),
-                version2.parts()
-        );
+        List<NVersionPart> p1 = version1 instanceof NVersionImpl
+                ? ((NVersionImpl) version1).comparisonParts()
+                : normalizeForComparison(version1.parts());
+        List<NVersionPart> p2 = version2 instanceof NVersionImpl
+                ? ((NVersionImpl) version2).comparisonParts()
+                : normalizeForComparison(version2.parts());
+        return compareNormalizedVersionParts(p1, p2);
     }
 
     /**
@@ -44,14 +47,18 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
      * @return compare version parts result
      */
     public int compareVersionParts(List<NVersionPart> v1, List<NVersionPart> v2) {
+        return compareNormalizedVersionParts(
+                normalizeForComparison(v1),
+                normalizeForComparison(v2));
+    }
+
+    private int compareNormalizedVersionParts(List<NVersionPart> v11, List<NVersionPart> v22) {
         int i = 0;
         int j = 0;
-        List<NVersionPart> v11 = normalizeForComparison(v1);
-        List<NVersionPart> v22 = normalizeForComparison(v2);
         while (i < v11.size() || j < v22.size()) {
             if (i < v11.size() && j < v22.size()) {
                 NVersionPart a = v11.get(i);
-                NVersionPart b = v22.get(i);
+                NVersionPart b = v22.get(j);
                 int r = compareTo(a, b);
                 if (r != 0) {
                     return r;
@@ -82,9 +89,9 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
                 }
                 return 1;
             } else {
-                NVersionPart b = v22.get(i);
+                NVersionPart b = v22.get(j);
                 if (b.type() == NVersionPartType.QUALIFIER || b.type() == NVersionPartType.SUFFIX) {
-                    if (b.value().equalsIgnoreCase("final") && i == v22.size() - 1) {
+                    if (b.value().equalsIgnoreCase("final") && j == v22.size() - 1) {
                         return 0;
                     } else {
                         switch (b.value().toLowerCase()) {
@@ -123,27 +130,60 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
      * @param v1 v1
      * @return normalize for comparison result
      */
-    private static List<NVersionPart> normalizeForComparison(List<NVersionPart> v1) {
+    public static List<NVersionPart> normalizeForComparison(List<NVersionPart> v1) {
         List<NVersionPart> ret = new ArrayList<>(v1);
         for (int i = ret.size() - 1; i >= 0; i--) {
-            if (ret.get(i).type() == NVersionPartType.SEPARATOR) {
+            NVersionPart p = ret.get(i);
+            if (p.type() == NVersionPartType.SEPARATOR) {
                 ret.remove(i);
-            } else if (ret.get(i).type() == NVersionPartType.QUALIFIER && ("final".equalsIgnoreCase(ret.get(i).value()) || "ga".equalsIgnoreCase(ret.get(i).value()))) {
+            } else if ((p.type() == NVersionPartType.QUALIFIER || p.type() == NVersionPartType.SUFFIX)
+                    && ("final".equalsIgnoreCase(p.value()) || "ga".equalsIgnoreCase(p.value()))) {
                 ret.remove(i);
-            } else if (ret.get(i).type() == NVersionPartType.SUFFIX && ("final".equalsIgnoreCase(ret.get(i).value()) || "ga".equalsIgnoreCase(ret.get(i).value()))) {
-                ret.remove(i);
-            } else if (ret.get(i).type() == NVersionPartType.NUMBER) {
-                if (new BigInteger(ret.get(i).value()).equals(BigInteger.ZERO)) {
+            } else if (p.type() == NVersionPartType.NUMBER) {
+                if (isZeroDigits(p.value())) {
                     if (i == ret.size() - 1 || (i < ret.size() - 1 && ret.get(i + 1).type() != NVersionPartType.NUMBER)) {
                         ret.remove(i);
                     }
                 }
-            } else if (ret.get(i).type() == NVersionPartType.SUFFIX || ret.get(i).type() == NVersionPartType.PREFIX) {
+            } else if (p.type() == NVersionPartType.SUFFIX || p.type() == NVersionPartType.PREFIX) {
                 //change them in qualifiers
-                ret.set(i, new NVersionPartImpl(ret.get(i).value(), NVersionPartType.QUALIFIER));
+                ret.set(i, new NVersionPartImpl(p.value(), NVersionPartType.QUALIFIER));
             }
         }
         return ret;
+    }
+
+    private static boolean isZeroDigits(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            if (value.charAt(i) != '0') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int compareNumber(String a, String b) {
+        int ai = 0;
+        while (ai < a.length() - 1 && a.charAt(ai) == '0') {
+            ai++;
+        }
+        int bi = 0;
+        while (bi < b.length() - 1 && b.charAt(bi) == '0') {
+            bi++;
+        }
+        int al = a.length() - ai;
+        int bl = b.length() - bi;
+        if (al != bl) {
+            return al < bl ? -1 : 1;
+        }
+        for (int i = 0; i < al; i++) {
+            char ca = a.charAt(ai + i);
+            char cb = b.charAt(bi + i);
+            if (ca != cb) {
+                return ca < cb ? -1 : 1;
+            }
+        }
+        return 0;
     }
 
 
@@ -172,7 +212,7 @@ public class NReservedMavenVersionComparator implements NVersionComparator {
         }
 
         if (v1.type() == NVersionPartType.NUMBER && v2.type() == NVersionPartType.NUMBER) {
-            return new BigInteger(v1.value()).compareTo(new BigInteger(v2.value()));
+            return compareNumber(v1.value(), v2.value());
         } else if (v1.type() == NVersionPartType.NUMBER) {
             return 1;
         } else if (v2.type() == NVersionPartType.NUMBER) {

@@ -50,6 +50,12 @@ public class NStringMapFormat {
         }
     };
     public static final Function<String, String> URL_DECODER = x -> {
+        // URLDecoder only rewrites %XX escapes and '+' (to a space). The vast
+        // majority of map keys/values are plain tokens, for which URLDecoder
+        // would just pay for a Charset.forName("UTF-8") lookup per token.
+        if (x.indexOf('%') < 0 && x.indexOf('+') < 0) {
+            return x;
+        }
         try {
             return URLDecoder.decode(x, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -154,6 +160,29 @@ public class NStringMapFormat {
     }
 
 
+    /**
+     * Minimal character cursor used by the map tokenizer. Replaces
+     * {@link PushbackReader} to keep the per-character cost down.
+     */
+    private static final class CharCursor {
+        private final String text;
+        private int pos;
+
+        CharCursor(String text) {
+            this.text = text;
+        }
+
+        int read() throws IOException {
+            return pos < text.length() ? text.charAt(pos++) : -1;
+        }
+
+        void unread(int c) {
+            if (c >= 0) {
+                pos--;
+            }
+        }
+    }
+
     private static class Token {
         TokenType type;
         String value;
@@ -201,7 +230,7 @@ public class NStringMapFormat {
      * @param decoder decoder
      * @return read token result
      */
-    private Token readToken(PushbackReader reader, Function<String, String> decoder) {
+    private Token readToken(CharCursor reader, Function<String, String> decoder) {
         try {
             if (decoder == null) {
                 decoder = x -> x;
@@ -210,7 +239,6 @@ public class NStringMapFormat {
             String eqChars = this.equalsChars;
             String sepChars = this.separatorChars;
             StringBuilder value = new StringBuilder();
-            StringBuilder image = new StringBuilder();
             int r = reader.read();
             if (r == -1) {
                 return null;
@@ -237,13 +265,11 @@ public class NStringMapFormat {
                     (r == '\'' && simpleQuoteSupported)
             ) {
                 char cr = (char) r;
-                image.append(cr);
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
                         throw NException.ofSafeIllegalArgumentException(NMsg.ofC("parsing error : expected %s",cr));
                     }
-                    image.append(cr);
                     if (r == cr) {
                         return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, decoder.apply(value.toString()), value.toString());
                     }
@@ -252,7 +278,6 @@ public class NStringMapFormat {
                         if (r == -1) {
                             throw NException.ofSafeIllegalArgumentException(NMsg.ofC("parsing error : expected %s",cr));
                         }
-                        image.append((char) r);
                         switch ((char) r) {
                             case 'n': {
                                 value.append('\n');
@@ -284,15 +309,14 @@ public class NStringMapFormat {
                 while (true) {
                     r = reader.read();
                     if (r < 0) {
-                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                        return new Token(TokenType.WORD, decoder.apply(value.toString()), value.toString());
                     }
                     char cr = (char) r;
                     if (escapedTokens.indexOf(cr) >= 0) {
-                        image.append(cr);
                         r = reader.read();
                         if (r == -1) {
                             value.append(cr);
-                            return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                            return new Token(TokenType.WORD, decoder.apply(value.toString()), value.toString());
                         } else {
                             cr = (char) r;
 
@@ -302,7 +326,6 @@ public class NStringMapFormat {
 //                            return new Token(TokenType.WORD, decoder.apply(value.toString()),image.toString());
 //                        }
 //                        cr = (char) r;
-                            image.append(cr);
                             if (escapedTokens.indexOf(cr) >= 0 || isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
                                 value.append(cr);
                             } else {
@@ -336,10 +359,9 @@ public class NStringMapFormat {
                         }
                     } else if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
                         reader.unread(cr);
-                        return new Token(TokenType.WORD, decoder.apply(value.toString()), image.toString());
+                        return new Token(TokenType.WORD, decoder.apply(value.toString()), value.toString());
                     } else {
                         value.append(cr);
-                        image.append(cr);
                     }
                 }
             }
@@ -381,8 +403,8 @@ public class NStringMapFormat {
         if (NBlankable.isBlank(text)) {
             return NOptional.of(m);
         }
-        PushbackReader reader = new PushbackReader(new StringReader(text));
-        List<Token> tokens = new ArrayList<>();
+        CharCursor reader = new CharCursor(text);
+        Deque<Token> tokens = new ArrayDeque<>();
         while (true) {
             Token r = null;
             try {
@@ -417,12 +439,11 @@ public class NStringMapFormat {
      * @param tokens tokens
      * @return skip separator result
      */
-    private boolean skipSeparator(List<Token> tokens) {
-        if (!tokens.isEmpty()) {
-            if (tokens.get(0).type == TokenType.SEP) {
-                tokens.remove(0);
-                return true;
-            }
+    private boolean skipSeparator(Deque<Token> tokens) {
+        Token first = tokens.peekFirst();
+        if (first != null && first.type == TokenType.SEP) {
+            tokens.pollFirst();
+            return true;
         }
         return false;
     }
@@ -433,17 +454,20 @@ public class NStringMapFormat {
      * @param tokens tokens
      * @return read entry result
      */
-    private Map.Entry<String, String> readEntry(List<Token> tokens) {
+    private Map.Entry<String, String> readEntry(Deque<Token> tokens) {
         boolean acceptNullKeys = this.acceptNullKeys;
-        if (!tokens.isEmpty()) {
-            if (tokens.get(0).type.isAnyWord()) {
-                String k = tokens.remove(0).value;
-                if (!tokens.isEmpty()) {
-                    if (tokens.get(0).type == TokenType.EQ) {
-                        tokens.remove(0);
-                        if (!tokens.isEmpty()) {
-                            if (tokens.get(0).type.isAnyWord()) {
-                                Token v = tokens.remove(0);
+        Token first = tokens.peekFirst();
+        if (first != null) {
+            if (first.type.isAnyWord()) {
+                String k = tokens.pollFirst().value;
+                Token next = tokens.peekFirst();
+                if (next != null) {
+                    if (next.type == TokenType.EQ) {
+                        tokens.pollFirst();
+                        Token value = tokens.peekFirst();
+                        if (value != null) {
+                            if (value.type.isAnyWord()) {
+                                Token v = tokens.pollFirst();
                                 return new AbstractMap.SimpleEntry<>(k, v.value);
                             } else {
                                 return new AbstractMap.SimpleEntry<>(k, null);
@@ -451,11 +475,11 @@ public class NStringMapFormat {
                         } else {
                             return new AbstractMap.SimpleEntry<>(k, null);
                         }
-                    } else if (tokens.get(0).type == TokenType.SEP) {
-                        tokens.remove(0);
+                    } else if (next.type == TokenType.SEP) {
+                        tokens.pollFirst();
                         return new AbstractMap.SimpleEntry<>(k, null);
-                    } else if (equalsChars().isEmpty() && tokens.get(0).type.isAnyWord()) {
-                        String v = tokens.remove(0).value;
+                    } else if (equalsChars().isEmpty() && next.type.isAnyWord()) {
+                        String v = tokens.pollFirst().value;
                         return new AbstractMap.SimpleEntry<>(k, v);
                     } else {
                         return new AbstractMap.SimpleEntry<>(k, null);
@@ -463,14 +487,15 @@ public class NStringMapFormat {
                 } else {
                     return new AbstractMap.SimpleEntry<>(k, null);
                 }
-            } else if (tokens.get(0).type == TokenType.SEP) {
-                tokens.remove(0);
+            } else if (first.type == TokenType.SEP) {
+                tokens.pollFirst();
                 return new AbstractMap.SimpleEntry<>(acceptNullKeys ? null : "", null);
-            } else if (tokens.get(0).type == TokenType.EQ) {
-                tokens.remove(0);
-                if (!tokens.isEmpty()) {
-                    if (tokens.get(0).type.isAnyWord()) {
-                        Token v = tokens.remove(0);
+            } else if (first.type == TokenType.EQ) {
+                tokens.pollFirst();
+                Token value = tokens.peekFirst();
+                if (value != null) {
+                    if (value.type.isAnyWord()) {
+                        Token v = tokens.pollFirst();
                         return new AbstractMap.SimpleEntry<>(acceptNullKeys ? null : "", v.value);
                     } else {
                         return new AbstractMap.SimpleEntry<>(acceptNullKeys ? null : "", null);

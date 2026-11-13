@@ -761,7 +761,41 @@ public class DefaultNTextRPI implements NTextRPI {
 
     @Override
     public NText createText(String t) {
-        return t == null ? createBlank() : NTextParser.of().parse(new StringReader(t));
+        if (t == null) {
+            return createBlank();
+        }
+        if (isPlainNtfFastPath(t)) {
+            // no NTF control characters: the parser would just produce a single
+            // plain text node, so skip building a parser/char queue for it
+            return createPlain(t);
+        }
+        return NTextParser.of().parse(new StringReader(t));
+    }
+
+    /**
+     * true when {@code t} contains no NTF control character, so it can be
+     * represented directly as plain text. {@code #}, {@code \}, backticks,
+     * SILENT, line breaks and {@code }} are the only characters that can start
+     * or alter NTF constructs.
+     */
+    private static boolean isPlainNtfFastPath(String t) {
+        int len = t.length();
+        for (int i = 0; i < len; i++) {
+            switch (t.charAt(i)) {
+                case '#':
+                case '\\':
+                case '`':
+                case '\u001E':
+                case '\r':
+                case '\n':
+                case '}':
+                case '¶':
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -67,6 +67,18 @@ public class DefaultNExtensions implements NExtensions {
         return createSupported(type, null);
     }
 
+    @Override
+    public <T> T createComponentOrNull(Class<T> type) {
+        T d = wsModel.createRPI(type);
+        if (d != null) {
+            return d;
+        }
+        if (wsModel.extensionModel == null) {
+            throw NException.ofSafeUnexpectedException(NMsg.ofC("Workspace is still booting and component container is not yet available. but you asked for %s", type.getName()));
+        }
+        return wsModel.extensionModel.createSupported(type, null).orNull();
+    }
+
     public <T, V> NOptional<T> createSupported(Class<T> serviceType, V criteriaType) {
         T d = wsModel.createRPI(serviceType);
         if(d!=null){

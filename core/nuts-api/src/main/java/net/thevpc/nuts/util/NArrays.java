@@ -868,22 +868,23 @@ public class NArrays {
      */
     public static long[] concat(long[]... arrays) {
         int count = 0;
-        for (long[] v : arrays) {
-            if (v != null) {
-                count += v.length;
-            }
-        }
-        long[] all = new long[count];
-        int idx = 0;
         if (arrays != null) {
+            for (long[] v : arrays) {
+                if (v != null) {
+                    count += v.length;
+                }
+            }
+            long[] all = new long[count];
+            int idx = 0;
             for (long[] v : arrays) {
                 if (v != null) {
                     System.arraycopy(v, 0, all, idx, v.length);
                     idx += v.length;
                 }
             }
+            return all;
         }
-        return all;
+        return new long[0];
     }
 
     /**
@@ -894,22 +895,23 @@ public class NArrays {
      */
     public static int[] concat(int[]... arrays) {
         int count = 0;
-        for (int[] v : arrays) {
-            if (v != null) {
-                count += v.length;
-            }
-        }
-        int[] all = new int[count];
-        int idx = 0;
         if (arrays != null) {
+            for (int[] v : arrays) {
+                if (v != null) {
+                    count += v.length;
+                }
+            }
+            int[] all = new int[count];
+            int idx = 0;
             for (int[] v : arrays) {
                 if (v != null) {
                     System.arraycopy(v, 0, all, idx, v.length);
                     idx += v.length;
                 }
             }
+            return all;
         }
-        return all;
+        return new int[0];
     }
 
     /**
@@ -921,22 +923,23 @@ public class NArrays {
      */
     public static <T> T[] concat(Class<T> cls, T[]... arrays) {
         int count = 0;
-        for (T[] v : arrays) {
-            if (v != null) {
-                count += v.length;
-            }
-        }
-        T[] all = (T[]) Array.newInstance(cls, count);
-        int idx = 0;
         if (arrays != null) {
+            for (T[] v : arrays) {
+                if (v != null) {
+                    count += v.length;
+                }
+            }
+            T[] all = (T[]) Array.newInstance(cls, count);
+            int idx = 0;
             for (T[] v : arrays) {
                 if (v != null) {
                     System.arraycopy(v, 0, all, idx, v.length);
                     idx += v.length;
                 }
             }
+            return all;
         }
-        return all;
+        return (T[]) Array.newInstance(cls, 0);
     }
 
     /**
