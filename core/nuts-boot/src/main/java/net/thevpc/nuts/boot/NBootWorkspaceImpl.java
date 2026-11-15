@@ -968,7 +968,9 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     if (options.runtimeBootDescriptor() == null && !isRuntimeLoaded()) {
                         Set<NBootDependency> loadedDeps = null;
                         String rid = options.runtimeId();
-                        Path nutsRuntimeCacheConfigPath = Paths.get(options.storeType("CONF") + File.separator + NBootConstants.Folders.ID).resolve(NBootUtils.resolveIdPath(bootApiId)).resolve(NBootConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
+                        Path nutsRuntimeCacheConfigPath = Paths.get(options.storeType("CONF") + File.separator + NBootConstants.Folders.ID)
+                                .resolve(NBootUtils.resolveIdPath(NBootDependency.of(rid)))
+                                .resolve(NBootConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
                         try {
                             boolean cacheLoaded = false;
                             if (!NBootUtils.firstNonNull(options.recover(), false) && !resetFlag && !resetHardFlag && NBootUtils.isFileAccessible(nutsRuntimeCacheConfigPath, options.expireTime())) {

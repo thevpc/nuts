@@ -30,6 +30,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.util.*;
 
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -977,7 +978,92 @@ public class NMsg implements NBlankable, NElementSimple {
             // for parsing it and resolving placeholders
             return sMsg;
         }
-        return MessageFormat.format(sMsg, _preFormatArr(params,plain));
+        Object[] args = _preFormatArr(params, plain);
+        if (sMsg.indexOf('\'') < 0) {
+            String fast = formatAsJSimple(sMsg, args);
+            if (fast != null) {
+                return fast;
+            }
+        }
+        return MessageFormat.format(sMsg, args);
+    }
+
+    private static final ThreadLocal<NumberFormatHolder> J_NUMBER_FORMAT = ThreadLocal.withInitial(NumberFormatHolder::new);
+
+    private static final class NumberFormatHolder {
+        private Locale locale;
+        private NumberFormat format;
+
+        NumberFormat get() {
+            Locale current = Locale.getDefault(Locale.Category.FORMAT);
+            if (format == null || !current.equals(locale)) {
+                locale = current;
+                format = NumberFormat.getInstance(current);
+            }
+            return format;
+        }
+    }
+
+    /**
+     * Fast path for the common {@code {0}}, {@code {1}} ... pattern without
+     * MessageFormat quoting. Returns {@code null} when the pattern uses any
+     * feature this method does not reproduce exactly (quotes, format types,
+     * dates/formattables, out-of-range indexes...).
+     */
+    private String formatAsJSimple(String sMsg, Object[] args) {
+        int len = sMsg.length();
+        StringBuilder sb = null;
+        int last = 0;
+        for (int i = 0; i < len; i++) {
+            char c = sMsg.charAt(i);
+            if (c == '\'') {
+                return null;
+            }
+            if (c == '{') {
+                int close = sMsg.indexOf('}', i + 1);
+                if (close < 0) {
+                    return null;
+                }
+                int idx = 0;
+                int digits = 0;
+                for (int k = i + 1; k < close; k++) {
+                    char d = sMsg.charAt(k);
+                    if (d < '0' || d > '9') {
+                        return null;
+                    }
+                    idx = idx * 10 + (d - '0');
+                    digits++;
+                    if (idx > 100000) {
+                        return null;
+                    }
+                }
+                if (digits == 0 || idx >= args.length) {
+                    return null;
+                }
+                Object arg = args[idx];
+                String formatted;
+                if (arg == null) {
+                    formatted = "null";
+                } else if (arg instanceof Number) {
+                    formatted = J_NUMBER_FORMAT.get().get().format(arg);
+                } else if (arg instanceof Date || arg instanceof Calendar || arg instanceof Formattable) {
+                    return null;
+                } else {
+                    formatted = arg.toString();
+                }
+                if (sb == null) {
+                    sb = new StringBuilder(len + 16);
+                }
+                sb.append(sMsg, last, i).append(formatted);
+                last = close + 1;
+                i = close;
+            }
+        }
+        if (sb == null) {
+            return sMsg;
+        }
+        sb.append(sMsg, last, len);
+        return sb.toString();
     }
 
     /**

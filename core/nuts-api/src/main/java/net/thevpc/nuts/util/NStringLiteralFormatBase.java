@@ -342,9 +342,18 @@ public abstract class NStringLiteralFormatBase implements NStringLiteralFormat {
         public String format(String text) {
             if (text == null) return "null";
 
+            char ownQuote = quoteChar();
+            if (condition == NSupportMode.ALWAYS && ownQuote != '\0'
+                    && text.indexOf(ownQuote) < 0
+                    && (charEscapeSet == null || !charEscapeSet.containsAlwaysEscapable(text))) {
+                // nothing to escape and quotes are always required
+                StringBuilder sb = new StringBuilder(text.length() + 2);
+                sb.append(ownQuote).append(text).append(ownQuote);
+                return sb.toString();
+            }
+
             boolean requireQuotes = (condition == NSupportMode.ALWAYS);
             boolean allowQuotes   = (condition != NSupportMode.NEVER);
-            char    ownQuote      = quoteChar();
             StringBuilder body    = new StringBuilder();
 
             for (int i = 0; i < text.length(); i++) {

@@ -16,7 +16,12 @@
 ## In the case you are debugging an application called by nuts
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
-NUTS_VERSION=1.1.0
+
+# Define the JAVA_HOME if not already defined
+if [ -z "$NUTS_VERSION" ]; then
+    NUTS_VERSION="1.2.0"
+fi
+
 NUTS_APP_JAR=~/.m2/repository/net/thevpc/nuts/nuts-app/$NUTS_VERSION/nuts-app-$NUTS_VERSION.jar
 
 # Check if the NUTS_VERSION is set
@@ -24,6 +29,7 @@ if [ -z "$NUTS_VERSION" ]; then
     echo "You must call 'nuts nsh build-website.nsh' first to update NUTS_VERSION"
     exit 0
 fi
+
 
 # Define the JAVA_HOME if not already defined
 if [ -z "$NUTS_JAVA_HOME" ]; then

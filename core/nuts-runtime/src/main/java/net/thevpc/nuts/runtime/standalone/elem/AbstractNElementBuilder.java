@@ -13,12 +13,13 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
 public abstract class AbstractNElementBuilder implements NElementBuilder {
     private final NBoundAffixList affixes = new NBoundAffixList();
-    private final List<NElementDiagnostic> diagnostics = new ArrayList<>();
+    private List<NElementDiagnostic> diagnostics;
     private NElementMetadata metadata = DefaultNElementMetadata.EMPTY;
 
 
@@ -39,6 +40,9 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
     @Override
     public NElementBuilder addDiagnostic(NElementDiagnostic error) {
         if (error != null) {
+            if (diagnostics == null) {
+                diagnostics = new ArrayList<>();
+            }
             this.diagnostics.add(error);
         }
         return this;
@@ -46,7 +50,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public NElementBuilder removeDiagnostic(NElementDiagnostic error) {
-        if (error != null) {
+        if (error != null && diagnostics != null) {
             this.diagnostics.remove(error);
         }
         return this;
@@ -54,7 +58,7 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
 
     @Override
     public List<NElementDiagnostic> diagnostics() {
-        return new ArrayList<>(diagnostics);
+        return (diagnostics == null || diagnostics.isEmpty()) ? Collections.emptyList() : new ArrayList<>(diagnostics);
     }
 
     @Override
@@ -179,7 +183,13 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         if (other == null) {
             return this;
         }
-        this.diagnostics.addAll(other.diagnostics());
+        List<NElementDiagnostic> otherDiagnostics = other.diagnostics();
+        if (!otherDiagnostics.isEmpty()) {
+            if (this.diagnostics == null) {
+                this.diagnostics = new ArrayList<>();
+            }
+            this.diagnostics.addAll(otherDiagnostics);
+        }
         this.affixes.addAffixes(other.affixes());
         this.metadata = other.metadata();
         return this;
@@ -190,7 +200,13 @@ public abstract class AbstractNElementBuilder implements NElementBuilder {
         if (other == null) {
             return this;
         }
-        this.diagnostics.addAll(other.diagnostics());
+        List<NElementDiagnostic> otherDiagnostics = other.diagnostics();
+        if (!otherDiagnostics.isEmpty()) {
+            if (this.diagnostics == null) {
+                this.diagnostics = new ArrayList<>();
+            }
+            this.diagnostics.addAll(otherDiagnostics);
+        }
         this.affixes.addAffixes(other.affixes());
         this.metadata = other.metadata();
         return this;

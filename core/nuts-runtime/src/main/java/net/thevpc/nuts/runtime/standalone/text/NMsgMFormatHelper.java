@@ -8,10 +8,8 @@ import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
 
@@ -49,21 +47,24 @@ public class NMsgMFormatHelper extends AbstractNMsgFormatHelper {
         if (ss == null) {
             return NText.ofBlank();
         }
-        List<NText> dd = NStringUtils.parseMoustachePlaceHolder(ss)
-                .map(t -> {
-                    switch (t.ttype) {
-                        case NToken.TT_MOUSTACHE_START:{
-                            NText x = mapper.apply(t.sval);
-                            if (x == null) {
-                                throw new IllegalArgumentException("msg var not found " + t.sval);
-                            }
-                            return x;
-                        }
-                    }
-                    return NText.ofPlain(t.sval);
-                }).collect(Collectors.toList());
+        if (ss.indexOf('{') < 0) {
+            return NText.ofPlain(ss);
+        }
         NTextBuilder sb = NTextBuilder.of();
-        sb.appendAll(dd);
+        NStringUtils.parseMoustachePlaceHolder(ss).forEach(t -> {
+            switch (t.ttype) {
+                case NToken.TT_MOUSTACHE_START: {
+                    NText x = mapper.apply(t.sval);
+                    if (x == null) {
+                        throw new IllegalArgumentException("msg var not found " + t.sval);
+                    }
+                    sb.append(x);
+                    break;
+                }
+                default:
+                    sb.append(NText.ofPlain(t.sval));
+            }
+        });
         return sb.build();
     }
 }

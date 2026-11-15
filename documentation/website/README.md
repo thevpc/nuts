@@ -149,3 +149,13 @@ To re-compile `documentation/website/src/` into the static `docs/` website and s
 
 ## Change Trace
 always add meaningful info on $NUTS_REPO/documentation/website/src/include/blog/2026/2026-10-05-1.1.0-updates.md (or equivalent depending on the version) for any feature or fix done
+
+## Bumping version
+when bumping version always update
+
+```
+$NUTS_REPO/core/nuts-boot/src/main/java/net/thevpc/nuts/boot/NBootWorkspace.java::NUTS_BOOT_VERSION 
+$NUTS_REPO/core/nuts-runtime/src/main/java/net/thevpc/nuts/runtime/standalone/workspace/DefaultNWorkspace.java::RUNTIME_VERSION 
+$NUTS_REPO/core/nuts-api/src/main/java/net/thevpc/nuts/Nuts.java::version 
+$NUTS_REPO/nuts-release-tool.local.tson::*-version 
+```

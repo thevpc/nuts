@@ -177,6 +177,7 @@ public final class NCharEscapeSet {
     // ── NCharEscapeSet ────────────────────────────────────────────────────────
 
     private final Entry[] entries;
+    private final boolean[] alwaysAscii = new boolean[128];
 
     /**
      * N char escape set.
@@ -186,6 +187,41 @@ public final class NCharEscapeSet {
      */
     private NCharEscapeSet(Entry[] entries) {
         this.entries = entries;
+        for (Entry e : entries) {
+            if (e.when() == When.ALWAYS) {
+                for (char c : e.chars) {
+                    if (c < 128) {
+                        alwaysAscii[c] = true;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * true when {@code text} contains a character that must be escaped even
+     * inside surrounding quotes. Used by the literal formatter fast path.
+     *
+     * @param text text to check
+     * @return true if any always-escaped character is present
+     */
+    public boolean containsAlwaysEscapable(CharSequence text) {
+        int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if (c < 128) {
+                if (alwaysAscii[c]) {
+                    return true;
+                }
+            } else {
+                for (Entry e : entries) {
+                    if (e.when() == When.ALWAYS && e.contains(c)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     // ── Factories ─────────────────────────────────────────────────────────────

@@ -329,7 +329,13 @@ public class CoreNElementUtils {
                 if (values == null) {
                     values = new ArrayList<>();
                 }
-                values.addAll(denullList(e));
+                if (e == null) {
+                    values.add(NElement.ofNull());
+                } else if (e.isFragment()) {
+                    values.addAll(e.asFragment().get().children());
+                } else {
+                    values.add(e);
+                }
             }
         }
         return values;
@@ -341,7 +347,13 @@ public class CoreNElementUtils {
                 if (values == null) {
                     values = new ArrayList<>();
                 }
-                values.addAll(denullList(e));
+                if (e == null) {
+                    values.add(NElement.ofNull());
+                } else if (e.isFragment()) {
+                    values.addAll(e.asFragment().get().children());
+                } else {
+                    values.add(e);
+                }
             }
         }
         return values;
@@ -351,7 +363,13 @@ public class CoreNElementUtils {
         if (values == null) {
             values = new ArrayList<>();
         }
-        values.addAll(CoreNElementUtils.denullList(e));
+        if (e == null) {
+            values.add(NElement.ofNull());
+        } else if (e.isFragment()) {
+            values.addAll(e.asFragment().get().children());
+        } else {
+            values.add(e);
+        }
         return values;
     }
 
@@ -362,7 +380,13 @@ public class CoreNElementUtils {
         while (values.size() < index) {
             values.add(NElement.ofNull());
         }
-        values.addAll(index, CoreNElementUtils.denullList(e));
+        if (e == null) {
+            values.add(index, NElement.ofNull());
+        } else if (e.isFragment()) {
+            values.addAll(index, e.asFragment().get().children());
+        } else {
+            values.add(index, e);
+        }
         return values;
     }
 

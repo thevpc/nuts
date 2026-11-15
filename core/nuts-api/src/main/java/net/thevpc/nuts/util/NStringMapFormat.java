@@ -181,6 +181,18 @@ public class NStringMapFormat {
                 pos--;
             }
         }
+
+        String text() {
+            return text;
+        }
+
+        int pos() {
+            return pos;
+        }
+
+        void pos(int p) {
+            this.pos = p;
+        }
     }
 
     private static class Token {
@@ -306,6 +318,29 @@ public class NStringMapFormat {
                 }
             } else {
                 reader.unread(r);
+                // fast path for plain words: scan the underlying string and take
+                // one substring instead of appending char by char
+                int wordStart = reader.pos();
+                String fullText = reader.text();
+                int wordEnd = wordStart;
+                int fullLength = fullText.length();
+                boolean needsSlowPath = false;
+                while (wordEnd < fullLength) {
+                    char cr = fullText.charAt(wordEnd);
+                    if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
+                        break;
+                    }
+                    if (escapedTokens.indexOf(cr) >= 0) {
+                        needsSlowPath = true;
+                        break;
+                    }
+                    wordEnd++;
+                }
+                if (!needsSlowPath) {
+                    reader.pos(wordEnd);
+                    String word = fullText.substring(wordStart, wordEnd);
+                    return new Token(TokenType.WORD, decoder.apply(word), word);
+                }
                 while (true) {
                     r = reader.read();
                     if (r < 0) {
@@ -378,13 +413,23 @@ public class NStringMapFormat {
      * @return parsed map
      */
     public NOptional<Map<String, String>> parse(String text) {
-        NOptional<Map<String, List<String>>> d = parseDuplicates(text);
-        return d.map(x -> {
-            Map<String, String> r = new LinkedHashMap<>();
-            for (Map.Entry<String, List<String>> e : x.entrySet()) {
-                r.put(e.getKey(), e.getValue().get(e.getValue().size() - 1));
+        Map<String, String> m = new LinkedHashMap<>();
+        if (NBlankable.isBlank(text)) {
+            return NOptional.of(m);
+        }
+        return tokenize(text).map(tokens -> {
+            if (skipSeparator(tokens)) {
+                m.put(null, null);
             }
-            return r;
+            while (true) {
+                skipSeparator(tokens);
+                Map.Entry<String, String> u = readEntry(tokens);
+                if (u == null) {
+                    break;
+                }
+                m.put(u.getKey(), u.getValue());
+            }
+            return m;
         });
     }
 
@@ -395,42 +440,46 @@ public class NStringMapFormat {
      * @return parsed map
      */
     public NOptional<Map<String, List<String>>> parseDuplicates(String text) {
-        Function<String, String> decoder = this.decoder;
-        if (decoder == null) {
-            decoder = x -> x;
-        }
         Map<String, List<String>> m = new LinkedHashMap<>();
         if (NBlankable.isBlank(text)) {
             return NOptional.of(m);
         }
+        return tokenize(text).map(tokens -> {
+            if (skipSeparator(tokens)) {
+                m.computeIfAbsent(null, v -> new ArrayList<>()).add(null);
+            }
+            while (true) {
+                skipSeparator(tokens);
+                Map.Entry<String, String> u = readEntry(tokens);
+                if (u == null) {
+                    break;
+                }
+                m.computeIfAbsent(u.getKey(), v -> new ArrayList<>()).add(u.getValue());
+            }
+            return m;
+        });
+    }
+
+    private NOptional<Deque<Token>> tokenize(String text) {
+        Function<String, String> decoder = this.decoder;
+        if (decoder == null) {
+            decoder = x -> x;
+        }
         CharCursor reader = new CharCursor(text);
         Deque<Token> tokens = new ArrayDeque<>();
         while (true) {
-            Token r = null;
+            Token r;
             try {
                 r = readToken(reader, decoder);
             } catch (UncheckedIOException | NIOException e) {
                 return NOptional.ofError(() -> NMsg.ofP("failed to read token"), e);
             }
-            if (r != null) {
-                tokens.add(r);
-            } else {
+            if (r == null) {
                 break;
             }
+            tokens.add(r);
         }
-        if (skipSeparator(tokens)) {
-            m.computeIfAbsent(null, v -> new ArrayList<>()).add(null);
-        }
-        while (true) {
-            skipSeparator(tokens);
-            Map.Entry<String, String> u;
-            if ((u = readEntry(tokens)) != null) {
-                m.computeIfAbsent(u.getKey(), v -> new ArrayList<>()).add(u.getValue());
-            } else {
-                break;
-            }
-        }
-        return NOptional.of(m);
+        return NOptional.of(tokens);
     }
 
     /**

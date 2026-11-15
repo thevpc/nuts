@@ -60,7 +60,7 @@ public class NBoundAffixList {
     }
 
     public List<NBoundAffix> list() {
-        return new ArrayList<>(affixes);
+        return affixes.isEmpty() ? Collections.emptyList() : new ArrayList<>(affixes);
     }
 
     public List<NElementComment> comments() {

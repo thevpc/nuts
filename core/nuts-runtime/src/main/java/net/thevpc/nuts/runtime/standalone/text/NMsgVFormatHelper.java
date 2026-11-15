@@ -43,6 +43,9 @@ public class NMsgVFormatHelper extends AbstractNMsgFormatHelper {
         if (ss == null) {
             return NText.ofBlank();
         }
+        if (ss.indexOf('$') < 0) {
+            return NText.ofPlain(ss);
+        }
         NTextBuilder sb = NTextBuilder.of();
         NStringUtils.parseDollarPlaceHolder(ss).forEach(t -> {
             switch (t.ttype) {

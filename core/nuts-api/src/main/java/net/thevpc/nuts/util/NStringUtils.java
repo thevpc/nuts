@@ -60,6 +60,13 @@ public class NStringUtils {
 
     private static final Pattern COMBINING_DIACRITICAL_MARKS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
+    private static final NStringLiteralFormat DEFAULT_STRING_LITERAL_FORMAT =
+            NStringLiteralFormatBase.ofEscapeChar(
+                    NElementType.DOUBLE_QUOTED_STRING,
+                    NSupportMode.ALWAYS,
+                    NCharEscapeSet.JAVA_WITH_SPACE,
+                    NCharEscape.BACKSLASH);
+
     /**
      * N string utils.
      *
@@ -653,7 +660,10 @@ public class NStringUtils {
      * @return format string literal result
      */
     public static String formatStringLiteral(String text) {
-        return formatStringLiteral(text, NElementType.DOUBLE_QUOTED_STRING);
+        if (text == null) {
+            return "null";
+        }
+        return DEFAULT_STRING_LITERAL_FORMAT.format(text);
     }
 
     /**
@@ -1031,6 +1041,9 @@ public class NStringUtils {
         if (mapper == null) {
             return "";
         }
+        if (text == null || text.isEmpty() || text.indexOf('$') < 0) {
+            return text == null ? "" : text;
+        }
         return parseDollarPlaceHolder(text)
                 .map(t -> {
                     switch (t.ttype) {
@@ -1116,6 +1129,9 @@ public class NStringUtils {
     public static String replaceMoustachePlaceHolder(String text, Function<String, String> mapper) {
         if (mapper == null) {
             return "";
+        }
+        if (text == null || text.isEmpty() || text.indexOf('{') < 0) {
+            return text == null ? "" : text;
         }
         return parseMoustachePlaceHolder(text)
                 .map(t -> {
@@ -1470,7 +1486,46 @@ public class NStringUtils {
         if (data == null) {
             return new ArrayList<>();
         }
-        return readLines(new StringBuilder(data));
+        // scan the String directly; wrapping it in a StringBuilder only to clear
+        // it afterwards adds an allocation and a full copy
+        int len = data.length();
+        List<String> all = new ArrayList<>();
+        if (data.indexOf('\r') < 0) {
+            // usual case (LF only): indexOf is a highly optimized scan
+            int start = 0;
+            int nl;
+            while ((nl = data.indexOf('\n', start)) >= 0) {
+                all.add(data.substring(start, nl));
+                start = nl + 1;
+            }
+            if (start < len) {
+                all.add(data.substring(start));
+            }
+            return all;
+        }
+        int start = 0;
+        int i = 0;
+        while (i < len) {
+            char c = data.charAt(i);
+            if (c == '\n') {
+                all.add(data.substring(start, i));
+                i++;
+                start = i;
+            } else if (c == '\r') {
+                all.add(data.substring(start, i));
+                i++;
+                if (i < len && data.charAt(i) == '\n') {
+                    i++;
+                }
+                start = i;
+            } else {
+                i++;
+            }
+        }
+        if (start < len) {
+            all.add(data.substring(start, len));
+        }
+        return all;
     }
 
     /**

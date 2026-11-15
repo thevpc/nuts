@@ -184,7 +184,13 @@ public class NReservedMavenUtilsBoot {
         String pomPath = NBootUtils.resolveFilePath(rid, "pom");
         String nutsPath = NBootUtils.resolveFilePath(rid, "nuts");
         Set<NBootDependency> deps = null;
-        for (NBootRepositoryLocation baseUrl : repos) {
+        // prefer local repositories (maven local, system, local) over remote ones.
+        // the runtime POM is usually already in the local maven repository, so
+        // fetching it from a preview/remote repository first adds a pointless
+        // TLS handshake and network round-trips to every startup.
+        List<NBootRepositoryLocation> ordered = new ArrayList<>(repos);
+        ordered.sort(Comparator.comparingInt(r -> isRemoteRepository(r) ? 1 : 0));
+        for (NBootRepositoryLocation baseUrl : ordered) {
             String loc = baseUrl.path();
             Set<String> urls = expandRepoUrls(baseUrl);
             for (String url : urls) {
@@ -212,6 +218,15 @@ public class NReservedMavenUtilsBoot {
         return deps;
     }
 
+
+    private static boolean isRemoteRepository(NBootRepositoryLocation r) {
+        String p = r.path();
+        if (p == null) {
+            return false;
+        }
+        String s = p.toLowerCase(Locale.ROOT);
+        return s.contains("://") || s.startsWith("htmlfs+") || s.startsWith("dotfilefs+");
+    }
 
     public static Set<NBootDependency> loadDependenciesFromNutsUrl(String url) {
         InputStream inputStream = NBootUtils.resolveInputStream(url);
