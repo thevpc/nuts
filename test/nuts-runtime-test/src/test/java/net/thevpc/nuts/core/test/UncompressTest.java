@@ -19,6 +19,7 @@ public class UncompressTest {
     public void packagingShouldBeRemembered() {
         Assertions.assertEquals("gzip", NUncompress.of().packaging("gzip").packaging());
         Assertions.assertEquals("zip", NUncompress.of().packaging(null).packaging());
+        Assertions.assertEquals("tar.gz", NUncompress.of().packaging("tar.gz").packaging());
     }
 
     @Test
