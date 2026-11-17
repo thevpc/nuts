@@ -317,3 +317,6 @@ core/nuts-app-full/target
 /.nmvn/version-history.tson
 /core/nuts-sources.zip
 /core/tree.txt
+
+# Maven build output
+target/

@@ -30,7 +30,6 @@ if [ -z "$NUTS_VERSION" ]; then
     exit 0
 fi
 
-
 # Define the JAVA_HOME if not already defined
 if [ -z "$NUTS_JAVA_HOME" ]; then
     NUTS_JAVA_HOME="${JAVA8_HOME}"
