@@ -118,6 +118,7 @@ The repository is organized into several key sub-projects:
 Here are some tips when working on nuts project or even working on an application that builds on `nuts` using NAF (aka Nuts Application Framework) for example:
 
 * ```nuts-dev``` is the script you are most of the time using when developing `nuts` project.
+* ```nuts-dev``` always runs the current development version (from `~/.m2`), regardless of the `NUTS_VERSION` exported by your installed `nuts`. To run another version, use ```nuts-any <version> ...``` (e.g. ```nuts-any 1.1.0 --version```) or the ```nuts-<version>``` shortcuts (e.g. ```nuts-1.1.0```).
 
 * ```nuts-dev``` script uses a special workspace called ```development```, so it does not interfere with your local `nuts` installation.
 

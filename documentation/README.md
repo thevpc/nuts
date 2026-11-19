@@ -101,7 +101,7 @@ cd documentation/presentations/001-Rationale && ./make-this
 Contains dynamic templates used by `nuts-release-tool` to maintain consistent versioning across repository files:
 * **`src/main/README.md`**: Template for the root `$NUTS_REPO_ROOT/README.md` using NExpr dynamic version tokens (e.g., `{{runtimeVersion}}`, `{{stableRuntimeVersion}}`).
 * **`src/main/CONTRIBUTING.md`**: Template for root contribution guidelines.
-* **`src/main/scripts/`**: Development shell helpers (`nuts-dev`, `nsh-dev`, `nuts-example-debug`).
+* **`src/main/scripts/`**: Development shell helpers (`nuts-dev`, `nuts-any`, `nsh-dev`, `nuts-example-debug`).
 
 When `nuts-release-tool` runs, these templates are evaluated and written to the repository root.
 

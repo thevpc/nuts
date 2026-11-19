@@ -1,2 +1,0 @@
-#!/bin/sh
-NUTS_VERSION=1.1.0 nuts-dev "$@"
