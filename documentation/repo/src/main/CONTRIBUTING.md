@@ -75,6 +75,7 @@ The script directly invokes `java -jar` using your locally compiled Maven artifa
 
 - Branch from the `master` branch and ensure commits compile and pass tests cleanly (`mvn clean test`).
 - Commits should be as small as possible while ensuring each commit builds independently.
+- Whenever adding a feature or a fix to nuts, add a line documenting the change to `documentation/website/src/include/blog/<YEAR>/<YEAR>-<MONTH>-<DAY>-<VERSION>-updates.md` (e.g. `documentation/website/src/include/blog/2026/2026-11-16-1.2.0-updates.md`).
 - If updating documentation or root README, ensure changes are made in `documentation/repo/src/main/` or `documentation/website/` and verified by running `./nuts-release-tool` at repo root.
 - Add tests relevant to the fixed bug or new feature.
 

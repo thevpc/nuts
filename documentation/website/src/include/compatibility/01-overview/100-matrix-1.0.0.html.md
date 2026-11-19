@@ -9,15 +9,15 @@ Green indicates 100% binary compatibility, while color gradations show the propo
   <tr>
     <th>From \ To</th>
     <th>1.0.0</th>
-    <th>1.1.0</th>
+    <th>1.2.0</th>
   </tr>
   <tr>
     <th>1.0.0</th>
     <td class="na">-</td>
-  <td style="background:#50c850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/1.0.0_to_1.1.0/compat_report.html" target="_blank">1.0.0→1.1.0 </a></td>
+  <td style="background:#50c850;color:#000000"><a style="color:#000000;text-decoration:none;" href="compat_reports/nuts/1.0.0_to_1.2.0/compat_report.html" target="_blank">1.0.0→1.2.0 </a></td>
   </tr>
   <tr>
-    <th>1.1.0</th>
+    <th>1.2.0</th>
     <td class="na">-</td>
     <td class="na">-</td>
   </tr>

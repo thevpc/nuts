@@ -1,12 +1,12 @@
 /* common.js (templated by nsite) */
-var buildTime = "$2026-11-07-151313";
-var latestJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar";
-var apiVersion = "$1.1.0";
-var runtimeVersion = "$1.1.0.0";
+var buildTime = "$2026-11-19-142124";
+var latestJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.2.0/nuts-app-1.2.0.jar";
+var apiVersion = "$1.2.0";
+var runtimeVersion = "$1.2.0.0";
 
-var stableJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.0.0/nuts-app-1.0.0.jar";
-var stableApiVersion = "$1.0.0";
-var stableRuntimeVersion = "$1.0.0.0";
+var stableJarLocation = "$https://maven.thevpc.net/net/thevpc/nuts/nuts-app/1.1.0/nuts-app-1.1.0.jar";
+var stableApiVersion = "$1.1.0";
+var stableRuntimeVersion = "$1.1.0.0";
 
 var buildTimeEl = document.getElementById('build-time');
 if (buildTimeEl) {

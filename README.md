@@ -4,8 +4,8 @@
      __        __
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   latest version 1.1.0.0 
-\_\ \/\__,_/\__/____/    LTS version 1.0.0.0 
+/ /\  / /_/ / /_(__  )   latest version 1.2.0.0 
+\_\ \/\__,_/\__/____/    LTS version 1.1.0.0 
 ```
 
 > **The package manager Java never had.**
@@ -49,9 +49,9 @@ Visit the official **[Nuts Download Page](https://thevpc.github.io/nuts/download
 - **Version Archives & Release LTS Builds**
 
 #### Quick Standalone Execution (No Install Required):
-Download `nuts-app-1.1.0.jar` from the [Download Page](https://thevpc.github.io/nuts/download.html) and run:
+Download `nuts-app-1.2.0.jar` from the [Download Page](https://thevpc.github.io/nuts/download.html) and run:
 ```bash
-java -jar nuts-app-1.1.0.jar -Zy
+java -jar nuts-app-1.2.0.jar -Zy
 ```
 
 ---

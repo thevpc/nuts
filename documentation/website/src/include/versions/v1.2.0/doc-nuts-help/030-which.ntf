@@ -1,0 +1,21 @@
+---
+id: which-help
+title: which
+---
+
+resolves commands type
+
+##) SYNOPSIS:
+
+    ```sh nuts which [<-options>]... [<command>] ...```
+        resolves commands type
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES:
+
+    ```sh nuts which --help```
+        show this help and exit
+
+    ```sh nuts which netbeans-launcher exec```
+        show netbeans-launcher and exec types. The first is a artifact the latter is an internal command

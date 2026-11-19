@@ -1,0 +1,20 @@
+---
+id: license-help
+title: license
+---
+
+show license info and exit
+
+##) SYNOPSIS:
+
+    ```sh nuts license```
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES
+
+    ```sh nuts license --help```
+        show this help and exit
+
+    ```sh nuts license```
+        show license and exit

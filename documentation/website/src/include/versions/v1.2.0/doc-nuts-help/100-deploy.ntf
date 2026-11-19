@@ -1,0 +1,38 @@
+---
+id: deploy-help
+title: deploy
+---
+
+deploy a ```sh nuts```
+
+##) SYNOPSIS:
+
+    ```sh nuts deploy [<-options>]... <file-or-id>...```
+        deploy a file or artifact ID to a repository
+
+##) OPTIONS:
+
+    ```sh -d | --desc <desc-file>```
+        descriptor file path
+
+    ```sh -s | --source | --from <repository>```
+        source repository to deploy from
+
+    ```sh -r | --target | --to <repository>```
+        target repository to deploy to
+
+    ```sh --sha1 <hash>```
+        SHA-1 checksum for the artifact content
+
+    ```sh --desc-sha1 <hash>```
+        SHA-1 checksum for the descriptor file
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES:
+
+    ```sh nuts deploy myjar.jar```
+        deploy myjar.jar file to default local repository
+
+    ```sh nuts deploy example:some-thing --to system```
+        deploy example:some-thing to system repository

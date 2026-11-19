@@ -1,0 +1,42 @@
+---
+id: uninstall-help
+title: uninstall
+---
+
+uninstall ```sh nuts``` package <nuts-artifact>
+
+##) SYNOPSIS:
+
+    ```sh nuts uninstall <nuts-artifact>... <args> ...```
+        uninstall one or more ```sh nuts``` from repositories if installed.
+        if no nuts-id is defined an error will occur
+
+##) OPTIONS:
+
+    ```sh -e | --erase```
+        enable erase mode to delete all of artifact's config data as well
+
+    ```sh --all-versions```
+        uninstall all installed versions of the specified artifact
+
+    ```sh -g | --args <args> ...```
+        pass the given args to the uninstaller executor
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES
+
+    ```sh nuts uninstall --help```
+        show this help and exit
+
+    ```sh nuts uninstall netbeans-launcher```
+        uninstall netbeans-launcher
+
+    ```sh nuts uninstall my-group:my-thing#2.3```
+        uninstalls - if able to resolve it - exactly the ```sh nuts``` "my-group:my-thing#2.3"
+
+    ```sh nuts uninstall my-group:my-thing```
+        uninstalls - if able to resolve it - the latest version of "my-group:my-thing"
+
+    ```sh nuts uninstall my-thing```
+        uninstalls - if able to resolve it - the latest version of "my-group:my-thing" as long as "my-group" is defined as a default import group

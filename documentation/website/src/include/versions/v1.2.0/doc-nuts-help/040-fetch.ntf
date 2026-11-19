@@ -1,0 +1,53 @@
+---
+id: fetch-help
+title: fetch
+---
+
+fetch artifacts without installing them
+
+##) SYNOPSIS:
+
+    ```sh nuts fetch [<-options>]... <ids> ...```
+        fetch and cache <ids>
+
+##) OPTIONS:
+
+    ```sh -i | --installed```
+        fetch installed artifacts
+
+    ```sh --not-installed```
+        fetch non-installed artifacts
+
+    ```sh --failfast```
+        fail fast on the first error
+
+    ```sh -r | --repository <repo-name>```
+        specify target repository to search for artifacts to fetch
+
+    ```sh --scope api|implementation|compile|provided|import|runtime|system|test```
+        filter dependencies by scope during resolution
+
+    ```sh --optional```
+        include optional dependencies during fetch
+
+    ```sh -l | --long```
+        display long format output with details
+
+    ```sh --display=<columns>```
+        comma-separated list of columns to display
+
+    ```sh --content```
+        include artifact content during fetch
+
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
+
+##) EXAMPLES
+
+    ```sh nuts fetch --help```
+        show this help and exit
+
+    ```sh nuts fetch org.jedit:jedit#5.6.0```
+        fetch and cache jedit artifact without installing
+
+    ```sh nuts fetch --offline org.jedit:jedit```
+        fetch jedit from local repositories only
