@@ -48,12 +48,17 @@ public class NCompressGzip implements NCompressPackaging {
 
         try {
             OutputStream fW = null;
-            if (target instanceof NPath) {
+            // any NOutputTarget (stream targets used to fail with 'unsupported target').
+            // Whoever calls target.outputStream() closes it (see NCompressZip).
+            {
+                boolean pathTarget = target instanceof NPath;
                 Path tempPath = null;
-                if (compress.isSafe()) {
+                if (pathTarget && compress.isSafe()) {
                     tempPath = NPath.ofTempFile("gz").toPath().get();
                 }
-                ((NPath) target).mkParentDirs();
+                if (pathTarget) {
+                    ((NPath) target).mkParentDirs();
+                }
 
                 fW = (tempPath == null) ? target.outputStream() : Files.newOutputStream(tempPath);
                 try {
@@ -79,8 +84,6 @@ public class NCompressGzip implements NCompressPackaging {
                         }
                     }
                 }
-            } else {
-                throw new NIllegalArgumentException(NMsg.ofC("unsupported target %s", target));
             }
 
             _LOG().log(NMsg.ofC("compressed %s to %s", sources, target).asFinest().withIntent(NMsgIntent.SUCCESS).withDurationMillis(chronometer.durationMs()));

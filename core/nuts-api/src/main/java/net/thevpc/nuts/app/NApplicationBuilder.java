@@ -242,9 +242,38 @@ public class NApplicationBuilder {
      * applies error-handling strategy, and executes the application lifecycle.
      */
     public void run() {
-        NApplicationHandleMode.runHandled(this::prepare, handleMode());
-        if (preparedWorkspace != null) {
-            preparedWorkspace.runApplication(this.handleMode());
+        NApplicationHandleMode mode = handleMode() == null ? NApplicationHandleMode.HANDLE : handleMode();
+        if (mode != NApplicationHandleMode.HANDLE) {
+            NApplicationHandleMode.runHandled(this::prepare, mode);
+            if (preparedWorkspace != null) {
+                preparedWorkspace.runApplication(mode);
+            }
+            return;
+        }
+        // HANDLE (default) : show the error but keep its exit code, which used to be lost
+        // (the error was printed and run() returned normally, so every app exited with 0).
+        // When no workspace is in scope, this application owns the JVM : exit with the code.
+        // Otherwise it runs in-process inside a host workspace (embedded execution, which
+        // calls main() by reflection) : rethrow so that the host executor gets the code
+        // (exiting there would kill the host).
+        boolean ownsJvm = !NWorkspace.get().isPresent();
+        try {
+            prepare();
+            if (preparedWorkspace != null) {
+                preparedWorkspace.runApplication(NApplicationHandleMode.NOP);
+            }
+        } catch (RuntimeException e) {
+            int code = net.thevpc.nuts.util.NExceptionHandler.of(e).handle().code();
+            if (code == 0) {
+                return;
+            }
+            if (ownsJvm) {
+                System.exit(code);
+            }
+            if (NException.resolveWithExitCodeExceptionBase(e).isPresent()) {
+                throw e;
+            }
+            throw new net.thevpc.nuts.command.NExecutionException(net.thevpc.nuts.text.NMsg.ofC("%s", e), e, code);
         }
     }
 

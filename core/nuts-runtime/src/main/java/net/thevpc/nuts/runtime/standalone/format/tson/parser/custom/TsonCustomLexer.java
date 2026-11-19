@@ -182,6 +182,9 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     return asOperator123(c, NOperatorSymbol.REM, NOperatorSymbol.REM2, NOperatorSymbol.REM3);
                 case '&':
                     return asOperator123(c, NOperatorSymbol.AND, NOperatorSymbol.AND2, NOperatorSymbol.AND3);
+                case '|':
+                    // | || |||  (previously split into single '|' tokens)
+                    return asOperator123(c, NOperatorSymbol.PIPE, NOperatorSymbol.PIPE2, NOperatorSymbol.PIPE3);
                 case '^': {
                     return continueReadStream(c, line, column, pos);
                 }
@@ -244,6 +247,16 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     if (c1 == ':') {
                         String s = reader.read(2);
                         return new NElementTokenImpl(s, NElementTokenType.OPERATOR_SYMBOL, s, 0, line, column, pos, NOperatorSymbol.MINUS_COLON, null);
+                    }
+                    if (c1 == '>') {
+                        // ->  (e.g. ranges [1 -> 5]); previously split into '-' '>'
+                        String s = reader.read(2);
+                        return new NElementTokenImpl(s, NElementTokenType.OPERATOR_SYMBOL, s, 0, line, column, pos, NOperatorSymbol.MINUS_GT, null);
+                    }
+                    if (c1 == '-' && reader.peekAt(2) == '>') {
+                        // -->
+                        String s = reader.read(3);
+                        return new NElementTokenImpl(s, NElementTokenType.OPERATOR_SYMBOL, s, 0, line, column, pos, NOperatorSymbol.MINUS2_GT, null);
                     }
                     if (Character.isDigit(c1)) {
                         return continueReadNumber();
@@ -362,36 +375,38 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     if (Character.isUnicodeIdentifierStart(c)) {
                         return continueReadIdentifier();
                     }
+                    // c is only peeked here (not consumed yet).
                     int codePoint = c;
-                    // 2. Handle Surrogate Pairs to support 4-byte Unicode
-                    if (Character.isHighSurrogate((char) c) && reader.canRead()) {
-                        int next = reader.peek();
-                        if (Character.isLowSurrogate((char) next)) {
+                    // Handle Surrogate Pairs to support 4-byte Unicode
+                    if (Character.isHighSurrogate((char) c)) {
+                        int next = reader.peekAt(1);
+                        if (next >= 0 && Character.isLowSurrogate((char) next)) {
                             // Combine them into a single 32-bit Code Point
-                            codePoint = Character.toCodePoint((char) c, (char) reader.read());
+                            codePoint = Character.toCodePoint((char) c, (char) next);
                         }
                     }
 
                     // Convert the full Code Point to a String for mapping
-                    String symbolStr = Character.isSupplementaryCodePoint(codePoint)
-                            ? new String(Character.toChars(codePoint))
-                            : String.valueOf((char) codePoint);
+                    // (never String.valueOf(int): that yields "124" instead of "|")
+                    String symbolStr = new String(Character.toChars(codePoint));
 
                     NOptional<NOperatorSymbol> cc = NOperatorSymbol.parse(symbolStr);
                     if (cc.isPresent()) {
-                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OPERATOR_SYMBOL, String.valueOf(c), 0, line, column, pos,
+                        reader.read(symbolStr.length());
+                        return new NElementTokenImpl(symbolStr, NElementTokenType.OPERATOR_SYMBOL, symbolStr, 0, line, column, pos,
                                 cc.get(), null
                         );
                     }
                     if (codePoint < 128) {
                         break;
                     }
-                    int type = Character.getType(c);
+                    int type = Character.getType(codePoint);
                     if (type == Character.MATH_SYMBOL ||
                             type == Character.OTHER_SYMBOL ||
                             type == Character.DASH_PUNCTUATION ||
                             type == Character.MODIFIER_SYMBOL) {
-                        return new NElementTokenImpl(String.valueOf(c), NElementTokenType.OPERATOR_SYMBOL, String.valueOf(c), 0, line, column, pos,
+                        reader.read(symbolStr.length());
+                        return new NElementTokenImpl(symbolStr, NElementTokenType.OPERATOR_SYMBOL, symbolStr, 0, line, column, pos,
                                 NOperatorSymbol.UNKNOWN, null
                         );
                     }
@@ -641,11 +656,13 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             char cc = (char) c;
             if (n2 == '=') {
                 reader.read(3);
-                String i = new String(new char[]{cc, cc, cc});
+                // e.g. "!==" (was wrongly built as "!!!")
+                String i = new String(new char[]{cc, '=', '='});
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq2, null);
             } else {
                 reader.read(2);
-                String i = new String(new char[]{cc, cc});
+                // e.g. "!=" (was wrongly built as "!!")
+                String i = new String(new char[]{cc, '='});
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq1, null);
             }
         } else {

@@ -467,16 +467,18 @@ public class JavaExecutorComponent implements NExecutorComponent {
             if (th != null) {
                 if (!(th instanceof NExecutionException)) {
                     NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), th), NRecommendationPhase.EXEC, false);
+                    // keep the exit code carried by the application's exception, if any
                     throw new NExecutionException(
                             NMsg.ofC("error executing %s : %s", def.id(), th)
-                            , th);
+                            , th, NException.resolveExitCode(th).orElse(NExecutionException.ERROR_255));
                 }
                 NExecutionException nex = (NExecutionException) th;
                 if (nex.exitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
                         NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.id().toString(), nex), NRecommendationPhase.EXEC, false);
                     }
-                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.id(), th), th);
+                    // was rewrapped with the default code (255), losing the application's exit code
+                    throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.id(), th), th, nex.exitCode());
                 }
             }
             return NExecutionException.SUCCESS;

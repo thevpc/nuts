@@ -1364,4 +1364,39 @@ public class TsonParseTest {
         Assertions.assertTrue(du.quotedUnterminated());
         Assertions.assertEquals("a", du.rawValue());
     }
+
+    private static NBinaryOperatorElement reshapeBinary(String tson) {
+        NElement e = NElementReader.ofTson().read(tson).asArray().get().children().get(0);
+        NElement r = ((NFlatExprElement) e).reshape();
+        Assertions.assertTrue(r.isBinaryOperator(), "not a binary expression : " + r + " " + r.diagnostics());
+        return r.asBinaryOperator().get();
+    }
+
+    @Test
+    public void testArrowOperatorsAreSingleTokens() {
+        // '->' used to be split into '-' '>' so reshape() failed
+        Assertions.assertEquals(NOperatorSymbol.MINUS_GT, reshapeBinary("[1 -> 5]").operatorSymbol());
+        Assertions.assertEquals(NOperatorSymbol.MINUS2_GT, reshapeBinary("[a --> b]").operatorSymbol());
+    }
+
+    @Test
+    public void testPipeOperators() {
+        // '|' used to produce a token whose text was "124" (and was never consumed)
+        Assertions.assertEquals(NOperatorSymbol.PIPE, reshapeBinary("[a | b]").operatorSymbol());
+        Assertions.assertEquals(NOperatorSymbol.PIPE2, reshapeBinary("[a || b]").operatorSymbol());
+        Assertions.assertEquals(NOperatorSymbol.PIPE2, reshapeBinary("[x > 5 || x == 3]").operatorSymbol());
+    }
+
+    @Test
+    public void testUnicodeOperatorIsConsumed() {
+        Assertions.assertEquals("∀", reshapeBinary("[x ∀ y]").operatorSymbol().lexeme());
+    }
+
+    @Test
+    public void testOperatorEqVariantsText() {
+        // '!=' used to get the token text "!!" (re-read later as NOT2)
+        NBinaryOperatorElement b = reshapeBinary("[a != b]");
+        Assertions.assertEquals(NOperatorSymbol.NOT_EQ, b.operatorSymbol());
+        Assertions.assertEquals(NOperatorSymbol.MINUS_EQ, reshapeBinary("[a -= b]").operatorSymbol());
+    }
 }
