@@ -861,24 +861,24 @@ public class DefaultNWorkspaceConfigModel {
 
     public NOptional<NRepositoryAccessConfig> getRepositoryUser(String repository, String user) {
         NRepository crepository = workspace.getRepositoryModel().getRepository(repository).orNull();
-        if (crepository == null) {
-            return NOptional.ofNamedEmpty(repository + "/" + user);
-        }
+        String uuid = crepository != null ? crepository.uuid() : repository;
         Optional<NRepositoryAccessConfig> o = configRepoUsers.stream().filter(
                 x ->
                         Objects.equals(x.userName(), user)
-                                && Objects.equals(x.repository(), crepository.uuid())
+                                && (Objects.equals(x.repository(), uuid)
+                                || Objects.equals(x.repository(), repository)
+                                || (crepository != null && Objects.equals(x.repository(), crepository.name())))
         ).findFirst().map(NRepositoryAccessConfig::copy);
         return NOptional.ofNamedOptional(o, repository + "/" + user);
     }
 
     public boolean removeRepositoryUser(String repository, String user) {
         NRepository crepository = workspace.getRepositoryModel().getRepository(repository).orNull();
-        if (crepository == null) {
-            return false;
-        }
+        String uuid = crepository != null ? crepository.uuid() : repository;
         if (configRepoUsers.removeIf(x -> Objects.equals(x.userName(), user)
-                && Objects.equals(x.repository(), crepository.uuid()))) {
+                && (Objects.equals(x.repository(), uuid)
+                || Objects.equals(x.repository(), repository)
+                || (crepository != null && Objects.equals(x.repository(), crepository.name()))))) {
             fireConfigurationChanged("repository-user", ConfigEventType.SECURITY);
             return true;
         }
@@ -1168,6 +1168,12 @@ public class DefaultNWorkspaceConfigModel {
         if (this.storeModelSecurity.getUsers() != null) {
             for (NUserConfig s : this.storeModelSecurity.getUsers()) {
                 configUsers.put(s.userName(), s);
+            }
+        }
+        configRepoUsers.clear();
+        if (this.storeModelSecurity.getRepositories() != null) {
+            for (NRepositoryAccessConfig rc : this.storeModelSecurity.getRepositories()) {
+                configRepoUsers.add(rc);
             }
         }
         storeModelSecurityChanged = true;

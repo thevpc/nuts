@@ -297,8 +297,9 @@ public class DefaultNSecurityManager implements NSecurityManager {
     @Override
     public List<NRepositoryAccess> getRepositoryAccessListByRepository(String repository) {
         NWorkspaceExt wse = NWorkspaceExt.of();
-        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        return users().stream().flatMap(x -> getRepositoryAccess(x.username(), repository1.name()).stream().jstream()).collect(Collectors.toList());
+        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).orNull();
+        String repoId = repository1 != null ? repository1.name() : repository;
+        return users().stream().flatMap(x -> getRepositoryAccess(x.username(), repoId).stream().jstream()).collect(Collectors.toList());
     }
 
     @Override
@@ -321,7 +322,10 @@ public class DefaultNSecurityManager implements NSecurityManager {
             if (repositoryAccess.remoteAuthType() != null) {
                 c.remoteAuthType(NStringUtils.stripToNull(repositoryAccess.remoteAuthType()));
             }
-            c.remoteCredential(repositoryAccess.remoteCredential() == null ? null : repositoryAccess.remoteCredential().toString());
+            if (repositoryAccess.remoteCredential() != null) {
+                NSecureToken token = addSecret(repositoryAccess.remoteCredential());
+                c.remoteCredential(token == null ? null : token.toString());
+            }
         });
         return this;
     }
@@ -348,13 +352,16 @@ public class DefaultNSecurityManager implements NSecurityManager {
         if (userConfigNOptional.isPresent()) {
             String finalUser = userConfigNOptional.get().userName();
             if (wse.getModel().securityModel.isAdminOrUser(finalUser)) {
-                NOptional<NRepository> repository1 = wse.getRepositoryModel().getRepository(repository);
-                if (repository1.isPresent()) {
-                    NRepositoryAccessConfig r = getRepositoryUserConfig(user, repository);
+                NRepository repo = wse.getRepositoryModel().getRepository(repository).orNull();
+                String repoUuid = repo != null ? repo.uuid() : repository;
+                String repoName = repo != null ? repo.name() : repository;
+                NOptional<NRepositoryAccessConfig> rOpt = wse.getConfigModel().getRepositoryUser(repoUuid, finalUser);
+                if (rOpt.isPresent()) {
+                    NRepositoryAccessConfig r = rOpt.get();
                     return NOptional.of(new DefaultNRepositoryAccess(
                             r.userName(),
-                            repository1.get().uuid(),
-                            repository1.get().name(),
+                            repoUuid,
+                            repoName,
                             r.remoteUserName(),
                             NBlankable.isBlank(r.remoteCredential()) ? null : NSecureToken.parse(r.remoteCredential()),
                             r.remoteAuthType(),
@@ -363,7 +370,7 @@ public class DefaultNSecurityManager implements NSecurityManager {
                 }
             }
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("access for user %s and repo %s"));
+        return NOptional.ofNamedEmpty(NMsg.ofC("access for user %s and repo %s", user, repository));
     }
 
     private NRepositoryAccessConfig getRepositoryUserConfig(String user, String repository) {
@@ -375,12 +382,13 @@ public class DefaultNSecurityManager implements NSecurityManager {
     private NSecurityManager withRepositoryUser(String user, String repository, Consumer<NRepositoryAccessConfig> consumer) {
         NWorkspaceExt wse = NWorkspaceExt.of();
         NUser user1 = securityModel().findUser(user).get();
-        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).get();
-        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repository1.uuid(), user1.username());
+        NRepository repository1 = wse.getRepositoryModel().getRepository(repository).orNull();
+        String repoUuid = repository1 != null ? repository1.uuid() : repository;
+        NOptional<NRepositoryAccessConfig> r = wse.getConfigModel().getRepositoryUser(repoUuid, user1.username());
         if (!r.isPresent()) {
             NRepositoryAccessConfig ru = new NRepositoryAccessConfig();
             ru.userName(user1.username());
-            ru.repository(repository1.uuid());
+            ru.repository(repoUuid);
             consumer.accept(ru);
             wse.getConfigModel().addRepositoryUser(ru);
         } else {

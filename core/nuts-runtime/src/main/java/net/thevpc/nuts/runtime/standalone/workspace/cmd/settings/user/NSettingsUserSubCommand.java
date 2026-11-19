@@ -16,6 +16,8 @@ import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
+import net.thevpc.nuts.security.NRepositoryAccess;
+import net.thevpc.nuts.security.NRepositoryAccessSpec;
 import net.thevpc.nuts.security.NSecureString;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.security.NUser;
@@ -289,17 +291,18 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                 String a = cmdLine.nextNonOption("RemoteIdentity",null).get().image();
                                 NOptional<NArg> bb = cmdLine.peek();
                                 if (bb.isPresent() && bb.get().key().equals("--remote-password")) {
+                                    cmdLine.next();
                                     NSecureString ss = null;
                                     try {
                                         ss = NSecureString.ofSecure(cmdLine.nextNonOption("RemotePassword",null).get().image().toCharArray());
                                         if (cmdLine.isExecMode()) {
                                             if (repository != null) {
-                                                NSecurityManager.of().updateRepositoryAccess(NSecurityManager.of().getRepositoryAccess(
-                                                                user, repository.uuid()).get()
-                                                        .toSpec()
-                                                        .remoteUserName(a)
-                                                        .remoteCredential(ss)
-                                                );
+                                                NSecurityManager sec = NSecurityManager.of();
+                                                NRepositoryAccess acc = sec.getRepositoryAccess(user, repository.uuid()).orNull();
+                                                NRepositoryAccessSpec spec = acc != null ? acc.toSpec() : NRepositoryAccessSpec.of(user, repository.uuid());
+                                                spec.remoteUserName(a);
+                                                spec.remoteCredential(ss);
+                                                sec.updateRepositoryAccess(spec);
                                             }
                                         }
                                     } finally {
@@ -307,7 +310,16 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                                             ss.destroy();
                                         }
                                     }
-
+                                } else {
+                                    if (cmdLine.isExecMode()) {
+                                        if (repository != null) {
+                                            NSecurityManager sec = NSecurityManager.of();
+                                            NRepositoryAccess acc = sec.getRepositoryAccess(user, repository.uuid()).orNull();
+                                            NRepositoryAccessSpec spec = acc != null ? acc.toSpec() : NRepositoryAccessSpec.of(user, repository.uuid());
+                                            spec.remoteUserName(a);
+                                            sec.updateRepositoryAccess(spec);
+                                        }
+                                    }
                                 }
                                 break;
                             }

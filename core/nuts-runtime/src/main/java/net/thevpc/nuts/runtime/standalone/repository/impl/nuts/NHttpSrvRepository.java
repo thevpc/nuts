@@ -277,7 +277,13 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private Creds resolveEncryptedAuth() {
         String login = NSecurityManager.of().currentUsername();
-        NRepositoryAccess security = NSecurityManager.of().getRepositoryAccess(uuid(), login).get();
+        NRepositoryAccess security = NSecurityManager.of().getRepositoryAccess(login, uuid()).orNull();
+        if (security == null || security.remoteCredential() == null) {
+            security = NSecurityManager.of().getRepositoryAccess("user", uuid()).orNull();
+        }
+        if (security == null || security.remoteCredential() == null) {
+            security = NSecurityManager.of().getRepositoryAccess("admin", uuid()).orNull();
+        }
         String newLogin = "";
         NSecureToken credentials = null;
         if (security == null) {

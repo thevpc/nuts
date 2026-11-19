@@ -397,7 +397,9 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             NWorkspace.of().saveConfig();
 
         }
-        cmdLine.commandName("config add repo").throwUnexpectedArgument();
+        if (cmdLine.hasNext()) {
+            cmdLine.commandName("config add repo").throwUnexpectedArgument();
+        }
     }
 
     private void enableRepo(NCmdLine cmdLine, Boolean autoSave, NSession session, boolean enableRepo) {

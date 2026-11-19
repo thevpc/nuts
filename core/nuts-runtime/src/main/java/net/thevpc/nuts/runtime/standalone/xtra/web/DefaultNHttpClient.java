@@ -39,11 +39,34 @@ import java.util.stream.Collectors;
 public class DefaultNHttpClient implements NHttpClient {
     private Executor executor;
 
+    public static String resolveAuthorizationHeader(URL url) {
+        if (url == null) {
+            return null;
+        }
+        String userInfo = url.getUserInfo();
+        if (userInfo != null && !userInfo.isEmpty()) {
+            try {
+                userInfo = java.net.URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
+            } catch (Exception ignored) {
+            }
+            return "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        return null;
+    }
+
     public static URLConnection prepareGlobalConnection(URLConnection c) {
         NDuration connectionTimeout = getGlobalConnectionTimeoutOrDefault();
         NDuration readTimeout = getGlobalReadConnectionTimeoutOrDefault();
         c.setConnectTimeout(connectionTimeout == null ? 0 : asMs(connectionTimeout.toMillis()));
         c.setReadTimeout(readTimeout == null ? 0 : asMs(readTimeout.toMillis()));
+        if (c instanceof HttpURLConnection) {
+            if (c.getRequestProperty("Authorization") == null) {
+                String auth = resolveAuthorizationHeader(c.getURL());
+                if (auth != null) {
+                    c.setRequestProperty("Authorization", auth);
+                }
+            }
+        }
         return c;
     }
 
@@ -445,6 +468,12 @@ public class DefaultNHttpClient implements NHttpClient {
 
                 headers.addHeadersMulti(r.headers(), DefaultNWebHeaders.Mode.ALWAYS);
                 headers.addHeadersMulti(this.headers.toMap(), DefaultNWebHeaders.Mode.IF_EMPTY);
+                if (headers.getFirst("Authorization") == null) {
+                    String auth = resolveAuthorizationHeader(h);
+                    if (auth != null) {
+                        headers.addHeader("Authorization", auth, DefaultNWebHeaders.Mode.ALWAYS);
+                    }
+                }
 
                 for (Map.Entry<String, List<String>> e : headers.toMap().entrySet()) {
                     _writeHeader(uc, e.getKey(), e.getValue());

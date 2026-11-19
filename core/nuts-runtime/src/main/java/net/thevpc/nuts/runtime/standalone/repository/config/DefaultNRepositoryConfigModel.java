@@ -2,9 +2,11 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.security.NSecurityManager;
+import net.thevpc.nuts.security.*;
+import java.net.URL;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.text.NPositionType;
@@ -17,6 +19,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryTagsListHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositoryAccess;
 import net.thevpc.nuts.runtime.standalone.util.NSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -206,9 +209,132 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NPath getLocationPath() {
         String s = NStringUtils.stripToNull(config.location().path());
         if (s != null) {
+            s = resolveLocationWithAuth(s);
             return NPath.of(s).toAbsolute(NWorkspace.of().workspaceLocation());
         }
         return null;
+    }
+
+    private String resolveLocationWithAuth(String s) {
+        if (s == null) {
+            return null;
+        }
+        if (s.startsWith("http://") || s.startsWith("https://")) {
+            try {
+                URL u = new URL(s);
+                if (u.getUserInfo() != null && !u.getUserInfo().isEmpty()) {
+                    return s;
+                }
+                String repoUuid = (repository != null) ? repository.uuid() : (config != null ? config.uuid() : null);
+                String repoName = (repository != null) ? repository.name() : (config != null ? config.name() : null);
+                if (repoUuid == null && config != null) {
+                    repoUuid = config.uuid();
+                }
+                if (repoName == null && config != null) {
+                    repoName = config.name();
+                }
+                if (repository != null || repoUuid != null || repoName != null) {
+                    NSecurityManager sec = NSecurityManager.of();
+                    String user = sec.currentUsername();
+                    NRepositoryAccess acc = null;
+                    if (user != null && repository != null) {
+                        acc = sec.getRepositoryAccess(user, repository.uuid()).orNull();
+                        if (acc == null) {
+                            acc = sec.getRepositoryAccess(user, repository.name()).orNull();
+                        }
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        acc = sec.getRepositoryAccess(NConstants.Users.ANONYMOUS, repository.uuid()).orNull();
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        acc = sec.getRepositoryAccess(NConstants.Users.ANONYMOUS, repository.name()).orNull();
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        acc = sec.getRepositoryAccess("user", repository.uuid()).orNull();
+                        if (acc == null || acc.remoteCredential() == null) {
+                            acc = sec.getRepositoryAccess("user", repository.name()).orNull();
+                        }
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        acc = sec.getRepositoryAccess("admin", repository.uuid()).orNull();
+                        if (acc == null || acc.remoteCredential() == null) {
+                            acc = sec.getRepositoryAccess("admin", repository.name()).orNull();
+                        }
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        List<NRepositoryAccess> list = sec.getRepositoryAccessListByRepository(repository.uuid());
+                        if (list.isEmpty()) {
+                            list = sec.getRepositoryAccessListByRepository(repository.name());
+                        }
+                        for (NRepositoryAccess a : list) {
+                            if (a.remoteCredential() != null) {
+                                acc = a;
+                                break;
+                            }
+                        }
+                    }
+                    if (acc == null || acc.remoteCredential() == null) {
+                        NRepositoryAccessConfig[] repoUsers = NWorkspaceExt.of().getConfigModel().getRepositoryUsers();
+                        if (repoUsers != null) {
+                            for (NRepositoryAccessConfig ru : repoUsers) {
+                                if ((repoUuid != null && Objects.equals(ru.repository(), repoUuid))
+                                        || (repoName != null && Objects.equals(ru.repository(), repoName))) {
+                                    if (!NBlankable.isBlank(ru.remoteCredential())) {
+                                        NSecureToken tok = NSecureToken.parse(ru.remoteCredential());
+                                        acc = new DefaultNRepositoryAccess(
+                                                ru.userName(),
+                                                ru.repository(),
+                                                repoName,
+                                                ru.remoteUserName(),
+                                                tok,
+                                                ru.remoteAuthType(),
+                                                ru.permissions()
+                                        );
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (acc != null) {
+                        String remoteUser = acc.remoteUserName();
+                        if (NBlankable.isBlank(remoteUser)) {
+                            remoteUser = acc.userName();
+                        }
+                        if (NBlankable.isBlank(remoteUser) && !NBlankable.isBlank(user) && !NConstants.Users.ANONYMOUS.equals(user)) {
+                            remoteUser = user;
+                        }
+                        NSecureToken token = acc.remoteCredential();
+                        if (token != null) {
+                            NRef<String> passRef = NRef.of();
+                            sec.runWithSecret(token, new NSecretRunner() {
+                                @Override
+                                public void run(NSecureToken id, NSecureString secretm, java.util.function.Function<String, String> env) {
+                                    secretm.doWithContent(cc -> passRef.set(new String(cc)));
+                                }
+                            });
+                            String pass = passRef.get();
+                            if (pass != null && remoteUser != null) {
+                                String encodedUser = CoreIOUtils.urlEncodeString(remoteUser);
+                                String encodedPass = CoreIOUtils.urlEncodeString(pass);
+                                String authPart = encodedUser + ":" + encodedPass + "@";
+                                String hostPort = u.getHost() + (u.getPort() > 0 ? (":" + u.getPort()) : "");
+                                String file = u.getFile();
+                                String ref = u.getRef();
+                                String full = u.getProtocol() + "://" + authPart + hostPort + (file != null ? file : "");
+                                if (ref != null && !ref.isEmpty()) {
+                                    full += "#" + ref;
+                                }
+                                return full;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                _LOG().log(Level.FINE, () -> NMsg.ofC("Failed to resolve repository location with auth: %s", ex));
+            }
+        }
+        return s;
     }
 
     @Override

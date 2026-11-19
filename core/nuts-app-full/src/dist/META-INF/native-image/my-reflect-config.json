@@ -40493,6 +40493,20 @@
     "allowWrite": true
   },
   {
+    "name": "net.thevpc.nuts.text.NMsg$NumberFormatHolder",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
     "name": "net.thevpc.nuts.text.NMsg$Placeholder",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
@@ -43406,6 +43420,20 @@
   },
   {
     "name": "net.thevpc.nuts.util.NStringMapFormat",
+    "allPublicMethods": true,
+    "queryAllPublicMethods": true,
+    "allPublicFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allowWrite": true
+  },
+  {
+    "name": "net.thevpc.nuts.util.NStringMapFormat$CharCursor",
     "allPublicMethods": true,
     "queryAllPublicMethods": true,
     "allPublicFields": true,

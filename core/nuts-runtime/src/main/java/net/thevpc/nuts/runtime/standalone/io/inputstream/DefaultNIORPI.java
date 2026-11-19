@@ -826,6 +826,9 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NId> resolveIds(Class<?> clazz) {
+        if (clazz == null) {
+            return Collections.emptyList();
+        }
         clazz = NReflectUtils.unproxyType(clazz);
         LinkedHashSet<NId> all = new LinkedHashSet<>();
         NApp annotation = clazz.getAnnotation(NApp.class);

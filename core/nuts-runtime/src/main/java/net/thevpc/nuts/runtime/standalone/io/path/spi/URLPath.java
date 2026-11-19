@@ -420,7 +420,40 @@ public class URLPath implements NPathSPI {
         }
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             NHttpClient best = NExtensions.of().createSupported(NHttpClient.class, url).get();
-            NHttpResponse rr = best.GET().uri(url.toString()).run();
+            net.thevpc.nuts.net.NHttpRequest req = best.GET().uri(url.toString());
+            if (options != null) {
+                for (NPathOption opt : options) {
+                    if (opt instanceof NPathCredentialsOption) {
+                        NPathCredentialsOption copt = (NPathCredentialsOption) opt;
+                        String scheme = copt.scheme();
+                        String secret = copt.secret().orNull();
+                        String user = copt.userName().orNull();
+                        switch (scheme == null ? "" : scheme.toUpperCase()) {
+                            case "BEARER": {
+                                if (secret != null) {
+                                    req.authorizationBearer(secret);
+                                }
+                                break;
+                            }
+                            case "BASIC":
+                            case "DEFAULT":
+                            case "": {
+                                if (user != null || secret != null) {
+                                    req.authorizationBasic(user, secret);
+                                }
+                                break;
+                            }
+                            default: {
+                                if (secret != null) {
+                                    req.authorization(scheme + " " + secret);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            NHttpResponse rr = req.run();
             if(rr.isOk()) {
                 return rr.content().inputStream();
             }

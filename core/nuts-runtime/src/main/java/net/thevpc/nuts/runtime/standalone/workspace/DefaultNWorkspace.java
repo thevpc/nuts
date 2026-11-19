@@ -1324,6 +1324,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NText resolveDefaultHelp(Class<?> clazz) {
+        if (clazz == null) {
+            return NText.ofStyled("no default help found", NTextStyle.error());
+        }
         return callWith(() -> {
             NId nutsId = NId.getForClass(clazz).orNull();
             if (nutsId != null) {
