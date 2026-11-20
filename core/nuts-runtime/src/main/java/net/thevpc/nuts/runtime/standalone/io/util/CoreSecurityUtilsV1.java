@@ -167,15 +167,19 @@ public class CoreSecurityUtilsV1 {
             byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
 
             //bytes is padded to be multiple of 16 (bug in jdk11)
+            if (bytes.length < 4) {
+                throw new EOFException("corrupted encrypted value: missing length header");
+            }
             int ch1 = bytes[0] & 0xff;
             int ch2 = bytes[1] & 0xff;
             int ch3 = bytes[2] & 0xff;
             int ch4 = bytes[3] & 0xff;
-            if ((ch1 | ch2 | ch3 | ch4) < 0)
-                throw new EOFException();
             int v = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+            if (v < 0 || 4L + v > bytes.length) {
+                throw new EOFException("corrupted encrypted value: invalid length " + v);
+            }
             bytes = Arrays.copyOfRange(bytes, 4, 4 + v);
-            return new String(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {

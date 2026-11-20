@@ -459,7 +459,8 @@ public class CorePlatformUtils {
                                 }
                                 return true;
                             } catch (ClassNotFoundException e) {
-                                return false;
+                                // this class is not visible to the given loader: keep
+                                // scanning, another entry may still be loadable
                             }
                         }
                     }

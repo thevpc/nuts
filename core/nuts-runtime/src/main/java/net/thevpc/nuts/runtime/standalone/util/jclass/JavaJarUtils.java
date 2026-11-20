@@ -205,8 +205,7 @@ public class JavaJarUtils {
                                 classes.add(new DefaultNExecutionEntry(a.substring("--main-class=".length()), true, false));
                             } else if (a.equals("--main-class")) {
                                 if (i + 1 < arguments.size()) {
-                                    i++;
-                                    classes.add(new DefaultNExecutionEntry(a, true, false));
+                                    classes.add(new DefaultNExecutionEntry(arguments.get(++i), true, false));
                                 }
                             }
                         }
