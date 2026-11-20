@@ -4,9 +4,11 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathType;
 import net.thevpc.nuts.util.NHex;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
+@Tag("local-only")
 public class SshTest {
     static {
         TestUtils.openNewTestWorkspace();

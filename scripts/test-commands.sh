@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+# Maintainer-local smoke commands. NOT part of CI: they require external
+# tools, network access and a configured SSH host. CI runs only tests that
+# are not tagged `local-only`.
+NUTS_REPO_DIR="${NUTS_REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+
 cd ~/programs/nuts-bundles/
 nuts-dev -ZyS --!switch
 
@@ -20,5 +26,5 @@ java -jar nuts-0.8.7-bundle.jar
 #
 nuts -ZySb --stacktrace --color=formatted nsh -c ls -l ssh://vpc@thevpc.net/
 
-cd /home/vpc/xprojects/nuts-world/nuts/
+cd "$NUTS_REPO_DIR"
 nuts -ZySb --stacktrace --color=formatted nuts-release-tool

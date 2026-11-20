@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.ps.LinuxPsParser;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.PosixPsParser;
 import net.thevpc.nuts.runtime.standalone.xtra.ps.WindowsPs1Parser;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStreamReader;
@@ -80,6 +81,7 @@ public class PsTest {
         }
     }
 
+    @Tag("local-only")
     @Test
     public void test07() {
         for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.LINUX_TEST_SERVER).getResultList()) {
@@ -87,6 +89,7 @@ public class PsTest {
         }
     }
 
+    @Tag("local-only")
     @Test
     public void test08() {
         for (NPsInfo nPsInfo : NPs.of().at("ssh://"+TestUtils.WINDOWS_TEST_SERVER+"").getResultList()) {

@@ -17,6 +17,7 @@ import java.io.*;
 /**
  * @author thevpc
  */
+@Tag("local-only")
 public class WorkspaceUpdateTest {
 
     private static String baseFolder;
