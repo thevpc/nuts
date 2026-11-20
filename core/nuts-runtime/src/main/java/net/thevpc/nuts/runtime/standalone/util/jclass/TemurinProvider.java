@@ -12,6 +12,7 @@ import net.thevpc.nuts.platform.NArchFamily;
 import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.runtime.standalone.io.util.NDownloadIntegrity;
 
 import java.time.Instant;
 import java.util.List;
@@ -48,6 +49,8 @@ public class TemurinProvider implements JavaProvider {
                         .options(NPathOption.LOG, NPathOption.TRACE)
                         .run();
             }
+            // never extract/execute a download whose metadata checksum does not match
+            NDownloadIntegrity.verify(toCache, p.get().checksum);
             boolean checkFolder = false;
             if (toCache.name().endsWith(".zip")) {
                 NUncompress.of().from(toCache).to(folderCache).run();
