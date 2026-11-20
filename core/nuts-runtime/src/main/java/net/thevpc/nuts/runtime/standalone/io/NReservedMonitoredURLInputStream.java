@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
+import net.thevpc.nuts.runtime.standalone.io.util.NSecretRedactor;
 import net.thevpc.nuts.runtime.standalone.xtra.web.DefaultNHttpClient;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.log.NMsgIntent;
@@ -21,6 +22,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
     private final long contentLength;
     private final NLog log;
     private final URL url;
+    private final String displayUrl;
     long lastSec = -1;
     long readCount = 0;
     boolean preDestroyed = false;
@@ -29,13 +31,15 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
         super(in);
         this.chronometer = chronometer;
         this.url = url;
+        this.displayUrl = NSecretRedactor.redact(url == null ? null : url.toString());
         this.contentLength = contentLength;
         this.log = log;
     }
 
     public static NReservedMonitoredURLInputStream of(URL url, NLog log) {
+        String displayUrl = NSecretRedactor.redact(url == null ? null : url.toString());
         if (log != null) {
-            log.log(NMsg.ofC("download %s", url).asFinest().withIntent(NMsgIntent.START));
+            log.log(NMsg.ofC("download %s", displayUrl).asFinest().withIntent(NMsgIntent.START));
         }
         NChronometer chronometer = NChronometer.of();
         URLConnection c = null;
@@ -43,9 +47,9 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             c = url.openConnection();
         } catch (IOException ex) {
             if (log != null) {
-                log.log(NMsg.ofC("failed to download %s", url).asFinestFail());
+                log.log(NMsg.ofC("failed to download %s", displayUrl).asFinestFail());
             }
-            throw new UncheckedIOException("url not accessible " + url, ex);
+            throw new UncheckedIOException("url not accessible " + displayUrl, ex);
         }
         DefaultNHttpClient.prepareGlobalConnection(c);
         long contentLength = c.getContentLengthLong();
@@ -53,9 +57,9 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             return new NReservedMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);
         } catch (IOException ex) {
             if (log != null) {
-                log.log(NMsg.ofC("failed to download %s", url));
+                log.log(NMsg.ofC("failed to download %s", displayUrl));
             }
-            throw new UncheckedIOException("url not accessible " + url, ex);
+            throw new UncheckedIOException("url not accessible " + displayUrl, ex);
         }
     }
 
@@ -107,12 +111,12 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             doLog(true);
             if (contentLength >= 0) {
                 if (readCount != contentLength) {
-                    log.log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url).asFineFail());
-                    throw new NIllegalArgumentException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
+                    log.log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", displayUrl).asFineFail());
+                    throw new NIllegalArgumentException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", displayUrl));
                 }
             }
             if (log != null) {
-                log.log(NMsg.ofC("successfully downloaded %s", url).asFine().withIntent(NMsgIntent.SUCCESS));
+                log.log(NMsg.ofC("successfully downloaded %s", displayUrl).asFine().withIntent(NMsgIntent.SUCCESS));
             }
         }
     }
@@ -128,26 +132,26 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             if (contentLength <= 0) {
                 String v = formatSize(readCount) + "/s";
                 if (log != null) {
-                    log.log(NMsg.ofC("%-8s %s/s", v, url).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
+                    log.log(NMsg.ofC("%-8s %s/s", v, displayUrl).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
                 }
             } else {
                 float f = (float) (((double) readCount / (double) contentLength) * 100);
                 String v = formatSize(readCount) + "/s";
                 if (log != null) {
-                    log.log(NMsg.ofC("%.2f%% %-8s %s", f, v, url).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
+                    log.log(NMsg.ofC("%.2f%% %-8s %s", f, v, displayUrl).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
                 }
             }
         } else {
             if (contentLength <= 0) {
                 String v = formatSize(readCount / sec) + "/s";
                 if (log != null) {
-                    log.log(NMsg.ofC("%-8s %s", v, url).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
+                    log.log(NMsg.ofC("%-8s %s", v, displayUrl).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
                 }
             } else {
                 float f = (float) (((double) readCount / (double) contentLength) * 100);
                 String v = formatSize(readCount / sec) + "/s";
                 if (log != null) {
-                    log.log(NMsg.ofC("%.2f%% %-8s %s", f, v, url).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
+                    log.log(NMsg.ofC("%.2f%% %-8s %s", f, v, displayUrl).withLevel(Level.FINE).withIntent(NMsgIntent.READ));
                 }
             }
         }

@@ -16,6 +16,7 @@ import net.thevpc.nuts.net.*;
 import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.NSecretRedactor;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.time.NDuration;
@@ -40,14 +41,19 @@ public class DefaultNHttpClient implements NHttpClient {
     private Executor executor;
 
     public static String resolveAuthorizationHeader(URL url) {
-        if (url == null) {
+        if (url == null || !"https".equalsIgnoreCase(url.getProtocol())) {
+            // never send credentials extracted from a URL over cleartext HTTP
             return null;
         }
         String userInfo = url.getUserInfo();
         if (userInfo != null && !userInfo.isEmpty()) {
             try {
-                userInfo = java.net.URLDecoder.decode(userInfo, java.nio.charset.StandardCharsets.UTF_8.name());
+                // URLDecoder treats '+' as a space, which corrupts basic credentials
+                userInfo = URLDecoder.decode(userInfo.replace("+", "%2B"), "UTF-8");
             } catch (Exception ignored) {
+            }
+            if (userInfo.indexOf(':') < 0) {
+                userInfo = userInfo + ":";
             }
             return "Basic " + Base64.getEncoder().encodeToString(userInfo.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
@@ -429,8 +435,10 @@ public class DefaultNHttpClient implements NHttpClient {
         NAssert.requireNamedNonNull(r.method(), "method");
         NHttpMethod method = r.method();
         String spec = null;
+        String logSpec = null;
         try {
             spec = formatURL(r, false);
+            logSpec = NSecretRedactor.redact(spec);
             URL h = CoreIOUtils.urlOf(spec);
             HttpURLConnection uc = null;
             try {
@@ -504,26 +512,26 @@ public class DefaultNHttpClient implements NHttpClient {
                 } finally {
                     if (seenError != null) {
                         if(seenError instanceof UnknownHostException){
-                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, logSpec, seenError)
                                     .withDurationNanos(System.nanoTime() - startTime)
                                     .withIntent(NMsgIntent.FAIL)
                             );
                         }else {
-                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, spec, seenError)
+                            NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s (%s)", "FAILED", method, logSpec, seenError)
                                     .withDurationNanos(System.nanoTime() - startTime)
                                     .withIntent(NMsgIntent.FAIL)
                                     .withThrowable(seenError)
                             );
                         }
                     } else {
-                        NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, spec)
+                        NLog.of(DefaultNHttpClient.class).debug(NMsg.ofC("[%s] %s %s", rCode == null ? "FAILED" : rCode, method, logSpec)
                                 .withDurationNanos(System.nanoTime() - startTime)
                                 .withIntent((rCode != null && rCode.isOk()) ? NMsgIntent.READ : NMsgIntent.FAIL)
                         );
                     }
                 }
                 if (seenError != null) {
-                    throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, seenError), seenError);
+                    throw new NIOException(NMsg.ofC("error loading %s (%s)", logSpec, seenError), seenError);
                 }
 
                 String rm = NStringUtils.strip(uc.getResponseMessage());
@@ -594,11 +602,11 @@ public class DefaultNHttpClient implements NHttpClient {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new NTimeoutException(NMsg.ofC("timed out loading %s (%s)", spec, ex), ex);
+            throw new NTimeoutException(NMsg.ofC("timed out loading %s (%s)", logSpec, ex), ex);
         } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
-            throw new NInterruptedException(NMsg.ofC("interrupt out loading %s (%s)", spec, ex), ex);
+            throw new NInterruptedException(NMsg.ofC("interrupt out loading %s (%s)", logSpec, ex), ex);
         } catch (UncheckedIOException | IOException ex) {
-            throw new NIOException(NMsg.ofC("error loading %s (%s)", spec, ex), ex);
+            throw new NIOException(NMsg.ofC("error loading %s (%s)", logSpec, ex), ex);
         }
     }
 

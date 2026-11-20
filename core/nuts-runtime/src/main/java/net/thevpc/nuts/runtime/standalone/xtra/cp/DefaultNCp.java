@@ -1049,7 +1049,7 @@ public class DefaultNCp implements NCp {
             }
         });
         if (_LOG().isLoggable(Level.FINEST)) {
-            _LOG().log(NMsg.ofC("download %s : %s", url, r).asFinest());
+            _LOG().log(NMsg.ofC("download %s : %s", NSecretRedactor.redact(url.toString()), r).asFinest());
         }
         return r != NSegmentedHttpDownload.Result.FALLBACK;
     }

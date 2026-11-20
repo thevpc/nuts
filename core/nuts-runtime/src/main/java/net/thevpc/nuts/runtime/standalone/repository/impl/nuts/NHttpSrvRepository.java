@@ -51,6 +51,7 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.NSecretRedactor;
 
 import java.io.*;
 import java.util.Arrays;
@@ -91,7 +92,8 @@ public class NHttpSrvRepository extends NCachedRepository {
                 remoteId = NId.get(httpGetString(getUrl("/version"))).get();
             } catch (Exception ex) {
                 LOG()
-                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().location())
+                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}",
+                                        NSecretRedactor.redact(config().location().toString()))
                                 .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL)
                         );
             }
@@ -255,7 +257,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private String httpGetString(String url) {
-        LOG().log(NMsg.ofJ("get URL{0}", url)
+        LOG().log(NMsg.ofJ("get URL{0}", NSecretRedactor.redact(url))
                 .withLevel(Level.FINEST).withIntent(NMsgIntent.START));
         return NIOUtils.loadString(NPath.of(url).inputStream(), true);
     }
@@ -302,6 +304,13 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private String resolveAuthURLPart() {
+        String location = config().locationPath().toString();
+        if (!location.regionMatches(true, 0, "https://", 0, 8)) {
+            LOG().log(NMsg.ofJ("credentials are not sent to a cleartext repository : {0}",
+                            NSecretRedactor.redact(location))
+                    .withLevel(Level.WARNING).withIntent(NMsgIntent.FAIL));
+            return "";
+        }
         Creds auth = resolveEncryptedAuth();
         NRef<String> s = NRef.of();
         if (auth.password == null) {

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.NSecretRedactor;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryWithChildren;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.security.*;
@@ -237,6 +238,31 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         return null;
     }
 
+    /**
+     * Inline URL credentials are preserved for HTTPS (documented 1.2.0 feature)
+     * but never for cleartext HTTP.
+     */
+    public static String stripCleartextCredentials(String s) {
+        if (s == null) {
+            return null;
+        }
+        try {
+            URL u = new URL(s);
+            if ("https".equalsIgnoreCase(u.getProtocol())
+                    || u.getUserInfo() == null || u.getUserInfo().isEmpty()) {
+                return s;
+            }
+            String hostPort = u.getHost() + (u.getPort() > 0 ? (":" + u.getPort()) : "");
+            String stripped = u.getProtocol() + "://" + hostPort + (u.getFile() != null ? u.getFile() : "");
+            if (u.getRef() != null && !u.getRef().isEmpty()) {
+                stripped += "#" + u.getRef();
+            }
+            return stripped;
+        } catch (Exception ex) {
+            return s;
+        }
+    }
+
     private String resolveLocationWithAuth(String s) {
         if (s == null) {
             return null;
@@ -245,7 +271,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             try {
                 URL u = new URL(s);
                 if (u.getUserInfo() != null && !u.getUserInfo().isEmpty()) {
-                    return s;
+                    return stripCleartextCredentials(s);
                 }
                 String repoUuid = (repository != null) ? repository.uuid() : (config != null ? config.uuid() : null);
                 String repoName = (repository != null) ? repository.name() : (config != null ? config.name() : null);
@@ -310,6 +336,12 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                         }
                         NSecureToken token = acc.remoteCredential();
                         if (token != null) {
+                            if (!"https".equalsIgnoreCase(u.getProtocol())) {
+                                final String repoUuidForLog = repoUuid;
+                                _LOG().log(Level.WARNING, () -> NMsg.ofC(
+                                        "credentials are not sent over cleartext protocol for repository %s", repoUuidForLog));
+                                return s;
+                            }
                             NRef<String> passRef = NRef.of();
                             sec.runWithSecret(token, new NSecretRunner() {
                                 @Override
@@ -335,7 +367,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     }
                 }
             } catch (Exception ex) {
-                _LOG().log(Level.FINE, () -> NMsg.ofC("Failed to resolve repository location with auth: %s", ex));
+                _LOG().log(Level.FINE, () -> NMsg.ofC("Failed to resolve repository location with auth: %s",
+                        NSecretRedactor.redact(ex.toString())));
             }
         }
         return s;
