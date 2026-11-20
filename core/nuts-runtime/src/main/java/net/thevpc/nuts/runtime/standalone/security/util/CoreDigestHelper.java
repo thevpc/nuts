@@ -104,7 +104,9 @@ public class CoreDigestHelper {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     append(new ByteArrayInputStream(file.toString().getBytes()));
-                    append(Files.newInputStream(file));
+                    try (InputStream in = Files.newInputStream(file)) {
+                        append(in);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 

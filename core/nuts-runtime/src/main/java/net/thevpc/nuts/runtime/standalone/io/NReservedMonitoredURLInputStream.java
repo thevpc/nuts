@@ -100,8 +100,13 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
 
     @Override
     public void close() throws IOException {
-        preDestroy();
-        super.close();
+        try {
+            preDestroy();
+        } finally {
+            // closing must always release the underlying connection, even if
+            // recording the download outcome fails
+            super.close();
+        }
     }
 
     private void preDestroy() {
@@ -109,14 +114,12 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             preDestroyed = true;
             chronometer.stop();
             doLog(true);
-            if (contentLength >= 0) {
-                if (readCount != contentLength) {
-                    log.log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", displayUrl).asFineFail());
-                    throw new NIllegalArgumentException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", displayUrl));
-                }
-            }
             if (log != null) {
-                log.log(NMsg.ofC("successfully downloaded %s", displayUrl).asFine().withIntent(NMsgIntent.SUCCESS));
+                if (contentLength >= 0 && readCount != contentLength) {
+                    log.log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", displayUrl).asFineFail());
+                } else {
+                    log.log(NMsg.ofC("successfully downloaded %s", displayUrl).asFine().withIntent(NMsgIntent.SUCCESS));
+                }
             }
         }
     }

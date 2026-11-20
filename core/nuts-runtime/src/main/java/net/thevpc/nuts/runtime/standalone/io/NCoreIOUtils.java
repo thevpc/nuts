@@ -138,7 +138,9 @@ public class NCoreIOUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     incrementalUpdateFileDigest(new ByteArrayInputStream(file.toString().getBytes()), md);
-                    incrementalUpdateFileDigest(Files.newInputStream(file), md);
+                    try (InputStream in = Files.newInputStream(file)) {
+                        incrementalUpdateFileDigest(in, md);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 

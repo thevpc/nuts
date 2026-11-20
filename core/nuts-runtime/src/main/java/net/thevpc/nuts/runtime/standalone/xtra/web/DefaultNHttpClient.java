@@ -531,6 +531,11 @@ public class DefaultNHttpClient implements NHttpClient {
                     }
                 }
                 if (seenError != null) {
+                    // the response body will never be consumed: release the connection now
+                    try {
+                        uc.disconnect();
+                    } catch (Exception ignored) {
+                    }
                     throw new NIOException(NMsg.ofC("error loading %s (%s)", logSpec, seenError), seenError);
                 }
 
@@ -539,7 +544,9 @@ public class DefaultNHttpClient implements NHttpClient {
                     rm = "Error " + rCode;
                 }
                 NHttpCode finalRCode = rCode;
-                NHttpResponse httpResponse = new NHttpResponseImpl(
+                NHttpResponse httpResponse;
+                try {
+                httpResponse = new NHttpResponseImpl(
                         rCode,
                         NMsg.ofP(rm),
                         uc.getHeaderFields(),
@@ -588,6 +595,14 @@ public class DefaultNHttpClient implements NHttpClient {
                     }
                 }
                 addCookies(httpResponse.cookies().toArray(new NHttpCookie[0]));
+                } catch (RuntimeException | Error ex) {
+                    // nobody took ownership of the response body
+                    try {
+                        uc.disconnect();
+                    } catch (Exception ignored) {
+                    }
+                    throw ex;
+                }
                 return httpResponse;
             } finally {
                 if (r.isOneWay()) {
