@@ -25,6 +25,7 @@ import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
+import net.thevpc.nuts.runtime.standalone.io.util.NAtomicFileWriter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.InstallInfoConfig;
 import net.thevpc.nuts.runtime.standalone.repository.index.NanoDBNIdSerializer;
@@ -475,7 +476,8 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         if (value == null) {
             path.delete();
         } else if (value instanceof String) {
-            path.mkParentDirs().writeString((String) value);
+            NAtomicFileWriter.writeString(path.toPath().get(), (String) value,
+                    java.nio.charset.StandardCharsets.UTF_8);
         } else if (value instanceof NDescriptor) {
             try {
                 NDescriptorWriter.of().ntf(false).print((NDescriptor) value, path);

@@ -9,11 +9,13 @@ import net.thevpc.nuts.core.NSession;
 import net.thevpc.nuts.text.NObjectWriter;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.runtime.standalone.io.util.NAtomicFileWriter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
@@ -115,12 +117,10 @@ public abstract class DefaultObjectWriterBase<T extends NObjectWriter> extends D
 
     @Override
     public void print(Object aValue, NPath path) {
-        path.mkParentDirs();
-        try (Writer w = path.getWriter()) {
-            print(aValue, w);
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
+        // REL-05: never truncate the target in place. A crash in the middle of
+        // a write used to leave a corrupted config file behind.
+        NAtomicFileWriter.write(path.toPath().get(), StandardCharsets.UTF_8,
+                out -> print(aValue, out));
     }
 
     @Override
