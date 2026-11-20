@@ -39,7 +39,6 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.collections.NCollections;
 
@@ -115,41 +114,45 @@ public class DefaultNWorkspaceSecurityModel {
             NWorkspaceExt.of(workspace).getConfigModel().addOrUpdateUser(u);
         }
 
-        return adminPassword.callWithContent(cc -> {
-            char[] credentials = NDigestUtils.evalSHA1(cc);
-            if (Arrays.equals(credentials, cc)) {
-                Arrays.fill(credentials, '\0');
-                throw new NSecurityException(NMsg.ofP("invalid credentials"));
-            }
-            Arrays.fill(credentials, '\0');
-            boolean activated = false;
-            if (isSecure()) {
-                NWorkspaceExt.of(workspace).getConfigModel().setSecure(false);
-                activated = true;
-            }
-            return activated;
-        });
+        if (!verifyAdminPassword(adminPassword)) {
+            throw new NSecurityException(NMsg.ofP("invalid credentials"));
+        }
+        boolean activated = false;
+        if (isSecure()) {
+            NWorkspaceExt.of(workspace).getConfigModel().setSecure(false);
+            activated = true;
+        }
+        return activated;
     }
 
     public boolean switchSecureMode(NSecureString adminPassword) {
-        if (adminPassword == null) {
-            adminPassword = NSecureString.ofEmpty();
+        if (!verifyAdminPassword(adminPassword)) {
+            throw new NSecurityException(NMsg.ofP("invalid credentials"));
         }
-        return adminPassword.callWithContent(cc -> {
-            boolean deactivated = false;
-            char[] credentials = NDigestUtils.evalSHA1(cc);
-            boolean passwordAccepted = Arrays.equals(credentials, cc);
-            Arrays.fill(credentials, '\0');
-            if (!passwordAccepted) {
-                throw new NSecurityException(NMsg.ofP("invalid credentials"));
-            }
-            DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
-            if (!configModel.isSecure()) {
-                configModel.setSecure(true);
-                deactivated = true;
-            }
-            return deactivated;
-        });
+        DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(workspace).getConfigModel();
+        boolean deactivated = false;
+        if (!configModel.isSecure()) {
+            configModel.setSecure(true);
+            deactivated = true;
+        }
+        return deactivated;
+    }
+
+    /**
+     * Verify the candidate against the stored admin credential. The previous implementation
+     * compared the hash of the candidate with the candidate itself, which could never match:
+     * any password disabled secure mode and no password could enable it.
+     */
+    private boolean verifyAdminPassword(NSecureString adminPassword) {
+        if (adminPassword == null) {
+            return false;
+        }
+        NUserConfig adminConfig = NWorkspaceExt.of(workspace).getConfigModel().getUser(NConstants.Users.ADMIN);
+        if (adminConfig == null || NBlankable.isBlank(adminConfig.credential())) {
+            return false;
+        }
+        NSecureToken token = NSecureToken.parse(adminConfig.credential());
+        return token != null && agentMapper.verify(token, adminPassword);
     }
 
 
