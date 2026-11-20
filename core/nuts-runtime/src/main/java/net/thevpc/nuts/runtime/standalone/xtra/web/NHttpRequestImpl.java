@@ -13,6 +13,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -704,7 +705,7 @@ public class NHttpRequestImpl implements NHttpRequest {
                         (NStringUtils.firstNonNull(username, "")
                                 + ":"
                                 + NStringUtils.firstNonNull(password, "")
-                        ).getBytes()
+                        ).getBytes(StandardCharsets.UTF_8)
                 )
         );
     }

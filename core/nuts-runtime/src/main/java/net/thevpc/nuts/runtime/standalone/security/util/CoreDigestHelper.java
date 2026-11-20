@@ -26,7 +26,9 @@ public class CoreDigestHelper {
 
     public CoreDigestHelper() {
         try {
-            md = MessageDigest.getInstance("MD5");
+            // SEC-11: MD5 is not collision resistant; this digest is used for
+            // equality/integrity decisions, so use SHA-256 instead.
+            md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalArgumentException(e);
         }

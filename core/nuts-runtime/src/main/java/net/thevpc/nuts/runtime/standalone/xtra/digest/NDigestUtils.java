@@ -167,4 +167,26 @@ public class NDigestUtils {
             }
         }
     }
+
+    /** SHA-256 digest for new integrity/key-derivation call sites (SEC-11). */
+    public static byte[] evalSHA256(byte[] bytesOfMessage) {
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(bytesOfMessage);
+        } catch (NoSuchAlgorithmException e) {
+            throw new NIOException(e);
+        }
+    }
+
+    public static String evalSHA256Hex(String input) {
+        return NHex.fromBytes(evalSHA256(input.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    public static char[] evalSHA256HexChars(char[] input) {
+        byte[] bytes = NIOUtils.charsToBytes(input);
+        try {
+            return NHex.fromBytes(evalSHA256(bytes)).toCharArray();
+        } finally {
+            Arrays.fill(bytes, (byte) 0);
+        }
+    }
 }

@@ -19,6 +19,16 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
     private volatile Class<?> loadedType;
 
     public NTypeLoaderImpl(String className) {
+        if (className == null || className.trim().isEmpty()) {
+            throw new net.thevpc.nuts.util.NIllegalArgumentException(net.thevpc.nuts.text.NMsg.ofP("missing class name"));
+        }
+        for (int i = 0; i < className.length(); i++) {
+            char ch = className.charAt(i);
+            if (Character.isWhitespace(ch) || ch == '/' || ch == ';' || ch == ',' || ch == ':') {
+                throw new net.thevpc.nuts.util.NIllegalArgumentException(
+                        net.thevpc.nuts.text.NMsg.ofC("invalid class name: %s", className));
+            }
+        }
         this.className = className;
     }
 

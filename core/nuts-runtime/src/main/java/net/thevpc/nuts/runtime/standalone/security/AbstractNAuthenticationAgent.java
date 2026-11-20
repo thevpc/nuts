@@ -198,7 +198,11 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     public String getPassphrase(Function<String, String> envProvider) {
         String defVal = CoreSecurityUtils.DEFAULT_PASSPHRASE;
         if (envProvider != null) {
-            String r = envProvider.apply("nuts.authentication-agent.simple.passphrase");
+            // SEC-10: accept the conventional environment override as well as the legacy key
+            String r = envProvider.apply("NUTS_AUTHENTICATION_AGENT_PASSPHRASE");
+            if (r == null || r.isEmpty()) {
+                r = envProvider.apply("nuts.authentication-agent.simple.passphrase");
+            }
             if (r == null) {
                 r = defVal;
             }

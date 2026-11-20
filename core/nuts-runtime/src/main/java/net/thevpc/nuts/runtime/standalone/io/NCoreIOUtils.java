@@ -127,7 +127,8 @@ public class NCoreIOUtils {
 
     private static String getDirectoryDigest(Path p) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            // SEC-11: use a collision-resistant digest for integrity decisions
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             Files.walkFileTree(p, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -163,7 +164,8 @@ public class NCoreIOUtils {
 
     public static String getStreamDigest(InputStream is) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            // SEC-11: use a collision-resistant digest for integrity decisions
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             return getStreamDigest(is, md, 2048);
         } catch (Exception e) {
             return null;

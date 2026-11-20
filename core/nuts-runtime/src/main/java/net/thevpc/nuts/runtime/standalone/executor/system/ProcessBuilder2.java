@@ -33,6 +33,7 @@ import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.NWorkspaceProfilerImpl;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BoundedOutputStream;
+import net.thevpc.nuts.runtime.standalone.io.util.NSecretRedactor;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
@@ -50,6 +51,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ProcessBuilder2 {
+
+    /** Environment variables whose values are safe to show in diagnostics. */
+    private static final Set<String> SAFE_LOG_ENV = new HashSet<>(Arrays.asList(
+            "PATH", "HOME", "USER", "USERNAME", "LANG", "LC_ALL", "TMPDIR", "TEMP", "TMP",
+            "JAVA_HOME", "SHELL", "PWD", "TERM", "OS", "NUTS_WORKSPACE"
+    ));
 
     private List<String> command = new ArrayList<>();
     private Map<String, String> env;
@@ -435,7 +442,8 @@ public class ProcessBuilder2 {
         long ppid = getProcessId();
         String procString = NPath.of(command.get(0)).name()
                 + "-" + (ppid < 0 ? ("unknown-pid" + -ppid) : String.valueOf(ppid));
-        String cmdStr = String.join(" ", command);
+        // SEC-19: pipe names end up in logs; never embed raw credentials there
+        String cmdStr = NSecretRedactor.redact(String.join(" ", command));
         switch (in.base.type()) {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
@@ -678,25 +686,25 @@ public class ProcessBuilder2 {
                     if (out.base.type() == NRedirectType.GRAB_FILE || out.base.type() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(
                                 NMsg.ofC("process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NCmdLine.of(getCommand())),
+                                        safeCommandString()),
                                 result);
                     }
                 } else {
                     if (err.base.type() == NRedirectType.GRAB_FILE || err.base.type() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(
                                 NMsg.ofC("process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NCmdLine.of(getCommand())),
+                                        safeCommandString()),
                                 result);
                     }
                     if (out.base.type() == NRedirectType.GRAB_FILE || out.base.type() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(NMsg.ofC(
                                 "process execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                NCmdLine.of(getCommand())
+                                safeCommandString()
                         ), result);
                     }
                 }
                 throw new NExecutionException(NMsg.ofC("process execution failed with code %d. Command was %s", result,
-                        NCmdLine.of(getCommand())
+                        safeCommandString()
                 ), result);
             }
         }
@@ -944,11 +952,26 @@ public class ProcessBuilder2 {
     }
 
 
+    private String safeCommandString() {
+        return NSecretRedactor.redact(String.valueOf(NCmdLine.of(getCommand())));
+    }
+
+    private Map<String, String> safeEnv() {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String key = e.getKey();
+                result.put(key, key != null && SAFE_LOG_ENV.contains(key) ? e.getValue() : "***");
+            }
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return "ProcessBuilder2{"
-                + "command=" + command
-                + ", env=" + env
+                + "command=" + safeCommandString()
+                + ", env=" + safeEnv()
                 + ", directory=" + directory
                 + ", failFast=" + failFast
                 + ", sleepMillis=" + sleepDuration

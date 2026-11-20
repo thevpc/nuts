@@ -21,10 +21,11 @@ class JavaNTypeNameDomain implements NTypeNamePlatformDomain {
 
     private Class toCls(String typeName, ClassLoader cl) {
         try {
-            return Class.forName(typeName, true, cl == null ? Thread.currentThread().getContextClassLoader() : cl);
+            // SEC-12: resolving a type name must never run untrusted static initializers
+            return Class.forName(typeName, false, cl == null ? Thread.currentThread().getContextClassLoader() : cl);
         } catch (ClassNotFoundException e) {
             try {
-                return Class.forName(typeName);
+                return Class.forName(typeName, false, JavaNTypeNameDomain.class.getClassLoader());
             } catch (ClassNotFoundException e2) {
                 throw new IllegalArgumentException(e);
             }
