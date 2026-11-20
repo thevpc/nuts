@@ -5,6 +5,7 @@ import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
 import net.thevpc.nuts.reflect.NScore;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.runtime.standalone.io.util.NArchiveSecurityUtils;
 import net.thevpc.nuts.spi.NUncompressPackaging;
 import net.thevpc.nuts.log.NLog;
 
@@ -16,6 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
@@ -35,6 +38,7 @@ public class NUncompressZip implements NUncompressPackaging {
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
         NOutputTarget target = uncompress.target();
+        List<Path> createdFiles = new ArrayList<Path>();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
@@ -42,6 +46,7 @@ public class NUncompressZip implements NUncompressPackaging {
             }
             Path folder = _target.toPath().get();
             NPath.of(folder).mkdirs();
+            NArchiveSecurityUtils.Limits limits = NArchiveSecurityUtils.Limits.fromSystemProperties();
             byte[] buffer = new byte[10 * 4 * 1024];
             InputStream _in = source.inputStream();
             try {
@@ -50,7 +55,9 @@ public class NUncompressZip implements NUncompressPackaging {
                     ZipEntry ze = zis.getNextEntry();
                     String root = null;
                     while (ze != null) {
+                        limits.startEntry(ze.getSize(), ze.getCompressedSize());
                         String fileName0 = ze.getName();
+                        NArchiveSecurityUtils.validateEntryName(fileName0);
                         String fileName = fileName0;
                         if (uncompress.isSkipRoot()) {
                             String currentRoot = extractRoot(fileName0);
@@ -71,24 +78,25 @@ public class NUncompressZip implements NUncompressPackaging {
                                 continue;
                             }
                         }
-                        if (fileName0.endsWith("/")) {
-                            if(!fileName.isEmpty()){ //check the case of skip riit
-                                Path newFile = folder.resolve(fileName);
-                                NPath.of(newFile).mkdirs();
+                        Path newFile = NArchiveSecurityUtils.resolveSafeEntry(folder, fileName);
+                        if (fileName.endsWith("/")) {
+                            if (!fileName.isEmpty()) { //check the case of skip root
+                                Files.createDirectories(newFile);
                             }
                         } else {
-                            Path newFile = folder.resolve(fileName);
                             _LOG()
                                     .log(NMsg.ofJ("file unzip : {0}", newFile)
                                             .asFinestAlert());
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
-                                NPath.of(newFile).mkParentDirs();
+                                Files.createDirectories(newFile.getParent());
                             }
+                            createdFiles.add(newFile);
                             try (OutputStream fos = Files.newOutputStream(newFile)) {
                                 int len;
                                 while ((len = zis.read(buffer)) > 0) {
+                                    limits.addBytes(len);
                                     fos.write(buffer, 0, len);
                                 }
                             }
@@ -101,11 +109,25 @@ public class NUncompressZip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
+            cleanupCreatedFiles(createdFiles);
             _LOG()
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}",
                             source, target, ex)
                             .withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
             throw new NIOException(ex);
+        } catch (RuntimeException ex) {
+            cleanupCreatedFiles(createdFiles);
+            throw ex;
+        }
+    }
+
+    private static void cleanupCreatedFiles(List<Path> createdFiles) {
+        for (int i = createdFiles.size() - 1; i >= 0; i--) {
+            try {
+                Files.deleteIfExists(createdFiles.get(i));
+            } catch (IOException ex) {
+                // best effort cleanup of a failed extraction
+            }
         }
     }
 
@@ -121,6 +143,7 @@ public class NUncompressZip implements NUncompressPackaging {
                     while (ze != null) {
 
                         String fileName = ze.getName();
+                        NArchiveSecurityUtils.validateEntryName(fileName);
                         if (uncompress.isSkipRoot()) {
                             String currentRoot = extractRoot(fileName);
 

@@ -36,6 +36,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -161,10 +163,11 @@ public class ZipUtils {
             } else {
                 byte[] buf = new byte[1024];
                 int len;
-                FileInputStream in = new FileInputStream(srcFile);
                 zip.putNextEntry(new ZipEntry(pathPrefix + folder.getName()));
-                while ((len = in.read(buf)) > 0) {
-                    zip.write(buf, 0, len);
+                try (FileInputStream in = new FileInputStream(srcFile)) {
+                    while ((len = in.read(buf)) > 0) {
+                        zip.write(buf, 0, len);
+                    }
                 }
             }
         }
@@ -187,8 +190,11 @@ public class ZipUtils {
         //create output directory is not exists
         File folder = new File(outputFolder);
         if (!folder.exists()) {
-            folder.mkdir();
+            folder.mkdirs();
         }
+        Path rootPath = folder.toPath().toAbsolutePath().normalize();
+        NArchiveSecurityUtils.Limits limits = NArchiveSecurityUtils.Limits.fromSystemProperties();
+        List<Path> createdFiles = new ArrayList<Path>();
 
         //get the zip file content
         try (ZipInputStream zis
@@ -197,8 +203,10 @@ public class ZipUtils {
             ZipEntry ze = zis.getNextEntry();
             String root = null;
             while (ze != null) {
+                limits.startEntry(ze.getSize(), ze.getCompressedSize());
 
                 String fileName = ze.getName();
+                NArchiveSecurityUtils.validateEntryName(fileName);
                 if (options.isSkipRoot()) {
                     if (root == null) {
                         if (fileName.endsWith("/")) {
@@ -215,31 +223,40 @@ public class ZipUtils {
                         throw new IOException("not a single root zip");
                     }
                 }
+                Path newFile = NArchiveSecurityUtils.resolveSafeEntry(rootPath, fileName);
                 if (fileName.endsWith("/")) {
-                    File newFile = new File(outputFolder + File.separator + fileName);
-                    newFile.mkdirs();
+                    Files.createDirectories(newFile);
                 } else {
-                    File newFile = new File(outputFolder + File.separator + fileName);
                     NLog.of(ZipUtils.class)
-                            .log(NMsg.ofC("file unzip : %s", newFile.getAbsoluteFile())
+                            .log(NMsg.ofC("file unzip : %s", newFile.toAbsolutePath())
                                     .asFinestAlert());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
-                    newFile.getParentFile().mkdirs();
-
-                    FileOutputStream fos = new FileOutputStream(newFile);
-
-                    int len;
-                    while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
+                    if (newFile.getParent() != null) {
+                        Files.createDirectories(newFile.getParent());
                     }
-
-                    fos.close();
+                    createdFiles.add(newFile);
+                    try (FileOutputStream fos = new FileOutputStream(newFile.toFile())) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            limits.addBytes(len);
+                            fos.write(buffer, 0, len);
+                        }
+                    }
                 }
                 ze = zis.getNextEntry();
             }
 
             zis.closeEntry();
+        } catch (IOException | RuntimeException ex) {
+            for (int i = createdFiles.size() - 1; i >= 0; i--) {
+                try {
+                    Files.deleteIfExists(createdFiles.get(i));
+                } catch (IOException ignore) {
+                    // best effort cleanup of a failed extraction
+                }
+            }
+            throw ex;
         }
     }
 

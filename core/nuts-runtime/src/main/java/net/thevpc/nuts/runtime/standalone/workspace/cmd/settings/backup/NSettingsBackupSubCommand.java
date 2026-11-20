@@ -17,6 +17,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.platform.NStoreType;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.platform.NPlatformHome;
@@ -141,6 +142,9 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
+                // names coming from a backup archive are untrusted: never let one
+                // redirect the restore outside of the platform workspace home
+                ws = CoreNUtils.resolveValidWorkspaceName(ws);
                 String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().storedConfig().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of()
                         .from(NPath.of(file))
