@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +17,7 @@ public class WrapperNAuthenticationAgent {
     protected NWorkspace ws;
     protected NAuthenticationAgentProvider provider;
     protected Supplier<Function<String, String>> envProvider;
-    private final Map<String, NAuthenticationAgent> cache = new HashMap<>();
+    private final Map<String, NAuthenticationAgent> cache = new ConcurrentHashMap<>();
 
     public WrapperNAuthenticationAgent(NWorkspace ws, Supplier<Function<String, String>> envProvider, NAuthenticationAgentProvider agentProvider) {
         this.envProvider = envProvider;
@@ -34,13 +34,10 @@ public class WrapperNAuthenticationAgent {
 
     public NAuthenticationAgent getCachedAuthenticationAgent(String name) {
         name = NStringUtils.strip(name);
-        NAuthenticationAgent a = cache.get(name);
-        if (a == null) {
-            a = provider.create(name);
-            cache.put(name, a);
-            if (!a.id().equals(name)) {
-                cache.put(a.id(), a);
-            }
+        // parallel solver/download threads must not race on the agent cache
+        NAuthenticationAgent a = cache.computeIfAbsent(name, provider::create);
+        if (!a.id().equals(name)) {
+            cache.putIfAbsent(a.id(), a);
         }
         return a;
     }

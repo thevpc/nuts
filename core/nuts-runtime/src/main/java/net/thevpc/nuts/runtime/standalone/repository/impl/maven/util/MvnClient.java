@@ -11,9 +11,11 @@ import net.thevpc.nuts.command.NSearch;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.text.NMsg;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class MvnClient {
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nmvn:nmvn";
-    private Status status = Status.INIT;
+    private final AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
     public enum Status {
         INIT,
@@ -33,38 +35,32 @@ public class MvnClient {
         if (id.shortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
-        switch (status) {
-            case INIT: {
-                status = Status.DIRTY;
-                try {
-                    NDefinition ff = NSearch.of()
-                            .fetchStrategy(NFetchStrategy.ONLINE)
-                            .addId(NET_VPC_APP_NUTS_MVN)
+        // parallel dependency-resolution threads share this client: only one
+        // of them may perform the bootstrap, all others observe its result
+        Status current = status.get();
+        if (current == Status.INIT) {
+            if (!status.compareAndSet(Status.INIT, Status.DIRTY)) {
+                return false;
+            }
+            try {
+                NDefinition ff = NSearch.of()
+                        .fetchStrategy(NFetchStrategy.ONLINE)
+                        .addId(NET_VPC_APP_NUTS_MVN)
+                        .dependencyFilter(NDependencyFilter.ofRunnable())
+                        .inlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
+                for (NId nutsId : NSearch.of().addId(ff.id()).inlineDependencies(true).getResultIds()) {
+                    NFetch.of(nutsId).fetchStrategy(NFetchStrategy.ONLINE)
                             .dependencyFilter(NDependencyFilter.ofRunnable())
-                            .inlineDependencies(true).latest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearch.of().addId(ff.id()).inlineDependencies(true).getResultIds()) {
-                        NFetch.of(nutsId).fetchStrategy(NFetchStrategy.ONLINE)
-                                .dependencyFilter(NDependencyFilter.ofRunnable())
-                                .getResultDefinition();
-                    }
-                    status = Status.SUCCESS;
-                } catch (Exception ex) {
-                    LOG().log(NMsg.ofC("failed to load %s : %s", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
-                    status = Status.FAIL;
-                    return false;
+                            .getResultDefinition();
                 }
-                break;
-            }
-            case FAIL: {
+                status.set(Status.SUCCESS);
+            } catch (Exception ex) {
+                LOG().log(NMsg.ofC("failed to load %s : %s", NET_VPC_APP_NUTS_MVN, ex).asFinestFail(ex));
+                status.set(Status.FAIL);
                 return false;
             }
-            case SUCCESS: {
-                //OK
-                break;
-            }
-            case DIRTY: {
-                return false;
-            }
+        } else if (current != Status.SUCCESS) {
+            return false;
         }
         try {
             NExec b = NExec.of()

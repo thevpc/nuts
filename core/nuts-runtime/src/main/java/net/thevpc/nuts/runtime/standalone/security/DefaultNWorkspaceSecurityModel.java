@@ -43,6 +43,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.collections.NCollections;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -53,7 +54,7 @@ public class DefaultNWorkspaceSecurityModel {
     private final ThreadLocal<Stack<DefaultNLoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNWorkspace workspace;
     private final WrapperNAuthenticationAgent agentMapper;
-    private final Map<String, NAuthorizations> authorizations = new HashMap<>();
+    private final Map<String, NAuthorizations> authorizations = new ConcurrentHashMap<>();
     private NLog LOG;
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
