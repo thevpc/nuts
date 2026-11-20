@@ -203,7 +203,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
         String currentCacheId = null;
         if (validator != null) {
             currentCacheId = validator.getCacheId();
-            if (!NBlankable.isBlank(currentCacheId) || !validator.isValidCacheId(currentCacheId)) {
+            if (!NBlankable.isBlank(currentCacheId) && !validator.isValidCacheId(valueCacheId)) {
                 evaluated = false;
             }
         }

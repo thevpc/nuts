@@ -17,7 +17,10 @@ import java.util.function.Supplier;
 
 public class NCliInfo {
     public static Map<String, String> loadConfigMap() {
-        Path userConfig = getConfigFile();
+        return loadConfigMap(getConfigFile());
+    }
+
+    public static Map<String, String> loadConfigMap(Path userConfig) {
         Map m = null;
         if (Files.exists(userConfig)) {
             try {
@@ -32,7 +35,11 @@ public class NCliInfo {
     }
 
     public static String loadVar(String name, Supplier<String> generator) {
-        Map<String, String> m = loadConfigMap();
+        return loadVar(getConfigFile(), name, generator);
+    }
+
+    public static String loadVar(Path userConfig, String name, Supplier<String> generator) {
+        Map<String, String> m = loadConfigMap(userConfig);
         String _uuid = NStringUtils.stripToNull(m.get(name));
         if (!NBlankable.isBlank(_uuid)) {
             return _uuid;
@@ -43,7 +50,6 @@ public class NCliInfo {
                 if (varVal != null) {
                     m.put(name, varVal);
                     try {
-                        Path userConfig = getConfigFile();
                         NElementWriter.ofJson().write(m, userConfig);
                     } catch (Exception ex) {
                         //ignore
@@ -55,17 +61,20 @@ public class NCliInfo {
     }
 
     public static String saveVar(String name, String value) {
-        Map<String, String> m = loadConfigMap();
+        return saveVar(getConfigFile(), name, value);
+    }
+
+    public static String saveVar(Path userConfig, String name, String value) {
+        Map<String, String> m = loadConfigMap(userConfig);
         String old = NStringUtils.stripToNull(m.get(name));
         value = NStringUtils.stripToNull(value);
-        if (Objects.equals(old, value)) {
+        if (!Objects.equals(old, value)) {
             if (value == null) {
                 m.remove(name);
             } else {
                 m.put(name, value);
             }
             try {
-                Path userConfig = getConfigFile();
                 NElementWriter.ofJson().write(m, userConfig);
             } catch (Exception ex) {
                 //ignore

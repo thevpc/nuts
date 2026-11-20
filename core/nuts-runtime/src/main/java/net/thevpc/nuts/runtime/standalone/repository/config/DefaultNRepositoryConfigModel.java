@@ -91,6 +91,28 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         return NLog.of(DefaultNRepositoryConfigModel.class);
     }
 
+    private static NRepositoryAccess findRepositoryAccess(NSecurityManager sec, String user, String repoUuid, String repoName) {
+        if (user == null) {
+            return null;
+        }
+        NRepositoryAccess acc = null;
+        if (repoUuid != null) {
+            acc = sec.getRepositoryAccess(user, repoUuid).orNull();
+        }
+        if ((acc == null || acc.remoteCredential() == null) && repoName != null) {
+            acc = sec.getRepositoryAccess(user, repoName).orNull();
+        }
+        return acc;
+    }
+
+    private static List<NRepositoryAccess> findRepositoryAccessList(NSecurityManager sec, String repoUuid, String repoName) {
+        List<NRepositoryAccess> list = repoUuid == null ? null : sec.getRepositoryAccessListByRepository(repoUuid);
+        if (list == null || list.isEmpty()) {
+            list = repoName == null ? null : sec.getRepositoryAccessListByRepository(repoName);
+        }
+        return list == null ? Collections.<NRepositoryAccess>emptyList() : list;
+    }
+
     public NRepository getRepository() {
         return repository;
     }
@@ -236,36 +258,18 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                 if (repository != null || repoUuid != null || repoName != null) {
                     NSecurityManager sec = NSecurityManager.of();
                     String user = sec.currentUsername();
-                    NRepositoryAccess acc = null;
-                    if (user != null && repository != null) {
-                        acc = sec.getRepositoryAccess(user, repository.uuid()).orNull();
-                        if (acc == null) {
-                            acc = sec.getRepositoryAccess(user, repository.name()).orNull();
-                        }
+                    NRepositoryAccess acc = findRepositoryAccess(sec, user, repoUuid, repoName);
+                    if (acc == null || acc.remoteCredential() == null) {
+                        acc = findRepositoryAccess(sec, NConstants.Users.ANONYMOUS, repoUuid, repoName);
                     }
                     if (acc == null || acc.remoteCredential() == null) {
-                        acc = sec.getRepositoryAccess(NConstants.Users.ANONYMOUS, repository.uuid()).orNull();
+                        acc = findRepositoryAccess(sec, "user", repoUuid, repoName);
                     }
                     if (acc == null || acc.remoteCredential() == null) {
-                        acc = sec.getRepositoryAccess(NConstants.Users.ANONYMOUS, repository.name()).orNull();
+                        acc = findRepositoryAccess(sec, "admin", repoUuid, repoName);
                     }
                     if (acc == null || acc.remoteCredential() == null) {
-                        acc = sec.getRepositoryAccess("user", repository.uuid()).orNull();
-                        if (acc == null || acc.remoteCredential() == null) {
-                            acc = sec.getRepositoryAccess("user", repository.name()).orNull();
-                        }
-                    }
-                    if (acc == null || acc.remoteCredential() == null) {
-                        acc = sec.getRepositoryAccess("admin", repository.uuid()).orNull();
-                        if (acc == null || acc.remoteCredential() == null) {
-                            acc = sec.getRepositoryAccess("admin", repository.name()).orNull();
-                        }
-                    }
-                    if (acc == null || acc.remoteCredential() == null) {
-                        List<NRepositoryAccess> list = sec.getRepositoryAccessListByRepository(repository.uuid());
-                        if (list.isEmpty()) {
-                            list = sec.getRepositoryAccessListByRepository(repository.name());
-                        }
+                        List<NRepositoryAccess> list = findRepositoryAccessList(sec, repoUuid, repoName);
                         for (NRepositoryAccess a : list) {
                             if (a.remoteCredential() != null) {
                                 acc = a;

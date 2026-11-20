@@ -315,18 +315,15 @@ public class DefaultNSession implements Cloneable, NSession, NCopiable {
                 case "--progress": {
                     NArg v = cmdLine.next().get();
                     if (active) {
-                        String s = a.getStringValue().orNull();
-                        if (a.isNegated()) {
+                        String s = v.getStringValue().orNull();
+                        if (v.isNegated()) {
                             if (NBlankable.isBlank(s)) {
                                 s = "false";
                             } else {
                                 s = "false," + s;
                             }
-                            progressOptions(s);
-                        } else {
-                            progressOptions(s);
                         }
-                        this.progressOptions(s);
+                        progressOptions(s);
                     }
                     return true;
                 }
