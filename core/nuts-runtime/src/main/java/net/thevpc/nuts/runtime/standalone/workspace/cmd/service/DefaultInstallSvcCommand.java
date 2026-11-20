@@ -145,6 +145,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     public boolean uninstall() {
+        serviceName = ServiceNameValidator.validate(serviceName);
         switch (getActualServiceType()) {
             case SYSTEMD: {
                 String serviceFilePath = "/etc/systemd/system/" + serviceName + ".service";
@@ -161,8 +162,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                 logInfo("We need root privileges to run de-installation script. Please enter your root password.");
                 runAsRoot(
                         new ScriptBuilder("uninstall-" + serviceName, "uninstall-" + serviceName)
-                                .printlnEcho("systemctl stop " + serviceName)
-                                .printlnEcho("rm -Rf " + serviceFilePath)
+                                .printlnEcho("systemctl stop " + ScriptBuilder.quote(serviceName))
+                                .printlnEcho("rm -Rf " + ScriptBuilder.quote(serviceFilePath))
                 );
                 logInfoSuccess(serviceName + " uninstalled successfully.");
                 return true;
@@ -182,8 +183,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                 logInfo("We need root privileges to run de-installation script. Please enter your root password.");
                 runAsRoot(
                         new ScriptBuilder("uninstall-" + serviceName, "uninstall-" + serviceName)
-                                .printlnEcho("sudo " + serviceFilePath + " stop")
-                                .printlnEcho("rm -Rf " + serviceFilePath)
+                                .printlnEcho("sudo " + ScriptBuilder.quote(serviceFilePath) + " stop")
+                                .printlnEcho("rm -Rf " + ScriptBuilder.quote(serviceFilePath))
                 );
                 logInfoSuccess(serviceName + " uninstalled successfully.");
                 return true;
@@ -197,6 +198,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     public boolean install() {
+        serviceName = ServiceNameValidator.validate(serviceName);
         logInfoStart("Installing System Service...");
 //        if (!isValidInstallDir(null)) {
 //            logError("Invalid installation at " + getCurrentWorkingDir());
@@ -250,13 +252,13 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             tempFile = File.createTempFile("srv-" + serviceName, ".service");
             createFileFromTemplate("service-systemd", tempFile.toString());
             ScriptBuilder script = new ScriptBuilder(serviceName, "systemctl enable/start " + serviceName + " script")
-                    .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath);
+                    .printlnEcho("cp " + ScriptBuilder.quote(tempFile.getPath()) + " " + ScriptBuilder.quote(serviceFilePath));
             if (!isRootOverridden()) {
                 script.printlnEcho("systemctl daemon-reload")
-                        .printlnEcho("systemctl enable " + serviceName)
-                        .printlnEcho("systemctl stop " + serviceName)
-                        .printlnEcho("systemctl start " + serviceName)
-                        .printlnEcho("systemctl status " + serviceName);
+                        .printlnEcho("systemctl enable " + ScriptBuilder.quote(serviceName))
+                        .printlnEcho("systemctl stop " + ScriptBuilder.quote(serviceName))
+                        .printlnEcho("systemctl start " + ScriptBuilder.quote(serviceName))
+                        .printlnEcho("systemctl status " + ScriptBuilder.quote(serviceName));
             }
             if (NSession.of().isDry()) {
                 new File(serviceFilePath).getParentFile().mkdirs();
@@ -305,15 +307,15 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             createFileFromTemplate("service-initd", tempFile.toString());
             NPath rcFile = rootFile("/etc/rc.d/S99z_" + serviceName);
             ScriptBuilder script = new ScriptBuilder(serviceName, "initd service enable/start " + serviceName + " script")
-                    .printlnEcho("mkdir -p " + rcFile.parent())
-                    .printlnEcho("mkdir -p " + serviceFilePath.parent())
-                    .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath)
-                    .printlnEcho("rm -Rf " + rcFile)
-                    .printlnEcho("ln -s " + serviceFilePath + " " + rcFile);
+                    .printlnEcho("mkdir -p " + ScriptBuilder.quote(rcFile.parent().toString()))
+                    .printlnEcho("mkdir -p " + ScriptBuilder.quote(serviceFilePath.parent().toString()))
+                    .printlnEcho("cp " + ScriptBuilder.quote(tempFile.getPath()) + " " + ScriptBuilder.quote(serviceFilePath.toString()))
+                    .printlnEcho("rm -Rf " + ScriptBuilder.quote(rcFile.toString()))
+                    .printlnEcho("ln -s " + ScriptBuilder.quote(serviceFilePath.toString()) + " " + ScriptBuilder.quote(rcFile.toString()));
 //                    .printlnEcho("update-rc.d "+serviceName+" defaults" + serviceFilePath)
 //                    .printlnEcho("systemctl daemon-reload")
             if (!isRootOverridden()) {
-                script.printlnEcho(serviceFilePath + " stop ")
+                script.printlnEcho(ScriptBuilder.quote(serviceFilePath.toString()) + " stop ")
 //                        .printlnEcho(serviceFilePath + " start ")
 //                        .printlnEcho(serviceFilePath + " status ")
                 ;
@@ -533,6 +535,10 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                 String x = this.apply(name);
                 if (x == null) {
                     x = "$$" + name + "$$";
+                }
+                if (x.indexOf('\n') >= 0 || x.indexOf('\r') >= 0) {
+                    throw new NIllegalArgumentException(
+                            NMsg.ofC("invalid newline in service variable : %s", name));
                 }
                 matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
             }

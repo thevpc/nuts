@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class ScriptBuilder {
+public class ScriptBuilder {
     String name;
     String description;
     StringBuffer sb = new StringBuffer();
@@ -45,6 +45,17 @@ class ScriptBuilder {
         sb.append(s);
         sb.append(NNewLineMode.system().value());
         return this;
+    }
+
+    /**
+     * Shell-quote a single argument for /bin/sh (single quotes with embedded
+     * quote escaping). Used for every value interpolated into root scripts.
+     */
+    public static String quote(String value) {
+        if (value == null) {
+            return "''";
+        }
+        return "'" + value.replace("'", "'\\''") + "'";
     }
 
     public ScriptBuilder printlnEcho(String s) {
