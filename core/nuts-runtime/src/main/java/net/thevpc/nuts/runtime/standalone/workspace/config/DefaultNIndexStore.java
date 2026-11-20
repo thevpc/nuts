@@ -208,8 +208,9 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
                 + CoreIOUtils.urlEncodeString(NWorkspace.of().workspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().uuid());
-        try {
-            return new Scanner(NPath.of(uu).inputStream()).nextBoolean();
+        // PERF-22: close the response stream even when parsing fails
+        try (Scanner scanner = new Scanner(NPath.of(uu).inputStream())) {
+            return scanner.hasNextBoolean() && scanner.nextBoolean();
         } catch (UncheckedIOException | NIOException e) {
             return false;
         }

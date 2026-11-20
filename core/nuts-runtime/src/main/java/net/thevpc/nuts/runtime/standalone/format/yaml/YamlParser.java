@@ -991,6 +991,11 @@ class YamlParser {
         private String joinFolded(List<String> lines) {
             if (lines.isEmpty()) return "";
             StringBuilder b = new StringBuilder();
+            // PERF-18: precompute suffix in one pass instead of rescanning per line
+            boolean[] nonEmptyAfter = new boolean[lines.size() + 1];
+            for (int i = lines.size() - 1; i >= 0; i--) {
+                nonEmptyAfter[i] = !lines.get(i).isEmpty() || nonEmptyAfter[i + 1];
+            }
             for (int i = 0; i < lines.size(); i++) {
                 String current = lines.get(i);
                 b.append(current);
@@ -998,7 +1003,7 @@ class YamlParser {
                     String next = lines.get(i + 1);
                     if (!current.isEmpty() && !next.isEmpty()) {
                         b.append(isMoreIndented(current) || isMoreIndented(next) ? '\n' : ' ');
-                    } else if (current.isEmpty() || !hasNonEmptyLineAfter(lines, i + 1)) {
+                    } else if (current.isEmpty() || !nonEmptyAfter[i + 1]) {
                         b.append('\n');
                     }
                 }

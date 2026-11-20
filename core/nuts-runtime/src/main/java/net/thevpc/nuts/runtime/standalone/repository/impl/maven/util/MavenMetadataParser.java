@@ -28,6 +28,15 @@ import java.util.List;
 import java.util.Stack;
 
 public class MavenMetadataParser {
+    // PERF-07: avoid JAXP service lookup and SimpleDateFormat allocation per metadata file
+    private static final ThreadLocal<XMLInputFactory> INPUT_FACTORY = ThreadLocal.withInitial(() -> {
+        XMLInputFactory f = XMLInputFactory.newInstance();
+        f.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+        return f;
+    });
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMddHHmmss"));
+
     private final NLog LOG;
 
     public MavenMetadataParser() {
@@ -98,7 +107,7 @@ public class MavenMetadataParser {
         }
         if (m.getLastUpdated() != null) {
             Element lastUpdated = document.createElement("lastUpdated");
-            lastUpdated.appendChild(document.createTextNode(new SimpleDateFormat("yyyyMMddHHmmss").format(m.getLastUpdated())));
+            lastUpdated.appendChild(document.createTextNode(DATE_FORMAT.get().format(m.getLastUpdated())));
             versioning.appendChild(lastUpdated);
         }
         XmlUtils.writeDocument(document, writer, false,true);
@@ -122,10 +131,8 @@ public class MavenMetadataParser {
         StringBuilder artifactId = new StringBuilder();
         List<String> versions = new ArrayList<>();
         try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
             XMLEventReader eventReader
-                    = factory.createXMLEventReader(new InputStreamReader(stream));
+                    = INPUT_FACTORY.get().createXMLEventReader(new InputStreamReader(stream));
             Stack<String> nodePath = new Stack<>();
             while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
@@ -176,7 +183,7 @@ public class MavenMetadataParser {
         try {
             //<lastUpdated>2018 12 22 22 59 57</lastUpdated>
 
-            info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
+            info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : DATE_FORMAT.get().parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
             LOG.log(NMsg.ofJ("failed to parse date {0} : {1}", lastUpdated, ex).asFinestFail(ex));
         }

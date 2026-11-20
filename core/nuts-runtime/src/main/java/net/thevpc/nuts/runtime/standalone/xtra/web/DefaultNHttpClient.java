@@ -117,8 +117,15 @@ public class DefaultNHttpClient implements NHttpClient {
     }
 
     public static InputStream prepareGlobalOpenStream(URL url) throws IOException {
-        URLConnection c = null;
-        c = url.openConnection();
+        return prepareGlobalOpenStream(url, null);
+    }
+
+    /** Open a stream, optionally with an HTTP Range header (used for cheap existence probes). */
+    public static InputStream prepareGlobalOpenStream(URL url, String range) throws IOException {
+        URLConnection c = url.openConnection();
+        if (range != null && c instanceof HttpURLConnection && !range.isEmpty()) {
+            ((HttpURLConnection) c).setRequestProperty("Range", range);
+        }
         prepareGlobalConnection(c);
         return c.getInputStream();
     }
@@ -554,7 +561,6 @@ public class DefaultNHttpClient implements NHttpClient {
                             NInputSource bytes = null;
                             if (!r.isOneWay()) {
                                 //TODO change me with a smart copy input source!
-                                HttpURLConnection uc2 = finalUc;
                                 InputStream is = null;
                                 if (finalRCode != null && finalRCode.isError()) {
                                     is = finalUc.getErrorStream();
@@ -569,17 +575,10 @@ public class DefaultNHttpClient implements NHttpClient {
                                 if (is == null) {
                                     is = NullInputStream.INSTANCE;
                                 }
-                                bytes = NInputSourceBuilder.of(is).closeAction(() -> {
-                                            // close connection when fully read!
-                                            if (uc2 != null) {
-                                                try {
-                                                    uc2.disconnect();
-                                                } catch (Exception e) {
-                                                    //
-                                                }
-                                            }
-                                        }
-                                ).createInputSource();
+                                // PERF-03: closing the HTTP InputStream returns the socket to the
+                                // keep-alive pool. Calling disconnect() here would tear it down and
+                                // force a fresh TCP+TLS handshake for every artifact request.
+                                bytes = NInputSourceBuilder.of(is).createInputSource();
                                 long contentLength = finalUc.getContentLengthLong();
                                 if (contentLength >= 0) {
                                     bytes.metaData().contentLength(contentLength);

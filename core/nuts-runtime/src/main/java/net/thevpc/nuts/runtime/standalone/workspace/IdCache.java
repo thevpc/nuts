@@ -66,9 +66,10 @@ class IdCache {
                         Class<?> serviceClass
     ) {
         int count = 0;
-        for (Class<?> extensionPoint : extensionPoints) {
-            Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).type().orNull();
-            if (c != null) {
+        // PERF-11: load the class once, then test every extension point against it
+        Class<?> c = new NTypeLoaderImpl(className).tryLoad(bootClassLoader).type().orNull();
+        if (c != null) {
+            for (Class<?> extensionPoint : extensionPoints) {
                 if (!logStart.get()) {
                     Set<String> extensionPointStrings = Arrays.stream(extensionPoints).map(x -> x.getName()).collect(Collectors.toSet());
                     if (id == null) {

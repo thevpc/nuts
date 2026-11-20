@@ -61,6 +61,13 @@ import org.xml.sax.SAXParseException;
  */
 public class XmlUtils {
 
+    // PERF-06: JAXP service lookup is expensive and happens for every POM parse.
+    // Factories are not guaranteed to be thread-safe, so keep one per thread.
+    private static final ThreadLocal<DocumentBuilderFactory> SAFE_FACTORY =
+            ThreadLocal.withInitial(() -> createDocumentBuilderFactory(true));
+    private static final ThreadLocal<DocumentBuilderFactory> UNSAFE_FACTORY =
+            ThreadLocal.withInitial(() -> createDocumentBuilderFactory(false));
+
 //    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration) {
 //        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
 //    }
@@ -212,6 +219,38 @@ public class XmlUtils {
     }
 
     public static DocumentBuilder createDocumentBuilder(boolean safe) {
+        DocumentBuilderFactory documentFactory = (safe ? SAFE_FACTORY : UNSAFE_FACTORY).get();
+        DocumentBuilder b;
+        try {
+            b = documentFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException ex) {
+            throw new NIOException(ex);
+        }
+
+        b.setErrorHandler(new ErrorHandler() {
+            @Override
+            public void warning(SAXParseException exception) throws SAXException {
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception).asFinestAlert());
+            }
+
+            @Override
+            public void error(SAXParseException exception) throws SAXException {
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception).asFinestAlert());
+            }
+
+            @Override
+            public void fatalError(SAXParseException exception) throws SAXException {
+                NLog.of(XmlUtils.class)
+                        .log(NMsg.ofC("%s",exception)
+                                .asFinestAlert());
+            }
+        });
+        return b;
+    }
+
+    private static DocumentBuilderFactory createDocumentBuilderFactory(boolean safe) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         if (safe) {
             documentFactory.setExpandEntityReferences(false);
@@ -241,34 +280,7 @@ public class XmlUtils {
             documentFactory.setXIncludeAware(false);
             documentFactory.setValidating(false);
         }
-        DocumentBuilder b;
-        try {
-            b = documentFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            throw new NIOException(ex);
-        }
-
-        b.setErrorHandler(new ErrorHandler() {
-            @Override
-            public void warning(SAXParseException exception) throws SAXException {
-                NLog.of(XmlUtils.class)
-                        .log(NMsg.ofC("%s",exception).asFinestAlert());
-            }
-
-            @Override
-            public void error(SAXParseException exception) throws SAXException {
-                NLog.of(XmlUtils.class)
-                        .log(NMsg.ofC("%s",exception).asFinestAlert());
-            }
-
-            @Override
-            public void fatalError(SAXParseException exception) throws SAXException {
-                NLog.of(XmlUtils.class)
-                        .log(NMsg.ofC("%s",exception)
-                                .asFinestAlert());
-            }
-        });
-        return b;
+        return documentFactory;
     }
 
     private static void setLenientFeature(DocumentBuilderFactory dbFactory, String s, boolean b) {

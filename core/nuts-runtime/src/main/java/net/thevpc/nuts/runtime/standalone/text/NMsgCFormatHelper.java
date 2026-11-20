@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
     int paramIndex = 0;
-    private static Pattern CFORMAT_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+    private static final Pattern CFORMAT_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
 
     public NMsgCFormatHelper(NMsg m) {
         super(m);
@@ -144,6 +144,11 @@ public class NMsgCFormatHelper extends AbstractNMsgFormatHelper {
     }
 
     private String formatWith(String pattern, Object value) {
+        // PERF-15: the overwhelming majority of placeholders are plain %s; avoid
+        // allocating a Formatter (and its locale lookup) for those.
+        if ("%s".equals(pattern)) {
+            return String.valueOf(value);
+        }
         StringBuilder sb2 = new StringBuilder();
         new Formatter(sb2, locale).format(pattern, value);
         return sb2.toString();

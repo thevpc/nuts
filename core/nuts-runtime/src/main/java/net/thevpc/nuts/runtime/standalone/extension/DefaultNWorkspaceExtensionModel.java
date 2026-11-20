@@ -852,7 +852,8 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
 
-    public synchronized NMutableClassLoader createMutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+    // PERF-05: no shared mutable state is touched here; do not serialize parallel classloader creation
+    public NMutableClassLoader createMutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
         if (nodes == null) {
             nodes = new NClasspathEntry[0];
         } else {
@@ -867,7 +868,9 @@ public class DefaultNWorkspaceExtensionModel {
         return new DefaultNMutableClassLoader(name, parent, nodes, repositoryFilter, dependencyFilter);
     }
 
-    public synchronized NClassLoader createImmutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, boolean usePreferred, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
+    // PERF-05: classpath resolution (which may hit the network) runs before the
+    // cache lock; only cache access below is synchronized.
+    public NClassLoader createImmutableClassLoader(String name, ClassLoader parent, NClasspathEntry[] nodes, boolean usePreferred, NRepositoryFilter repositoryFilter, NDependencyFilter dependencyFilter) {
         if (nodes == null) {
             nodes = new NClasspathEntry[0];
         } else {

@@ -21,8 +21,13 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class NElementMapperObjReflect implements NElementMapper<Object> {
+
+    // PERF-10: record metadata is immutable per class; inspect it only once
+    private static final ConcurrentMap<Class<?>, RecordComponentData[]> RECORD_COMPONENTS = new ConcurrentHashMap<>();
 
 
     public NElementMapperObjReflect() {
@@ -209,6 +214,10 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
     }
 
     private static RecordComponentData[] recordComponents(Class<?> type) {
+        RecordComponentData[] cached = RECORD_COMPONENTS.get(type);
+        if (cached != null) {
+            return cached;
+        }
         try {
             Object[] components = (Object[]) Class.class.getMethod("getRecordComponents").invoke(type);
             Class<?>[] parameterTypes = new Class<?>[components.length];
@@ -235,6 +244,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                         accessor
                 );
             }
+            RECORD_COMPONENTS.put(type, result);
             return result;
         } catch (ReflectiveOperationException ex) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to inspect record type %s", type.getName()), ex);

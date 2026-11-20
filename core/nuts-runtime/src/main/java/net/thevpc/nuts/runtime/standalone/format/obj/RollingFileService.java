@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 
 public class RollingFileService {
     public static final String YYYY_M_MDD_H_HMMSS_SSS = "yyyyMMddHHmmssSSSSSS";
+    // PERF-20: SimpleDateFormat is mutable and not thread-safe; keep one per thread
+    private static final ThreadLocal<SimpleDateFormat> ROLL_DATE_FORMAT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat(YYYY_M_MDD_H_HMMSS_SSS));
     private DecimalFormat doubleFormat;
     private String ps;
     private Pattern p;
@@ -145,7 +148,7 @@ public class RollingFileService {
 
     private String nextFileName(Instant instant, int number) {
         return filePatternSimple.replace("#",
-                new SimpleDateFormat(YYYY_M_MDD_H_HMMSS_SSS).format(
+                ROLL_DATE_FORMAT.get().format(
                         Date.from(instant)
                 )
                         + "-"
@@ -167,7 +170,7 @@ public class RollingFileService {
             String t = matcher.group("t");
             Date localDateTime = null;
             try {
-                localDateTime = new SimpleDateFormat(YYYY_M_MDD_H_HMMSS_SSS).parse(t);
+                localDateTime = ROLL_DATE_FORMAT.get().parse(t);
             } catch (ParseException e) {
                 return NOptional.ofEmpty();
             }

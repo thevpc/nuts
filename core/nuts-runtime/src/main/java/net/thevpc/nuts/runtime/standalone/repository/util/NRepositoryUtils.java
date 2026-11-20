@@ -20,6 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NRepositoryUtils {
+    // PERF-13: precompiled repository-location patterns
+    private static final Pattern REPO_LOCATION_PATTERN = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)");
+    private static final Pattern REPO_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]+");
+
     public static NRepositoryRef optionsToRef(NRepositorySpec options) {
         return new NRepositoryRef()
                 .enabled(options.isEnabled())
@@ -231,13 +235,13 @@ public class NRepositoryUtils {
             String finalLocationString = locationString;
             return NOptional.<NRepositoryLocation>ofError(() -> NMsg.ofC("invalid selection syntax : %s", finalLocationString));
         }
-        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(locationString);
+        Matcher matcher = REPO_LOCATION_PATTERN.matcher(locationString);
         if (matcher.find()) {
             name = matcher.group("name");
             url = matcher.group("value");
         } else {
             DefaultNRepositoryDB db = NWorkspaceExt.of().getRepositoryModel().getDB();
-            if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
+            if (REPO_NAME_PATTERN.matcher(locationString).matches()) {
                 name = locationString;
                 NRepositorySpec ro = db.getDefinitionByName(name).orNull();
                 String u = ro==null?null:ro.sourceLocation().fullLocation();

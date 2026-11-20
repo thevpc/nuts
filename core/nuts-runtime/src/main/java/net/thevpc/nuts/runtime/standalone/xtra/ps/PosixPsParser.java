@@ -17,8 +17,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class PosixPsParser {
+
+    // PERF-08: immutable parsers shared across all ps rows
+    private static final Pattern HHMM_PATTERN = Pattern.compile("[0-9]+:[0-9]+");
+    private static final Pattern YEAR_PATTERN = Pattern.compile("[0-9]{4}");
+    private static final DateTimeFormatter HHMMSS_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
+    private static final DateTimeFormatter PS_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy", Locale.ENGLISH);
 
     public NStream<NPsInfo> parse(Reader reader) {
         BufferedReader br = new BufferedReader(reader);
@@ -318,18 +327,16 @@ public class PosixPsParser {
             LocalDate localDate = LocalDate.parse(fullDateStr); // uses ISO_LOCAL_DATE format
             LocalDateTime dateTime = localDate.atStartOfDay(); // midnight
             return dateTime.atZone(ZoneId.systemDefault()).toInstant();
-        } else if (auxStatDate.matches("[0-9]+:[0-9]+")) {
+        } else if (HHMM_PATTERN.matcher(auxStatDate).matches()) {
             String[] parts = auxStatDate.split(":");
             String timeStr = String.format("%02d", NLiteral.of(parts[0]).asInt().get())
                     + ":" + String.format("%02d", NLiteral.of(parts[1]).asInt().get())
                     + ":00";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-            LocalTime time = LocalTime.parse(timeStr, formatter);
+            LocalTime time = LocalTime.parse(timeStr, HHMMSS_FORMATTER);
             LocalDateTime dateTime = LocalDate.now().atTime(time);
             return dateTime.atZone(ZoneId.systemDefault()).toInstant();
-        } else if (auxStatDate.matches("[0-9]{4}")) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
-            LocalTime time = LocalTime.parse(auxStatDate, formatter);
+        } else if (YEAR_PATTERN.matcher(auxStatDate).matches()) {
+            LocalTime time = LocalTime.parse(auxStatDate, YEAR_FORMATTER);
             LocalDateTime dateTime = LocalDate.now().atTime(time);
             return dateTime.atZone(ZoneId.systemDefault()).toInstant();
         } else {
@@ -338,8 +345,7 @@ public class PosixPsParser {
     }
 
     public static Instant parseStartDateLong(String lstart) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy", Locale.ENGLISH);
-        LocalDateTime dateTime = LocalDateTime.parse(lstart.replace("  "," "), formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(lstart.replace("  "," "), PS_DATE_FORMATTER);
         return dateTime.atZone(ZoneId.systemDefault()).toInstant();
     }
 }

@@ -15,8 +15,14 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public abstract class AbstractNText implements NText {
+
+    // PERF-16: quote/compile separator patterns only once
+    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r?\\n");
+    private static final ConcurrentMap<String, Pattern> SEPARATOR_PATTERNS = new ConcurrentHashMap<>();
 
     public AbstractNText() {
     }
@@ -295,11 +301,18 @@ public abstract class AbstractNText implements NText {
     }
 
     public List<NText> split(String separator, boolean returnSeparator) {
-        return split(Pattern.compile(Pattern.quote(separator)), returnSeparator);
+        Pattern p = SEPARATOR_PATTERNS.get(separator);
+        if (p == null) {
+            p = SEPARATOR_PATTERNS.computeIfAbsent(separator, k -> Pattern.compile(Pattern.quote(k)));
+            if (SEPARATOR_PATTERNS.size() > 256) {
+                SEPARATOR_PATTERNS.clear();
+            }
+        }
+        return split(p, returnSeparator);
     }
 
     public List<NText> splitLines(boolean returnSeparator) {
-        return split(Pattern.compile("\\r?\\n"), returnSeparator);
+        return split(LINE_SEPARATOR_PATTERN, returnSeparator);
     }
 
     @Override

@@ -20,6 +20,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 public class WindowsPs1Parser {
+    // PERF-08: formatter is immutable and shared across all parsed rows
+    private static final DateTimeFormatter START_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
     public NStream<NPsInfo> parse(Reader reader) {
         BufferedReader br = new BufferedReader(reader);
         return NStream.ofIterator(new Iterator<NPsInfo>() {
@@ -159,10 +162,8 @@ public class WindowsPs1Parser {
                             if ("N/A".equals(value)) {
                                 //ignore
                             } else {
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-
                                 // Parse the string into a LocalDateTime
-                                LocalDateTime localDateTime = LocalDateTime.parse(value, formatter);
+                                LocalDateTime localDateTime = LocalDateTime.parse(value, START_FORMATTER);
 
                                 // Convert LocalDateTime to Instant (Assuming UTC for simplicity)
                                 v.setStartTime(localDateTime.atZone(ZoneId.systemDefault()).toInstant());

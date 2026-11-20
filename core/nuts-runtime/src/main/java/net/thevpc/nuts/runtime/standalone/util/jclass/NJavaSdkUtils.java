@@ -32,8 +32,30 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 public class NJavaSdkUtils {
+
+    // PERF-14: provider detection runs for every discovered JDK path at startup
+    private static final String[] JDK_PROVIDER_IDS = {
+            "bellsoft", "oracle", "openj9", "liberica", "sap", "graalvm", "temurin",
+            "sapmachine", "corretto", "jbr", "azul", "zulu", "semeru"
+    };
+    private static final String[] JDK_PROVIDER_NAMES = {
+            "Bellsoft", "Oracle", "Eclipse OpenJ9", "Bellsoft Liberica", "SAP", "GraalVM",
+            "IBM Temurin", "SAP Machine", "Amazon Corretto", "Jetbrains", "Azul Zulu",
+            "Azul Zulu", "IBM Semeru"
+    };
+    private static final Pattern[] JDK_PROVIDER_PATTERNS = buildJdkProviderPatterns();
+
+    private static Pattern[] buildJdkProviderPatterns() {
+        Pattern[] result = new Pattern[JDK_PROVIDER_IDS.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Pattern.compile(".*\\b" + Pattern.quote(JDK_PROVIDER_IDS[i]) + "\\b.*",
+                    Pattern.CASE_INSENSITIVE);
+        }
+        return result;
+    }
 
     private final List<JavaProvider> javaProviders = new ArrayList<>();
     private NRuntimeDistribution hostVm;
@@ -705,26 +727,12 @@ public class NJavaSdkUtils {
     }
 
     public String detectJdkProvider(String name) {
-        for (String s : new String[]{
-                "bellsoft:Bellsoft",
-                "oracle:Oracle",
-                "openj9:Eclipse OpenJ9",
-                "liberica:Bellsoft Liberica",
-                "sap:SAP",
-                "graalvm:GraalVM",
-                "temurin:IBM Temurin",
-                "sapmachine:SAP Machine",
-                "corretto:Amazon Corretto",
-                "jbr:Jetbrains",
-                "azul:Azul Zulu",
-                "zulu:Azul Zulu",
-                "semeru:IBM Semeru",
-
-
-        }) {
-            String[] t = s.split(":");
-            if (name.toLowerCase().matches(".*\\b" + t[0].toLowerCase() + "\\b.*")) {
-                return t[1];
+        if (name == null) {
+            return null;
+        }
+        for (int i = 0; i < JDK_PROVIDER_PATTERNS.length; i++) {
+            if (JDK_PROVIDER_PATTERNS[i].matcher(name).matches()) {
+                return JDK_PROVIDER_NAMES[i];
             }
         }
         return null;

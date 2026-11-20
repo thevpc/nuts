@@ -324,7 +324,8 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        try (InputStream is = DefaultNHttpClient.prepareGlobalOpenStream(url)) {
+        // PERF-19: a ranged GET is enough to prove existence; avoid downloading the whole body
+        try (InputStream is = DefaultNHttpClient.prepareGlobalOpenStream(url, "bytes=0-0")) {
             return true;
         } catch (IOException e) {
             return false;

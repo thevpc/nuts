@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A mutable sequence of characters with extensive utility methods,
@@ -38,6 +40,20 @@ import java.util.stream.IntStream;
  * @see NBlankable
  */
 public class NStringBuilderImpl implements NStringBuilder {
+    // PERF-17: regexes in replace/replaceFirst/replaceAll are frequently reused
+    private static final ConcurrentMap<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
+
+    private static Pattern cachedPattern(String regex) {
+        Pattern p = PATTERN_CACHE.get(regex);
+        if (p == null) {
+            p = PATTERN_CACHE.computeIfAbsent(regex, Pattern::compile);
+            if (PATTERN_CACHE.size() > 512) {
+                PATTERN_CACHE.clear();
+            }
+        }
+        return p;
+    }
+
     private StringBuilder data;
     /**
      * N string builder.
@@ -1667,8 +1683,8 @@ public class NStringBuilderImpl implements NStringBuilder {
      */
     @Override
     public NStringBuilder replaceFirst(String regex, String replacement) {
-        String s = Pattern.compile(regex).matcher(this).replaceFirst(replacement);
-        if (!s.equals(data.toString())) {
+        String s = cachedPattern(regex).matcher(this).replaceFirst(replacement);
+        if (!s.contentEquals(data)) {
           /**
            * Sets the content.
            *
@@ -1707,7 +1723,7 @@ public class NStringBuilderImpl implements NStringBuilder {
          * @param Pattern.compile(regex).matcher(this).replaceAll(replacement) pattern.compile(regex).matcher(this).replace all(replacement)
          * @return set content result
          */
-        return setContent(Pattern.compile(regex).matcher(this).replaceAll(replacement));
+        return setContent(cachedPattern(regex).matcher(this).replaceAll(replacement));
     }
 
     /**

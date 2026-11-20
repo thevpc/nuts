@@ -886,8 +886,7 @@ public final class NReservedMavenUtils {
         for (String p : cp.split(File.pathSeparator)) {
             File f = new File(p);
             if (f.isDirectory()) {
-                Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
-                        .matcher(f.getPath().replace('/', File.separatorChar));
+                Matcher m = PATTERN_TARGET_CLASSES.matcher(f.getPath().replace('/', File.separatorChar));
                 if (m.find()) {
                     String src = m.group("src");
                     if (new File(src, "pom.xml").exists() && new File(src,

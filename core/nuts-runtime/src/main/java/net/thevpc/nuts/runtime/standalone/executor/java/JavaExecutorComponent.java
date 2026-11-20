@@ -78,6 +78,9 @@ import java.util.stream.Collectors;
 @NComponentScope(NScopeType.WORKSPACE)
 public class JavaExecutorComponent implements NExecutorComponent {
 
+    // PERF-12: compile once instead of once per classpath entry
+    private static final Pattern NUTS_JAR_PATTERN = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
+
     public static NId ID;
 
     @Override
@@ -223,8 +226,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         if (sid != null && sid.equalsShortId(NId.getApi("").orNull())) {
                             nutsDependencyVersion = sid.version();
                         } else {
-                            Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
-                            Matcher mm = pp.matcher(s);
+                            Matcher mm = NUTS_JAR_PATTERN.matcher(s);
                             if (mm.find()) {
                                 String v = mm.group("v");
                                 nutsDependencyVersion = NVersion.get(v).get();

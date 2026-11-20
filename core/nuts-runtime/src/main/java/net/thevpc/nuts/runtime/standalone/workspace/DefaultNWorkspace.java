@@ -1624,9 +1624,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             defs.put(m.id().longId(), m);
             if (withDependencies) {
                 for (NDependency dependency : m.dependencies().get()) {
-                    if (!defs.containsKey(dependency.toId().longId())) {
-                        m = NFetch.of(id).failFast(false).dependencyFilter(dependencyRunFilter).getResultDefinition();
-                        defs.put(m.id().longId(), m);
+                    NId depId = dependency.toId();
+                    // PERF-21: fetch each dependency once, and fetch the dependency itself
+                    // instead of re-fetching the original boot id for every entry.
+                    if (!defs.containsKey(depId.longId())) {
+                        NDefinition depDef = NFetch.of(depId).failFast(false).dependencyFilter(dependencyRunFilter).getResultDefinition();
+                        defs.put(depDef.id().longId(), depDef);
                     }
                 }
             }
