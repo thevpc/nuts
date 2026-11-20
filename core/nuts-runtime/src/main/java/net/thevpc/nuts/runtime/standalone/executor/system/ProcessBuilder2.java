@@ -101,6 +101,17 @@ public class ProcessBuilder2 {
             return pid;
         }
         try {
+            // Java 9+: the public API works on every platform (and under JPMS)
+            java.lang.reflect.Method pidMethod = Process.class.getMethod("pid");
+            Object value = pidMethod.invoke(proc);
+            if (value instanceof Number) {
+                pid = ((Number) value).longValue();
+                return pid;
+            }
+        } catch (Exception ignored) {
+            // Java 8 or restricted runtime: fall back to the JDK-internal fields
+        }
+        try {
             //for windows
             if (proc.getClass().getName().equals("java.lang.Win32Process") || proc.getClass().getName().equals("java.lang.ProcessImpl")) {
                 Field f = proc.getClass().getDeclaredField("handle");
@@ -316,6 +327,7 @@ public class ProcessBuilder2 {
                 out.file = out.tempPath.toFile().get();
                 base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
             }
+            break;
             case PATH: {
                 NPath path = out.base.path();
                 Path file = path.toPath().get();
@@ -325,10 +337,10 @@ public class ProcessBuilder2 {
                     out.tempStream = out.base.path().getOutputStream(options.toArray(new NPathOption[0]));
                 } else {
                     if (options.isEmpty()) {
-                        in.file = file.toFile();
+                        out.file = file.toFile();
                         base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
                     } else if (options.size() == 1 && options.contains(NPathOption.APPEND)) {
-                        in.file = file.toFile();
+                        out.file = file.toFile();
                         base.redirectOutput(ProcessBuilder.Redirect.appendTo(out.file));
                     } else {
                         base.redirectOutput(ProcessBuilder.Redirect.PIPE);
@@ -366,6 +378,7 @@ public class ProcessBuilder2 {
                 err.file = err.tempPath.toFile().get();
                 base.redirectError(ProcessBuilder.Redirect.to(err.file));
             }
+            break;
             case PATH: {
                 NPath path = err.base.path();
                 Path file = path.toPath().get();
@@ -375,10 +388,10 @@ public class ProcessBuilder2 {
                     err.tempStream = err.base.path().getOutputStream(options.toArray(new NPathOption[0]));
                 } else {
                     if (options.isEmpty()) {
-                        in.file = file.toFile();
+                        err.file = file.toFile();
                         base.redirectError(ProcessBuilder.Redirect.to(err.file));
                     } else if (options.size() == 1 && options.contains(NPathOption.APPEND)) {
-                        in.file = file.toFile();
+                        err.file = file.toFile();
                         base.redirectError(ProcessBuilder.Redirect.appendTo(err.file));
                     } else {
                         base.redirectError(ProcessBuilder.Redirect.PIPE);

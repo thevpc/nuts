@@ -679,8 +679,9 @@ public class DefaultNHttpClient implements NHttpClient {
                     }
                 }
                 if (!success) {
-                    uc.setRequestMethod("POST");
-                    uc.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+                    // never silently downgrade PATCH to POST: the server would
+                    // perform a different operation than the caller requested
+                    throw new NIOException(NMsg.ofC("PATCH is not supported by the current HTTP stack"), ex);
                 }
             } else {
                 throw ex;
