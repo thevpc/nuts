@@ -1032,7 +1032,7 @@ public class DefaultNTextRPI implements NTextRPI {
                     .best();
             return b.map(NScoredCallable::call)
                     .orElseGetOptionalFrom(() -> createTextFormatDefault(type, pattern, finalExpectedType))
-                    .withMessage(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                    .withMessage(() -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, finalExpectedType, "Number"));
         }
         return createTextFormatDefault(type, pattern, expectedType);
     }

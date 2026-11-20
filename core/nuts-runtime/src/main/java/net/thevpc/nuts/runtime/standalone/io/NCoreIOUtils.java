@@ -219,7 +219,7 @@ public class NCoreIOUtils {
                     }
                 }
             } catch (Exception ex0) {
-                bLog.log(NMsg.ofC("unable to get LastModifiedTime for file : %s", path.toString(), ex0.toString()).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
+                bLog.log(NMsg.ofC("unable to get LastModifiedTime for file : %s : %s", path.toString(), ex0.toString()).withLevel(Level.FINEST).withIntent(NMsgIntent.FAIL));
             }
         }
         return proceed;

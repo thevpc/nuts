@@ -800,7 +800,9 @@ public class DefaultNWorkspaceConfigModel {
 
     public void setBootRuntimeDependencies(String dependencies) {
         if (!Objects.equals(dependencies, storeModelRuntime.getDependencies())) {
-//            options = CoreNutsUtils.validate(options, ws);
+            storeModelRuntime.setDependencies(dependencies);
+            setConfigRuntime(storeModelRuntime, true);
+            fireConfigurationChanged("runtime-dependencies", ConfigEventType.API);
         }
     }
 

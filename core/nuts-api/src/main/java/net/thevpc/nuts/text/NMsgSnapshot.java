@@ -91,7 +91,9 @@ public class NMsgSnapshot implements NToElement, NCopiable, Cloneable {
     public NMsg toMsg() {
         boolean plain = isPlainFormat();
         if (plain) {
-            return NMsg.ofP(text == null ? "" : text.toString());
+            // the raw text: toString() is the NTF-escaped form, and wrapping that as plain
+            // text froze the escapes into the message ("## x" came back as "\## x")
+            return NMsg.ofP(text == null ? "" : text.filteredText());
         }
         return NMsg.ofNtf(text)
                 .withDuration(duration)
@@ -102,7 +104,9 @@ public class NMsgSnapshot implements NToElement, NCopiable, Cloneable {
     @Override
     public NElement toElement() {
         if (isPlainFormat()) {
-            return NElement.ofString(text == null ? "" : text.toString());
+            // read back as plain text by of(NElement), so it must be stored unescaped too;
+            // the escaped form gained another layer of backslashes on every save and load
+            return NElement.ofString(text == null ? "" : text.filteredText());
         }
         NObjectElementBuilder b = NObjectElementBuilder.of();
         b.add("text", text == null ? "" : text.toString());

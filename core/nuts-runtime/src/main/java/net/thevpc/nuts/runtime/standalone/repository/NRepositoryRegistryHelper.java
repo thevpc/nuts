@@ -75,7 +75,7 @@ public class NRepositoryRegistryHelper {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
                 throw new NIllegalArgumentException(
-                        NMsg.ofC("repository with the same uuid already exists % / %s", ii.repo.uuid(), ii.repo.name())
+                        NMsg.ofC("repository with the same uuid already exists %s / %s", ii.repo.uuid(), ii.repo.name())
                 );
             }
         }

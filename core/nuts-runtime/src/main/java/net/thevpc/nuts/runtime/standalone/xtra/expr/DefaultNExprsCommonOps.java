@@ -533,7 +533,7 @@ public class DefaultNExprsCommonOps {
                 return (NOptional) v;
             }
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("%s %s %s", op.image() + type.id(), sig));
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s %s", op.image() + type.id(), sig));
     }
 
     public NOptional<NFunction<?, ?>> findFunction1(NExprCommonOp op, NFixity type, NPlatformSignature sig0) {
@@ -559,7 +559,7 @@ public class DefaultNExprsCommonOps {
                 return (NOptional) v;
             }
         }
-        return NOptional.ofNamedEmpty(NMsg.ofC("%s %s %s", op.image() + type.id(), sig));
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s %s", op.image() + type.id(), sig));
     }
 
 

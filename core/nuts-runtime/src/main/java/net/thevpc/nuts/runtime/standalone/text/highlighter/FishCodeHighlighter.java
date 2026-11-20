@@ -317,7 +317,7 @@ public class FishCodeHighlighter implements NCodeHighlighter {
                         return i;
                     }
                     NText p = all.get(i + 1);
-                    switch (resolveTokenType(n)) {
+                    switch (resolveTokenType(p)) {
                         case SPACE:
                         case SEPARATORS:{
                             return i;

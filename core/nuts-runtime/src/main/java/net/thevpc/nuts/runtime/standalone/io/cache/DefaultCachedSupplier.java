@@ -147,14 +147,16 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
                             T d = NElementReader.ofJson().read(cachePath, clazz);
                             if (d != null) {
                                 if (validator != null && !validator.isValidValue(d)) {
-                                    //this is invalid cache!
+                                    // this value is stale/invalid: drop it and recompute,
+                                    // never return it to the caller
                                     if (cachePath.isRegularFile()) {
                                         cachePath.delete();
                                     }
+                                } else {
+                                    this.valueCacheId = currentCacheId;
+                                    this.value = d;
+                                    return d;
                                 }
-                                this.valueCacheId = currentCacheId;
-                                this.value = d;
-                                return d;
                             }
                         } catch (Exception ex) {
                             //

@@ -91,16 +91,16 @@ Each fix must land with a regression test (unit test preferred; a focused integr
 
 | ID | Location | Defect / fix |
 |---|---|---|
-| BUG-08 | `io/cache/DefaultCachedSupplier.java:146-157` | A value rejected by `validator.isValidValue(d)` is deleted from disk but still assigned and returned → do not return `d`; recompute. |
-| BUG-09/10 | `text/highlighter/ShCodeHighlighter.java:363-388`, `FishCodeHighlighter.java:306-330` | Lookahead `p = all.get(i+1)` is computed but inner switch tests `resolveTokenType(n)` again → `SPACE`/`SEPARATORS` branches unreachable. Switch on `resolveTokenType(p)`. |
-| BUG-11 | `repository/impl/nuts/NHttpSrvRepository.java:332-349` | `NamedNIdFromStreamIterator.source0` never assigned in constructor; `describe()` NPEs. Assign it or describe with a stored label. |
+| BUG-08 — DONE 2026-11-20 | `io/cache/DefaultCachedSupplier.java:146-157` | A value rejected by `validator.isValidValue(d)` is deleted from disk but still assigned and returned → do not return `d`; recompute. |
+| BUG-09/10 — DONE 2026-11-20 | `text/highlighter/ShCodeHighlighter.java:363-388`, `FishCodeHighlighter.java:306-330` | Lookahead `p = all.get(i+1)` is computed but inner switch tests `resolveTokenType(n)` again → `SPACE`/`SEPARATORS` branches unreachable. Switch on `resolveTokenType(p)`. |
+| BUG-11 — DONE 2026-11-20 | `repository/impl/nuts/NHttpSrvRepository.java:332-349` | `NamedNIdFromStreamIterator.source0` never assigned in constructor; `describe()` NPEs. Assign it or describe with a stored label. |
 | BUG-12 — DONE 2026-11-20 | `io/util/CoreSecurityUtilsV1.java:169-177` | `(ch1|ch2|ch3|ch4) < 0` after `& 0xff` is unreachable; no length/bounds checks on truncated ciphertext. Validate `bytes.length >= 4` and `4L + v <= bytes.length`. |
 | BUG-13 — DONE 2026-11-20 | `xtra/web/DefaultNHttpClient.java:42-55` | `URLDecoder.decode` treats `+` as space in userinfo; colonless userinfo produces Basic credentials without `:`. Decode percent-escapes only and append `":"` when needed. |
-| BUG-14 | `format/tson/parser/custom/TsonCustomLexer.java:208-242` | `<` operator tokens carry wrong image/variant (`<=`, `<--`, `<-`, plain `<`); align with `NOperatorSymbol`. |
-| BUG-15 | `workspace/config/DefaultNWorkspaceConfigModel.java:801-805` | `setBootRuntimeDependencies` is a no-op (body commented out) → implement like `setRuntimeId` (790-798). |
-| BUG-16 | `repository/NRepositoryRegistryHelper.java:77-79` | Invalid bare `%` in CFORMAT message → change to `"%s / %s"`. |
-| BUG-17 | `xtra/expr/DefaultNExprsCommonOps.java:536,562`; `elem/DefaultNElementNavigator.java:41-46`; `elem/item/DefaultNNumberElement.java:148-149`; `util/NTypeLoaderImpl.java:124-129` | CFORMAT strings with three placeholders but two args → `[ERROR] Invalid CFORMAT message`. Align placeholders/args; fix "method"→"field" wording. |
-| BUG-18 | `text/DefaultNTextRPI.java:1035`; `workspace/NWorkspaceUtils.java:290-295`; `io/NCoreIOUtils.java:219-220` | Extra CFORMAT args silently drop exception/context text → add missing placeholders. |
+| BUG-14 — DONE 2026-11-20 | `format/tson/parser/custom/TsonCustomLexer.java:208-242` | `<` operator tokens carry wrong image/variant (`<=`, `<--`, `<-`, plain `<`); align with `NOperatorSymbol`. |
+| BUG-15 — DONE 2026-11-20 | `workspace/config/DefaultNWorkspaceConfigModel.java:801-805` | `setBootRuntimeDependencies` is a no-op (body commented out) → implement like `setRuntimeId` (790-798). |
+| BUG-16 — DONE 2026-11-20 | `repository/NRepositoryRegistryHelper.java:77-79` | Invalid bare `%` in CFORMAT message → change to `"%s / %s"`. |
+| BUG-17 — DONE 2026-11-20 | `xtra/expr/DefaultNExprsCommonOps.java:536,562`; `elem/DefaultNElementNavigator.java:41-46`; `elem/item/DefaultNNumberElement.java:148-149`; `util/NTypeLoaderImpl.java:124-129` | CFORMAT strings with three placeholders but two args → `[ERROR] Invalid CFORMAT message`. Align placeholders/args; fix "method"→"field" wording. |
+| BUG-18 — DONE 2026-11-20 | `text/DefaultNTextRPI.java:1035`; `workspace/NWorkspaceUtils.java:290-295`; `io/NCoreIOUtils.java:219-220` | Extra CFORMAT args silently drop exception/context text → add missing placeholders. |
 | REL-01 — DONE 2026-11-20 | `io/util/ZipUtils.java:164` | `FileInputStream` in `addFileToZip()` never closed → fd exhaustion on large backups; use try-with-resources. |
 | REL-02 — DONE 2026-11-20 | `security/util/CoreDigestHelper.java:105-108`; `io/NCoreIOUtils.java:139-142,186-196` | `Files.newInputStream` leaked in directory digest walks (one fd per file, reached at boot from `DefaultNWorkspace.java:959`); close in the `visitFile` callbacks. |
 | REL-03 — DONE 2026-11-20 | `io/NReservedMonitoredURLInputStream.java:98-117` | `close()` throws on length mismatch and dereferences a possibly null log → never throw from `close()`; validate separately; null-safe logger. |

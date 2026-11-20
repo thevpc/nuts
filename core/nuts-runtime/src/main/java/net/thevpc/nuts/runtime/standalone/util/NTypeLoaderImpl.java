@@ -126,7 +126,7 @@ public class NTypeLoaderImpl implements net.thevpc.nuts.reflect.NTypeLoader {
                         ex).asFinestAlert(ex));
             }
             return null;
-        }).withMessage(() -> NMsg.ofC("missing method find %s.%s : %s", className, name).asFineAlert());
+        }).withMessage(() -> NMsg.ofC("unable to find field %s.%s : %s", className, name, "field not present").asFineAlert());
     }
 
     public String className() {

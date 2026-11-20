@@ -221,25 +221,25 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                         int c2 = reader.peekAt(2);
                         if (c2 == '=') {
                             reader.read(3);
-                            return new NElementTokenImpl("<==", NElementTokenType.OPERATOR_SYMBOL, "<<<", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
+                            return new NElementTokenImpl("<==", NElementTokenType.OPERATOR_SYMBOL, "<==", 0, line, column, pos, NOperatorSymbol.LT_EQ2, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("<=", NElementTokenType.OPERATOR_SYMBOL, "<<", 0, line, column, pos, NOperatorSymbol.LTE, null);
+                        return new NElementTokenImpl("<=", NElementTokenType.OPERATOR_SYMBOL, "<=", 0, line, column, pos, NOperatorSymbol.LTE, null);
                     } else if (c1 == '-') {
                         int c2 = reader.peekAt(2);
                         if (c2 == '-') {
                             reader.read(3); // <--x
-                            return new NElementTokenImpl("<--", NElementTokenType.OPERATOR_SYMBOL, "<<<", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
+                            return new NElementTokenImpl("<--", NElementTokenType.OPERATOR_SYMBOL, "<--", 0, line, column, pos, NOperatorSymbol.LT_MINUS2, null);
                         } else if (Character.isDigit(c2)) {
                             //<-3
                             reader.read(); // <--x
                             return new NElementTokenImpl("<", NElementTokenType.OPERATOR_SYMBOL, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
                         }
                         reader.read(2);
-                        return new NElementTokenImpl("<=", NElementTokenType.OPERATOR_SYMBOL, "<<", 0, line, column, pos, NOperatorSymbol.LT2, null);
+                        return new NElementTokenImpl("<-", NElementTokenType.OPERATOR_SYMBOL, "<-", 0, line, column, pos, NOperatorSymbol.LT, null);
                     }
                     reader.read();
-                    return new NElementTokenImpl("<", NElementTokenType.OPERATOR_SYMBOL, "&", 0, line, column, pos, NOperatorSymbol.LT, null);
+                    return new NElementTokenImpl("<", NElementTokenType.OPERATOR_SYMBOL, "<", 0, line, column, pos, NOperatorSymbol.LT, null);
                 }
 
                 case '-': {

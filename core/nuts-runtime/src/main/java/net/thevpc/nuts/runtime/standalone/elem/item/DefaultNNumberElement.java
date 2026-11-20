@@ -146,7 +146,7 @@ public class DefaultNNumberElement extends DefaultNPrimitiveElement implements N
             }
         }
         if (!newValue.isPresent()) {
-            return NOptional.ofNamedEmpty(NMsg.ofC("unable to convert %s to %s : %s", type(), elemType));
+            return NOptional.ofNamedEmpty(NMsg.ofC("unable to convert %s to %s : %s", value(), type(), elemType));
         }
         return NOptional.of(new DefaultNNumberElement(
                 type(), newValue.get(),
