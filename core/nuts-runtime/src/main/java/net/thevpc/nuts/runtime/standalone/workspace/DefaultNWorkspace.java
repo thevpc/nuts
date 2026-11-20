@@ -139,6 +139,29 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NApplication currentApp;
     private Map<String,String> jprops=new HashMap<>();
 
+    /**
+     * Bounded in-memory cache of effective-descriptor source fingerprints.
+     * A warm cache hit no longer refetches and rehashes every parent descriptor.
+     * Entries are validated against the raw descriptor content and its parent ids.
+     */
+    private final Map<String, SourceFingerprintCacheEntry> sourceFingerprintCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, SourceFingerprintCacheEntry>() {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, SourceFingerprintCacheEntry> eldest) {
+                    return size() > 256;
+                }
+            });
+
+    private static final class SourceFingerprintCacheEntry {
+        private final String validationToken;
+        private final String fingerprint;
+
+        private SourceFingerprintCacheEntry(String validationToken, String fingerprint) {
+            this.validationToken = validationToken;
+            this.fingerprint = fingerprint;
+        }
+    }
+
     public DefaultNWorkspace(NBootOptionsInfo callerBootOptionsInfo, NBootOptions info) {
         this.callerBootOptionsInfo = callerBootOptionsInfo;
         initWorkspace(info);
@@ -966,9 +989,18 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
      * parents, recursively, in resolution order.
      */
     private String effectiveSourcesFingerprint(NDescriptor descriptor) {
+        String key = descriptor.id().longName();
+        String token = key + '|' + descriptor.parents().toString() + '|'
+                + NDigest.of().sha1().source(descriptor).computeString();
+        SourceFingerprintCacheEntry cached = sourceFingerprintCache.get(key);
+        if (cached != null && cached.validationToken.equals(token)) {
+            return cached.fingerprint;
+        }
         StringBuilder sb = new StringBuilder();
         fillEffectiveSourcesFingerprint(descriptor, sb, new HashSet<>());
-        return sb.toString();
+        String fingerprint = sb.toString();
+        sourceFingerprintCache.put(key, new SourceFingerprintCacheEntry(token, fingerprint));
+        return fingerprint;
     }
 
     private void fillEffectiveSourcesFingerprint(NDescriptor descriptor, StringBuilder sb, Set<String> visited) {
@@ -1072,6 +1104,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         List<NDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
         LinkedHashSet<NDependency> effStandardDeps = new LinkedHashSet<>();
+        // PERF-02: index by shortName once instead of rescanning the whole list
+        // (and recomputing shortName()) for every old dependency.
+        Map<String, NDependency> effStandardDepsByName = new HashMap<>();
         for (NDependency standardDependency : effectiveDescriptor.standardDependencies()) {
             if ("import".equals(standardDependency.scope())) {
                 NDescriptor dd = NFetch.of(standardDependency.toId())
@@ -1080,22 +1115,18 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 for (NDependency dependency : dd.standardDependencies()) {
                     if (effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptDependency(dependency)) {
                         effStandardDeps.add(dependency);
+                        effStandardDepsByName.putIfAbsent(dependency.shortName(), dependency);
                     }
                 }
             } else {
                 if (effectiveNDescriptorConfig.isIgnoreCurrentEnvironment() || CoreFilterUtils.acceptDependency(standardDependency)) {
                     effStandardDeps.add(standardDependency);
+                    effStandardDepsByName.putIfAbsent(standardDependency.shortName(), standardDependency);
                 }
             }
         }
         for (NDependency d : oldDependencies) {
-            NDependency standardDependencyOk = null;
-            for (NDependency standardDependency : effStandardDeps) {
-                if (standardDependency.shortName().equals(d.toId().shortName())) {
-                    standardDependencyOk = standardDependency;
-                    break;
-                }
-            }
+            NDependency standardDependencyOk = effStandardDepsByName.get(d.toId().shortName());
             if (standardDependencyOk != null) {
                 if (NBlankable.isBlank(d.scope())
                         && !NBlankable.isBlank(standardDependencyOk.scope())) {
