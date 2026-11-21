@@ -13,6 +13,13 @@ import java.util.concurrent.atomic.AtomicLong;
 public class NWorkspaceProfilerImpl {
     public static final Map<String, AtomicLong> map = new HashMap<>();
 
+    /** Support hook for tests that recreate workspaces in the same JVM. */
+    public static void resetForTests() {
+        synchronized (map) {
+            map.clear();
+        }
+    }
+
     public static AtomicLong of(String s) {
         synchronized (map) {
             return map.computeIfAbsent(s, k -> new AtomicLong());

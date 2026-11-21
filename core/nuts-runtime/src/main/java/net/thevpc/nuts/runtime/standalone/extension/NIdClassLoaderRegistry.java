@@ -412,6 +412,17 @@ public final class NIdClassLoaderRegistry {
         NEGATIVE_CLASS_CACHE.clear();
     }
 
+    /**
+     * Support hook for embedding applications and tests that recreate workspaces
+     * inside the same JVM. Drops cached leaves and the workspace-bound leaf parent.
+     */
+    public static void resetForTests() {
+        synchronized (NIdClassLoaderRegistry.class) {
+            LEAF_PARENT = null;
+        }
+        invalidateAll();
+    }
+
     public static void invalidateCache() {
         RESOLVED_CLASS_CACHE.clear();
         NEGATIVE_CLASS_CACHE.clear();
