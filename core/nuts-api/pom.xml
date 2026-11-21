@@ -23,7 +23,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-boot</artifactId>
-            <version>1.2.0</version>
+            <version>${nuts.api.version}</version>
         </dependency>
     </dependencies>
     <build>

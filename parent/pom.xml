@@ -16,6 +16,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <!-- ARCH-04: single source of truth for API and implementation versions -->
+        <nuts.api.version>1.2.0</nuts.api.version>
+        <nuts.impl.version>1.2.0.0</nuts.impl.version>
         <targetdirectory>${project.build.directory}/dependency</targetdirectory>
         <!-- module-info.java can only be compiled on JDK 9+ -->
         <module-info.skip>false</module-info.skip>

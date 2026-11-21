@@ -20,13 +20,13 @@
         <excluded.groups></excluded.groups>
     </properties>
     <dependencies>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>1.2.0</version></dependency>
-        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>1.2.0.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>${nuts.api.version}</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-runtime</artifactId><version>${nuts.impl.version}</version></dependency>
         <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>${junit-jupiter.version}</version><scope>test</scope></dependency>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-ssh</artifactId>
-            <version>1.2.0.0</version>
+            <version>${nuts.impl.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
