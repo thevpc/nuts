@@ -36,7 +36,17 @@ cd nuts
 mvn clean install
 ```
 
-> **Target Compatibility**: You must compile `nuts` targeting Java 8 (`nuts` must remain compatible from Java 8 through Java 24+). Do not use features or APIs deprecated/removed in Java 9+ (e.g., Nashorn JS engine, RMI activation).
+> **Target Compatibility**: You must compile `nuts` targeting Java 8 (`nuts` must remain compatible from Java 8 through Java 25, the JDKs in the CI matrix: 8, 17, 21 and 25). Do not use features or APIs deprecated/removed in Java 9+ (e.g., Nashorn JS engine, RMI activation).
+
+## Test lanes
+
+Regression tests live in `test/nuts-runtime-test` (black-box/integration) and must accompany each fix. CI runs:
+
+```bash
+mvn -B -ntp install -Dexcluded.groups=local-only
+```
+
+Tests that need network access, installed external tools or the maintainer's machine are tagged `local-only` and excluded in CI; run them explicitly on a development machine with a plain `mvn install`.
 
 ---
 

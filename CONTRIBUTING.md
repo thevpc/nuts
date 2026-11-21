@@ -36,7 +36,17 @@ cd nuts
 mvn clean install
 ```
 
-> **Target Compatibility**: You must compile `nuts` targeting Java 8 (`nuts` must remain compatible from Java 8 through Java 24+). Do not use features or APIs deprecated/removed in Java 9+ (e.g., Nashorn JS engine, RMI activation).
+> **Target Compatibility**: You must compile `nuts` targeting Java 8 (`nuts` must remain compatible from Java 8 through Java 25, the JDKs in the CI matrix: 8, 17, 21 and 25). Do not use features or APIs deprecated/removed in Java 9+ (e.g., Nashorn JS engine, RMI activation).
+
+## Test lanes
+
+Regression tests live in `test/nuts-runtime-test` (black-box/integration) and must accompany each fix. CI runs:
+
+```bash
+mvn -B -ntp install -Dexcluded.groups=local-only
+```
+
+Tests that need network access, installed external tools or the maintainer's machine are tagged `local-only` and excluded in CI; run them explicitly on a development machine with a plain `mvn install`.
 
 ---
 
@@ -78,6 +88,7 @@ The script directly invokes `java -jar` using your locally compiled Maven artifa
 - Whenever adding a feature or a fix to nuts, add a line documenting the change to `documentation/website/src/include/blog/<YEAR>/<YEAR>-<MONTH>-<DAY>-<VERSION>-updates.md` (e.g. `documentation/website/src/include/blog/2026/2026-11-16-1.2.0-updates.md`).
 - If updating documentation or root README, ensure changes are made in `documentation/repo/src/main/` or `documentation/website/` and verified by running `./nuts-release-tool` at repo root.
 - Add tests relevant to the fixed bug or new feature.
+- Licensing is governed by the root `LICENSE` file. The old per-module `licenseheader.txt` templates were stale and unenforced, so they were removed; do not reintroduce them.
 
 
 ## How to contribute
