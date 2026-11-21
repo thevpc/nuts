@@ -67,6 +67,23 @@ public class BuildVersionConsistencyTest {
                 "hardcoded nuts dependency versions (use ${nuts.api.version}/${nuts.impl.version}): " + offenders);
     }
 
+    @Test
+    public void buildPluginConfigurationIsPinnedAndModern() throws Exception {
+        String pom = new String(Files.readAllBytes(
+                Paths.get("../../parent/pom.xml").toAbsolutePath().normalize()), StandardCharsets.UTF_8);
+        Assertions.assertTrue(pom.contains("<maven-antrun-plugin.version>"),
+                "antrun plugin version must be pinned in parent/pom.xml");
+        Assertions.assertTrue(pom.contains("<artifactId>maven-antrun-plugin</artifactId>")
+                        && pom.contains("<version>${maven-antrun-plugin.version}</version>"),
+                "antrun plugin must use the pinned version");
+        Assertions.assertFalse(pom.contains("<jdkToolchain>"),
+                "the obsolete Java 8 javadoc toolchain requirement must be removed");
+        int javadoc = pom.indexOf("<artifactId>maven-javadoc-plugin</artifactId>");
+        Assertions.assertTrue(javadoc > 0);
+        Assertions.assertTrue(pom.substring(javadoc).contains("<phase>package</phase>"),
+                "javadoc generation must be bound to package, not compile");
+    }
+
     private static String property(String pom, String kind) {
         Matcher m = PROPERTY.matcher(pom);
         while (m.find()) {

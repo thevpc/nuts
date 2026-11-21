@@ -86,7 +86,6 @@
                      Moving it after compilation keeps the reactor classes directory stable. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>place-module-info-in-multi-release-jar</id>
