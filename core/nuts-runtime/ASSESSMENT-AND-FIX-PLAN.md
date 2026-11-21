@@ -207,6 +207,19 @@ Add a `Status` column to the tables above when work starts: `Open` → `In progr
 
 ---
 
+## Final verification (2026-11-21)
+
+- CI-equivalent gate rerun after the last test tag/configuration changes:
+  `mvn -B -ntp install -Dexcluded.groups=local-only` → **BUILD SUCCESS** (exit 0, zero failures/errors).
+- All P0–P3 items above are DONE except ARCH-08, which is **DEFERRED** by owner decision
+  (god-class splitting needs an API-safe design pass and explicit approval).
+- PERF-04 and PERF-09 were explicitly deferred with the owner: they require stateful
+  executor lifecycle/API changes.
+- Full per-workspace scoping (ARCH-10) was replaced with static cache reset hooks and
+  a lifecycle regression test; deeper scoping requires API changes.
+
+---
+
 ## Appendix A — Grep seeds for re-verification
 
 ```bash
