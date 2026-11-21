@@ -177,7 +177,6 @@ module net.thevpc.nuts.runtime {
             net.thevpc.nuts.runtime.standalone.boot.DefaultNBootWorkspaceFactory;
 
     exports net.thevpc.nuts.runtime;
-    exports net.thevpc.nuts.runtime.deprecated;
     exports net.thevpc.nuts.runtime.optional.jansi;
     exports net.thevpc.nuts.runtime.optional.mslink;
     exports net.thevpc.nuts.runtime.standalone;
