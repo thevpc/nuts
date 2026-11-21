@@ -55,6 +55,11 @@
                         <configuration>
                             <skip>${module-info.skip}</skip>
                             <release>9</release>
+                            <!-- module-info references packages from the main sources; patch them in -->
+                            <compilerArgs>
+                                <arg>--patch-module</arg>
+                                <arg>net.thevpc.nuts.runtime=${project.build.outputDirectory}</arg>
+                            </compilerArgs>
                             <compileSourceRoots>
                                 <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
                             </compileSourceRoots>
@@ -75,6 +80,30 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- ARCH-02: the descriptor must be under META-INF/versions/9, not at the jar root.
+                     Moving it after compilation keeps the reactor classes directory stable. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>place-module-info-in-multi-release-jar</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}/META-INF/versions/9"/>
+                                <move file="${project.build.outputDirectory}/module-info.class"
+                                      todir="${project.build.outputDirectory}/META-INF/versions/9"
+                                      failonerror="false"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

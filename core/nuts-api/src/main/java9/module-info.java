@@ -6,6 +6,7 @@ module net.thevpc.nuts {
     requires java.logging;
     requires java.xml;
     requires java.desktop;
+    requires net.thevpc.nuts.boot;
 
     exports net.thevpc.nuts;
     exports net.thevpc.nuts.app;
@@ -33,6 +34,13 @@ module net.thevpc.nuts {
     exports net.thevpc.nuts.time;
     exports net.thevpc.nuts.util;
 
-//    uses net.thevpc.nuts.boot.NBootWorkspaceFactory;
+    // ARCH-01: runtime implements internal RPI contracts but they are not public API
+    exports net.thevpc.nuts.internal to net.thevpc.nuts.runtime;
+    exports net.thevpc.nuts.internal.artifact to net.thevpc.nuts.runtime;
+    exports net.thevpc.nuts.internal.optional to net.thevpc.nuts.runtime;
+    exports net.thevpc.nuts.internal.rpi to net.thevpc.nuts.runtime;
+    exports net.thevpc.nuts.internal.util to net.thevpc.nuts.runtime;
+
+    uses net.thevpc.nuts.boot.NBootWorkspaceFactory;
     uses net.thevpc.nuts.spi.NComponent;
 }
