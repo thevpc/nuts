@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.xtra.cp.NSegmentedHttpDownload;
@@ -217,6 +218,31 @@ public class SegmentedDownloadTest {
         segmentedCp().from(NPath.of(url("/changing").toString())).to(NPath.of(target)).options(NPathOption.SAFE).run();
         Assertions.assertArrayEquals(DATA, Files.readAllBytes(target));
         Assertions.assertTrue(fullRequests.get() - before >= 1);
+    }
+
+    @Test
+    public void checksumIsVerifiedAfterSegmentedDownload() throws Exception {
+        Path reference = tempFile();
+        Files.write(reference, DATA);
+        String sha256 = NDigest.of().sha256().source(NPath.of(reference)).computeString();
+
+        Path target = tempFile();
+        NSegmentedHttpDownload.Options o = options();
+        o.expectedChecksum = "sha256:" + sha256;
+        NSegmentedHttpDownload.Result r = NSegmentedHttpDownload.download(url("/ranged"), target, o, new CountingProgress());
+
+        Assertions.assertEquals(NSegmentedHttpDownload.Result.SEGMENTED, r);
+        Assertions.assertArrayEquals(DATA, Files.readAllBytes(target));
+    }
+
+    @Test
+    public void mismatchingChecksumFailsClosed() throws Exception {
+        Path target = tempFile();
+        NSegmentedHttpDownload.Options o = options();
+        o.expectedChecksum = "0000000000000000000000000000000000000000000000000000000000000000";
+        Assertions.assertThrows(java.io.IOException.class,
+                () -> NSegmentedHttpDownload.download(url("/ranged"), target, o, new CountingProgress()));
+        Assertions.assertFalse(Files.exists(target), "a file that failed integrity checking must not be kept");
     }
 
     @Test

@@ -1,5 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.io.util.NDownloadIntegrity;
+import net.thevpc.nuts.util.NException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -101,6 +105,12 @@ public final class NSegmentedHttpDownload {
          */
         public int chunkRetries = 3;
         public String userAgent;
+        /**
+         * Optional SHA-256/SHA-1 checksum (optionally prefixed with {@code sha256:}
+         * or {@code sha1:}) verified against the assembled file. When set, a
+         * missing/mismatching checksum fails the download closed (SEC-08).
+         */
+        public String expectedChecksum;
     }
 
     private NSegmentedHttpDownload() {
@@ -144,7 +154,7 @@ public final class NSegmentedHttpDownload {
             throw ex;
         }
         if (code == HttpURLConnection.HTTP_OK) {
-            return sequential(probe, target, progress);
+            return sequential(probe, target, options, progress);
         }
         long[] range = code == HttpURLConnection.HTTP_PARTIAL ? parseContentRange(probe.getHeaderField("Content-Range")) : null;
         if (range == null || range[0] != 0 || range[2] < 0) {
@@ -232,6 +242,7 @@ public final class NSegmentedHttpDownload {
                 error = new IOException("incomplete download : " + done.get() + "/" + length + " bytes : " + url);
                 throw (IOException) error;
             }
+            verify(target, options);
             return Result.SEGMENTED;
         } catch (IOException | RuntimeException | Error ex) {
             if (error == null) {
@@ -246,7 +257,7 @@ public final class NSegmentedHttpDownload {
         }
     }
 
-    private static Result sequential(HttpURLConnection c, Path target, Progress progress) throws IOException {
+    private static Result sequential(HttpURLConnection c, Path target, Options options, Progress progress) throws IOException {
         long length = c.getContentLengthLong();
         long done = 0;
         Throwable error = null;
@@ -271,6 +282,7 @@ public final class NSegmentedHttpDownload {
             if (length >= 0 && done != length) {
                 throw new MiddleTransferException("incomplete download : " + done + "/" + length + " bytes : " + c.getURL());
             }
+            verify(target, options);
             return Result.SEQUENTIAL;
         } catch (IOException | RuntimeException ex) {
             error = ex;
@@ -278,6 +290,24 @@ public final class NSegmentedHttpDownload {
         } finally {
             c.disconnect();
             progress.onComplete(done, length, error);
+        }
+    }
+
+    /** SEC-08: verify the assembled file when the caller supplied a checksum. */
+    private static void verify(Path target, Options options) throws IOException {
+        if (options == null || options.expectedChecksum == null || options.expectedChecksum.trim().isEmpty()) {
+            return;
+        }
+        try {
+            NDownloadIntegrity.verify(NPath.of(target), options.expectedChecksum);
+        } catch (NException ex) {
+            // never leave a file that failed integrity checking available to callers
+            try {
+                Files.deleteIfExists(target);
+            } catch (IOException ignore) {
+                // best effort; the exception below is the relevant failure
+            }
+            throw new IOException("integrity check failed for downloaded file : " + target, ex);
         }
     }
 
