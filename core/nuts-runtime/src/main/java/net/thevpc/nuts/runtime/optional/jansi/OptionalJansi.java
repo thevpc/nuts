@@ -30,7 +30,6 @@ import net.thevpc.nuts.platform.NOsFamily;
 import net.thevpc.nuts.reflect.NTypeLoader;
 import net.thevpc.nuts.runtime.standalone.util.NTypeLoaderImpl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -105,70 +104,45 @@ public class OptionalJansi {
         }
     }
 
+    /**
+     * ARCH-03: jansi is optional; every reference is resolved reflectively so this
+     * class can be loaded on systems where the library was not deployed.
+     */
     public static void ensureJansiInstalled() {
-        boolean window = System.getProperty("os.name","").toLowerCase().contains("win");
-        window=false;
-        if(window) {
-            if (JANSI_INSTALLED == null) {
-                System.setProperty("jansi.passthrough", "true");
-                System.setProperty("jansi.mode", "strip");
-                synchronized (OptionalJansi.class) {
-                    if (JANSI_INSTALLED == null) {
-                        org.fusesource.jansi.AnsiConsole.systemInstall();
-                        try {
-                            org.fusesource.jansi.AnsiConsole.out().install();
-                        } catch (IOException e) {
-                            JANSI_INSTALLED=false;
-                            return;
-                        }
-                        try {
-                            org.fusesource.jansi.AnsiConsole.err().install();
-                        } catch (IOException e) {
-                            JANSI_INSTALLED=false;
-                            return;
-                        }
-                        JANSI_INSTALLED = true;
-                        // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
-                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                            try {
-                                org.fusesource.jansi.AnsiConsole.out().uninstall();
-                            } catch (IOException e) {
-                            }
-                            try {
-                                org.fusesource.jansi.AnsiConsole.err().uninstall();
-                            } catch (IOException e) {
-                            }
-                        }));
-                    }
+        if (JANSI_INSTALLED != null) {
+            return;
+        }
+        NTypeLoader ansiConsole = new NTypeLoaderImpl("org.fusesource.jansi.AnsiConsole");
+        if (!ansiConsole.type().isPresent()) {
+            JANSI_INSTALLED = Boolean.FALSE;
+            return;
+        }
+        synchronized (OptionalJansi.class) {
+            if (JANSI_INSTALLED != null) {
+                return;
+            }
+            try {
+                Method install = ansiConsole.getDeclaredMethod("systemInstall").orNull();
+                Method uninstall = ansiConsole.getDeclaredMethod("systemUninstall").orNull();
+                if (install == null) {
+                    JANSI_INSTALLED = Boolean.FALSE;
+                    return;
                 }
-            }else{
-                if (JANSI_INSTALLED == null) {
-                    org.fusesource.jansi.AnsiConsole.systemInstall();
-                    JANSI_INSTALLED = true;
-                    // 2. Ensure console state is restored even on SIGINT / Ctrl+C / normal exit
+                install.invoke(null);
+                JANSI_INSTALLED = Boolean.TRUE;
+                if (uninstall != null) {
+                    final Method restore = uninstall;
                     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                         try {
-                            org.fusesource.jansi.AnsiConsole.systemUninstall();
-                        } catch (Exception e) {
+                            restore.invoke(null);
+                        } catch (Exception ignore) {
+                            // console restoration is best effort
                         }
-                    }));
+                    }, "nuts-jansi-restore"));
                 }
+            } catch (Exception e) {
+                JANSI_INSTALLED = Boolean.FALSE;
             }
         }
-
     }
-//
-//    private static class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
-//
-//        public ResetOnCloseOutputStream(OutputStream base) {
-//            super(base);
-//        }
-//
-//        @Override
-//        public void close() throws IOException {
-//            write(org.fusesource.jansi.io.AnsiOutputStream.RESET_CODE);
-//            flush();
-//            super.close();
-//        }
-//    }
 }
