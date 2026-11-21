@@ -78,6 +78,7 @@ The script directly invokes `java -jar` using your locally compiled Maven artifa
 - Whenever adding a feature or a fix to nuts, add a line documenting the change to `documentation/website/src/include/blog/<YEAR>/<YEAR>-<MONTH>-<DAY>-<VERSION>-updates.md` (e.g. `documentation/website/src/include/blog/2026/2026-11-16-1.2.0-updates.md`).
 - If updating documentation or root README, ensure changes are made in `documentation/repo/src/main/` or `documentation/website/` and verified by running `./nuts-release-tool` at repo root.
 - Add tests relevant to the fixed bug or new feature.
+- Licensing is governed by the root `LICENSE` file. The old per-module `licenseheader.txt` templates were stale and unenforced, so they were removed; do not reintroduce them.
 
 
 ## How to contribute
