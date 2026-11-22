@@ -1007,15 +1007,32 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (!visited.add(descriptor.id().longName())) {
             return;
         }
-        sb.append(descriptor.id().longName()).append(' ')
-                .append(NDigest.of().sha1().source(descriptor).computeString())
-                .append('\n');
+        sb.append(effectiveSourceFingerprintLine(descriptor)).append('\n');
         for (NId parent : descriptor.parents()) {
             fillEffectiveSourcesFingerprint(
                     NFetch.of(parent)
                             .dependencyFilter(NDependencyFilter.ofRunnable())
                             .getResultDescriptor(),
                     sb, visited);
+        }
+    }
+
+    private String effectiveSourceFingerprintLine(NDescriptor descriptor) {
+        return descriptor.id().longName() + ' ' + NDigest.of().sha1().source(descriptor).computeString();
+    }
+
+    private NDescriptor loadMatchingCachedEffectiveDescriptor(NDescriptor descriptor, String cachedSourcesFingerprint, String cacheId) {
+        if (cacheId == null || cachedSourcesFingerprint == null || descriptor == null || descriptor.id() == null) {
+            return null;
+        }
+        String line = effectiveSourceFingerprintLine(descriptor);
+        if (!cachedSourcesFingerprint.equals(line) && !cachedSourcesFingerprint.startsWith(line + '\n')) {
+            return null;
+        }
+        try {
+            return store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, cacheId), NDescriptor.class);
+        } catch (Exception ex) {
+            return null;
         }
     }
 
@@ -1526,6 +1543,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         // must not be served stale
         String sourceCacheId = null;
         String sourcesFingerprint = null;
+        String cachedSourcesFingerprint = null;
         if (effectiveNDescriptorConfig.equals(new NDescriptorEffectiveConfig())) {
             cacheId = "eff-nuts.cache";
             sourceCacheId = "eff-nuts-src.cache";
@@ -1534,25 +1552,42 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (!descriptor.id().version().isBlank() && descriptor.id().version().isSingleValue()
                     && descriptor.id().toString().indexOf('$') < 0) {
                 try {
-                    String src = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, sourceCacheId), String.class);
-                    sourcesFingerprint = effectiveSourcesFingerprint(descriptor);
-                    if (src != null && src.equals(sourcesFingerprint)) {
-                        NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, cacheId), NDescriptor.class);
-                        if (d != null) {
-                            return d;
+                    cachedSourcesFingerprint = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, sourceCacheId), String.class);
+                    if (cachedSourcesFingerprint != null) {
+                        sourcesFingerprint = effectiveSourcesFingerprint(descriptor);
+                        if (cachedSourcesFingerprint.equals(sourcesFingerprint)) {
+                            NDescriptor d = store().loadLocationKey(NStoreKey.ofCacheFaced(descriptor.id(), null, cacheId), NDescriptor.class);
+                            if (d != null) {
+                                return d;
+                            }
+                        } else {
+                            wsModel.LOG.log(NMsg.ofC("eff-nuts.cache of %s is missing or stale, recompute it", descriptor.id()).asFine());
                         }
                     } else {
                         wsModel.LOG.log(NMsg.ofC("eff-nuts.cache of %s is missing or stale, recompute it", descriptor.id()).asFine());
                     }
                 } catch (Exception ex) {
-                    wsModel.LOG.log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.id()).asError(ex));
+                    wsModel.LOG.log(NMsg.ofC("failed to load eff-nuts.cache for %s", descriptor.id()).asFinest(ex));
                     //
                 }
             }
         }
         //
-        NDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, effectiveNDescriptorConfig);
-        NDescriptorUtils.checkValidEffectiveDescriptor(effectiveDescriptor);
+        NDescriptor effectiveDescriptor;
+        try {
+            effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, effectiveNDescriptorConfig);
+            NDescriptorUtils.checkValidEffectiveDescriptor(effectiveDescriptor);
+        } catch (RuntimeException ex) {
+            // Parent descriptors may be unavailable (offline mode or an excluded
+            // repository). If the raw descriptor itself did not change, the cached
+            // effective descriptor remains the best usable value.
+            NDescriptor cached = loadMatchingCachedEffectiveDescriptor(descriptor, cachedSourcesFingerprint, cacheId);
+            if (cached != null) {
+                wsModel.LOG.log(NMsg.ofC("using cached eff-nuts.cache for %s because its parents are not available", descriptor.id()).asFine());
+                return cached;
+            }
+            throw ex;
+        }
 
         if (cacheId != null) {
             try {

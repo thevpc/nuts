@@ -6,6 +6,7 @@ import net.thevpc.nuts.concurrent.NOnceValue;
 import net.thevpc.nuts.internal.rpi.NDependencyFilterRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.core.NRepository;
+import net.thevpc.nuts.core.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NMsg;
@@ -41,6 +42,43 @@ public class NDefinitionHelper {
 
     public static NDefinition ofDescriptorOnly(NDescriptor descriptor) {
         return new DefinitionForIdAndDescriptor(descriptor.id(), descriptor);
+    }
+
+    /**
+     * Returns a self-contained (effective) descriptor suitable to be written
+     * alongside an artifact staged for another workspace or host.
+     * <p>
+     * Raw descriptors may still reference parent properties (for example
+     * {@code ${nuts.api.version}}). Once written to a companion repository the
+     * parent may not be reachable anymore, so the variables must be resolved
+     * before persisting the descriptor.
+     */
+    public static NDescriptor effectiveDescriptor(NDefinition def) {
+        if (def == null) {
+            return null;
+        }
+        NDescriptor descriptor = def.descriptor();
+        if (descriptor == null) {
+            return null;
+        }
+        NDescriptor effective = def.effectiveDescriptor().orNull();
+        if (effective != null) {
+            return effective;
+        }
+        return resolveEffectiveDescriptor(descriptor);
+    }
+
+    public static NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor) {
+        if (descriptor == null) {
+            return null;
+        }
+        try {
+            return NWorkspace.of().resolveEffectiveDescriptor(descriptor,
+                    new NDescriptorEffectiveConfig().setIgnoreCurrentEnvironment(true));
+        } catch (RuntimeException ex) {
+            //keep the raw descriptor when the parent chain cannot be resolved
+            return descriptor;
+        }
     }
 
     private static class DefinitionForIdAndDescriptor extends NDefinitionDelegate {

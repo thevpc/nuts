@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
 import net.thevpc.nuts.artifact.NDefinition;
 import net.thevpc.nuts.artifact.NDependency;
+import net.thevpc.nuts.artifact.NDescriptor;
 import net.thevpc.nuts.artifact.NId;
 import net.thevpc.nuts.artifact.NVersion;
 import net.thevpc.nuts.command.NExec;
@@ -10,6 +11,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.net.NConnectionString;
 import net.thevpc.nuts.platform.NEnv;
+import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.text.NDescriptorWriter;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
@@ -86,6 +88,7 @@ class DefaultNPrepareTransaction implements AutoCloseable {
             LOG.debug(NMsg.ofC("Definition not found for artifact: %s", pid));
             return;
         }
+        NDescriptor effectiveDescriptor = NDefinitionHelper.effectiveDescriptor(def);
         NPath apiJar = def.content().orNull();
         NId targetId = def.id() != null ? def.id() : pid;
         NPath to;
@@ -103,19 +106,19 @@ class DefaultNPrepareTransaction implements AutoCloseable {
         if (!to.exists()) {
             LOG.debug(NMsg.ofC("Staging descriptor for %s -> %s", targetId, to));
             to.mkParentDirs();
-            to.writeString(NDescriptorWriter.of().formatPlain(def.descriptor()));
+            to.writeString(NDescriptorWriter.of().formatPlain(effectiveDescriptor));
         }
-        if (def.descriptor() != null) {
-            if (def.descriptor().parents() != null) {
-                for (NId parentId : def.descriptor().parents()) {
+        if (effectiveDescriptor != null) {
+            if (effectiveDescriptor.parents() != null) {
+                for (NId parentId : effectiveDescriptor.parents()) {
                     if (parentId != null) {
                         LOG.debug(NMsg.ofC("Pushing parent descriptor %s for %s", parentId, pid));
                         pushId(parentId);
                     }
                 }
             }
-            if (def.descriptor().dependencies() != null) {
-                for (NDependency dependency : def.descriptor().dependencies()) {
+            if (effectiveDescriptor.dependencies() != null) {
+                for (NDependency dependency : effectiveDescriptor.dependencies()) {
                     if (dependency != null && dependency.toId() != null) {
                         LOG.debug(NMsg.ofC("Pushing dependency %s for %s", dependency.toId(), pid));
                         pushId(dependency.toId());

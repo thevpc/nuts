@@ -18,7 +18,9 @@ import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NStream;
 import net.thevpc.nuts.util.NStringBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class MvnRepoHelper implements ToolboxRepoHelper {
 
@@ -84,19 +86,28 @@ public class MvnRepoHelper implements ToolboxRepoHelper {
         NEnv env = NEnv.of();
         boolean isWindows = env.osFamily().isWindow();
 
+        boolean maven4OrLater = version.getPartAt(0).map(NVersionPart::value).map(Integer::parseInt).orElse(3) >= 4;
+        List<String> wrapperCommands = new ArrayList<>();
+        wrapperCommands.add("--default mvn=\"${NUTS_DEPLOY_BIN}/app/bin/mvn\"");
+        wrapperCommands.add("--cmd mvnDebug=\"${NUTS_DEPLOY_BIN}/app/bin/mvnDebug\"");
+        wrapperCommands.add("--cmd mvnyjp=\"${NUTS_DEPLOY_BIN}/app/bin/mvnyjp\"");
+        if (maven4OrLater) {
+            wrapperCommands.add("--cmd mvnenc=\"${NUTS_DEPLOY_BIN}/app/bin/mvnenc\"");
+            wrapperCommands.add("--cmd mvnup=\"${NUTS_DEPLOY_BIN}/app/bin/mvnup\"");
+        }
+
         NStringBuilder installerScript = NStringBuilder.of();
         installerScript
                 .println("echo 'Extracting Apache Maven...'")
                 .println("unzip --skip-root \"${NUTS_DEPLOY_CONTENT}\" -d \"${NUTS_DEPLOY_BIN}/app\"")
                 .println("chmod +x \"${NUTS_DEPLOY_BIN}/app/bin/mvn\"")
                 .println()
-                .println("make-wrapper --target \"${NUTS_DEPLOY_BIN}/mvn-wrapper\" \\")
-                .println("    --default mvn=\"${NUTS_DEPLOY_BIN}/app/bin/mvn\"")
-                .println("    --cmd mvnenc=\"${NUTS_DEPLOY_BIN}/app/bin/mvnenc\"")
-                .println("    --cmd mvnup=\"${NUTS_DEPLOY_BIN}/app/bin/mvnup\"")
-                .println("    --cmd mvnDebug=\"${NUTS_DEPLOY_BIN}/app/bin/mvnDebug\"")
-                .println("    --cmd mvnyjp=\"${NUTS_DEPLOY_BIN}/app/bin/mvnyjp\"")
-                .println("echo 'Done.'");
+                .println("make-wrapper --target \"${NUTS_DEPLOY_BIN}/mvn-wrapper\" \\");
+        for (int i = 0; i < wrapperCommands.size(); i++) {
+            installerScript.println("    " + wrapperCommands.get(i)
+                    + (i < wrapperCommands.size() - 1 ? " \\" : ""));
+        }
+        installerScript.println("echo 'Done.'");
 
         // For Windows, ensure .bat is used
         if (isWindows) {
