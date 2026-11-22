@@ -197,14 +197,13 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
                     int n = reader.peekAt(1);
                     if (n == c) {
                         int n2 = reader.peekAt(2);
-                        char cc = (char) c;
                         if (n2 == c) {
                             reader.read(3);
-                            String i = new String(new char[]{cc, cc, cc});
+                            String i = NOperatorSymbol.AT3.lexeme();
                             return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, NOperatorSymbol.AT3, null);
                         } else {
                             reader.read(2);
-                            String i = new String(new char[]{cc, cc});
+                            String i = NOperatorSymbol.AT2.lexeme();
                             return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, NOperatorSymbol.AT2, null);
                         }
                     }
@@ -646,28 +645,24 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
         int n = reader.peekAt(1);
         if (n == c) {
             int n2 = reader.peekAt(2);
-            char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
-                String i = new String(new char[]{cc, cc, cc});
+                String i = t3.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
-                String i = new String(new char[]{cc, cc});
+                String i = t2.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t2, null);
             }
         } else if (n == '=') {
             int n2 = reader.peekAt(2);
-            char cc = (char) c;
             if (n2 == '=') {
                 reader.read(3);
-                // e.g. "!==" (was wrongly built as "!!!")
-                String i = new String(new char[]{cc, '=', '='});
+                String i = eq2.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq2, null);
             } else {
                 reader.read(2);
-                // e.g. "!=" (was wrongly built as "!!")
-                String i = new String(new char[]{cc, '='});
+                String i = eq1.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, eq1, null);
             }
         } else {
@@ -682,14 +677,13 @@ public class TsonCustomLexer implements NGenerator<NElementTokenImpl> {
             int column = reader.column();
             long pos = reader.pos();
             int n2 = reader.peekAt(2);
-            char cc = (char) c;
             if (n2 == c) {
                 reader.read(3);
-                String i = new String(new char[]{cc, cc, cc});
+                String i = t3.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t3, null);
             } else {
                 reader.read(2);
-                String i = new String(new char[]{cc, cc});
+                String i = t2.lexeme();
                 return new NElementTokenImpl(i, NElementTokenType.OPERATOR_SYMBOL, i, 0, line, column, pos, t2, null);
             }
         }

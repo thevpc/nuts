@@ -9,6 +9,23 @@ import java.util.List;
 
 public class NElementTransformHelper {
 
+    private static NElementTransformContext with(NElementTransformContext ctx, NElement element, NElementPath path, boolean tail) {
+        if (ctx instanceof DefaultNElementTransformContext) {
+            return ((DefaultNElementTransformContext) ctx).with(element, path, tail);
+        }
+        NElementTransformContext c = ctx;
+        if (!java.util.Objects.equals(c.path(), path)) {
+            c = c.withPath(path);
+        }
+        if (c.isTail() != tail) {
+            c = c.withTail(tail);
+        }
+        if (c.element() != element) {
+            c = c.withElement(element);
+        }
+        return c;
+    }
+
     public static NElementTransformContext context(NElement element) {
         return new DefaultNElementTransformContext(element);
     }
@@ -249,8 +266,8 @@ public class NElementTransformHelper {
     private static List<NElement> transformAfterBinaryOperator(NBinaryOperatorElement item, NElementTransformContext context, NElementTransform transform) {
         NElementPath path = context.path();
         NOperatorElementBuilder b = item.builder();
-        List<NElement> k = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(0)))).withElement(item.firstOperand()).withTail(false), transform);
-        List<NElement> v = transform(transform.prepareChildContext(item, context.withPath(path.resolve(NElementStep.ofChild(1)))).withElement(item.secondOperand())
+        List<NElement> k = transform(transform.prepareChildContext(item, with(context, context.element(), path.resolve(NElementStep.ofChild(0)), false)).withElement(item.firstOperand()).withTail(false), transform);
+        List<NElement> v = transform(transform.prepareChildContext(item, with(context, context.element(), path.resolve(NElementStep.ofChild(1)), context.isTail() && item.fixity() != NFixity.POSTFIX)).withElement(item.secondOperand())
                         .withTail(context.isTail() && item.fixity() != NFixity.POSTFIX)
                 , transform);
         b.first(compressElement(k));
@@ -262,8 +279,8 @@ public class NElementTransformHelper {
     private static List<NElement> transformAfterPair(NPairElement o, NElementTransformContext context, NElementTransform transform) {
         NElementPath path = context.path();
         boolean wasLast = context.isTail();
-        List<NElement> k = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(0))).withTail(false)).withElement(o.key()), transform);
-        List<NElement> v = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(1))).withTail(wasLast)).withElement(o.value()), transform);
+        List<NElement> k = transform(transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofChild(0)), false)).withElement(o.key()), transform);
+        List<NElement> v = transform(transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofChild(1)), wasLast)).withElement(o.value()), transform);
         NPairElementBuilder b = o.builder();
         b.key(compressElement(k));
         b.value(compressElement(v));
@@ -284,7 +301,7 @@ public class NElementTransformHelper {
             List<NElement> params = o.params();
             for (int i = 0; i < params.size(); i++) {
                 NElement e = params.get(i);
-                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofChild(i)), context.isTail())).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }
@@ -320,7 +337,7 @@ public class NElementTransformHelper {
             for (int i = 0; i < get.size(); i++) {
                 NElement e = get.get(i);
                 List<NElement> u = transform(
-                        transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofParam(i)))).withElement(e), transform);
+                        transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofParam(i)), context.isTail())).withElement(e), transform);
                 if (u != null) {
                     b.addParams(u);
                 }
@@ -334,7 +351,7 @@ public class NElementTransformHelper {
             List<NElement> children = o.children();
             for (int i = 0; i < children.size(); i++) {
                 NElement e = children.get(i);
-                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofChild(i)), context.isTail())).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }
@@ -374,7 +391,7 @@ public class NElementTransformHelper {
             List<NElement> children = o.children();
             for (int i = 0; i < children.size(); i++) {
                 NElement e = children.get(i);
-                List<NElement> u = transform(transform.prepareChildContext(o, context.withPath(path.resolve(NElementStep.ofChild(i)))).withElement(e), transform);
+                List<NElement> u = transform(transform.prepareChildContext(o, with(context, context.element(), path.resolve(NElementStep.ofChild(i)), context.isTail())).withElement(e), transform);
                 if (u != null) {
                     b.addAll(u);
                 }

@@ -13,6 +13,9 @@
     <packaging>jar</packaging>
     <name>Nuts Community Library for Tar and TarGZ support</name>
     <description>Nuts Compression Extension</description>
+    <properties>
+        <nuts.extension>true</nuts.extension>
+    </properties>
     <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>${nuts.api.version}</version></dependency>
         <dependency><groupId>org.apache.commons</groupId><artifactId>commons-compress</artifactId><version>1.26.1</version></dependency>

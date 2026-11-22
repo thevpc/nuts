@@ -46,7 +46,7 @@ public class TsonCustomParser {
     public NElement parseDocument() {
         List<NElement> elements = new ArrayList<>();
         while (true) {
-            NElement e = parseElement(new ArrayList<>());
+            NElement e = parseElement(Collections.emptyList());
             if (e == null) {
                 break;
             }
@@ -62,7 +62,7 @@ public class TsonCustomParser {
     }
 
     public NElement parseElement() {
-        return parseElement(new ArrayList<>());
+        return parseElement(Collections.emptyList());
     }
 
     public NElement parseElement(List<NAffix> pendingAffixTokens) {
@@ -70,16 +70,17 @@ public class TsonCustomParser {
     }
 
     private NElement exprOrPairElement(List<NAffix> pendingAffixTokens) {
-        pendingAffixTokens = new ArrayList<>(pendingAffixTokens);
-        NElement first = exprElement(pendingAffixTokens);
+        List<NAffix> ownedAffixes = (pendingAffixTokens == null || pendingAffixTokens.isEmpty())
+                ? Collections.emptyList()
+                : new ArrayList<>(pendingAffixTokens);
+        NElement first = exprElement(ownedAffixes);
         if (first == null) {
             return null;
         }
-        pendingAffixTokens = new ArrayList<>();
         NElementTokenInfo t = peekToken();
         if (t != null && t.token != null && t.token.type() == NElementTokenType.COLON) {
             nextToken();
-            NElement second = exprElement(pendingAffixTokens);
+            NElement second = exprElement(Collections.emptyList());
             return NElement.ofPair(first, second);
         }
         return first;
@@ -97,7 +98,7 @@ public class TsonCustomParser {
     }
 
     private List<NAffix> tokenToAffixes(NElementTokenInfo token) {
-        return token.prefixes.stream().map(this::tokenToAffix).collect(Collectors.toList());
+        return tokensToAffixes(token.prefixes);
     }
 
     private NAffix tokenToAffix(NElementTokenImpl x) {
@@ -120,11 +121,25 @@ public class TsonCustomParser {
     }
 
     private List<NBoundAffix> tokensToBoundAffixes(List<NElementTokenImpl> prefixes, NAffixAnchor anchor) {
-        return prefixes.stream().map(x -> tokenToBoundAffix(x, anchor)).collect(Collectors.toList());
+        if (prefixes == null || prefixes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<NBoundAffix> out = new ArrayList<>(prefixes.size());
+        for (NElementTokenImpl x : prefixes) {
+            out.add(tokenToBoundAffix(x, anchor));
+        }
+        return out;
     }
 
     private List<NAffix> tokensToAffixes(List<NElementTokenImpl> prefixes) {
-        return prefixes.stream().map(x -> tokenToAffix(x)).collect(Collectors.toList());
+        if (prefixes == null || prefixes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<NAffix> out = new ArrayList<>(prefixes.size());
+        for (NElementTokenImpl x : prefixes) {
+            out.add(tokenToAffix(x));
+        }
+        return out;
     }
 
     private NElement exprElement(List<NAffix> pendingAffixTokens) {
@@ -354,7 +369,7 @@ public class TsonCustomParser {
                     break;
                 }
                 case UNKNOWN: {
-                    // TODO: handle error
+                    // recover by consuming the unexpected token and recording a diagnostic
                     NElementTokenInfo t2 = nextToken();
                     diagnostics.add(new DefaultNElementDiagnostic(t2.token, NMsg.ofC("unexpected token '%s'", t2.token.image())));
                     break;
@@ -370,8 +385,7 @@ public class TsonCustomParser {
                     break;
                 }
                 default: {
-                    // TODO: handle error
-                    // just ignore for now
+                    // recover by consuming the unexpected token and recording a diagnostic
                     NElementTokenInfo t2 = nextToken();
                     diagnostics.add(new DefaultNElementDiagnostic(t2.token, NMsg.ofC("unexpected token '%s'", t2.token.image())));
                     break;
@@ -459,7 +473,14 @@ public class TsonCustomParser {
     }
 
     private List<NBoundAffix> bindAffixes(List<NAffix> affixes, NAffixAnchor anchor) {
-        return affixes.stream().map(x -> DefaultNBoundAffix.of(x, anchor)).collect(Collectors.toList());
+        if (affixes == null || affixes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<NBoundAffix> out = new ArrayList<>(affixes.size());
+        for (NAffix x : affixes) {
+            out.add(DefaultNBoundAffix.of(x, anchor));
+        }
+        return out;
     }
 
     private NElement object(String name,
@@ -682,9 +703,9 @@ public class TsonCustomParser {
         }
 
         List<NBoundAffix> boundAffixes = new ArrayList<>();
-        boundAffixes.addAll(pendingAffixTokens.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
-        boundAffixes.addAll(beforeLparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.START)).collect(Collectors.toList()));
-        boundAffixes.addAll(beforeRparAffixes.stream().map(x -> DefaultNBoundAffix.of(x, NAffixAnchor.PRE_3)).collect(Collectors.toList()));
+        boundAffixes.addAll(bindAffixes(pendingAffixTokens, NAffixAnchor.START));
+        boundAffixes.addAll(bindAffixes(beforeLparAffixes, NAffixAnchor.START));
+        boundAffixes.addAll(bindAffixes(beforeRparAffixes, NAffixAnchor.PRE_3));
         boundAffixes.addAll(readPostComments());
         return new DefaultNTupleElement(
                 seenName, elements,

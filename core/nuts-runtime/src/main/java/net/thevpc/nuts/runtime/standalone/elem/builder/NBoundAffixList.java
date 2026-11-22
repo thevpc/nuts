@@ -64,11 +64,15 @@ public class NBoundAffixList {
     }
 
     public List<NElementComment> comments() {
-        return affixes.stream().filter(x ->
-                        x.affix().type() == NAffixType.BLOC_COMMENT
-                                || x.affix().type() == NAffixType.LINE_COMMENT
-                ).map(x -> (NElementComment) x)
-                .collect(Collectors.toList());
+        List<NElementComment> out = null;
+        for (NBoundAffix x : affixes) {
+            NAffixType t = x.affix().type();
+            if (t == NAffixType.BLOC_COMMENT || t == NAffixType.LINE_COMMENT) {
+                if (out == null) out = new ArrayList<>();
+                out.add((NElementComment) x.affix());
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
 
@@ -82,24 +86,32 @@ public class NBoundAffixList {
 
 
     public List<NElementComment> trailingComments() {
-        return affixes.stream().filter(x ->
-                        x.anchor() == NAffixAnchor.END && (
-                                x.affix().type() == NAffixType.BLOC_COMMENT
-                                        || x.affix().type() == NAffixType.LINE_COMMENT
-                        )
-                ).map(x -> (NElementComment) x)
-                .collect(Collectors.toList());
+        List<NElementComment> out = null;
+        for (NBoundAffix x : affixes) {
+            if (x.anchor() == NAffixAnchor.END) {
+                NAffixType t = x.affix().type();
+                if (t == NAffixType.BLOC_COMMENT || t == NAffixType.LINE_COMMENT) {
+                    if (out == null) out = new ArrayList<>();
+                    out.add((NElementComment) x.affix());
+                }
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
 
     public List<NElementComment> leadingComments() {
-        return affixes.stream().filter(x ->
-                        x.anchor() == NAffixAnchor.START && (
-                                x.affix().type() == NAffixType.BLOC_COMMENT
-                                        || x.affix().type() == NAffixType.LINE_COMMENT
-                        )
-                ).map(x -> (NElementComment) x)
-                .collect(Collectors.toList());
+        List<NElementComment> out = null;
+        for (NBoundAffix x : affixes) {
+            if (x.anchor() == NAffixAnchor.START) {
+                NAffixType t = x.affix().type();
+                if (t == NAffixType.BLOC_COMMENT || t == NAffixType.LINE_COMMENT) {
+                    if (out == null) out = new ArrayList<>();
+                    out.add((NElementComment) x.affix());
+                }
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
 
@@ -256,9 +268,14 @@ public class NBoundAffixList {
     }
 
     public List<NElementAnnotation> annotations() {
-        return affixes.stream()
-                .filter(x -> x.affix().type() == NAffixType.ANNOTATION)
-                .map(x -> (NElementAnnotation) x.affix()).collect(Collectors.toList());
+        List<NElementAnnotation> out = null;
+        for (NBoundAffix x : affixes) {
+            if (x.affix().type() == NAffixType.ANNOTATION) {
+                if (out == null) out = new ArrayList<>();
+                out.add((NElementAnnotation) x.affix());
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
     public NBoundAffixList setAffix(int index, NBoundAffix affix) {
@@ -367,11 +384,28 @@ public class NBoundAffixList {
     }
 
     public static List<NBoundAffix> filter(List<NBoundAffix> list, NAffixAnchor anchor, NAffixType... acceptableTypes) {
-        Set<NAffixType> at = new HashSet<>(Arrays.asList(acceptableTypes));
-        return list.stream().filter(x ->
-                x.anchor() == anchor
-                        && at.contains(x.affix().type())
-        ).collect(Collectors.toList());
+        if (list == null || list.isEmpty() || acceptableTypes == null || acceptableTypes.length == 0) {
+            return Collections.emptyList();
+        }
+        List<NBoundAffix> out = null;
+        for (NBoundAffix x : list) {
+            if (x.anchor() == anchor && containsAcceptableType(acceptableTypes, x.affix().type())) {
+                if (out == null) {
+                    out = new ArrayList<>();
+                }
+                out.add(x);
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
+    }
+
+    private static boolean containsAcceptableType(NAffixType[] types, NAffixType type) {
+        for (NAffixType t : types) {
+            if (t == type) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removeAffixIf(Predicate<NBoundAffix> predicate) {

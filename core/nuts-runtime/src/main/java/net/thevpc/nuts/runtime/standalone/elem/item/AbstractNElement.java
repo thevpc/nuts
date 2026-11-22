@@ -121,18 +121,29 @@ public abstract class AbstractNElement implements NElement {
     }
 
     public List<NElementComment> comments() {
-        return affixes().stream().filter(x ->
-                        x.affix().type() == NAffixType.BLOC_COMMENT
-                                || x.affix().type() == NAffixType.LINE_COMMENT
-                ).map(x -> (NElementComment) x.affix())
-                .collect(Collectors.toList());
+        List<NBoundAffix> a = affixes();
+        List<NElementComment> out = null;
+        for (NBoundAffix x : a) {
+            NAffixType t = x.affix().type();
+            if (t == NAffixType.BLOC_COMMENT || t == NAffixType.LINE_COMMENT) {
+                if (out == null) out = new ArrayList<>();
+                out.add((NElementComment) x.affix());
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
     @Override
     public List<NElementAnnotation> annotations() {
-        return affixes().stream().filter(x ->
-                        x.affix().type() == NAffixType.ANNOTATION)
-                .map(x -> (NElementAnnotation) x.affix()).collect(Collectors.toList());
+        List<NBoundAffix> a = affixes();
+        List<NElementAnnotation> out = null;
+        for (NBoundAffix x : a) {
+            if (x.affix().type() == NAffixType.ANNOTATION) {
+                if (out == null) out = new ArrayList<>();
+                out.add((NElementAnnotation) x.affix());
+            }
+        }
+        return out == null ? Collections.emptyList() : out;
     }
 
     public List<NElementDiagnostic> treeDiagnostics() {

@@ -419,7 +419,9 @@ public class DefaultNWorkspaceExtensionModel {
                         throw new NIllegalArgumentException(NMsg.ofC("extension not found: %s", extension));
                     }
                     if (def.descriptor().idType() != NIdType.EXTENSION) {
-                        throw new NIllegalArgumentException(NMsg.ofC("not an extension: %s", extension));
+                        _LOG()
+                                .log(NMsg.ofC("loading artifact with descriptor idType %s as extension: %s", def.descriptor().idType(), extension)
+                                        .withLevel(Level.WARNING));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(def);

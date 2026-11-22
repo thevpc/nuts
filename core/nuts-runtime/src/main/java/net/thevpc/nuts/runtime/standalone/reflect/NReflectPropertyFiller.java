@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.reflect;
 
 import net.thevpc.nuts.reflect.*;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.*;
@@ -602,34 +603,30 @@ public class NReflectPropertyFiller {
     }
 
     static Method[] _getMethods(Type clazz) {
-        Method[] declaredMethods = new Method[0];
         if (clazz instanceof Class) {
-            declaredMethods = ((Class) clazz).getDeclaredMethods();
-        } else if (clazz instanceof ParameterizedType) {
-            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
+            return ((Class<?>) clazz).getDeclaredMethods();
+        }
+        if (clazz instanceof ParameterizedType) {
+            Class<?> c2 = NReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredMethods();
             }
-            throw new IllegalArgumentException("TODO");
-        } else {
-            throw new IllegalArgumentException("TODO");
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve raw class for parameterized type: %s", clazz));
         }
-        return declaredMethods;
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported type for method lookup: %s", clazz));
     }
 
     static Field[] _getFields(Type clazz) {
-        Field[] declaredFields = new Field[0];
         if (clazz instanceof Class) {
-            declaredFields = ((Class) clazz).getDeclaredFields();
-        } else if (clazz instanceof ParameterizedType) {
-            Class c2 = NReflectUtils.getRawClass(clazz).orNull();
+            return ((Class<?>) clazz).getDeclaredFields();
+        }
+        if (clazz instanceof ParameterizedType) {
+            Class<?> c2 = NReflectUtils.getRawClass(clazz).orNull();
             if (c2 != null) {
                 return c2.getDeclaredFields();
             }
-            throw new IllegalArgumentException("TODO");
-        } else {
-            throw new IllegalArgumentException("TODO");
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve raw class for parameterized type: %s", clazz));
         }
-        return declaredFields;
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported type for field lookup: %s", clazz));
     }
 }

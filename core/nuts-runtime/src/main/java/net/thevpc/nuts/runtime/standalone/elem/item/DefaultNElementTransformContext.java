@@ -58,11 +58,17 @@ public class DefaultNElementTransformContext implements NElementTransformContext
 
     @Override
     public NElementTransformContext withPath(NElementPath path) {
+        if (Objects.equals(this.path, path)) {
+            return this;
+        }
         return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
     @Override
     public NElementTransformContext withElement(NElement element) {
+        if (this.element == element) {
+            return this;
+        }
         return newInstance(element, path, properties, sharedConfig, lastElement);
     }
 
@@ -83,6 +89,9 @@ public class DefaultNElementTransformContext implements NElementTransformContext
 
     @Override
     public NElementTransformContext withTail(boolean tail) {
+        if (this.lastElement == tail) {
+            return this;
+        }
         return newInstance(element, path, properties, sharedConfig, tail);
     }
 
@@ -129,6 +138,13 @@ public class DefaultNElementTransformContext implements NElementTransformContext
             return this;
         }
         return newInstance(element, path, properties, sharedConfig, lastElement);
+    }
+
+    public NElementTransformContext with(NElement element, NElementPath path, boolean tail) {
+        if (this.element == element && Objects.equals(this.path, path) && this.lastElement == tail) {
+            return this;
+        }
+        return newInstance(element, path, properties, sharedConfig, tail);
     }
 
     protected NElementTransformContext newInstance(NElement element, NElementPath path,

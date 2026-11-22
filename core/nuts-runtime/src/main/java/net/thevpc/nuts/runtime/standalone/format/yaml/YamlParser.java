@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Dependency-free YAML 1.2 reader. The implementation parses YAML syntax into
@@ -25,6 +26,21 @@ import java.util.Set;
  * are retained as NElement annotations where the NElement model permits it.
  */
 class YamlParser {
+    private static final Pattern TAG_HANDLE_PATTERN = Pattern.compile("!(?:!|[A-Za-z0-9_-]+!)?");
+    private static final Pattern PLAIN_NAME_PATTERN = Pattern.compile("[a-zA-Z_]([a-zA-Z0-9_-])*");
+    private static final Pattern TIMESTAMP_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+    private static final Pattern TIMESTAMP_TZ_PATTERN = Pattern.compile(".*[+-]\\d{2}:?\\d{2}$");
+    private static final Pattern HEX_INT_PATTERN = Pattern.compile("[-+]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*");
+    private static final Pattern OCT_INT_PATTERN = Pattern.compile("[-+]?0[oO][0-7](?:_?[0-7])*");
+    private static final Pattern INF_PATTERN = Pattern.compile("[-+]?\\.(inf|Inf|INF)");
+    private static final Pattern NAN_PATTERN = Pattern.compile("(?i)\\.(nan)");
+    private static final Pattern INT_SCALAR_PATTERN = Pattern.compile(
+            "[-+]?(?:0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*"
+                    + "|0[oO][0-7](?:_?[0-7])*|[0-9](?:_?[0-9])*)");
+    private static final Pattern FLOAT_SCALAR_PATTERN = Pattern.compile(
+            "[-+]?(?:(?:[0-9](?:_?[0-9])*)(?:\\.(?:[0-9](?:_?[0-9])*)?)?"
+                    + "|\\.(?:[0-9](?:_?[0-9])*))(?:[eE][-+]?(?:[0-9](?:_?[0-9])*))?");
+
     public NElement parseElement(Reader reader) {
         StringBuilder source = new StringBuilder();
         char[] buffer = new char[4096];
@@ -156,7 +172,7 @@ class YamlParser {
                 }
             } else if (text.startsWith("%TAG ")) {
                 String[] parts = text.trim().split("\\s+", 3);
-                if (parts.length != 3 || !parts[1].matches("!(?:!|[A-Za-z0-9_-]+!)?")) {
+                if (parts.length != 3 || !TAG_HANDLE_PATTERN.matcher(parts[1]).matches()) {
                     throw error(directive.number, "invalid %TAG directive");
                 }
                 if (!declaredTagHandles.add(parts[1])) {
@@ -748,7 +764,7 @@ class YamlParser {
                     String value = element.asStringValue().get();
                     // The writer only adds this tag for names that are not plain identifiers
                     // (for instance '$ref' or 'x-something'); such names round-trip as strings.
-                    if (value.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")) {
+                    if (PLAIN_NAME_PATTERN.matcher(value).matches()) {
                         return NElement.ofName(value);
                     }
                 }
@@ -762,11 +778,11 @@ class YamlParser {
                 throw error(sourceLine, "invalid !!timestamp value");
             }
             try {
-                if (value.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                if (TIMESTAMP_DATE_PATTERN.matcher(value).matches()) {
                     return NElement.ofLocalDate(LocalDate.parse(value));
                 }
                 String normalized = value.replace('t', 'T').replace(' ', 'T');
-                if (normalized.endsWith("Z") || normalized.matches(".*[+-]\\d{2}:?\\d{2}$")) {
+                if (normalized.endsWith("Z") || TIMESTAMP_TZ_PATTERN.matcher(normalized).matches()) {
                     try {
                         return NElement.ofInstant(Instant.parse(normalized));
                     } catch (DateTimeParseException ignored) {
@@ -797,7 +813,7 @@ class YamlParser {
             if (n != null) {
                 return n;
             }
-            if (value.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")) {
+            if (PLAIN_NAME_PATTERN.matcher(value).matches()) {
                 return NElement.ofName(value);
             }
             return NElement.ofString(value);
@@ -805,12 +821,12 @@ class YamlParser {
 
         private NElement numberOrNull(String value) {
             try {
-                if (value.matches("[-+]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*")) {
+                if (HEX_INT_PATTERN.matcher(value).matches()) {
                     BigInteger integer = new BigInteger(value.replace("_", "").replaceFirst("^[-+]?0[xX]", ""), 16)
                             .multiply(value.startsWith("-") ? BigInteger.valueOf(-1) : BigInteger.ONE);
                     return integerElement(integer);
                 }
-                if (value.matches("[-+]?0[oO][0-7](?:_?[0-7])*")) {
+                if (OCT_INT_PATTERN.matcher(value).matches()) {
                     String digits = value.replace("_", "").replaceFirst("^[-+]?0[oO]", "");
                     BigInteger v = new BigInteger(digits, 8);
                     return integerElement(value.startsWith("-") ? v.negate() : v);
@@ -822,10 +838,10 @@ class YamlParser {
                 if (isIntegerScalar(value)) {
                     return integerElement(new BigInteger(value.replace("_", "")));
                 }
-                if (value.matches("[-+]?\\.(inf|Inf|INF)")) {
+                if (INF_PATTERN.matcher(value).matches()) {
                     return NElement.ofDouble(value.startsWith("-") ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY);
                 }
-                if (value.matches("(?i)\\.(nan)")) {
+                if (NAN_PATTERN.matcher(value).matches()) {
                     return NElement.ofDouble(Double.NaN);
                 }
             } catch (NumberFormatException ignored) {
@@ -835,14 +851,11 @@ class YamlParser {
         }
 
         private boolean isIntegerScalar(String value) {
-            return value.matches("[-+]?(?:0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*"
-                    + "|0[oO][0-7](?:_?[0-7])*|[0-9](?:_?[0-9])*)");
+            return INT_SCALAR_PATTERN.matcher(value).matches();
         }
 
         private boolean isFloatScalar(String value) {
-            String digits = "[0-9](?:_?[0-9])*";
-            return value.matches("[-+]?(?:(?:" + digits + ")(?:\\.(?:" + digits + ")?)?"
-                    + "|\\.(?:" + digits + "))(?:[eE][-+]?(?:" + digits + "))?");
+            return FLOAT_SCALAR_PATTERN.matcher(value).matches();
         }
 
         private NElement integerElement(BigInteger value) {
@@ -1013,15 +1026,6 @@ class YamlParser {
 
         private boolean isMoreIndented(String line) {
             return !line.isEmpty() && line.charAt(0) == ' ';
-        }
-
-        private boolean hasNonEmptyLineAfter(List<String> lines, int index) {
-            for (int i = index + 1; i < lines.size(); i++) {
-                if (!lines.get(i).isEmpty()) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private String stripTrailingNewlines(String value) {

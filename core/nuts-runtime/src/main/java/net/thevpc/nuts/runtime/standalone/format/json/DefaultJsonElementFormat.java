@@ -94,70 +94,50 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             case NAME:
 //            case NUTS_STRING:
             {
-                StringBuilder sb = new StringBuilder("\"");
                 final String str = data.asStringValue().orElse("");
-                char[] chars = str.toCharArray();
-
-                for (int i = 0; i < chars.length; i++) {
-                    char c = chars[i];
-                    if (c < 32) {
-                        switch (c) {
-                            case '\n': {
-                                sb.append('\\').append('n');
-                                break;
-                            }
-                            case '\f': {
-                                sb.append('\\').append('f');
-                                break;
-                            }
-                            case '\t': {
-                                sb.append('\\').append('t');
-                                break;
-                            }
-                            case '\r': {
-                                sb.append('\\').append('r');
-                                break;
-                            }
-                            case '\b': {
-                                sb.append('\\').append('b');
-                                break;
-                            }
-                            default: {
-                                sb.append('\\');
-                                sb.append('u');
-                                sb.append(NHex.toHexChar((c >> 12) & 0xF));
-                                sb.append(NHex.toHexChar((c >> 8) & 0xF));
-                                sb.append(NHex.toHexChar((c >> 4) & 0xF));
-                                sb.append(NHex.toHexChar(c & 0xF));
-                            }
-                        }
-                    } else {
-                        switch (c) {
-                            case '\\': {
-                                sb.append(c).append(c);
-                                break;
-                            }
-                            case '"': {
-                                sb.append('\\').append('"');
-                                break;
-                            }
-                            default: {
-                                if (c > 0x007e) {
-                                    sb.append('\\');
-                                    sb.append('u');
+                if (!needsJsonEscaping(str)) {
+                    out.print('"');
+                    out.print(str);
+                    out.print('"');
+                } else {
+                    StringBuilder sb = new StringBuilder(str.length() + 16);
+                    sb.append('"');
+                    for (int i = 0; i < str.length(); i++) {
+                        char c = str.charAt(i);
+                        if (c < 32) {
+                            switch (c) {
+                                case '\n': sb.append('\\').append('n'); break;
+                                case '\f': sb.append('\\').append('f'); break;
+                                case '\t': sb.append('\\').append('t'); break;
+                                case '\r': sb.append('\\').append('r'); break;
+                                case '\b': sb.append('\\').append('b'); break;
+                                default:
+                                    sb.append('\\').append('u');
                                     sb.append(NHex.toHexChar((c >> 12) & 0xF));
                                     sb.append(NHex.toHexChar((c >> 8) & 0xF));
                                     sb.append(NHex.toHexChar((c >> 4) & 0xF));
                                     sb.append(NHex.toHexChar(c & 0xF));
-                                } else {
-                                    sb.append(c);
-                                }
+                            }
+                        } else {
+                            switch (c) {
+                                case '\\': sb.append('\\').append('\\'); break;
+                                case '"': sb.append('\\').append('"'); break;
+                                default:
+                                    if (c > 0x007e) {
+                                        sb.append('\\').append('u');
+                                        sb.append(NHex.toHexChar((c >> 12) & 0xF));
+                                        sb.append(NHex.toHexChar((c >> 8) & 0xF));
+                                        sb.append(NHex.toHexChar((c >> 4) & 0xF));
+                                        sb.append(NHex.toHexChar(c & 0xF));
+                                    } else {
+                                        sb.append(c);
+                                    }
                             }
                         }
                     }
+                    sb.append('"');
+                    out.print(sb.toString());
                 }
-                sb.append('\"');
-                out.print(sb);
                 break;
             }
 
@@ -242,6 +222,16 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
     }
 
+    private static boolean needsJsonEscaping(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c < 32 || c == '"' || c == '\\' || c > 0x007e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private NElement _jsonAnnotations(List<NElementAnnotation> a) {
         return NElement.ofArray(
                 a.stream().map(x -> _jsonAnnotation(x)).toArray(NElement[]::new)
@@ -290,7 +280,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                 Float dv = e.asFloatValue().get();
                 if(Float.isNaN(dv)) {
                     b = NElement.ofNull();
-                }else if(Double.isInfinite(dv)) {
+                }else if(Float.isInfinite(dv)) {
                     b = NElement.ofNull();
                 }
                 List<NElementAnnotation> a = e.annotations();
@@ -872,7 +862,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             readNext();
             StringBuilder sb = new StringBuilder();
             while (current != -1 && current != end) {
-                sb.append(skipWhiteSpaceAndComments());
+                sb.append(skipWhiteSpaceAndCommentsCollect());
                 String str = readStringLiteralUnQuoted();
                 if(str.isEmpty()){
                     break;
@@ -990,34 +980,64 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             return true;
         }
 
-        private String skipWhiteSpaceAndComments() {
+        private void skipWhiteSpaceAndComments() {
+            while (true) {
+                if (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
+                    readNext();
+                } else if (current == '/') {
+                    if (currentIsSlashSlash()) {
+                        readNext();
+                        readNext(); // skip //
+                        while (current > 0 && current != '\r' && current != '\n') {
+                            readNext();
+                        }
+                    } else if (currentIsSlashStar()) {
+                        readNext();
+                        readNext(); // skip /*
+                        while (current > 0) {
+                            if (current == '*' && currentIsStarSlash()) {
+                                readNext();
+                                readNext(); // skip */
+                                break;
+                            }
+                            readNext();
+                        }
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        private String skipWhiteSpaceAndCommentsCollect() {
             StringBuilder sb = new StringBuilder();
             while (true) {
                 if (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
                     sb.append((char) current);
                     readNext();
                 } else if (current == '/') {
-                    String s = foreSeek(2);
-                    if ("//".equals(s)) {
+                    if (currentIsSlashSlash()) {
                         sb.append((char) current);
                         readNext();
                         sb.append((char) current);
-                        readNext();//skip //
+                        readNext(); // skip //
                         while (current > 0 && current != '\r' && current != '\n') {
                             sb.append((char) current);
                             readNext();
                         }
-                    } else if ("/*".equals(s)) {
+                    } else if (currentIsSlashStar()) {
                         sb.append((char) current);
                         readNext();
                         sb.append((char) current);
-                        readNext();//skip /*
+                        readNext(); // skip /*
                         while (current > 0) {
-                            if (current == '*' && "*/".equals(foreSeek(2))) {
+                            if (current == '*' && currentIsStarSlash()) {
                                 sb.append((char) current);
                                 readNext();
                                 sb.append((char) current);
-                                readNext();//skip */
+                                readNext(); // skip */
                                 break;
                             }
                             sb.append((char) current);
@@ -1033,31 +1053,36 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
             return sb.toString();
         }
 
-        private String foreSeek(int count) {
-            StringBuilder sb = new StringBuilder();
-            if (current > 0) {
-                sb.append((char) current);
-                count--;
+        private boolean currentIsSlashSlash() {
+            return current == '/' && peekChar(1) == '/';
+        }
+
+        private boolean currentIsSlashStar() {
+            return current == '/' && peekChar(1) == '*';
+        }
+
+        private boolean currentIsStarSlash() {
+            return current == '*' && peekChar(1) == '/';
+        }
+
+        private int peekChar(int offset) {
+            if (offset == 0) {
+                return current;
             }
-            if (count > 0) {
-                try {
-                    reader.mark(count);
-                    for (int i = 0; i < count; i++) {
-                        int r = reader.read();
-                        if (r >= 0) {
-                            sb.append((char) r);
-                        } else {
-                            break;
-                        }
+            try {
+                reader.mark(offset);
+                int r = -1;
+                for (int i = 0; i < offset; i++) {
+                    r = reader.read();
+                    if (r < 0) {
+                        break;
                     }
-                    if (sb.length() > 0) {
-                        reader.reset();
-                    }
-                } catch (IOException ex) {
-                    throw new NIOException(ex);
                 }
+                reader.reset();
+                return r;
+            } catch (IOException ex) {
+                throw new NIOException(ex);
             }
-            return sb.toString();
         }
 
         private void readNext() {

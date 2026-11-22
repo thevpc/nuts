@@ -13,6 +13,9 @@
     <packaging>jar</packaging>
     <name>Nuts Community Library for SSH support</name>
     <description>Nuts SSH Extension</description>
+    <properties>
+        <nuts.extension>true</nuts.extension>
+    </properties>
     <dependencies>
         <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts</artifactId><version>${nuts.api.version}</version></dependency>
         <dependency><groupId>com.jcraft</groupId><artifactId>jsch</artifactId><version>0.1.55</version></dependency>

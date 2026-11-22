@@ -11,6 +11,7 @@ import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -33,7 +34,7 @@ public class DefaultTsonWriter {
                 break;
             }
             case SPACE: {
-                write(affix.toString());
+                write(((NElementSpace) affix).value());
                 break;
             }
             case ANNOTATION: {
@@ -42,7 +43,7 @@ public class DefaultTsonWriter {
                 break;
             }
             case SEPARATOR: {
-                write(affix.toString());
+                write(((NElementSeparator) affix).value());
                 break;
             }
             case NEWLINE: {
@@ -421,7 +422,7 @@ public class DefaultTsonWriter {
                 }
             }
         } catch (IOException e) {
-            throw new NIllegalArgumentException(NMsg.ofC("unable to execute toString on CharStream"));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to write BinaryStream"), e);
         }
         writeBoundedString("]", 2, a.affixes());
         write(a.affixes(), NAffixAnchor.END, acceptablePost);
@@ -504,7 +505,6 @@ public class DefaultTsonWriter {
                 String img = r.image();
                 if (!NBlankable.isBlank(img)) {
                     write(img);
-                    return;
                 } else {
                     NNumberLayout layout = r.numberLayout();
                     String suffix = r.numberSuffix();
@@ -559,12 +559,12 @@ public class DefaultTsonWriter {
         return Base64.getEncoder().wrap(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
-                DefaultTsonWriter.this.write(String.valueOf((char) b));
+                DefaultTsonWriter.this.write((char) b);
             }
 
             @Override
             public void write(byte[] b, int off, int len) throws IOException {
-                DefaultTsonWriter.this.write(new String(b, off, len));
+                DefaultTsonWriter.this.write(new String(b, off, len, StandardCharsets.US_ASCII));
             }
         });
     }
@@ -620,9 +620,26 @@ public class DefaultTsonWriter {
     }
 
     private void write(List<NBoundAffix> list, NAffixAnchor anchor, NAffixType[] acceptableTypes) {
-        for (NBoundAffix p : NBoundAffixList.filter(list, anchor, acceptableTypes)) {
-            write(p);
+        if (list == null || list.isEmpty()) {
+            return;
         }
+        boolean allTypes = acceptableTypes == this.acceptablePre;
+        for (NBoundAffix p : list) {
+            if (p.anchor() == anchor) {
+                if (allTypes || containsType(acceptableTypes, p.affix().type())) {
+                    write(p);
+                }
+            }
+        }
+    }
+
+    private static boolean containsType(NAffixType[] types, NAffixType type) {
+        for (NAffixType t : types) {
+            if (t == type) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void write(char[] buffer, int offset, int len) {

@@ -23,6 +23,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContext
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.*;
@@ -757,21 +758,20 @@ public class InstallHelper {
 
     private void fireEventBeforeInstall(NDefinition def) {
         try {
-            NDefinition finalDef = def;
-            ws.runWith(() -> {
-                new Thread(() -> {
-                    Map rec = null;
-                    if (updateMode) {
-                        rec = ws.getModel().recomm.getRecommendations(new RequestQueryInfo(finalDef.id().toString()), NRecommendationPhase.UPDATE, false);
-                    } else {
-                        rec = ws.getModel().recomm.getRecommendations(new RequestQueryInfo(finalDef.id().toString()), NRecommendationPhase.INSTALL, false);
-                    }
-                }).start();
-            });
-
-            //TODO: should check here for any security issue!
-        } catch (Exception ex2) {
-            //just ignore
+            if (def == null) {
+                return;
+            }
+            SafeRecommendationConnector recomm = ws.getModel().recomm;
+            if (recomm != null) {
+                // async prefetch: must not block install/update; server side may be unavailable
+                recomm.trackRecommendationsAsync(
+                        new RequestQueryInfo(def.id().toString()),
+                        updateMode ? NRecommendationPhase.UPDATE : NRecommendationPhase.INSTALL,
+                        false
+                );
+            }
+        } catch (Exception ignored) {
+            // recommendation tracking must never block or break install/update
         }
     }
 

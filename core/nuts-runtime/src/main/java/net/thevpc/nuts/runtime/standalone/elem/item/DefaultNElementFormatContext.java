@@ -73,6 +73,13 @@ public class DefaultNElementFormatContext extends DefaultNElementTransformContex
     }
 
     @Override
+    public NElementFormatContext with(NElement element, NElementPath path, boolean tail) {
+        if (this.element() == element && Objects.equals(this.path(), path) && this.isTail() == tail) {
+            return this;
+        }
+        return newInstance(element, path, properties(), sharedConfig(), tail, indent, options, builder);
+    }
+
     protected NElementFormatContext newInstance(NElement element, NElementPath path, Map<String, Object> properties, Map<String, Object> sharedConfig, boolean lastElement) {
         return newInstance(element, path, properties, sharedConfig, lastElement, indent, options, builder);
     }

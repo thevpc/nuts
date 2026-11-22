@@ -86,7 +86,6 @@ public class DefaultNPush extends AbstractDefaultNPush {
             NWorkspaceUtils wu = NWorkspaceUtils.of();
             if (NBlankable.isBlank(this.repository())) {
                 Set<String> errors = new LinkedHashSet<>();
-                //TODO : CHECK ME, why offline?
                 boolean ok = false;
                 for (NRepository repo : wu.filterRepositoriesDeploy(file.id(), repositoryFilter)) {
                     NDescriptor descr = null;

@@ -534,8 +534,7 @@ public class DefaultNReflectType implements NReflectType {
     @Override
     public NOptional<NReflectMethod> getMethod(String name, NReflectSignature signature) {
         if (NBlankable.isBlank(name)) {
-            //TODO
-            return NOptional.ofNamedEmpty(signature.toString());
+            return NOptional.ofNamedEmpty(signature == null ? "method" : signature.toString());
         } else {
             build();
             NReflectMethod value = methodsAllMap.get(normalizeSig(name, signature));
@@ -551,10 +550,10 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     /**
-     * TODO
-     *
-     * @param signature
-     * @return
+     * Returns methods matching the exact name and signature.
+     * <p>
+     * Note: this currently performs an exact lookup; broader signature matching
+     * may be added when needed.
      */
     @Override
     public List<NReflectMethod> getMatchingMethods(String name, NReflectSignature signature) {
@@ -566,10 +565,10 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     /**
-     * TODO
-     *
-     * @param signature
-     * @return
+     * Returns the first method matching the exact name and signature.
+     * <p>
+     * Note: this currently performs an exact lookup; broader signature matching
+     * may be added when needed.
      */
     @Override
     public NOptional<NReflectMethod> getMatchingMethod(String name, NReflectSignature signature) {

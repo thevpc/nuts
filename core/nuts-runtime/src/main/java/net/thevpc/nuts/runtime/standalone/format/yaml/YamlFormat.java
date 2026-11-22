@@ -9,8 +9,11 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class YamlFormat {
+    private static final Pattern PLAIN_NAME_PATTERN = Pattern.compile("[a-zA-Z_]([a-zA-Z0-9_-])*");
+
     private NElement str(String any) {
         return NElement.ofString(any);
     }
@@ -322,7 +325,7 @@ public class YamlFormat {
     }
 
     private void formatName(String name, NPrintStream out) {
-        if (name.matches("[a-zA-Z_]([a-zA-Z0-9_-])*")
+        if (PLAIN_NAME_PATTERN.matcher(name).matches()
                 && !name.equalsIgnoreCase("null")
                 && !name.equalsIgnoreCase("true")
                 && !name.equalsIgnoreCase("false")) {

@@ -127,8 +127,16 @@ public class CoreNUtils {
     }
 
     public static <T> List<T> copyAndFilterList(List<T> other, Predicate<T> filter) {
-        return (other == null || other.isEmpty()) ? new ArrayList<>() :
-                other.stream().filter(x -> filter == null || filter.test(x)).collect(Collectors.toList());
+        if (other == null || other.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<T> out = new ArrayList<>(other.size());
+        for (T x : other) {
+            if (filter == null || filter.test(x)) {
+                out.add(x);
+            }
+        }
+        return out;
     }
 
     public static <T> List<T> copyAndUnmodifiableList(List<T> other) {
