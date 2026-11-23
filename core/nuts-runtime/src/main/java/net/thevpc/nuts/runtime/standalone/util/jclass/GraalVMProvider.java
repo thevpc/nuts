@@ -8,7 +8,9 @@ public class GraalVMProvider extends AbstractDiscoJavaProvider {
 
     @Override
     protected String getDiscoDistributionName() {
-        // Foojay identifies GraalVM Community Edition as "graalvm_ce"
-        return "graalvm_ce";
+        // "graalvm_ce" is not a Foojay distribution id (the API answers 400 "unsupported
+        // distribution"). The legacy CE builds are versioned ("graalvm_ce8", ... "graalvm_ce19");
+        // "graalvm_community" is the current GraalVM Community Edition (recent JDKs, e.g. 21).
+        return "graalvm_community";
     }
 }

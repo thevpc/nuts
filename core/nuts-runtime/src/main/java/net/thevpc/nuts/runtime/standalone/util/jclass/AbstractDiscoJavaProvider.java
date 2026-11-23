@@ -140,7 +140,15 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
                 + "&release_status=ga"
                 + "&directly_downloadable=true";
 
-        NElement elem = NElementReader.ofJson().read(NPath.of(url));
+        NElement elem;
+        try {
+            elem = NElementReader.ofJson().read(NPath.of(url));
+        } catch (RuntimeException ex) {
+            // A provider that cannot be queried (HTTP 4xx/5xx, offline, unknown distribution)
+            // simply has nothing to offer: the caller goes on to the next provider instead of
+            // aborting the whole Java lookup.
+            return NOptional.ofEmpty(NMsg.ofC("unable to query java provider %s : %s", getName(), ex.getMessage()));
+        }
         if (elem.isAnyObject()) {
             NArrayElement results = elem.asObject().get().getArray("result").orNull();
             if (results != null) {
@@ -150,7 +158,10 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
                         String archiveType = obj.getStringValue("archive_type").orNull();
                         // Prefer archive formats that do not require OS installers (.tar.gz / .zip)
                         if ("tar.gz".equalsIgnoreCase(archiveType) || "zip".equalsIgnoreCase(archiveType) || "tgz".equalsIgnoreCase(archiveType)) {
-                            String packageUrl = obj.getStringValue("links/pkg_download_redirect").orNull();
+                            // getStringValue(key) is a plain key lookup (no "a/b" path syntax): the
+                            // download link is nested in the "links" object of the Disco package record
+                            NObjectElement links = obj.getObject("links").orNull();
+                            String packageUrl = links == null ? null : links.getStringValue("pkg_download_redirect").orNull();
                             if (packageUrl == null) {
                                 packageUrl = obj.getStringValue("download_url").orNull();
                             }
