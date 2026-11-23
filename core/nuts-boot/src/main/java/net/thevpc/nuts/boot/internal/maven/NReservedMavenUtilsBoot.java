@@ -29,6 +29,11 @@ public class NReservedMavenUtilsBoot {
     public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("META-INF/nuts/(?<g>[a-zA-Z0-9_.-]+)/(?<a>[a-zA-Z0-9_-]+)/nuts.json");
     public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
     public static final Pattern PATTERN_TARGET_CLASSES = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*");
+    /**
+     * maven property reference, as used in {@code <version>${nuts.api.version}</version>}.
+     */
+    private static final Pattern POM_PROPERTY_PATTERN = Pattern.compile("\\$\\{([^}]+)}");
+    private static final int POM_PARENT_DEPTH_LIMIT = 8;
 
     public NReservedMavenUtilsBoot() {
     }
@@ -195,7 +200,7 @@ public class NReservedMavenUtilsBoot {
             Set<String> urls = expandRepoUrls(baseUrl);
             for (String url : urls) {
                 if (url != null) {
-                    deps = loadDependenciesFromPomUrl(url + "/" + pomPath);
+                    deps = loadDependenciesFromPomUrl(url + "/" + pomPath, url);
                     if (deps != null) {
                         return deps;
                     }
@@ -205,7 +210,7 @@ public class NReservedMavenUtilsBoot {
                 if (loc.startsWith("htmlfs+")) {
                     loc = loc.substring("htmlfs+".length());
                 }
-                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath);
+                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath, loc);
                 if (deps != null) {
                     break;
                 }
@@ -254,6 +259,27 @@ public class NReservedMavenUtilsBoot {
 
 
     private static Set<NBootDependency> loadDependenciesFromPomUrl(String url) {
+        return loadDependenciesFromPomUrl(url, null);
+    }
+
+    /**
+     * Loads the compile dependencies declared by a maven pom.
+     * <p>
+     * Maven allows dependency fields to be properties, for instance
+     * {@code <version>${nuts.api.version}</version>}. The boot intentionally has no
+     * maven model, so those variables must be resolved here from the pom's own
+     * {@code <properties>} and, when needed, from the parent chain read from the
+     * same repository. Without this, a freshly generated nuts runtime pom is
+     * refused with "unexpected maven variable", which leaves the runtime
+     * classpath empty and the boot fails with
+     * {@code NoClassDefFoundError: net/thevpc/nuts/core/NWorkspace}.
+     *
+     * @param url            pom url
+     * @param repositoryBase repository root the pom was read from, used to read
+     *                       the parent pom; may be null when unknown
+     * @return declared dependencies, or null when the pom cannot be read at all
+     */
+    private static Set<NBootDependency> loadDependenciesFromPomUrl(String url, String repositoryBase) {
         LinkedHashSet<NBootDependency> depsSet = new LinkedHashSet<>();
         InputStream xml = NBootUtils.resolveInputStream(url);
         if (xml != null) {
@@ -270,136 +296,157 @@ public class NReservedMavenUtilsBoot {
                 Element c = doc.getDocumentElement();
                 Map<String, String> osMap = new HashMap<>();
                 Map<String, String> archMap = new HashMap<>();
+                Map<String, String> properties = new HashMap<>();
+                String ownGroupId = null;
+                String ownArtifactId = null;
+                String ownVersion = null;
+                String parentGroupId = null;
+                String parentArtifactId = null;
+                String parentVersion = null;
+                List<String[]> rawDependencies = new ArrayList<>();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
-                        Element c2 = (Element) c.getChildNodes().item(i);
-                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
-                                Element c3 = (Element) c2.getChildNodes().item(j);
-                                String groupId = null;
-                                String artifactId = null;
-                                String version = null;
-                                String scope = null;
-                                String optional = null;
-                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                    if (c3.getChildNodes().item(k) instanceof Element) {
-                                        Element c4 = (Element) c3.getChildNodes().item(k);
-                                        switch (c4.getNodeName()) {
-                                            case "groupId": {
-                                                groupId = c4.getTextContent().trim();
-                                                break;
-                                            }
-                                            case "artifactId": {
-                                                artifactId = c4.getTextContent().trim();
-                                                break;
-                                            }
-                                            case "version": {
-                                                version = c4.getTextContent().trim();
-                                                break;
-                                            }
-                                            case "scope": {
-                                                scope = c4.getTextContent().trim();
-                                                break;
-                                            }
-                                            case "optional": {
-                                                optional = c4.getTextContent().trim();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                if (NBootUtils.isBlank(groupId)) {
-                                    throw new NBootException(NBootMsg.ofPlain("unexpected empty groupId"));
-                                } else if (groupId.contains("$")) {
-                                    throw new NBootException(NBootMsg.ofC("unexpected maven variable in groupId=%s", groupId));
-                                }
-                                if (NBootUtils.isBlank(artifactId)) {
-                                    throw new NBootException(NBootMsg.ofPlain("unexpected empty artifactId"));
-                                } else if (artifactId.contains("$")) {
-                                    throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", artifactId));
-                                }
-                                if (NBootUtils.isBlank(version)) {
-                                    throw new NBootException(NBootMsg.ofPlain("unexpected empty artifactId"));
-                                } else if (version.contains("$")) {
-                                    throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", version));
-                                }
-                                //this is maven dependency, using "compile"
-                                if (NBootUtils.isBlank(scope) || scope.equals("compile")) {
-                                    boolean optionalBool = NBootUtils.parseBooleanOr(optional, false);
-                                    depsSet.add(
-                                            NBootDependency.of(
-                                                            groupId,
-                                                            artifactId,
-                                                            version)
-                                                    .setProperty(NBootConstants.IdProperties.OPTIONAL,
-                                                            optionalBool ? Boolean.TRUE.toString() : null)
-                                                    .conditionOs(Collections.singletonList(osMap.get(groupId + ":" + artifactId)))
-                                                    .conditionArch(Collections.singletonList(archMap.get(groupId + ":" + artifactId)))
-                                    )
-                                    ;
-                                } else if (version.contains("$")) {
-                                    throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", version));
-                                }
-                            }
+                    if (!(c.getChildNodes().item(i) instanceof Element)) {
+                        continue;
+                    }
+                    Element e = (Element) c.getChildNodes().item(i);
+                    switch (e.getNodeName()) {
+                        case "groupId": {
+                            ownGroupId = e.getTextContent().trim();
+                            break;
                         }
-                    } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
-                        Element c2 = (Element) c.getChildNodes().item(i);
-                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                            if (c2.getChildNodes().item(j) instanceof Element) {
-                                Element c3 = (Element) c2.getChildNodes().item(j);
-                                String nodeName = c3.getNodeName();
-                                switch (nodeName) {
-                                    default: {
-                                        Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
-                                        if (m.find()) {
-                                            String os = m.group("os");
-                                            String arch = m.group("arch");
-                                            String txt = c3.getTextContent().trim();
-                                            for (String a : txt.trim().split("[;,\n\t]")) {
-                                                a = a.trim();
-                                                if (a.startsWith("#")) {
-                                                    //ignore!
-                                                } else {
-                                                    if (!NBootUtils.isBlank(os)) {
-                                                        osMap.put(a, os);
-                                                    }
-                                                    if (!NBootUtils.isBlank(arch)) {
-                                                        archMap.put(a, arch);
-                                                    }
+                        case "artifactId": {
+                            ownArtifactId = e.getTextContent().trim();
+                            break;
+                        }
+                        case "version": {
+                            ownVersion = e.getTextContent().trim();
+                            break;
+                        }
+                        case "parent": {
+                            parentGroupId = elementText(e, "groupId");
+                            parentArtifactId = elementText(e, "artifactId");
+                            parentVersion = elementText(e, "version");
+                            break;
+                        }
+                        case "properties": {
+                            for (int j = 0; j < e.getChildNodes().getLength(); j++) {
+                                if (e.getChildNodes().item(j) instanceof Element) {
+                                    Element property = (Element) e.getChildNodes().item(j);
+                                    String nodeName = property.getNodeName();
+                                    properties.put(nodeName, property.getTextContent().trim());
+                                    Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
+                                    if (m.find()) {
+                                        String os = m.group("os");
+                                        String arch = m.group("arch");
+                                        String txt = property.getTextContent().trim();
+                                        for (String a : txt.trim().split("[;,\n\t]")) {
+                                            a = a.trim();
+                                            if (a.startsWith("#")) {
+                                                //ignore!
+                                            } else {
+                                                if (!NBootUtils.isBlank(os)) {
+                                                    osMap.put(a, os);
+                                                }
+                                                if (!NBootUtils.isBlank(arch)) {
+                                                    archMap.put(a, arch);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                            break;
+                        }
+                        case "dependencies": {
+                            for (int j = 0; j < e.getChildNodes().getLength(); j++) {
+                                if (e.getChildNodes().item(j) instanceof Element
+                                        && e.getChildNodes().item(j).getNodeName().equals("dependency")) {
+                                    Element dependency = (Element) e.getChildNodes().item(j);
+                                    rawDependencies.add(new String[]{
+                                            elementText(dependency, "groupId"),
+                                            elementText(dependency, "artifactId"),
+                                            elementText(dependency, "version"),
+                                            elementText(dependency, "scope"),
+                                            elementText(dependency, "optional")
+                                    });
+                                }
+                            }
+                            break;
                         }
                     }
+                }
+                // maven built-in properties; the effective values are the local ones,
+                // else the ones inherited from the parent
+                String projectGroupId = NBootUtils.isBlank(ownGroupId) ? parentGroupId : ownGroupId;
+                String projectVersion = NBootUtils.isBlank(ownVersion) ? parentVersion : ownVersion;
+                putProperty(properties, "project.groupId", projectGroupId);
+                putProperty(properties, "project.artifactId", ownArtifactId);
+                putProperty(properties, "project.version", projectVersion);
+                putProperty(properties, "pom.groupId", projectGroupId);
+                putProperty(properties, "pom.artifactId", ownArtifactId);
+                putProperty(properties, "pom.version", projectVersion);
+                putProperty(properties, "project.parent.groupId", parentGroupId);
+                putProperty(properties, "project.parent.artifactId", parentArtifactId);
+                putProperty(properties, "project.parent.version", parentVersion);
+                if (needsPropertyResolution(rawDependencies)
+                        && repositoryBase != null && !NBootUtils.isBlank(parentGroupId)
+                        && !NBootUtils.isBlank(parentArtifactId) && !NBootUtils.isBlank(parentVersion)) {
+                    NBootDependency parentId = NBootDependency.of(parentGroupId, parentArtifactId, parentVersion);
+                    loadPomPropertiesFromUrl(
+                            repositoryBase + "/" + NBootUtils.resolveFilePath(parentId, "pom"),
+                            repositoryBase, properties, new HashSet<String>(), 0);
                 }
                 List<NBootDependency> ok = new ArrayList<>();
-                for (NBootDependency idep : depsSet) {
-                    NBootDependency dep = idep.toDependency();
-
-                    String arch = archMap.get(idep.shortName());
-                    String os = osMap.get(idep.shortName());
-                    boolean replace = false;
-                    if (arch != null || os != null) {
-                        if ((dep.conditionOs().isEmpty() && os != null)
-                                || (dep.conditionArch().isEmpty() && arch != null)) {
-                            replace = true;
-                        }
+                for (String[] rawDependency : rawDependencies) {
+                    String groupId = resolvePomProperties(rawDependency[0], properties);
+                    String artifactId = resolvePomProperties(rawDependency[1], properties);
+                    String version = resolvePomProperties(rawDependency[2], properties);
+                    String scope = resolvePomProperties(rawDependency[3], properties);
+                    String optional = resolvePomProperties(rawDependency[4], properties);
+                    if (NBootUtils.isBlank(groupId)) {
+                        throw new NBootException(NBootMsg.ofPlain("unexpected empty groupId"));
+                    } else if (groupId.contains("$")) {
+                        throw new NBootException(NBootMsg.ofC("unexpected maven variable in groupId=%s", groupId));
                     }
-                    if (replace) {
-                        ok.add(
-                                dep.conditionArch(
-                                                arch != null ? Collections.singletonList(arch) : dep.conditionArch())
-                                        .conditionOs(
-                                                arch != null ? Collections.singletonList(arch) : dep.conditionArch())
-                        );
-                    } else {
-                        ok.add(idep);
+                    if (NBootUtils.isBlank(artifactId)) {
+                        throw new NBootException(NBootMsg.ofPlain("unexpected empty artifactId"));
+                    } else if (artifactId.contains("$")) {
+                        throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", artifactId));
+                    }
+                    if (NBootUtils.isBlank(version)) {
+                        throw new NBootException(NBootMsg.ofPlain("unexpected empty artifactId"));
+                    } else if (version.contains("$")) {
+                        throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", version));
+                    }
+                    //this is maven dependency, using "compile"
+                    if (NBootUtils.isBlank(scope) || scope.equals("compile")) {
+                        boolean optionalBool = NBootUtils.parseBooleanOr(optional, false);
+                        NBootDependency dep = NBootDependency.of(
+                                        groupId,
+                                        artifactId,
+                                        version)
+                                .setProperty(NBootConstants.IdProperties.OPTIONAL,
+                                        optionalBool ? Boolean.TRUE.toString() : null);
+                        String arch = archMap.get(groupId + ":" + artifactId);
+                        String os = osMap.get(groupId + ":" + artifactId);
+                        boolean replace = false;
+                        if (arch != null || os != null) {
+                            if ((dep.conditionOs().isEmpty() && os != null)
+                                    || (dep.conditionArch().isEmpty() && arch != null)) {
+                                replace = true;
+                            }
+                        }
+                        if (replace) {
+                            dep = dep.conditionArch(
+                                            arch != null ? Collections.singletonList(arch) : dep.conditionArch())
+                                    .conditionOs(
+                                            os != null ? Collections.singletonList(os) : dep.conditionOs());
+                        }
+                        ok.add(dep);
+                    } else if (version.contains("$")) {
+                        throw new NBootException(NBootMsg.ofC("unexpected maven variable in artifactId=%s", version));
                     }
                 }
-                depsSet.clear();
                 depsSet.addAll(ok);
 
             } catch (Exception ex) {
@@ -415,6 +462,127 @@ public class NReservedMavenUtilsBoot {
         } else {
             return null;
         }
+    }
+
+    private static String elementText(Element parent, String name) {
+        if (parent == null) {
+            return null;
+        }
+        for (int i = 0; i < parent.getChildNodes().getLength(); i++) {
+            if (parent.getChildNodes().item(i) instanceof Element) {
+                Element e = (Element) parent.getChildNodes().item(i);
+                if (name.equals(e.getNodeName())) {
+                    return e.getTextContent().trim();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void putProperty(Map<String, String> properties, String name, String value) {
+        if (!NBootUtils.isBlank(value) && value.indexOf('$') < 0) {
+            properties.put(name, value);
+        }
+    }
+
+    private static boolean needsPropertyResolution(List<String[]> dependencies) {
+        for (String[] dependency : dependencies) {
+            for (String value : dependency) {
+                if (value != null && value.indexOf('$') >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Reads the {@code <properties>} of a pom and of its parents, adding them to
+     * {@code properties} without overriding values already resolved (the closest
+     * declaration wins, as in maven).
+     */
+    private static void loadPomPropertiesFromUrl(String pomUrl, String repositoryBase,
+                                                 Map<String, String> properties, Set<String> visited,
+                                                 int depth) {
+        if (pomUrl == null || depth > POM_PARENT_DEPTH_LIMIT || !visited.add(pomUrl)) {
+            return;
+        }
+        InputStream xml = NBootUtils.resolveInputStream(pomUrl);
+        if (xml == null) {
+            return;
+        }
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Element c = builder.parse(xml).getDocumentElement();
+            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                if (!(c.getChildNodes().item(i) instanceof Element)) {
+                    continue;
+                }
+                Element e = (Element) c.getChildNodes().item(i);
+                if (e.getNodeName().equals("properties")) {
+                    for (int j = 0; j < e.getChildNodes().getLength(); j++) {
+                        if (e.getChildNodes().item(j) instanceof Element) {
+                            Element property = (Element) e.getChildNodes().item(j);
+                            String name = property.getNodeName();
+                            if (!properties.containsKey(name)) {
+                                properties.put(name, property.getTextContent().trim());
+                            }
+                        }
+                    }
+                } else if (e.getNodeName().equals("parent")) {
+                    String groupId = elementText(e, "groupId");
+                    String artifactId = elementText(e, "artifactId");
+                    String version = elementText(e, "version");
+                    if (!NBootUtils.isBlank(groupId) && !NBootUtils.isBlank(artifactId) && !NBootUtils.isBlank(version)) {
+                        NBootDependency parentId = NBootDependency.of(groupId, artifactId, version);
+                        loadPomPropertiesFromUrl(
+                                repositoryBase + "/" + NBootUtils.resolveFilePath(parentId, "pom"),
+                                repositoryBase, properties, visited, depth + 1);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            NBootContext.log().with().level(Level.FINEST).verbFail().error(ex)
+                    .log(NBootMsg.ofC("unable to read pom properties %s", pomUrl));
+        } finally {
+            try {
+                xml.close();
+            } catch (IOException ex) {
+                //ignore
+            }
+        }
+    }
+
+    /**
+     * Replaces {@code ${name}} occurrences until the value is stable; unknown
+     * variables are kept as-is so the caller can still detect them.
+     */
+    private static String resolvePomProperties(String value, Map<String, String> properties) {
+        if (value == null || value.indexOf('$') < 0) {
+            return value;
+        }
+        String s = value;
+        for (int round = 0; round < 10; round++) {
+            Matcher m = POM_PROPERTY_PATTERN.matcher(s);
+            StringBuffer sb = new StringBuffer();
+            boolean replaced = false;
+            while (m.find()) {
+                String replacement = properties.get(m.group(1));
+                if (replacement != null) {
+                    m.appendReplacement(sb, Matcher.quoteReplacement(replacement));
+                    replaced = true;
+                } else {
+                    m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0)));
+                }
+            }
+            m.appendTail(sb);
+            s = sb.toString();
+            if (!replaced || s.indexOf('$') < 0) {
+                break;
+            }
+        }
+        return s;
     }
 
     static List<NBootVersion> detectVersionsFromMetaData(String mavenMetadata) {
