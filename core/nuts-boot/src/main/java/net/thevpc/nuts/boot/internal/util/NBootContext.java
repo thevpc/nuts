@@ -8,6 +8,7 @@ public class NBootContext {
     public static InheritableThreadLocal<NBootContext> curr = new InheritableThreadLocal<>();
     public NBootLog log;
     public Integer connectionTimout;
+    public Integer connectionReadTimeout;
     private NBootCache cache = new NBootCache();
 
 

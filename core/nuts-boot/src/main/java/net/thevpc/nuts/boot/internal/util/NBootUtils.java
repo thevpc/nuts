@@ -35,8 +35,6 @@ import net.thevpc.nuts.boot.internal.maven.NReservedMavenUtilsBoot;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -1705,33 +1703,133 @@ public final class NBootUtils {
         }
     }
 
-    public static void copy(URL url, File to)  {
+    public static void copy(URL url, File to) {
         NBootLog log = NBootContext.log();
-        try {
-            InputStream in = openStream(url);
-            if (in == null) {
-                throw new IOException("empty Stream " + url);
-            }
-            if (to.getParentFile() != null) {
-                if (!to.getParentFile().isDirectory()) {
-                    boolean mkdirs = to.getParentFile().mkdirs();
-                    if (!mkdirs) {
-                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error creating folder %s", url));
-                    }
+        File parent = to.getParentFile();
+        if (parent != null && !parent.isDirectory()) {
+            if (!parent.mkdirs()) {
+                if (log != null) {
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error creating folder %s", url));
                 }
             }
-            ReadableByteChannel rbc = Channels.newChannel(in);
-            FileOutputStream fos = new FileOutputStream(to);
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (FileNotFoundException ex) {
-            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
-            throw new UncheckedIOException(ex);
-        } catch (UncheckedIOException ex) {
-            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
-            throw ex;
-        } catch (IOException ex) {
-            log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
-            throw new UncheckedIOException(ex);
+        }
+        int maxAttempts = isRemoteURL(url) ? 3 : 1;
+        IOException lastError = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            File part = new File(to.getPath() + ".part");
+            try {
+                copyURLOnce(url, part);
+                replaceFile(part, to);
+                return;
+            } catch (UncheckedIOException ex) {
+                deleteQuietly(part);
+                if (isNotFound(ex)) {
+                    if (log != null) {
+                        log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", url));
+                    }
+                    throw ex;
+                }
+                lastError = new IOException(ex.getMessage(), ex);
+                if (log != null) {
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
+                }
+            } catch (IOException ex) {
+                deleteQuietly(part);
+                lastError = ex;
+                if (log != null) {
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
+                }
+            } catch (NBootException ex) {
+                // truncated downloads are reported by NBootMonitoredURLInputStream
+                deleteQuietly(part);
+                lastError = new IOException(ex.getMessage(), ex);
+                if (log != null) {
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()));
+                }
+            }
+            if (attempt < maxAttempts) {
+                if (log != null) {
+                    log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("retrying download of %s (attempt %s/%s)", url, attempt + 1, maxAttempts));
+                }
+                sleepQuietly(250L * attempt);
+            }
+        }
+        throw new UncheckedIOException(lastError == null ? new IOException("unable to copy " + url) : lastError);
+    }
+
+    private static void copyURLOnce(URL url, File to) throws IOException {
+        InputStream in = openStream(url);
+        if (in == null) {
+            throw new IOException("empty Stream " + url);
+        }
+        long expectedLength = in instanceof NBootMonitoredURLInputStream
+                ? ((NBootMonitoredURLInputStream) in).getContentLength() : -1;
+        long readCount = 0;
+        try (InputStream is = in; OutputStream os = new BufferedOutputStream(new FileOutputStream(to))) {
+            byte[] buffer = new byte[64 * 1024];
+            int count;
+            while ((count = is.read(buffer)) >= 0) {
+                if (count > 0) {
+                    os.write(buffer, 0, count);
+                    readCount += count;
+                }
+            }
+        }
+        if (expectedLength >= 0 && readCount != expectedLength) {
+            throw new IOException("incomplete download of " + url + " : expected " + expectedLength + " bytes but received " + readCount);
+        }
+    }
+
+    private static void replaceFile(File from, File to) throws IOException {
+        try {
+            Files.move(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException moveError) {
+            // some file systems (and virus scanners holding the target open)
+            // refuse a move; fall back to a regular copy
+            try {
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException copyError) {
+                copyError.addSuppressed(moveError);
+                throw copyError;
+            }
+            deleteQuietly(from);
+        }
+    }
+
+    private static boolean isRemoteURL(URL url) {
+        if (url == null) {
+            return false;
+        }
+        String protocol = url.getProtocol();
+        return "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
+    }
+
+    private static boolean isNotFound(Throwable error) {
+        Throwable t = error;
+        while (t != null) {
+            if (t instanceof FileNotFoundException) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
+    }
+
+    private static void deleteQuietly(File file) {
+        if (file != null && file.exists()) {
+            try {
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException ignored) {
+                //
+            }
+        }
+    }
+
+    private static void sleepQuietly(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
     }
 

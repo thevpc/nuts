@@ -13,13 +13,19 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptIn
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.xtra.shell.NShellHelper;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.pipeline.NStream;
+import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -144,6 +150,58 @@ public class WindowsNdi extends BaseSystemNdi {
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
 
+    }
+
+    @Override
+    protected void removeStaleShortcuts(NdiScriptOptions options, List<String> oldVersions) {
+        if (oldVersions == null || oldVersions.isEmpty()) {
+            return;
+        }
+        List<NPath> places = new ArrayList<>();
+        NPath userMenu = NPath.ofUserHome()
+                .resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
+        if (userMenu.isDirectory()) {
+            places.add(userMenu);
+        }
+        NPath allUsersMenu = NPath.of("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs");
+        if (allUsersMenu.isDirectory()) {
+            places.add(allUsersMenu);
+        }
+        Path desktop = NEnv.of().desktopPath();
+        if (desktop != null) {
+            NPath desktopPath = NPath.of(desktop);
+            if (desktopPath.isDirectory()) {
+                places.add(desktopPath);
+            }
+        }
+        for (NPath place : places) {
+            try (NStream<NPath> stream = place.walk()) {
+                for (NPath file : stream) {
+                    if (!file.isRegularFile()) {
+                        continue;
+                    }
+                    String name = file.name();
+                    String lower = name.toLowerCase();
+                    if (!lower.endsWith(".lnk") || !lower.startsWith("nuts")) {
+                        continue;
+                    }
+                    for (String oldVersion : oldVersions) {
+                        if (name.contains(oldVersion)) {
+                            try {
+                                file.delete();
+                            } catch (Exception ex) {
+                                NLog.of(WindowsNdi.class)
+                                        .log(NMsg.ofC("unable to remove stale shortcut %s : %s", file, ex).asFineFail());
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                NLog.of(WindowsNdi.class)
+                        .log(NMsg.ofC("unable to scan shortcuts in %s : %s", place, ex).asFineFail());
+            }
+        }
     }
 
 

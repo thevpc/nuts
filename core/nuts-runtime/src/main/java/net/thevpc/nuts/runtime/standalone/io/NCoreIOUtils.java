@@ -19,8 +19,6 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -484,28 +482,114 @@ public class NCoreIOUtils {
     }
 
     public static void copy(URL url, File to, NLog bLog) throws IOException {
-        try {
-            InputStream in = openStream(url, bLog);
-            if (in == null) {
-                throw new IOException("empty Stream " + url);
+        File parent = to.getParentFile();
+        if (parent != null && !parent.isDirectory()) {
+            if (!parent.mkdirs()) {
+                bLog.log(NMsg.ofC("error creating folder %s", url).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
             }
-            if (to.getParentFile() != null) {
-                if (!to.getParentFile().isDirectory()) {
-                    boolean mkdirs = to.getParentFile().mkdirs();
-                    if (!mkdirs) {
-                        bLog.log(NMsg.ofC("error creating folder %s", url).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
-                    }
+        }
+        int maxAttempts = isRemoteURL(url) ? 3 : 1;
+        IOException lastError = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            File part = new File(to.getPath() + ".part");
+            try {
+                copyURLOnce(url, part, bLog);
+                replaceFile(part, to);
+                return;
+            } catch (UncheckedIOException ex) {
+                deleteQuietly(part);
+                if (isNotFound(ex)) {
+                    bLog.log(NMsg.ofC("not found %s", url).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
+                    throw ex;
+                }
+                lastError = new IOException(ex.getMessage(), ex);
+                bLog.log(NMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
+            } catch (IOException ex) {
+                deleteQuietly(part);
+                lastError = ex;
+                bLog.log(NMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
+            }
+            if (attempt < maxAttempts) {
+                bLog.log(NMsg.ofC("retrying download of %s (attempt %s/%s)", url, attempt + 1, maxAttempts).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
+                sleepQuietly(250L * attempt);
+            }
+        }
+        throw lastError == null ? new IOException("unable to copy " + url) : lastError;
+    }
+
+    private static void copyURLOnce(URL url, File to, NLog bLog) throws IOException {
+        InputStream in = openStream(url, bLog);
+        if (in == null) {
+            throw new IOException("empty Stream " + url);
+        }
+        long expectedLength = in instanceof NReservedMonitoredURLInputStream
+                ? ((NReservedMonitoredURLInputStream) in).getContentLength() : -1;
+        long readCount = 0;
+        try (InputStream is = in; OutputStream os = new BufferedOutputStream(new FileOutputStream(to))) {
+            byte[] buffer = new byte[64 * 1024];
+            int count;
+            while ((count = is.read(buffer)) >= 0) {
+                if (count > 0) {
+                    os.write(buffer, 0, count);
+                    readCount += count;
                 }
             }
-            ReadableByteChannel rbc = Channels.newChannel(in);
-            FileOutputStream fos = new FileOutputStream(to);
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (FileNotFoundException | UncheckedIOException ex) {
-            bLog.log(NMsg.ofC("not found %s", url).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
-            throw ex;
-        } catch (IOException ex) {
-            bLog.log(NMsg.ofC("error copying %s to %s : %s", url, to, ex.toString()).withLevel(Level.CONFIG).withIntent(NMsgIntent.FAIL));
-            throw ex;
+        }
+        if (expectedLength >= 0 && readCount != expectedLength) {
+            throw new IOException("incomplete download of " + url + " : expected " + expectedLength + " bytes but received " + readCount);
+        }
+    }
+
+    private static void replaceFile(File from, File to) throws IOException {
+        try {
+            Files.move(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException moveError) {
+            // some file systems (and virus scanners holding the target open)
+            // refuse a move; fall back to a regular copy
+            try {
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException copyError) {
+                copyError.addSuppressed(moveError);
+                throw copyError;
+            }
+            deleteQuietly(from);
+        }
+    }
+
+    private static boolean isRemoteURL(URL url) {
+        if (url == null) {
+            return false;
+        }
+        String protocol = url.getProtocol();
+        return "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol);
+    }
+
+    private static boolean isNotFound(Throwable error) {
+        Throwable t = error;
+        while (t != null) {
+            if (t instanceof FileNotFoundException) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
+    }
+
+    private static void deleteQuietly(File file) {
+        if (file != null && file.exists()) {
+            try {
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException ignored) {
+                //
+            }
+        }
+    }
+
+    private static void sleepQuietly(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
     }
 

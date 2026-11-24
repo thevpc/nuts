@@ -63,6 +63,22 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
         }
     }
 
+    public long getContentLength() {
+        return contentLength;
+    }
+
+    public long getReadCount() {
+        return readCount;
+    }
+
+    /**
+     * @return true when the whole announced content has been read (or the
+     * content length is unknown).
+     */
+    public boolean isComplete() {
+        return contentLength < 0 || readCount == contentLength;
+    }
+
     @Override
     public int read() throws IOException {
         int r = super.read();
@@ -80,7 +96,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
         if (t > 0) {
             readCount += t;
             doLog(false);
-        } else {
+        } else if (t < 0) {
             preDestroy();
         }
         return t;
@@ -92,8 +108,6 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
         if (t > 0) {
             readCount += t;
             doLog(false);
-        } else {
-            preDestroy();
         }
         return t;
     }

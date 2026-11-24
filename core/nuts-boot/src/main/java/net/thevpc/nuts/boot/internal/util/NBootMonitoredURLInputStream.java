@@ -12,12 +12,22 @@ import java.util.logging.Level;
 
 public class NBootMonitoredURLInputStream extends FilterInputStream {
     public static final int M = 1024 * 1024;
+    /**
+     * timeout used to establish the connection (milliseconds)
+     */
+    public static final int DEFAULT_CONNECT_TIMEOUT = 3000;
+    /**
+     * timeout used while waiting for data (milliseconds). A download may
+     * legitimately pause longer than a connection is allowed to be established,
+     * so the two timeouts must not share the same (short) value.
+     */
+    public static final int DEFAULT_READ_TIMEOUT = 30000;
     private NBootChronometer chronometer;
     private final long contentLength;
     private final URL url;
     long lastSec = -1;
     long readCount = 0;
-    boolean preDestroyed = false;
+    boolean finished = false;
 
     private NBootMonitoredURLInputStream(InputStream in, URL url, NBootChronometer chronometer, long contentLength) {
         super(in);
@@ -37,29 +47,51 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
             c = url.openConnection();
         } catch (IOException ex) {
             if (log != null) {
-                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : open connection leads to %s", url,ex));
+                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : open connection leads to %s", url, ex));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
         Integer bootConnectionTimout = null;
+        Integer bootReadTimout = null;
         if (NBootContext.context() != null) {
             bootConnectionTimout = NBootContext.context().connectionTimout;
+            bootReadTimout = NBootContext.context().connectionReadTimeout;
         }
         if (bootConnectionTimout == null) {
-            bootConnectionTimout = 3000;
+            bootConnectionTimout = DEFAULT_CONNECT_TIMEOUT;
         }
-        bootConnectionTimout=Math.max(0,bootConnectionTimout);
+        if (bootReadTimout == null) {
+            bootReadTimout = DEFAULT_READ_TIMEOUT;
+        }
+        bootConnectionTimout = Math.max(0, bootConnectionTimout);
+        bootReadTimout = Math.max(0, bootReadTimout);
         c.setConnectTimeout(bootConnectionTimout);
-        c.setReadTimeout(bootConnectionTimout);
+        c.setReadTimeout(bootReadTimout);
         long contentLength = c.getContentLengthLong();
         try {
             return new NBootMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength);
         } catch (IOException ex) {
-            if (log!=null) {
-                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : %s", url,ex));
+            if (log != null) {
+                log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to download %s : %s", url, ex));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
+    }
+
+    public long getContentLength() {
+        return contentLength;
+    }
+
+    public long getReadCount() {
+        return readCount;
+    }
+
+    /**
+     * @return true when the whole announced content has been read (or the
+     * content length is unknown).
+     */
+    public boolean isComplete() {
+        return contentLength < 0 || readCount == contentLength;
     }
 
     @Override
@@ -68,7 +100,7 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
         if (r >= 0) {
             readCount++;
         } else {
-            preDestroy();
+            completed();
         }
         return r;
     }
@@ -79,8 +111,8 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
         if (t > 0) {
             readCount += t;
             doLog(false);
-        } else {
-            preDestroy();
+        } else if (t < 0) {
+            completed();
         }
         return t;
     }
@@ -91,31 +123,40 @@ public class NBootMonitoredURLInputStream extends FilterInputStream {
         if (t > 0) {
             readCount += t;
             doLog(false);
-        } else {
-            preDestroy();
         }
         return t;
     }
 
     @Override
     public void close() throws IOException {
-        preDestroy();
-        super.close();
+        try {
+            finished(true);
+        } finally {
+            super.close();
+        }
     }
 
-    private void preDestroy() {
-        if (!preDestroyed) {
-            preDestroyed = true;
+    private void completed() {
+        finished(false);
+    }
+
+    private void finished(boolean closing) {
+        if (!finished) {
+            finished = true;
             chronometer.stop();
             doLog(true);
             NBootLog log = NBootContext.log();
-            if (contentLength >= 0) {
-                if (readCount != contentLength) {
+            if (contentLength >= 0 && readCount != contentLength) {
+                if (log != null) {
                     log.with().level(Level.FINE).verbFail().log(NBootMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
+                }
+                // closing a stream before its end is a legitimate operation (the
+                // caller may only need a prefix). Only a read that reaches EOF
+                // earlier than announced is an actual download failure.
+                if (!closing) {
                     throw new NBootException(NBootMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
                 }
-            }
-            if (log != null) {
+            } else if (log != null) {
                 log.with().level(Level.FINE).verbSuccess().log(NBootMsg.ofC("successfully downloaded %s", url));
             }
         }

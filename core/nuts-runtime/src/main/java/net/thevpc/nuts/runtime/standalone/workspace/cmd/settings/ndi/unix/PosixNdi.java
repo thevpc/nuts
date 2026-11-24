@@ -135,6 +135,49 @@ public class PosixNdi extends BaseSystemNdi {
     }
 
     @Override
+    protected void removeStaleShortcuts(NdiScriptOptions options, List<String> oldVersions) {
+        if (oldVersions == null || oldVersions.isEmpty()) {
+            return;
+        }
+        List<NPath> folders = Arrays.asList(
+                NPath.ofUserHome().resolve(".local/share/applications"),
+                NPath.ofUserHome().resolve(".config/menus/applications-merged")
+        );
+        for (NPath folder : folders) {
+            if (!folder.isDirectory()) {
+                continue;
+            }
+            try {
+                for (NPath file : folder.list()) {
+                    if (!file.isRegularFile()) {
+                        continue;
+                    }
+                    String name = file.name();
+                    String lower = name.toLowerCase();
+                    if (!(lower.endsWith(".desktop") || lower.endsWith(".menu"))
+                            || !lower.startsWith("nuts")) {
+                        continue;
+                    }
+                    for (String oldVersion : oldVersions) {
+                        if (name.contains(oldVersion)) {
+                            try {
+                                file.delete();
+                            } catch (Exception ex) {
+                                NLog.of(PosixNdi.class)
+                                        .log(NMsg.ofC("unable to remove stale shortcut %s : %s", file, ex).asFineFail());
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                NLog.of(PosixNdi.class)
+                        .log(NMsg.ofC("unable to scan shortcuts in %s : %s", folder, ex).asFineFail());
+            }
+        }
+    }
+
+    @Override
     public String getExecFileName(String name, NShellFamily shellFamily) {
         return name;
     }

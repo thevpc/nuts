@@ -4,6 +4,7 @@ import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.core.*;
 import net.thevpc.nuts.command.NExecutionException;
 import net.thevpc.nuts.command.NSearch;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.platform.*;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.text.NText;
@@ -152,7 +153,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return new NdiScriptInfo() {
             @Override
             public NPath path() {
-                return options.resolveBinFolder().resolve(getExecFileName("nuts", shellFamily));
+                // Only one "nuts" launcher is generated, and it belongs to the
+                // preferred shell family (on Windows that is nuts.cmd, not
+                // nuts.ps1). Shell specific templates (such as
+                // .nuts-term-init.ps1) must call that exact file, otherwise they
+                // point to a launcher that was never created.
+                return options.resolveBinFolder().resolve(getExecFileName("nuts", getPreferredBinScriptFamily()));
             }
 
             @Override
@@ -431,7 +437,70 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 && all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
             onPostGlobal(options, all.toArray(new PathInfo[0]));
         }
+        removeStaleBootLaunchers(options);
         return all.toArray(new PathInfo[0]);
+    }
+
+    /**
+     * The nuts API launchers are stored per API version. Installing a newer
+     * version used to leave the previous version's scripts (and their desktop
+     * shortcuts) behind, so a stale menu entry could keep pointing to an old
+     * installation. Remove older versions once the new launchers have been
+     * generated.
+     */
+    private void removeStaleBootLaunchers(NdiScriptOptions options) {
+        try {
+            NPath binFolder = options.resolveBinFolder();
+            if (binFolder == null) {
+                return;
+            }
+            NPath versionFolder = binFolder.parent();
+            if (versionFolder == null) {
+                return;
+            }
+            NPath artifactFolder = versionFolder.parent();
+            if (artifactFolder == null || !artifactFolder.isDirectory()) {
+                return;
+            }
+            NVersion currentVersion = NVersion.get(versionFolder.name()).orNull();
+            if (currentVersion == null) {
+                return;
+            }
+            List<NPath> oldFolders = new ArrayList<>();
+            List<String> oldVersions = new ArrayList<>();
+            for (NPath child : artifactFolder.list()) {
+                if (child.isDirectory()) {
+                    NVersion version = NVersion.get(child.name()).orNull();
+                    if (version != null && version.compareTo(currentVersion) < 0) {
+                        oldFolders.add(child);
+                        oldVersions.add(child.name());
+                    }
+                }
+            }
+            if (oldFolders.isEmpty()) {
+                return;
+            }
+            for (NPath oldFolder : oldFolders) {
+                try {
+                    oldFolder.deleteTree();
+                } catch (Exception ex) {
+                    NLog.of(BaseSystemNdi.class)
+                            .log(NMsg.ofC("unable to remove old launcher folder %s : %s", oldFolder, ex).asFineFail());
+                }
+            }
+            removeStaleShortcuts(options, oldVersions);
+        } catch (Exception ex) {
+            NLog.of(BaseSystemNdi.class)
+                    .log(NMsg.ofC("unable to clean old launchers : %s", ex).asFineFail());
+        }
+    }
+
+    /**
+     * Removes desktop/menu shortcuts that belong to versions listed in
+     * {@code oldVersions}. Implemented by the platform specific NDI.
+     */
+    protected void removeStaleShortcuts(NdiScriptOptions options, List<String> oldVersions) {
+        // no-op by default
     }
 
     private NDefinition loadIdDefinition(NId nid) {

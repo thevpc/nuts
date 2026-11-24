@@ -108,6 +108,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"java.lang.Process",
+  "methods":[{"name":"pid","parameterTypes":[] }]
+},
+{
   "name":"java.lang.ProcessImpl",
   "fields":[{"name":"handle"}]
 },

@@ -198,7 +198,11 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                     userOptions.customOptions(new ArrayList<>());
                 }
                 this.options = userOptions.copy();
-                NBootContext.context().connectionTimout = options.customOptions().stream().map(x -> NBootArg.of(x)).filter(x -> Objects.equals(x.optionName(), "---connection-timeout")).map(x -> x.intValue())
+                NBootContext bootContext = NBootContext.context();
+                bootContext.connectionTimout = options.customOptions().stream().map(x -> NBootArg.of(x)).filter(x -> Objects.equals(x.optionName(), "---connection-timeout")).map(x -> x.intValue())
+                        .filter(x -> x != null)
+                        .findFirst().orElse(null);
+                bootContext.connectionReadTimeout = options.customOptions().stream().map(x -> NBootArg.of(x)).filter(x -> Objects.equals(x.optionName(), "---connection-read-timeout")).map(x -> x.intValue())
                         .filter(x -> x != null)
                         .findFirst().orElse(null);
                 this.postInit();
