@@ -601,6 +601,28 @@ public class NJavaSdkUtils {
                 conf = new String[]{
                         NPlatformHome.USER.windowsProgramFiles() + "\\Java",
                         NPlatformHome.USER.windowsProgramFilesX86() + "\\Java",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Eclipse Adoptium",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Eclipse Adoptium",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Eclipse Foundation",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Eclipse Foundation",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\AdoptOpenJDK",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\AdoptOpenJDK",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Amazon Corretto",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Amazon Corretto",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Microsoft",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Microsoft",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Zulu",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Zulu",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\BellSoft",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\BellSoft",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\OpenLogic",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\OpenLogic",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\RedHat",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\RedHat",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\Semeru",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\Semeru",
+                        NPlatformHome.USER.windowsProgramFiles() + "\\JetBrains",
+                        NPlatformHome.USER.windowsProgramFilesX86() + "\\JetBrains",
                         (System.getProperty("java.home") + "\\.jdk")
                 };
                 break;
@@ -615,6 +637,35 @@ public class NJavaSdkUtils {
         List<NRuntimeDistribution> all = new ArrayList<>();
         for (String s : conf) {
             all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s))));
+        }
+        // Also inspect explicitly configured / PATH-provided JDK homes. This
+        // catches vendor layouts that are not under the usual Program Files
+        // roots (for example C:\Program Files\OpenLogic\jdk-8...).
+        Set<String> candidateHomes = new LinkedHashSet<>();
+        String javaHome = System.getenv("JAVA_HOME");
+        if (!NBlankable.isBlank(javaHome)) {
+            candidateHomes.add(javaHome);
+        }
+        String pathEnv = System.getenv("PATH");
+        if (!NBlankable.isBlank(pathEnv)) {
+            for (String p : pathEnv.split(File.pathSeparator)) {
+                if (!NBlankable.isBlank(p)) {
+                    File f = new File(p);
+                    if (f.getName().equalsIgnoreCase("bin") && f.getParentFile() != null) {
+                        candidateHomes.add(f.getParentFile().getPath());
+                    }
+                }
+            }
+        }
+        for (String h : candidateHomes) {
+            try {
+                NRuntimeDistribution r = resolveJdkLocation(NPath.of(h), null);
+                if (r != null) {
+                    all.add(r);
+                }
+            } catch (Exception ignored) {
+                // not a JDK
+            }
         }
         return all.toArray(new NRuntimeDistribution[0]);
     }

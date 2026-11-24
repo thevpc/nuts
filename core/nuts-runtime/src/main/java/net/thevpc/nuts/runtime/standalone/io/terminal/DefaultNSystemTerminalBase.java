@@ -31,8 +31,11 @@ import java.util.Scanner;
 @NScore(fixed = NScorable.DEFAULT_SCORE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public static final NDuration EXPIRY_30S = NDuration.ofSeconds(30);
+    //the terminal can be resized at any time, so its geometry is re-read often
+    public static final NDuration EXPIRY_TERM_SIZE = NDuration.ofMillis(1000);
     NCachedValue<Cursor> termCursor;
     NCachedValue<Size> termSize;
+    private volatile Size lastTermSize;
 
     private Scanner scanner;
     private NTerminalMode outMode = NTerminalMode.FORMATTED;
@@ -59,7 +62,15 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         }
         if (bootStdFd.flags().contains("tty")) {
             termCursor = NCachedValue.of(() -> CoreAnsiTermHelper.evalCursor()).expiry(EXPIRY_30S);
-            termSize = NCachedValue.of(() -> CoreAnsiTermHelper.evalSize()).expiry(EXPIRY_30S);
+            termSize = NCachedValue.of(() -> {
+                Size s = CoreAnsiTermHelper.evalSize();
+                if (s != null) {
+                    //keep the last known geometry: a transient failure to query
+                    //must not make the progress line fall back to a guess
+                    lastTermSize = s;
+                }
+                return s != null ? s : lastTermSize;
+            }).expiry(EXPIRY_TERM_SIZE);
         } else {
             termCursor = NCachedValue.of(() -> (Cursor) null).expiry(EXPIRY_30S);
             termSize = NCachedValue.of(() -> (Size) null).expiry(EXPIRY_30S);

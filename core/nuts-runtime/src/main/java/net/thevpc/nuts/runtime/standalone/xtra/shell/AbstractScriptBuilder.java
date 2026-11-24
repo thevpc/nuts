@@ -67,12 +67,20 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public PathInfo build() {
         //Path script = getScriptFile(name);
-        NDefinition anyIdDef = NSearch.of(anyId).latest(true).distinct(true)
-                .dependencyFilter(NDependencyFilter.ofRunnable())
-                .getResultDefinitions().findSingleton().get();
-        NId anyId = anyIdDef.id();
-        String path = NameBuilder.id(anyId,
-                this.path,"%n", anyIdDef.descriptor()).buildName();
+        // Resolving the id here used to abort script generation on clean or
+        // offline installs where the repository lookup failed. The id we were
+        // given is enough to generate the script; the descriptor is optional.
+        NDefinition anyIdDef = null;
+        try {
+            anyIdDef = NSearch.of(anyId).latest(true).distinct(true)
+                    .dependencyFilter(NDependencyFilter.ofRunnable())
+                    .getResultDefinitions().findSingleton().get();
+        } catch (Exception ex) {
+            // optional only
+        }
+        NId resolvedId = anyIdDef == null ? anyId : anyIdDef.id();
+        String path = NameBuilder.id(resolvedId,
+                this.path, "%n", anyIdDef == null ? null : anyIdDef.descriptor()).buildName();
         NPath script = NPath.of(path);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);

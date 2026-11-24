@@ -19,6 +19,15 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
 
     protected abstract String getDiscoDistributionName();
 
+    /**
+     * Some foojay distributions are version specific (for example GraalVM CE 8
+     * is {@code graalvm_ce8}, not {@code graalvm_ce}). Providers can override
+     * this to build a valid query for the requested version.
+     */
+    protected String getDiscoDistributionName(int version) {
+        return getDiscoDistributionName();
+    }
+
     @Override
     public NOptional<NPath> resolveDownloadPath(String product, int version, NOsFamily os, NArchFamily arch, NPath targetBin) {
         return resolveDownloadUrl(product, version, os, arch).map(x -> x.path);
@@ -133,14 +142,21 @@ public abstract class AbstractDiscoJavaProvider implements JavaProvider {
 
         String url = "https://api.foojay.io/disco/v3.0/packages?"
                 + "version=" + version
-                + "&distro=" + getDiscoDistributionName()
+                + "&distro=" + getDiscoDistributionName(version)
                 + "&operating_system=" + discoOs
                 + "&architecture=" + discoArch
                 + "&package_type=" + pkgType
                 + "&release_status=ga"
                 + "&directly_downloadable=true";
 
-        NElement elem = NElementReader.ofJson().read(NPath.of(url));
+        NElement elem;
+        try {
+            elem = NElementReader.ofJson().read(NPath.of(url));
+        } catch (Exception ex) {
+            // One provider must never abort the whole provider loop. foojay
+            // answers 400 for unknown/invalid distribution names.
+            return NOptional.ofEmpty(NMsg.ofC("unable to query java provider %s : %s", url, ex));
+        }
         if (elem.isAnyObject()) {
             NArrayElement results = elem.asObject().get().getArray("result").orNull();
             if (results != null) {

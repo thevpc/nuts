@@ -117,12 +117,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = NSearch.of().addId(getAnyId()).latest(true)
-                    .dependencyFilter(NDependencyFilter.ofRunnable())
-                    .distinct(true)
-                    .getResultDefinitions()
-                    .findSingleton().get();
-            NId anyId = anyIdDef.id();
+            // Never re-resolve the id here: on a clean/offline install the
+            // repository lookup can fail even though the id is already known.
+            NId anyId = getAnyId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
                 NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
@@ -157,8 +154,10 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_COMPLETION":
                                         return sndi.getIncludeNutsCompletion(options,getShellFamily()).path().toString();
-                                    case "NUTS_APP_JAR":
-                                        return options.resolveNutsAppJarPath().toString();
+                                    case "NUTS_APP_JAR": {
+                                        NPath appJar = options.resolveNutsAppJarPath();
+                                        return appJar == null ? "" : appJar.toString();
+                                    }
                                     case "BIN_FOLDER":
                                         return options.resolveBinFolder().toString();
                                     case "INC_FOLDER":
@@ -188,7 +187,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_VAR":
                                         return str(NPath.of(NStoreKey.ofVar()));
                                     case "NUTS_APP_JAR_EXPR": {
-                                        String NUTS_APP_JAR_PATH = options.resolveNutsAppJarPath().toString();
+                                        NPath appJar = options.resolveNutsAppJarPath();
+                                        String NUTS_APP_JAR_PATH = appJar == null ? "" : appJar.toString();
                                         if (NUTS_APP_JAR_PATH.startsWith(NPath.of(NStoreKey.ofLib()).toString())) {
                                             String pp = NUTS_APP_JAR_PATH.substring(NPath.of(NStoreKey.ofLib()).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;

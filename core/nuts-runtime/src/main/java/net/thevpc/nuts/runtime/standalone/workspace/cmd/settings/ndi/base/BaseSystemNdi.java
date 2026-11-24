@@ -392,7 +392,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NShellFamily preferredBinScriptFamily = getPreferredBinScriptFamily();
         all.add(scriptBuilderTemplate("nuts", preferredBinScriptFamily, "nuts", options.resolveNutsApiId(), options)
                 .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
-                        options.resolveNutsApiDef().descriptor()).buildName(), options, preferredBinScriptFamily))
+                        options.resolveNutsApiDescriptorOrNull()).buildName(), options, preferredBinScriptFamily))
                 .build());
         for (NdiScriptInfo i : getIncludeNutsTermInit(options)) {
             all.add(i.create());
@@ -980,9 +980,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                                String fileName, String name,
                                                NShellFamily shellFamily
     ) {
-        fileName = resolveShortcutFileName(options.resolveNutsApiId(), options.resolveNutsApiDef().descriptor(), fileName, name);
+        NDescriptor apiDescriptor = options.resolveNutsApiDescriptorOrNull();
+        fileName = resolveShortcutFileName(options.resolveNutsApiId(), apiDescriptor, fileName, name);
         if (name == null) {
-            name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().descriptor())
+            name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, apiDescriptor)
                     .buildName();
         }
         switch (shellFamily) {
@@ -1004,8 +1005,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         .setIcon(resolveIcon(null, options.resolveNutsApiId()))
                         .setStartNotify(true)
                         .addCategory("/Utility/Nuts")
-                        .setGenericName(options.resolveNutsApiDef().descriptor().genericName())
-                        .setComment(options.resolveNutsApiDef().descriptor().description())
+                        .setGenericName(apiDescriptor == null ? null : apiDescriptor.genericName())
+                        .setComment(apiDescriptor == null ? null : apiDescriptor.description())
                         .setTerminal(true)
         );
     }

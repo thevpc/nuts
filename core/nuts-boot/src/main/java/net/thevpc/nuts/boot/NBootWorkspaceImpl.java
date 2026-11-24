@@ -985,6 +985,18 @@ public final class NBootWorkspaceImpl implements NBootWorkspace {
                                     if (loadedDeps == null) {
                                         loadedDeps = new LinkedHashSet<>();
                                     }
+                                    // An incomplete cache (for example a runtime-only
+                                    // classpath without the nuts API) must never be
+                                    // trusted: it causes ClassNotFoundException for
+                                    // net.thevpc.nuts.core.NWorkspace when the
+                                    // runtime factory is loaded.
+                                    if (loadedDeps.stream().noneMatch(
+                                            d -> "net.thevpc.nuts".equals(d.groupId())
+                                                    && NBootConstants.Ids.NUTS_API_ARTIFACT_ID.equals(d.artifactId()))) {
+                                        log.log(Level.CONFIG, NBootLog.INTENT_FAIL,
+                                                NBootMsg.ofC(NBootI18n.of("ignored incomplete runtime dependency cache %s"), nutsRuntimeCacheConfigPath.toString()));
+                                        loadedDeps = null;
+                                    }
                                 } catch (Exception ex) {
                                     log.log(Level.FINEST, NBootLog.INTENT_FAIL, NBootMsg.ofC(NBootI18n.of("unable to load %s file : %s : %s"), nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString(), ex.toString()));
                                     //ignore...

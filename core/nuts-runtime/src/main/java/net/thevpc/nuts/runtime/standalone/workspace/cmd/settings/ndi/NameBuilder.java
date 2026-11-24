@@ -131,7 +131,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'N': {
-                        String str = descriptor.name();
+                        String str = descriptor == null ? null : descriptor.name();
                         if (str == null) {
                             str = "";
                         }

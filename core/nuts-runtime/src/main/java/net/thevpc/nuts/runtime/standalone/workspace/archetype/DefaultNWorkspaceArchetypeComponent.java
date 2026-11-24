@@ -139,20 +139,16 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        }
 
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetch.of().id(workspace.apiId())
-                    .dependencyFilter(NDependencyFilter.ofRunnable())
-                    .failFast(false).getResultId();
-            if (api != null) {
-                NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
-                if (initializeScripts || initializeLaunchers) {
-                    //api would be null if running in fatjar and no internet/maven is available
-                    nWorkspaceUtils.installScriptsAndLaunchers(initializeLaunchers);
-                }
-                if (installCompanions) {
-                    if (api != null) {
-                        nWorkspaceUtils.installCompanions();
-                    }
-                }
+            // Launcher/script generation does not need the artifact to be
+            // re-resolved from a repository: the workspace is already running
+            // and its apiId is known. Resolving here used to skip all NDI work
+            // on clean/offline installs where NFetch could not find the API.
+            NWorkspaceUtils nWorkspaceUtils = NWorkspaceUtils.of();
+            if (initializeScripts || initializeLaunchers) {
+                nWorkspaceUtils.installScriptsAndLaunchers(initializeLaunchers);
+            }
+            if (installCompanions) {
+                nWorkspaceUtils.installCompanions();
             }
         }
     }

@@ -14,11 +14,13 @@
 # If you are using PowerShell Core / PS 7+ (pwsh.exe) uncomment this line
 # if (-not $env:NUTS_SYS_TERM_START) { $env:NUTS_SYS_TERM_START = "pwsh.exe -NoExit -ExecutionPolicy Bypass -File" }
 
-# Default to standard Windows PowerShell (powershell.exe)
-if (-not $env:NUTS_SYS_TERM_START) {
-    $env:NUTS_SYS_TERM_START = "powershell.exe -NoExit -ExecutionPolicy Bypass -File"
+# By default initialize the current PowerShell session. Starting a nested
+# PowerShell here breaks PSReadLine on Windows ("set_CursorVisible: The
+# parameter is incorrect") as soon as the user types a character.
+if ($env:NUTS_SYS_TERM_START) {
+    Invoke-Expression "$env:NUTS_SYS_TERM_START `"$$SCRIPT_NUTS_TERM_INIT$$`""
+} else {
+    . "$$SCRIPT_NUTS_TERM_INIT$$"
 }
-
-Invoke-Expression "$env:NUTS_SYS_TERM_START `"$$SCRIPT_NUTS_TERM_INIT$$`""
 
 # END-COMMAND

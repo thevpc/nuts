@@ -5,7 +5,6 @@ import net.thevpc.nuts.command.NExec;
 import net.thevpc.nuts.platform.NEnv;
 import net.thevpc.nuts.platform.NShellFamily;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptInfoBase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
@@ -223,9 +222,27 @@ public class WindowsNdi extends BaseSystemNdi {
 
     public String[] getNutsTermFullCommand(NdiScriptOptions options, NShellFamily shellFamily) {
         if (shellFamily == NShellFamily.WIN_POWER_SHELL) {
-            return new String[]{
-                    findPwShOrPowerShell().orDefault().toString()
-                    , "-NoExit", "-ExecutionPolicy", "Bypass", "-File", getNutsTerm(options, shellFamily).path().toString()};
+            String ps = findPwShOrPowerShell().orDefault().toString();
+            // Dot-source the nuts terminal script in the current PowerShell
+            // session. Running it with -File used to start a nested PowerShell,
+            // which breaks PSReadLine on Windows (set_CursorVisible raises
+            // "The parameter is incorrect").
+            NdiScriptInfo term = getNutsTerm(options, shellFamily);
+            if (term != null) {
+                String termPath = term.path().toString().replace("'", "''");
+                return new String[]{
+                        ps, "-NoExit", "-ExecutionPolicy", "Bypass",
+                        "-Command", ". '" + termPath + "'"
+                };
+            }
+            NdiScriptInfo termInit = getIncludeNutsTermInit(options, shellFamily);
+            if (termInit != null) {
+                String initPath = termInit.path().toString().replace("'", "''");
+                return new String[]{
+                        ps, "-NoExit", "-ExecutionPolicy", "Bypass",
+                        "-Command", ". '" + initPath + "'"
+                };
+            }
         }
         return super.getNutsTermFullCommand(options, shellFamily);
     }
@@ -313,9 +330,9 @@ public class WindowsNdi extends BaseSystemNdi {
         if (NBlankable.isBlank(ext)) {
             return null;
         }
-        if (!OptionalMsLinkHelper.isSupported()) {
-            return null;
-        }
+        // Generating the terminal script itself does not require mslinks.
+        // Only .lnk creation does; that is handled separately, so never skip
+        // script generation just because the shortcut helper is unavailable.
         return new NdiScriptInfoBase(options.resolveBinFolder().resolve("nuts-term." + ext)) {
 
             @Override
@@ -348,9 +365,8 @@ public class WindowsNdi extends BaseSystemNdi {
         if (NBlankable.isBlank(ext)) {
             return null;
         }
-        if (!OptionalMsLinkHelper.isSupported()) {
-            return null;
-        }
+        // See getNutsTerm: the init script must be generated even when the
+        // .lnk helper is unavailable.
         return
                 new NdiScriptInfoBase(options.resolveIncFolder().resolve(".nuts-term-init." + ext)) {
 

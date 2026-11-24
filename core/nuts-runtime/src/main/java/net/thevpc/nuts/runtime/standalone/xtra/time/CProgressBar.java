@@ -47,8 +47,57 @@ public class CProgressBar {
     private int maxColumnsInOutput = 80;
 
     static {
-        reg("", () -> {
-            return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille") : createFormatter("simple");
+        reg("", () -> createFormatter("spinner"));
+        reg("spinner", () -> {
+            if (CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return new SpinnerFormatter("spinner",
+                        new NText[]{
+                                NText.ofStyled("\u280B", NTextStyle.primary1()),// ⠋
+                                NText.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
+                                NText.ofStyled("\u2839", NTextStyle.primary1()),// ⠹
+                                NText.ofStyled("\u2838", NTextStyle.primary1()),// ⠸
+                                NText.ofStyled("\u283C", NTextStyle.primary1()),// ⠼
+                                NText.ofStyled("\u2834", NTextStyle.primary1()),// ⠴
+                                NText.ofStyled("\u2826", NTextStyle.primary1()),// ⠦
+                                NText.ofStyled("\u2827", NTextStyle.primary1()),// ⠧
+                                NText.ofStyled("\u2807", NTextStyle.primary1()),// ⠇
+                                NText.ofStyled("\u280F", NTextStyle.primary1()),// ⠏
+                        },
+                        new NText[]{
+                                NText.ofStyled(" ", NTextStyle.primary1()),
+                                NText.ofStyled("\u258F", NTextStyle.primary1()),// ▏
+                                NText.ofStyled("\u258E", NTextStyle.primary1()),// ▎
+                                NText.ofStyled("\u258D", NTextStyle.primary1()),// ▍
+                                NText.ofStyled("\u258C", NTextStyle.primary1()),// ▌
+                                NText.ofStyled("\u258B", NTextStyle.primary1()),// ▋
+                                NText.ofStyled("\u258A", NTextStyle.primary1()),// ▊
+                                NText.ofStyled("\u2589", NTextStyle.primary1()),// ▉
+                                NText.ofStyled("\u2588", NTextStyle.primary1()),// █
+                        },
+                        1, 2
+                );
+            }
+            return new SpinnerFormatter("spinner",
+                    new NText[]{
+                            NText.ofStyled("|", NTextStyle.primary1()),
+                            NText.ofStyled("/", NTextStyle.primary1()),
+                            NText.ofStyled("-", NTextStyle.primary1()),
+                            NText.ofStyled("\\", NTextStyle.primary1()),
+                    },
+                    new NText[]{
+                            NText.ofStyled(" ", NTextStyle.primary1()),
+                            NText.ofStyled(".", NTextStyle.primary1()),
+                            NText.ofStyled(":", NTextStyle.primary1()),
+                            NText.ofStyled("-", NTextStyle.primary1()),
+                            NText.ofStyled("=", NTextStyle.primary1()),
+                            NText.ofStyled("+", NTextStyle.primary1()),
+                            NText.ofStyled("*", NTextStyle.primary1()),
+                            NText.ofStyled("#", NTextStyle.primary1()),
+                            NText.ofStyled("%", NTextStyle.primary1()),
+                            NText.ofStyled("@", NTextStyle.primary1()),
+                    },
+                    1, 2
+            );
         });
         reg("square", () -> {
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
@@ -255,10 +304,18 @@ public class CProgressBar {
         this.logger = NLog.of(CProgressBar.class);
         this.options = ProgressOptions.of();
         this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""));
-        if (determinateSize <= 0) {
-            determinateSize = options.get("size").flatMap(NLiteral::asInt).orElse(formatter.getDefaultWidth());
+        int size = options.get("size").flatMap(NLiteral::asInt).orElse(-1);
+        boolean explicitSize = determinateSize > 0;
+        if (!explicitSize) {
+            determinateSize = size > 0 ? size : formatter.getDefaultWidth();
         }
         setDeterminateSize(determinateSize);
+        setIndeterminateSize(size > 0 ? size
+                : (explicitSize ? determinateSize : formatter.getDefaultIndeterminateWidth()));
+        maxColumnsInOutput = options.get("columns").flatMap(NLiteral::asInt).orElse(maxColumnsInOutput);
+        if (maxColumnsInOutput < 0) {
+            maxColumnsInOutput = 0;
+        }
     }
 
     public String[] getFormatterNames() {
@@ -322,6 +379,107 @@ public class CProgressBar {
     public CProgressBar setDeterminateSize(int determinateSize) {
         this.determinateSize = determinateSize;
         return this;
+    }
+
+    /**
+     * Compact formatter that stands on one cell by default (two at most).
+     * Indeterminate progress rotates a short frame sequence (a spinner) and
+     * determinate progress fills the same cell(s) using a small density ramp,
+     * so the animated area never grows with the terminal width.
+     */
+    public static class SpinnerFormatter implements Formatter {
+
+        private static final int FRAME_PERIOD_MS = 120;
+        private final String name;
+        private final NText[] frames;
+        private final NText[] determinateFrames;
+        private final int defaultWidth;
+        private final int maxWidth;
+
+        public SpinnerFormatter(String name, NText[] frames, NText[] determinateFrames,
+                                int defaultWidth, int maxWidth) {
+            this.name = name;
+            this.frames = frames == null || frames.length == 0
+                    ? new NText[]{NText.ofBlank()} : frames;
+            this.determinateFrames = determinateFrames == null || determinateFrames.length == 0
+                    ? this.frames : determinateFrames;
+            this.defaultWidth = defaultWidth < 1 ? 1 : defaultWidth;
+            this.maxWidth = maxWidth < this.defaultWidth ? this.defaultWidth : maxWidth;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public boolean isSpinner() {
+            return true;
+        }
+
+        @Override
+        public NText getIndicator(float itemDensity, int itemPosition) {
+            int n = determinateFrames.length;
+            if (itemDensity <= 0) {
+                return determinateFrames[0];
+            }
+            int p = (int) Math.round(itemDensity * (n - 1));
+            if (p < 0) {
+                p = 0;
+            } else if (p >= n) {
+                p = n - 1;
+            }
+            return determinateFrames[p];
+        }
+
+        @Override
+        public NText getIntermediateIndicator(int intermediatePosition, int indeterminateSize,
+                                              int intermediateStartPosition, boolean forward) {
+            return frameAt(intermediateStartPosition + intermediatePosition);
+        }
+
+        @Override
+        public NText getIndeterminateIndicator(int position, int indeterminateSize) {
+            return frameAt(position);
+        }
+
+        private NText frameAt(int offset) {
+            long tick = System.currentTimeMillis() / FRAME_PERIOD_MS;
+            int i = (int) ((tick + offset) % frames.length);
+            if (i < 0) {
+                i += frames.length;
+            }
+            return frames[i];
+        }
+
+        @Override
+        public NText getStart() {
+            return null;
+        }
+
+        @Override
+        public NText getEnd() {
+            return null;
+        }
+
+        @Override
+        public int getMaxWidth() {
+            return maxWidth;
+        }
+
+        @Override
+        public int getDefaultWidth() {
+            return defaultWidth;
+        }
+
+        @Override
+        public int getIndeterminateMaxWidth() {
+            return maxWidth;
+        }
+
+        @Override
+        public int getDefaultIndeterminateWidth() {
+            return defaultWidth;
+        }
     }
 
     public static class SimpleFormatter implements Formatter {
@@ -457,6 +615,28 @@ public class CProgressBar {
         int getIndeterminateMaxWidth();
 
         int getDefaultIndeterminateWidth();
+
+        /**
+         * when true the indeterminate line is rendered from
+         * {@link #getIndeterminateIndicator(int, int)} only, and the bar does
+         * not sweep a moving window over the available width.
+         *
+         * @return true for compact spinners
+         */
+        default boolean isSpinner() {
+            return false;
+        }
+
+        /**
+         * one animated cell for indeterminate progress.
+         *
+         * @param position cell index
+         * @param indeterminateSize number of animated cells
+         * @return animated cell
+         */
+        default NText getIndeterminateIndicator(int position, int indeterminateSize) {
+            return getIndicator(0, position);
+        }
     }
 
     public int getColumns() {
@@ -500,6 +680,15 @@ public class CProgressBar {
         boolean indeterminate = percent < 0;
         int eSize = getEffSize(indeterminate);
         if (indeterminate) {
+            if (getFormatter().isSpinner()) {
+                NTextBuilder formattedLine = NTextBuilder.of();
+                formattedLine.append(getFormatter().getStart());
+                for (int i = 0; i < eSize; i++) {
+                    formattedLine.append(getFormatter().getIndeterminateIndicator(i, eSize));
+                }
+                formattedLine.append(getFormatter().getEnd());
+                return formattedLine.build();
+            }
             NTextBuilder formattedLine = NTextBuilder.of();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateRatio * eSize);
@@ -582,7 +771,7 @@ public class CProgressBar {
             logger.log(NMsg.ofNtf(p).withLevel(armedLogLevel).withIntent(NMsgIntent.PROGRESS));
         } else {
             NTerminalMode m = out.terminalMode();
-            NText p = progress(percent, msg, m == NTerminalMode.FILTERED);
+            NText p = progress(percent, msg, m == NTerminalMode.FILTERED, columnsToFit(m, out));
             if (p == null || p.isEmpty()) {
                 return;
             }
@@ -605,28 +794,77 @@ public class CProgressBar {
         }
     }
 
+    /**
+     * columns usable for a progress line. A filtered stream is not an
+     * interactive line (it is written once, with a newline), so nothing has to
+     * be clamped there and no arbitrary width is imposed.
+     */
+    private int columnsToFit(NTerminalMode mode, NPrintStream out) {
+        return mode == NTerminalMode.FILTERED ? Integer.MAX_VALUE : resolveColumns(out);
+    }
+
+    private int resolveColumns(NPrintStream out) {
+        try {
+            NSystemTerminalBase.Size size = out.terminal().terminalSize();
+            if (size != null && size.columns() > 0) {
+                return size.columns();
+            }
+        } catch (Exception ex) {
+            // just ignore
+        }
+        return maxColumnsInOutput;
+    }
+
+    /**
+     * Clamp a line so that it never wraps on the terminal. The last column is
+     * left free because most terminals defer the wrap until the next character
+     * is written, which is exactly what breaks a re-printed progress line.
+     *
+     * @param p line to clamp
+     * @param out target stream, used to resolve the terminal width
+     * @return a line that fits on one terminal row
+     */
+    public NText fit(NText p, NPrintStream out) {
+        if (p == null || p.isEmpty()) {
+            return p;
+        }
+        int max = resolveColumns(out) - 1;
+        if (max < 1) {
+            max = 1;
+        }
+        if (p.length() <= max) {
+            return p;
+        }
+        return truncate(p, max);
+    }
+
+    private static NText truncate(NText p, int max) {
+        if (max <= 0) {
+            return NText.ofBlank();
+        }
+        if (p.length() <= max) {
+            return p;
+        }
+        if (max <= 3) {
+            return p.substring(0, max);
+        }
+        return NTextBuilder.of().append(p.substring(0, max - 3)).append("...").build();
+    }
+
     private void printStreamWithCut(NText p, NPrintStream out) {
         synchronized (CProgressBar.class) {
-            NSystemTerminalBase.Size size = null;
-            int max=maxColumnsInOutput;
-            try {
-                size = out.terminal().terminalSize();
-            }catch (Exception ex) {
-                // just ignore
-            }
-            if(size!=null && size.columns()>0){
-                max=size.columns()-1;
-            }
 //            out.resetLine();
-            int len = p.length();
-            if (len > max) {
-                p = p.substring(0, max);
-            }
-            out.printProgressLine(p);
+            out.printProgressLine(columnsToFit(out.terminalMode(), out) == Integer.MAX_VALUE ? p : fit(p, out));
         }
     }
 
     public NText progress(int percent, NText msg, boolean forceNewline) {
+        //no output stream is available here, so the caller (or printProgress)
+        //decides the terminal width; keep the historical unbounded layout
+        return progress(percent, msg, forceNewline, Integer.MAX_VALUE);
+    }
+
+    private NText progress(int percent, NText msg, boolean forceNewline, int terminalColumns) {
         NTextBuilder sb = NTextBuilder.of();
         if (maxMessage < columns) {
             maxMessage = columns;
@@ -653,9 +891,17 @@ public class CProgressBar {
         if (p == null) {
             return NText.ofBlank();
         }
+        //budget the whole line instead of cutting it after rendering: keep the
+        //last terminal column free so the line can never wrap on the next row
+        int available = Math.max(1, terminalColumns - 1);
+        int messageBudget = Math.max(0, available - p.length() - 1);
+        NText shownMsg = truncate(msg, messageBudget);
         sb.append(p).append(" ");
-        sb.append(msg);
-        sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
+        sb.append(shownMsg);
+        int padTo = Math.min(maxMessage, messageBudget);
+        if (padTo > shownMsg.length()) {
+            sb.append(CoreStringUtils.fillString(' ', padTo - shownMsg.length()));
+        }
         if (isSuffixMoveLineStart()) {
             if ((armedLogLevel == null && options.isArmedNewline()) || forceNewline) {
                 sb.append("\n");

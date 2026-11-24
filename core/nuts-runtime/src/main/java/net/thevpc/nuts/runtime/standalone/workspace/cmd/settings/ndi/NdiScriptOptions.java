@@ -14,10 +14,12 @@ import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIllegalArgumentException;
 import net.thevpc.nuts.text.NMsg;
 import net.thevpc.nuts.util.NUnexpectedException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -133,9 +135,19 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsApiJarPath == null) {
             NId nid = resolveNutsApiId();
             if (getLauncher().switchWorkspaceLocation() == null) {
-                NDefinition apiDef = NSearch.of()
-                        .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
-                nutsApiJarPath = apiDef.content().orNull();
+                try {
+                    NDefinition apiDef = NSearch.of()
+                            .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
+                    nutsApiJarPath = apiDef.content().orNull();
+                } catch (Exception ex) {
+                    // fall through to the local lib folder
+                }
+                if (nutsApiJarPath == null || !nutsApiJarPath.isRegularFile()) {
+                    NPath p = NPath.of(NStoreKey.ofLib(nid));
+                    if (p.isRegularFile()) {
+                        nutsApiJarPath = p;
+                    }
+                }
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
                 nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
@@ -148,9 +160,38 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsAppJarPath == null) {
             NId nid = resolveNutsAppId();
             if (getLauncher().switchWorkspaceLocation() == null) {
-                NDefinition appDef = NSearch.of()
-                        .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
-                nutsAppJarPath = appDef.content().get();
+                try {
+                    NDefinition appDef = NSearch.of()
+                            .addId(nid).dependencyFilter(NDependencyFilter.ofRunnable()).latest(true).getResultDefinitions().findFirst().get();
+                    nutsAppJarPath = appDef.content().orNull();
+                } catch (Exception ex) {
+                    // fall through to the boot classpath / lib folder
+                }
+                if (nutsAppJarPath == null || !nutsAppJarPath.isRegularFile()) {
+                    // The boot app jar is exactly what the current process was
+                    // started with. This is the most reliable source on a clean
+                    // or offline install where no repository search succeeds.
+                    String cp = System.getProperty("java.class.path");
+                    if (cp != null) {
+                        for (String item : cp.split(File.pathSeparator)) {
+                            if (!NBlankable.isBlank(item)
+                                    && item.endsWith(".jar")
+                                    && (item.contains("nuts-app-") || item.endsWith("nuts.jar"))) {
+                                NPath p = NPath.of(item);
+                                if (p.isRegularFile()) {
+                                    nutsAppJarPath = p;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (nutsAppJarPath == null || !nutsAppJarPath.isRegularFile()) {
+                    NPath p = NPath.of(NStoreKey.ofLib(nid));
+                    if (p.isRegularFile()) {
+                        nutsAppJarPath = p;
+                    }
+                }
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().switchWorkspaceLocation());
                 nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
@@ -204,6 +245,24 @@ public class NdiScriptOptions implements Cloneable {
                 .distinct(true)
                 .getResultDefinitions()
                 .findSingleton().get();
+    }
+
+    /**
+     * Same as {@link #resolveNutsApiDef()} but returns null instead of failing.
+     * Launcher generation must not be skipped when the API descriptor cannot be
+     * re-resolved (for example on a clean/offline install).
+     */
+    public NDefinition resolveNutsApiDefOrNull() {
+        try {
+            return resolveNutsApiDef();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public NDescriptor resolveNutsApiDescriptorOrNull() {
+        NDefinition definition = resolveNutsApiDefOrNull();
+        return definition == null ? null : definition.descriptor();
     }
 
     public NId resolveNutsAppId() {
