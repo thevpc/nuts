@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNCharQueue;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNTextRPI;
+import net.thevpc.nuts.runtime.standalone.text.NTextNodeCollector;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
@@ -15,7 +15,8 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 public class NTFParser2 extends AbstractNTextNodeParser {
-    private StringBuffer buffer = new StringBuffer();
+    private final StringBuilder buffer = new StringBuilder();
+    private NTextRPI textRPI;
     private static String[] SHARPS = {
             "",
             "#",
@@ -45,6 +46,11 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 
     private final DefaultNCharQueue q = new DefaultNCharQueue();
     private boolean wasNewLine = true;
+    /**
+     * true when the blank that follows a title delimiter has not been consumed yet
+     * because it was not part of the current input chunk.
+     */
+    private boolean skipTitleBlank;
     private Stack<Embedded> stackedStyles = new Stack<>();
 
     private static class Embedded {
@@ -99,7 +105,35 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     private void resetBuffer() {
-        buffer.delete(0, buffer.length());
+        buffer.setLength(0);
+    }
+
+    private NTextRPI textRPI() {
+        NTextRPI r = textRPI;
+        if (r == null) {
+            r = NTextRPI.of();
+            textRPI = r;
+        }
+        return r;
+    }
+
+    /**
+     * @param c character to test
+     * @return true if the character may introduce an NTF construct
+     */
+    private static boolean isSpecial(char c) {
+        switch (c) {
+            case '}':
+            case '#':
+            case '\\':
+            case '\u001E':
+            case '\r':
+            case '\n':
+            case '`':
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -109,7 +143,17 @@ public class NTFParser2 extends AbstractNTextNodeParser {
 
     @Override
     public NText readFully() {
-        return read(true);
+        synchronized (q) {
+            NTextNodeCollector collector = new NTextNodeCollector();
+            while (true) {
+                NText n = read(true);
+                if (n == null) {
+                    break;
+                }
+                collector.accept(n);
+            }
+            return collector.getRootOrNull();
+        }
     }
 
     public NText read(boolean fully) {
@@ -117,6 +161,14 @@ public class NTFParser2 extends AbstractNTextNodeParser {
             while (q.hasNext()) {
                 Embedded embedded = stackedStyles.isEmpty() ? null : stackedStyles.peek();
                 StepEnum mode = embedded == null ? StepEnum.TEXT : embedded.mode;
+                if (skipTitleBlank) {
+                    skipTitleBlank = false;
+                    if (mode == StepEnum.TITLE && q.peek() == ' ') {
+                        //ignore the leading space of the title
+                        q.read();
+                        continue;
+                    }
+                }
                 switch (q.peek()) {
                     case '}': {
                         wasNewLine = false;
@@ -133,8 +185,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             } else if (n1.mode() == NMatchType.NO_MATCH) {
                                 buffer.append(q.read());
                             } else {
-                                // PARTIAL_MATCH or other - consume one character to avoid infinite loop
-                                buffer.append(q.read());
+                                // PARTIAL_MATCH: wait for more input without consuming
                                 return null;
                             }
                         }
@@ -191,9 +242,14 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                                         wasNewLine = false;
                                                         String s = m.get();
                                                         q.read(m.count());
-                                                        if(q.hasNext() && q.peek()==' '){
-                                                            //ignore leading space!
-                                                            q.read();
+                                                        if(q.hasNext()){
+                                                            if(q.peek()==' '){
+                                                                //ignore leading space!
+                                                                q.read();
+                                                            }
+                                                        } else {
+                                                            //the leading space may be part of a next chunk
+                                                            skipTitleBlank = true;
                                                         }
                                                         NText p = pushUp(consumeBuffer());
                                                         pushTitle(s.length() - 1);
@@ -263,12 +319,11 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     buffer.append(q.read(2));
                                 }
                             } else {
-                                if (q.isEOF()) {
+                                if (fully || q.isEOF()) {
                                     wasNewLine = false;
                                     buffer.append(q.read());
                                 } else {
-                                    // Consume one character to avoid infinite loop
-                                    buffer.append(q.read());
+                                    // more input may turn this into a complete escape
                                     return null;
                                 }
                             }
@@ -306,12 +361,11 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                         }
                                     }
                                 } else {
-                                    if (q.isEOF()) {
+                                    if (fully || q.isEOF()) {
                                         wasNewLine = false;
                                         buffer.append(q.read());
                                     } else {
-                                        // Consume one character to avoid infinite loop
-                                        buffer.append(q.read());
+                                        // more input may turn this into a complete escape
                                         return null;
                                     }
                                 }
@@ -336,12 +390,10 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             wasNewLine = false;
                             buffer.append(q.read());
                         } else if (mode == StepEnum.TITLE) {
-                            String s = q.readNewLine(true);
+                            String s = q.readNewLine(fully);
                             if (s != null) {
                                 wasNewLine = true;
                                 return pushUpTitle();
-                            }else{
-                                wasNewLine = false;
                             }
                             return null;
                         } else {
@@ -377,9 +429,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     break;
                                 }
                                 default: {
-                                    // Consume one character to avoid infinite loop
-                                    wasNewLine = false;
-                                    buffer.append(q.read());
+                                    // more input is required to decide if this is a code fence
                                     return null;
                                 }
                             }
@@ -401,9 +451,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                     break;
                                 }
                                 default: {
-                                    // Consume one character to avoid infinite loop
-                                    wasNewLine = false;
-                                    buffer.append(q.read());
+                                    // more input is required to decide if this is a code fence
                                     return null;
                                 }
                             }
@@ -412,7 +460,16 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                     }
                     default: {
                         wasNewLine = false;
-                        buffer.append(q.read());
+                        int start = q.from();
+                        int limit = q.to();
+                        char[] content = q.content();
+                        int end = start;
+                        while (end < limit && !isSpecial(content[end])) {
+                            end++;
+                        }
+                        //the first character is not special, so the run is never empty
+                        buffer.append(content, start, end - start);
+                        q.skip(end - start);
                     }
                 }
             }
@@ -465,21 +522,21 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         Embedded embedded = stackedStyles.peek();
         String b = consumeBuffer();
         stackedStyles.pop();
-        return pushUp(NText.ofCodeOrCommand(b));
+        return pushUp(textRPI().createCodeOrCommand(b));
     }
 
     private NText pushUpTitle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(NText.ofTitle(NText.ofList(embedded.children), embedded.level));
+        return pushUp(textRPI().createTitle(textRPI().createList(embedded.children), embedded.level));
     }
 
     private NText pushUpCompositeStyle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
+        return pushUp(textRPI().createStyled(textRPI().createList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private NText pushUpSimpleStyle() {
@@ -487,7 +544,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         wasNewLine = false;
         pushUp(consumeBuffer());
         stackedStyles.pop();
-        return pushUp(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
+        return pushUp(textRPI().createStyled(textRPI().createList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private void pushCompositeStyle(NTextStyles style) {
@@ -536,7 +593,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
             return null;
         }
         if (t.length() > 0) {
-            return pushUp(NText.ofPlain(t));
+            return pushUp(textRPI().createPlain(t));
         }
         return null;
     }
@@ -555,6 +612,8 @@ public class NTFParser2 extends AbstractNTextNodeParser {
             buffer.setLength(0);
             stackedStyles.clear();
             wasNewLine = true;
+            skipTitleBlank = false;
+            textRPI = null;
         }
     }
 
@@ -562,21 +621,12 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     public long parseRemaining(Consumer<NText> visitor) {
         long b = 0;
         while (true) {
-            NText n = readFully();
-            if (n != null) {
-                b++;
-                visitor.accept(n);
-            } else {
-                if(q.hasNext()){
-                    n = readFully();
-                    if(n!=null){
-                        visitor.accept(n);
-                    }else {
-                        throw new IllegalArgumentException("parseRemaining failed because readFull returns null whereas the stream is not empty?");
-                    }
-                }
+            NText n = read(true);
+            if (n == null) {
                 break;
             }
+            b++;
+            visitor.accept(n);
         }
         return b;
     }

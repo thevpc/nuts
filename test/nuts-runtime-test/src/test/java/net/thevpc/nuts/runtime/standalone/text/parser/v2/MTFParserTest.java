@@ -548,6 +548,12 @@ class MTFParserTest {
                 ((NTextStyled) result).styles().get(0));
     }
 
+    @Test
+    void testRepeatedAndNestedEmphasisFragments() {
+        assertParses("*a* then *b* then **c** then *`d`*", "a then b then c then d");
+        assertParses("*a **b** c* and *d*", "a b c and d");
+    }
+
     // ------------------------------------------------------------------ incremental
 
     /**
@@ -640,6 +646,12 @@ class MTFParserTest {
     @Test
     void testIncrementalMixedDocument() {
         assertIncrementalEquals("#) T\n*a* and **b** and `c` and [[java:x]]\n##:success:ok##\n");
+    }
+
+    @Test
+    void testIncrementalCrLf() {
+        assertIncrementalEquals("a\r\nb");
+        assertIncrementalEquals("#) Title\r\nrest");
     }
 
     /**

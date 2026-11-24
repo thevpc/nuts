@@ -5,6 +5,7 @@ import net.thevpc.nuts.text.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
@@ -86,12 +87,13 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public long parseIncremental(char[] buf, Consumer<NText> visitor) {
-        return parseIncremental(new String(buf), visitor);
+        return parseIncremental(buf, 0, buf.length, visitor);
     }
 
     @Override
     public long parseIncremental(String buf, Consumer<NText> visitor) {
-        return parseIncremental(buf.getBytes(), visitor);
+        char[] chars = buf.toCharArray();
+        return parseIncremental(chars, 0, chars.length, visitor);
     }
 
     @Override
@@ -104,14 +106,15 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
     @Override
     public NText parseIncremental(char[] buf) {
         NTextNodeCollector doc = new NTextNodeCollector();
-        parseIncremental(new String(buf), doc);
+        parseIncremental(buf, 0, buf.length, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(String buf) {
         NTextNodeCollector doc = new NTextNodeCollector();
-        parseIncremental(buf.getBytes(), doc);
+        char[] chars = buf.toCharArray();
+        parseIncremental(chars, 0, chars.length, doc);
         return doc.getRootOrEmpty();
     }
 
@@ -148,8 +151,7 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
         if (len == 0) {
             return 0;
         }
-        String raw = new String(buf, off, len);
-        char[] c = raw.toCharArray();
+        char[] c = new String(buf, off, len, StandardCharsets.UTF_8).toCharArray();
         return parseIncremental(c, 0, c.length, visitor);
     }
 

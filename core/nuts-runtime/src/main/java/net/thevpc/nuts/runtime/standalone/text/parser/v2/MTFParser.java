@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
+import net.thevpc.nuts.internal.rpi.NTextRPI;
 import net.thevpc.nuts.runtime.standalone.collections.DefaultNCharQueue;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeCollector;
@@ -84,6 +85,16 @@ public class MTFParser extends AbstractNTextNodeParser {
      */
     private static final String OPEN_STYLE_PATTERN = "##+";
 
+    /**
+     * Matches the header of an NTF simple style such as {@code ##:success:}.
+     */
+    private static final String SIMPLE_STYLE_PATTERN = "##:(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]";
+
+    /**
+     * Matches the header of an NTF composite style such as {@code ##{success:}.
+     */
+    private static final String COMPOSITE_STYLE_PATTERN = "##\\{(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]";
+
     private static final String[] SHARPS = {
             "",
             "#",
@@ -102,6 +113,19 @@ public class MTFParser extends AbstractNTextNodeParser {
             "##############",
             "###############"
     };
+
+    /**
+     * Per-level closing patterns of the NTF primary styles, precomputed once.
+     */
+    private static final String[] CLOSE_PATTERNS = createClosePatterns();
+
+    private static String[] createClosePatterns() {
+        String[] all = new String[SHARPS.length];
+        for (int i = 0; i < SHARPS.length; i++) {
+            all[i] = SHARPS[i] + "($|[^#])";
+        }
+        return all;
+    }
 
     private enum StepEnum {
         TEXT,
@@ -127,6 +151,12 @@ public class MTFParser extends AbstractNTextNodeParser {
     private final StringBuilder buffer = new StringBuilder();
     private final DefaultNCharQueue q = new DefaultNCharQueue();
     private final Stack<Embedded> stackedStyles = new Stack<>();
+    /**
+     * Parsers used to parse emphasis fragments, reused to avoid rebuilding a queue
+     * and warming the pattern cache for every emphasis span.
+     */
+    private final Deque<MTFParser> fragmentParsers = new ArrayDeque<>();
+    private NTextRPI textRPI;
     /**
      * Top level nodes already parsed but not yet returned to the caller.
      */
@@ -198,6 +228,11 @@ public class MTFParser extends AbstractNTextNodeParser {
             buffer.setLength(0);
             wasNewLine = true;
             skipTitleBlank = false;
+            for (MTFParser parser : fragmentParsers) {
+                parser.reset();
+            }
+            fragmentParsers.clear();
+            textRPI = null;
         }
     }
 
@@ -283,6 +318,14 @@ public class MTFParser extends AbstractNTextNodeParser {
                 }
                 Embedded embedded = stackedStyles.isEmpty() ? null : stackedStyles.peek();
                 StepEnum mode = embedded == null ? StepEnum.TEXT : embedded.mode;
+                if (skipTitleBlank) {
+                    skipTitleBlank = false;
+                    if (mode == StepEnum.TITLE && q.peek() == ' ') {
+                        //ignore the leading space of the title
+                        q.read();
+                        continue;
+                    }
+                }
                 switch (q.peek()) {
                     case '}': {
                         wasNewLine = false;
@@ -360,15 +403,16 @@ public class MTFParser extends AbstractNTextNodeParser {
                     }
                     default: {
                         wasNewLine = false;
-                        if (skipTitleBlank) {
-                            skipTitleBlank = false;
-                            if (mode == StepEnum.TITLE && q.peek() == ' ') {
-                                //ignore the leading space of the title
-                                q.read();
-                                break;
-                            }
+                        int start = q.from();
+                        int limit = q.to();
+                        char[] content = q.content();
+                        int end = start;
+                        while (end < limit && !isSpecial(content[end])) {
+                            end++;
                         }
-                        buffer.append(q.read());
+                        //the first character is not special, so the run is never empty
+                        buffer.append(content, start, end - start);
+                        q.skip(end - start);
                     }
                 }
             }
@@ -406,9 +450,9 @@ public class MTFParser extends AbstractNTextNodeParser {
                 && (mode == StepEnum.TEXT || mode == StepEnum.COMPOSITE_STYLE);
         final boolean canOpen = mode != StepEnum.SIMPLE_STYLE;
 
-        final String simplePattern = "##:(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]";
-        final String compositePattern = "##\\{(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]";
-        final String closePattern = SHARPS[level] + "($|[^#])";
+        final String simplePattern = SIMPLE_STYLE_PATTERN;
+        final String compositePattern = COMPOSITE_STYLE_PATTERN;
+        final String closePattern = level < CLOSE_PATTERNS.length ? CLOSE_PATTERNS[level] : null;
 
         final NStringMatchResult rSimple = q.peekPattern(simplePattern, fully);
         final NStringMatchResult rComposite = q.peekPattern(compositePattern, fully);
@@ -636,7 +680,7 @@ public class MTFParser extends AbstractNTextNodeParser {
         //drop the surrounding back quotes
         String code = q.read(close + 1).substring(1, close);
         consumeBuffer();
-        push(NText.ofCode("`", "", ":", "`", code));
+        push(textRPI().createCode("`", "", ":", "`", code));
         return true;
     }
 
@@ -678,7 +722,7 @@ public class MTFParser extends AbstractNTextNodeParser {
         String raw = q.read(close + delimiterCount);
         wasNewLine = false;
         consumeBuffer();
-        push(NText.ofStyled(parseFragment(raw.substring(delimiterCount, close)), emphasisStyle(delimiterCount)));
+        push(textRPI().createStyled(parseFragment(raw.substring(delimiterCount, close)), emphasisStyle(delimiterCount)));
         return true;
     }
 
@@ -724,7 +768,7 @@ public class MTFParser extends AbstractNTextNodeParser {
         String raw = q.read(end + 2);
         wasNewLine = false;
         consumeBuffer();
-        push(NText.ofCodeOrCommand(
+        push(textRPI().createCodeOrCommand(
                 raw.substring(2, sourceColonIndex),
                 unescapeSource(raw.substring(sourceContentIndex, end)),
                 ":"
@@ -931,6 +975,36 @@ public class MTFParser extends AbstractNTextNodeParser {
         return stackedStyles.isEmpty() ? StepEnum.TEXT : stackedStyles.peek().mode;
     }
 
+    private NTextRPI textRPI() {
+        NTextRPI r = textRPI;
+        if (r == null) {
+            r = NTextRPI.of();
+            textRPI = r;
+        }
+        return r;
+    }
+
+    /**
+     * @param c character to test
+     * @return true if the character may introduce an MTF construct
+     */
+    private static boolean isSpecial(char c) {
+        switch (c) {
+            case '}':
+            case '#':
+            case '\\':
+            case SILENT:
+            case '\r':
+            case '\n':
+            case '`':
+            case '*':
+            case '[':
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private boolean eofReached() {
         return fully || q.isEOF();
     }
@@ -1013,18 +1087,29 @@ public class MTFParser extends AbstractNTextNodeParser {
 
     /**
      * parses a standalone fragment such as the content of an emphasis span.
+     * Parsers are pooled because emphasis fragments are parsed recursively.
      */
-    private static NText parseFragment(String text) {
-        MTFParser parser = new MTFParser();
-        parser.offer(text);
-        parser.eof(true);
-        return parser.readFully();
+    private NText parseFragment(String text) {
+        MTFParser parser = fragmentParsers.poll();
+        if (parser == null) {
+            parser = new MTFParser();
+        } else {
+            parser.reset();
+        }
+        try {
+            parser.offer(text);
+            parser.eof(true);
+            return parser.readFully();
+        } finally {
+            parser.reset();
+            fragmentParsers.push(parser);
+        }
     }
 
     private void consumeBuffer() {
         String s = consumeBufferString();
         if (s != null) {
-            push(NText.ofPlain(s));
+            push(textRPI().createPlain(s));
         }
     }
 
@@ -1107,27 +1192,27 @@ public class MTFParser extends AbstractNTextNodeParser {
     private void closeCode() {
         consumeBuffer();
         Embedded embedded = stackedStyles.pop();
-        push(NText.ofCodeOrCommand(
-                NText.ofList(embedded.children).simplify().filteredText()
+        push(textRPI().createCodeOrCommand(
+                textRPI().createList(embedded.children).simplify().filteredText()
         ).simplify());
     }
 
     private void closeTitle() {
         consumeBuffer();
         Embedded embedded = stackedStyles.pop();
-        push(NText.ofTitle(NText.ofList(embedded.children).simplify(), embedded.level));
+        push(textRPI().createTitle(textRPI().createList(embedded.children).simplify(), embedded.level));
     }
 
     private void closeSimpleStyle() {
         consumeBuffer();
         Embedded embedded = stackedStyles.pop();
         wasNewLine = false;
-        push(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
+        push(textRPI().createStyled(textRPI().createList(embedded.children).simplify(), embedded.style).simplify());
     }
 
     private void closeCompositeStyle() {
         consumeBuffer();
         Embedded embedded = stackedStyles.pop();
-        push(NText.ofStyled(NText.ofList(embedded.children).simplify(), embedded.style).simplify());
+        push(textRPI().createStyled(textRPI().createList(embedded.children).simplify(), embedded.style).simplify());
     }
 }

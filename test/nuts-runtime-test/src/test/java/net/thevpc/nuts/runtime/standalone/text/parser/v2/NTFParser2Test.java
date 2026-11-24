@@ -78,6 +78,119 @@ class NTFParser2Test {
     }
 
     @Test
+    void testReadFullyReturnsWholeInputWithSeveralTopLevelNodes() {
+        NTFParser2 parser = new NTFParser2();
+        String input = "first ##:success:ok## middle ##:error:ko## last";
+        parser.offer(input);
+        parser.eof(true);
+
+        NText result = parser.readFully();
+        assertNotNull(result);
+        assertEquals("first ok middle ko last", result.filteredText());
+    }
+
+    @Test
+    void testReadFullyDrainsMixedDocument() {
+        NTFParser2 parser = new NTFParser2();
+        String input = "#) Title\nplain\n##:success:ok##\n```code```";
+        parser.offer(input);
+        parser.eof(true);
+
+        NText result = parser.readFully();
+        assertNotNull(result);
+        assertEquals("Title\nplain\nok\ncode", result.filteredText());
+    }
+
+    @Test
+    void testTitleDoesNotCloseOnIncompleteCrLf() {
+        NTFParser2 parser = new NTFParser2();
+        parser.offer("#) Title\r");
+        // the '\r' may be the first half of a '\r\n' sequence
+        assertNull(parser.read());
+
+        parser.offer("\nrest");
+        parser.eof(true);
+        assertEquals("Title\nrest", parser.readFully().filteredText());
+    }
+
+    @Test
+    void testIncrementalUnicodeIsNotCorruptedByCharsetRoundTrip() {
+        String input = "h\u00e9llo \u2603 \u4e16\u754c";
+        NTFParser2 parser = new NTFParser2();
+        StringBuilder sb = new StringBuilder();
+        parser.parseIncremental(input.toCharArray(), n -> sb.append(n.filteredText()));
+        parser.eof(true);
+        NText remaining = parser.parseRemaining();
+        if (remaining != null) {
+            sb.append(remaining.filteredText());
+        }
+        assertEquals(input, sb.toString());
+    }
+
+    @Test
+    void testIncrementalUtf8BytesAreDecodedAsUtf8() {
+        String input = "h\u00e9llo \u2603 \u4e16\u754c";
+        NTFParser2 parser = new NTFParser2();
+        StringBuilder sb = new StringBuilder();
+        parser.parseIncremental(input.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                n -> sb.append(n.filteredText()));
+        parser.eof(true);
+        NText remaining = parser.parseRemaining();
+        if (remaining != null) {
+            sb.append(remaining.filteredText());
+        }
+        assertEquals(input, sb.toString());
+    }
+
+    @Test
+    void testSplitEscapeSequenceIsNotCorrupted() {
+        NTFParser2 parser = new NTFParser2();
+        parser.offer("a\\");
+        assertNull(parser.read());
+        parser.offer("#b");
+        parser.eof(true);
+        assertEquals("a#b", parser.readFully().filteredText());
+    }
+
+    @Test
+    void testSplitSimpleStyleHeaderIsNotMisparsed() {
+        NTFParser2 parser = new NTFParser2();
+        StringBuilder sb = new StringBuilder();
+        for (String chunk : new String[]{"##:", "warn", ":", "ok", "##"}) {
+            parser.offer(chunk);
+            NText n;
+            while ((n = parser.read()) != null) {
+                sb.append(n.filteredText());
+            }
+        }
+        parser.eof(true);
+        NText remaining = parser.readFully();
+        if (remaining != null) {
+            sb.append(remaining.filteredText());
+        }
+        assertEquals("ok", sb.toString());
+    }
+
+    @Test
+    void testSplitTitleDelimiterDoesNotKeepLeadingBlank() {
+        NTFParser2 parser = new NTFParser2();
+        StringBuilder sb = new StringBuilder();
+        for (String chunk : new String[]{"#)", " ", "Title", "\n", "rest"}) {
+            parser.offer(chunk);
+            NText n;
+            while ((n = parser.read()) != null) {
+                sb.append(n.filteredText());
+            }
+        }
+        parser.eof(true);
+        NText remaining = parser.readFully();
+        if (remaining != null) {
+            sb.append(remaining.filteredText());
+        }
+        assertEquals("Title\nrest", sb.toString());
+    }
+
+    @Test
     void testNPatternInfoCompareToEdgeCases() {
         // Test the NPatternInfo compareTo method directly
         net.thevpc.nuts.util.NPatternInfo info1 = new net.thevpc.nuts.util.NPatternInfo("test");

@@ -12,18 +12,26 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.CharBuffer;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class DefaultNCharQueue implements NCharQueue {
 
+    /**
+     * Upper bound of the shared pattern cache. The patterns used by the text
+     * parsers are static and few, the bound protects against unbounded growth
+     * when callers probe arbitrary patterns.
+     */
+    private static final int MAX_CACHED_PATTERNS = 256;
+    private static final Map<String, Pattern> CACHED_PATTERNS = new ConcurrentHashMap<>();
+
     private char[] content;
     private final int increment;
     private int from;
     private int to;
     private boolean eof;
-    private final Map<String, Pattern> cachedPatterns = new HashMap<>();
 
     public static NCharQueue of() {
         return new DefaultNCharQueue(256);
@@ -214,27 +222,35 @@ public class DefaultNCharQueue implements NCharQueue {
     @Override
     public NMatchType skipValue(String value) {
         int count = value.length();
-        if (from + count < to) {
-            for (int i = 0; i < count; i++) {
-                if (value.charAt(i) != content[from + i]) {
-                    return NMatchType.NO_MATCH;
-                }
-            }
-            skip(count);
-            return NMatchType.FULL_MATCH;
-        }
-        for (int i = 0; i < to; i++) {
+        int available = to - from;
+        int compared = Math.min(count, available);
+        for (int i = 0; i < compared; i++) {
             if (value.charAt(i) != content[from + i]) {
                 return NMatchType.NO_MATCH;
             }
+        }
+        if (available >= count) {
+            skip(count);
+            return NMatchType.FULL_MATCH;
         }
         return NMatchType.PARTIAL_MATCH;
     }
 
 
-    private Pattern pattern(String pattern) {
-        return Pattern.compile("^" + pattern);
-//        return cachedPatterns.computeIfAbsent("^" + pattern, Pattern::compile);
+    private static Pattern pattern(String pattern) {
+        String key = "^" + pattern;
+        Pattern p = CACHED_PATTERNS.get(key);
+        if (p != null) {
+            return p;
+        }
+        p = Pattern.compile(key);
+        if (CACHED_PATTERNS.size() < MAX_CACHED_PATTERNS) {
+            Pattern previous = CACHED_PATTERNS.putIfAbsent(key, p);
+            if (previous != null) {
+                p = previous;
+            }
+        }
+        return p;
     }
 
     @Override
@@ -257,7 +273,22 @@ public class DefaultNCharQueue implements NCharQueue {
         for (NPatternInfo patternInfo : all) {
             patternInfo.result(peekPattern(patternInfo.pattern(), pattern.isFully()));
         }
-        NPatternInfo p = all.stream().min(NPatternInfo::compareTo).get();
+        NPatternInfo p = null;
+        if (!pattern.isFully()) {
+            // A pattern that is still incomplete may become the best match once more
+            // input is available. Acting on a lesser match now would consume characters
+            // that belong to the pending construct, breaking incremental parsing.
+            for (NPatternInfo patternInfo : all) {
+                NStringMatchResult rr = patternInfo.result();
+                if (rr != null && rr.mode() == NMatchType.PARTIAL_MATCH) {
+                    p = patternInfo;
+                    break;
+                }
+            }
+        }
+        if (p == null) {
+            p = all.stream().min(NPatternInfo::compareTo).get();
+        }
         NStringMatchResult r = p.result();
         switch (r.mode()) {
             case NO_MATCH: {
@@ -379,16 +410,15 @@ public class DefaultNCharQueue implements NCharQueue {
                     return "" + c;
                 }
                 case '\r': {
-                    read();
-                    if (hasNext()) {
-                        if (peek() == '\n') {
-                            return "" + c + read();
-                        }
-                        return "" + c;
-                    } else if (fully) {
-                        return "" + c;
+                    if (length() == 1 && !fully) {
+                        //the next chunk may start with '\n', do not consume '\r' yet
+                        break;
                     }
-                    break;
+                    read();
+                    if (hasNext() && peek() == '\n') {
+                        return "" + c + read();
+                    }
+                    return "" + c;
                 }
             }
         }
@@ -485,6 +515,19 @@ public class DefaultNCharQueue implements NCharQueue {
     @Override
     public int to() {
         return to;
+    }
+
+    /**
+     * Backing array of the live window. Characters of the window are stored in
+     * {@code content[from() .. to() - 1]}. This accessor is meant for bulk
+     * scans performed by the text parsers while they hold the queue monitor;
+     * the array reference may change on the next {@link #write(char[], int, int)}
+     * call.
+     *
+     * @return the backing array
+     */
+    public char[] content() {
+        return content;
     }
 
     @Override
