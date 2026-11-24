@@ -53,10 +53,17 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 case ']':
                 case '(':
                 case ')':
-                case '@':
                 case '^':
                 case ':': {
                     all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    break;
+                }
+                case '@': {
+                    if (ar.hasNext(1) && isIdentifierStart(ar.peekChar(1))) {
+                        all.addAll(Arrays.asList(readAnnotation(ar)));
+                    } else {
+                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
+                    }
                     break;
                 }
                 case '\'':
@@ -122,7 +129,16 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                                 } else if (s.matches(" *[:].*")) {
                                     next = ":";
                                 }
-                                NText last = all.isEmpty() ? null : all.get(all.size() - 1);
+                                NText last = null;
+                                for (int i = all.size() - 1; i >= 0; i--) {
+                                    NText candidate = all.get(i);
+                                    if (candidate.type() == NTextType.PLAIN
+                                            && ((NTextPlain) candidate).value().trim().isEmpty()) {
+                                        continue;
+                                    }
+                                    last = candidate;
+                                    break;
+                                }
                                 NTextStyles t = resolveTokenStyle(txt2, next, last);
                                 if (t != null) {
                                     d[0] = NText.ofStyled(d[0], t);
@@ -270,6 +286,9 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
             case "false": {
                 return NTextStyles.of(NTextStyle.bool());
             }
+            case "null": {
+                return NTextStyles.of(NTextStyle.keyword());
+            }
         }
         return null;
     }
@@ -318,6 +337,22 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         }
         all.add(NText.ofPlain(sb.toString()));
         return all.toArray(new NText[0]);
+    }
+
+    /**
+     * Reads a TSON annotation such as {@code @required} or {@code @range(1, 100)}.
+     * Only the annotation name is consumed here; its arguments are highlighted as
+     * ordinary TSON tokens on the next iterations.
+     */
+    protected NText[] readAnnotation(StringReaderExt ar) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ar.readChar()); // @
+        while (ar.hasNext() && (isJavaIdentifierPart(ar.peekChar()) || ar.peekChar() == '.')) {
+            sb.append(ar.readChar());
+        }
+        return new NText[]{
+                NText.ofStyled(sb.toString(), NTextStyle.annotation())
+        };
     }
 
     public NText[] parseOneLineString(StringReaderExt chars) {

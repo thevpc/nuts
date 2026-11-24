@@ -1,139 +1,41 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
-import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.text.NTextStyles;
 
-import java.util.*;
+public class SqlCodeHighlighter extends AbstractCodeHighlighter {
 
-public class SqlCodeHighlighter implements NCodeHighlighter {
-
-    private Set<String> reservedWords1 =new HashSet<>();
-    private Set<String> reservedWords2 =new HashSet<>();
     public SqlCodeHighlighter() {
-        reservedWords1.addAll(NCodeHighlighterHelper.loadNames("sql.kw1",getClass()));
-        reservedWords2.addAll(NCodeHighlighterHelper.loadNames("sql.kw2",getClass()));
+        super("sql");
+        for (String s : NCodeHighlighterHelper.loadNames("sql.kw1", getClass())) {
+            keywords.add(s.toLowerCase());
+        }
+        for (String s : NCodeHighlighterHelper.loadNames("sql.kw2", getClass())) {
+            types.add(s.toLowerCase());
+        }
+        booleanLiterals.addAll(java.util.Arrays.asList("true", "false"));
+        nullLiterals.add("null");
+        lineComments.add("--");
+        lineComments.add("#");
+        blockCommentOpen = "/*";
+        blockCommentClose = "*/";
+        stringQuotes.add('\'');
+        stringQuotes.add('`');
+        numberSuffixChars = "";
+        separatorChars = "()[]{},.;";
+        operatorChars = "+-*/%=<>!&|^~?:";
     }
-
-    @Override
-    public String id() {
-        return "sql";
-    }
-
-    @Override
-    public NText tokenToText(String text, String nodeType) {
-        return NText.ofPlain(text);
-    }
-
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.criteria();
-        if (s == null) {
-            return NScorable.DEFAULT_SCORE;
-        }
-        switch (s) {
-            case "sql":
-            case "text/sql":
-            case "application/sql":
-            {
-                return NScorable.DEFAULT_SCORE;
-            }
-        }
-        return NScorable.UNSUPPORTED_SCORE;
+        return NCodeHighlighterHelper.score(context,
+                "sql", "text/sql", "text/x-sql", "application/sql", "application/x-sql");
     }
 
     @Override
-    public NText stringToText(String text) {
-        List<NText> all = new ArrayList<>();
-        StringReaderExt ar = new StringReaderExt(text);
-        while (ar.hasNext()) {
-            switch (ar.peekChar()) {
-                case '{':
-                case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '@':
-                case '=':
-                case '+':
-                case '*':
-                case '%':
-                case ':':
-                case '?':
-                case '<':
-                case '>':
-                case '!':
-                case ';': {
-                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    break;
-                }
-                case '\'': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(ar)));
-                    break;
-                }
-                case '"': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ar)));
-                    break;
-                }
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(ar)));
-                    break;
-                }
-                case '.':
-                case '-': {
-                    NText[] d = StringReaderExtUtils.readNumber(ar);
-                    if (d != null) {
-                        all.addAll(Arrays.asList(d));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                case '/': {
-                    if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ar)));
-                    } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                default: {
-                    if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
-                    } else {
-                        NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
-                        if (d != null) {
-                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).value();
-                                if (reservedWords1.contains(txt2.toLowerCase())) {
-                                    d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
-                                }
-                            }
-                            all.addAll(Arrays.asList(d));
-                        } else {
-                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return NText.ofList(all.toArray(new NText[0]));
+    protected NTextStyles styleForWord(String word) {
+        // SQL keywords are case insensitive
+        return super.styleForWord(word.toLowerCase());
     }
 }

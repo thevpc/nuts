@@ -88,6 +88,7 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.JsonCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.TsonCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.NTexupCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.NtxCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.CSharpCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.NtfCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.MtfCodeHighlighter
@@ -102,6 +103,18 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.NaruCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.PythonCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.YamlCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.RustCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.ScalaCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.KotlinCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.GoCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.RubyCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.PhpCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.SwiftCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.TomlCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.IniCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.DockerfileCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.MakefileCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.HclCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.CssCodeHighlighter
 
 
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver

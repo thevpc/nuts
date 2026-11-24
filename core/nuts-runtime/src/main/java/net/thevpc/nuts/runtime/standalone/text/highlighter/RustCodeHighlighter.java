@@ -56,7 +56,9 @@ public class RustCodeHighlighter implements NCodeHighlighter {
         switch (s) {
             case "rust":
             case "rs":
+            case "text/rust":
             case "text/x-rust":
+            case "application/x-rust":
                 return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;

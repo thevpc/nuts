@@ -34,6 +34,8 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
         }
         switch (s){
             case "json":
+            case "jsonc":
+            case "json5":
             case "application/json":
             case "text/json":
             {
@@ -110,6 +112,10 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
                                     case "true":
                                     case "false": {
                                         d[0] = NText.ofStyled(d[0], NTextStyle.bool());
+                                        break;
+                                    }
+                                    case "null": {
+                                        d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
                                         break;
                                     }
                                 }

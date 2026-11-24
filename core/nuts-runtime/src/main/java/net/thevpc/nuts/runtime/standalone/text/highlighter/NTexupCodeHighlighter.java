@@ -8,30 +8,91 @@ import net.thevpc.nuts.text.*;
 
 import java.util.*;
 
+/**
+ * Syntax highlighter for ntexup documents ({@code .ntx}, historically also
+ * called {@code ntexup}). ntexup documents are TSON documents whose node names
+ * are slide/page elements and whose named arguments are element properties.
+ */
 public class NTexupCodeHighlighter extends TsonCodeHighlighter {
-    public static final Set<String> ctrl = new HashSet<>(Arrays.asList(
-            "import;page;page-group;styles;if;for"
-                    .split(";")
+
+    /**
+     * Control words that introduce a statement or a block.
+     */
+    public static final Set<String> ctrl = new LinkedHashSet<>(Arrays.asList(
+            "import", "include", "page", "page-group", "styles", "define", "if", "else", "for", "while",
+            "return", "let", "var", "fn", "function", "component"
     ));
-    //    public static final Set<String> p2 = new HashSet<>(Arrays.asList(
-//            "arc;circle;ellipse;eq;equation;flow;grid;image;img;line;octagon;ol;pentagon;plain;points;polygon;polyline;rectangle;sphere;square;stack;text;triangle;txt;ul;void"
-//                    .split(";")
-//    ));
-//    public static final Set<String> p3 = new HashSet<>(Arrays.asList(
-//            "anchor;at;background;bg;bottom;class;color;columns;debug;disabled;draw-contour;fg;fill;font-bold;font-crossthrough;font-family;font-italic;font-size;font-underline;grid-color;hide;left;line-color;name;origin;position;preserve-aspect-ratio;right;rotate;rows;show;size;sphere;stroke;template;top;weights"
-//                    .split(";")
-//    ));
-    public static final Set<String> attrs = new HashSet<>(Arrays.asList(
-            "anchor;at;background;bg;bottom;class;color;columns;debug;disabled;draw-contour;fg;fill;font-bold;font-crossthrough;margin;columns-weight;from;to;ctrl;ctrl1;start-arrow;end-arrow;rows-weight;font-family;font-italic;font-size;font-underline;grid-color;hide;left;line-color;name;origin;position;preserve-aspect-ratio;right;rotate;rows;show;size;sphere;stroke;top;weights"
-                    .split(";")
+
+    /**
+     * Built-in ntexup node types (core extensions). These are stable names
+     * understood by a raw ntexup document without any theme.
+     */
+    public static final Set<String> defaultNodes = new LinkedHashSet<>(Arrays.asList(
+            // structure
+            "page-group", "page", "fragment", "group", "block", "flow", "grid", "row", "column",
+            "table", "table-row", "table-cell", "filler", "void", "stack",
+            // text
+            "plain", "text", "txt", "ntf", "source", "eq", "equation",
+            // shapes 2d
+            "rectangle", "square", "circle", "ellipse", "triangle", "pentagon", "hexagon", "heptagon",
+            "octagon", "nonagon", "decagon", "rhombus", "trapezoid", "parallelogram", "polygon", "polyline",
+            "line", "arrow", "connector", "arc", "quad-curve", "cubic-curve", "donut", "pie", "cylinder",
+            "sphere", "ellipsoid", "scene3d", "box", "box3d", "pyramid", "pyramid3d", "uvsphere", "sphere3d",
+            "helix", "helix3d", "spiral3d", "polyline3d", "polygon3d",
+            // layout shortcuts and media
+            "ordered-list", "unordered-list", "ol", "ul", "col", "diamond", "rect", "bar", "img", "picture",
+            "image", "plot2d", "plot3d", "table",
+            // other built-in extensions
+            "scoreboard", "score-board", "leaderboard", "scores",
+            "progress-monitor", "progress-view",
+            // diagrams
+            "plantuml", "uml", "gantt", "nwdiag", "wireframe", "mindmap", "salt", "ditaa", "chen",
+            "ebnf", "chronology", "wbs", "regex", "plantuml-json", "json-diagram",
+            "plantuml-yaml", "yaml-diagram",
+            // control nodes
+            "assign", "defaultassign", "expr", "call", "for", "define", "include", "uncompiled", "import",
+            "ctrlname", "ctrlcomplexresult", "ctrlsimpleresult", "ctrlerror", "if", "unnamed"
     ));
-    public static final Set<String> components = new HashSet<>(Arrays.asList(
-            "arc;circle;ellipse;eq;equation;flow;grid;image;img;line;octagon;ol;pentagon;plain;points;polygon;polyline;rectangle;sphere;square;group;text;triangle;txt;ul;void;ntf;source;col;column;row;rhombus;diamond;parallelogram;trapezoid;quad-curve;cubic-curve;plot2d;plot3d;hexagon;helptagon;nonagon;decagon;arrow;donut;cylinder;pie;image;gantt;nwdiag;uml;wireframe;"
-                    .split(";")
+
+    /**
+     * Backward compatible alias for {@link #defaultNodes}.
+     */
+    public static final Set<String> components = defaultNodes;
+
+    /**
+     * Components defined by the bundled themes (classic, eniso, ibtihel,
+     * meridian). They are highlighted with a color of their own so a reader can
+     * tell theme-provided slide components from core elements.
+     */
+    public static final Set<String> themeComponents = new LinkedHashSet<>(Arrays.asList(
+            "agenda-slide", "cover-slide", "content-slide", "conclusion-slide", "thankyou-slide",
+            "body", "body2a", "body2b", "body3a", "body3b", "body3c",
+            "header", "footer", "card", "kicker", "divider", "stat", "quote", "panel", "callout",
+            "hint-info", "hint-warning", "hint-error", "hint-success", "image-fig",
+            "definition", "example", "remark", "theorem", "palette", "Palette"
     ));
-    public static final Set<String> values = new HashSet<>(Arrays.asList(
-            "center;left;right;true;false;red"
-                    .split(";")
+
+    /**
+     * Common ntexup property names.
+     */
+    public static final Set<String> attrs = new LinkedHashSet<>(Arrays.asList(
+            "anchor", "at", "background", "bg", "bottom", "class", "color", "columns", "columns-weight",
+            "ctrl", "ctrl1", "debug", "disabled", "draw-contour", "end-arrow", "fg", "fill", "font-bold",
+            "font-crossthrough", "font-family", "font-italic", "font-size", "font-underline", "from",
+            "grid-color", "hide", "left", "line-color", "margin", "name", "origin", "position",
+            "preserve-aspect-ratio", "right", "rotate", "rows", "rows-weight", "show", "size", "sphere",
+            "start-arrow", "stroke", "template", "to", "top", "weights"
+    ));
+
+    /**
+     * Common bare scalar values (flags, alignments, sizes...).
+     */
+    public static final Set<String> values = new LinkedHashSet<>(Arrays.asList(
+            "all", "auto", "baseline", "bold", "bottom", "both", "center", "contain", "cover",
+            "clockwise", "counter-clockwise", "dashed", "dotted", "end", "false", "fill", "hidden",
+            "horizontal", "italic", "justify", "large", "left", "medium", "middle", "none", "no-repeat",
+            "nowrap", "null", "repeat", "right", "row", "column", "small", "solid", "start", "stretch",
+            "top", "true", "underline", "vertical", "visible", "wrap", "xlarge", "xsmall"
     ));
 
     static {
@@ -44,7 +105,6 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
 
     public NTexupCodeHighlighter() {
         super();
-
     }
 
     @Override
@@ -68,35 +128,46 @@ public class NTexupCodeHighlighter extends TsonCodeHighlighter {
         return NScorable.UNSUPPORTED_SCORE;
     }
 
-
     @Override
     protected NTextStyles resolveTokenStyle(String token, String next, NText last) {
+        if ("true".equals(token) || "false".equals(token)) {
+            return NTextStyles.of(NTextStyle.bool());
+        }
+        if ("null".equals(token)) {
+            return NTextStyles.of(NTextStyle.keyword());
+        }
         if ("(".equals(next) || "{".equals(next)) {
             if (ctrl.contains(token)) {
                 return NTextStyles.of(NTextStyle.primary2());
             }
-            if (components.contains(token)) {
+            if (themeComponents.contains(token)) {
+                return NTextStyles.of(NTextStyle.primary5());
+            }
+            if (defaultNodes.contains(token)) {
                 return NTextStyles.of(NTextStyle.primary1());
             }
-            return NTextStyles.of(NTextStyle.primary1());
-        }
-        if (":".equals(next)) {
             if (attrs.contains(token)) {
                 return NTextStyles.of(NTextStyle.primary3());
             }
+            // user defined components (themes, @define) are call-like too
+            return NTextStyles.of(NTextStyle.primary6());
+        }
+        if (":".equals(next)) {
+            // object/node property
             return NTextStyles.of(NTextStyle.primary3());
         }
         if (last != null) {
             String s = last.filteredText();
-            if (s.equals(":")) {
-                if (values.contains(token)) {
-                    return NTextStyles.of(NTextStyle.primary4());
-                }
+            if (":".equals(s)) {
+                // value position
                 return NTextStyles.of(NTextStyle.primary4());
             }
-            if (attrs.contains(token)) {
-                return NTextStyles.of(NTextStyle.primary3());
-            }
+        }
+        if (attrs.contains(token)) {
+            return NTextStyles.of(NTextStyle.primary3());
+        }
+        if (values.contains(token)) {
+            return NTextStyles.of(NTextStyle.primary4());
         }
         return super.resolveTokenStyle(token, next, last);
     }

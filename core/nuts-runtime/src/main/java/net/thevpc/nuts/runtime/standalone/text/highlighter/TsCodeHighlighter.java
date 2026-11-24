@@ -23,6 +23,7 @@ public class TsCodeHighlighter extends JsCodeHighlighter {
             case "mts":
             case "cts":
             case "text/typescript":
+            case "text/x-typescript":
             case "application/typescript":
                 return NScorable.DEFAULT_SCORE;
         }

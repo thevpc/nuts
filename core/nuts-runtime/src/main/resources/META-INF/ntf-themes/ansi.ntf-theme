@@ -37,4 +37,8 @@ VAR(*)=foregroundColor(2)
 PALE(*)=foregroundColor(8)
 VERSION(*)=foregroundColor(13)
 PATH(*)=foregroundColor(14)
+COMMENTS(*)=foregroundColor(8)
+ANNOTATION(*)=foregroundColor(3)
+ENTITY(*)=foregroundColor(6)
+ACTION(*)=foregroundColor(4)
 

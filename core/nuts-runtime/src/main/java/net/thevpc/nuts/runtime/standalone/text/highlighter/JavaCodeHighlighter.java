@@ -1,138 +1,28 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-
-import java.util.*;
-
-import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
-import net.thevpc.nuts.text.*;
 
-public class JavaCodeHighlighter implements NCodeHighlighter {
+public class JavaCodeHighlighter extends AbstractCodeHighlighter {
 
-    private Set<String> reservedWords = new HashSet<>();
     public JavaCodeHighlighter() {
-        reservedWords.addAll(NCodeHighlighterHelper.loadNames("java.kw1",getClass()));
+        super("java");
+        keywords.addAll(NCodeHighlighterHelper.loadNames("java.kw1", getClass()));
+        booleanLiterals.addAll(java.util.Arrays.asList("true", "false"));
+        nullLiterals.add("null");
+        lineComments.add("//");
+        blockCommentOpen = "/*";
+        blockCommentClose = "*/";
+        stringQuotes.add('\'');
+        charLiterals = true;
+        tripleQuotes = true;
+        annotations = true;
+        numberSuffixChars = "uUlLfFdD";
     }
-
-    @Override
-    public String id() {
-        return "java";
-    }
-
-    @Override
-    public NText tokenToText(String text, String nodeType) {
-        return NText.ofPlain(text);
-    }
-
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.criteria();
-        if(s==null){
-            return NScorable.DEFAULT_SCORE;
-        }
-        switch (s){
-            case "java":
-            case "jav":
-            case "text/x-java":
-            {
-                return NScorable.DEFAULT_SCORE;
-            }
-        }
-        return NScorable.UNSUPPORTED_SCORE;
-    }
-
-    @Override
-    public NText stringToText(String text) {
-        List<NText> all = new ArrayList<>();
-        StringReaderExt ar = new StringReaderExt(text);
-        while (ar.hasNext()) {
-            switch (ar.peekChar()) {
-                case '{':
-                case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '@':
-                case '=':
-                case '+':
-                case '*':
-                case '%':
-                case ':':
-                case '?':
-                case '<':
-                case '>':
-                case '!':
-                case ';': {
-                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    break;
-                }
-                case '\'': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(ar)));
-                    break;
-                }
-                case '"': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ar)));
-                    break;
-                }
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(ar)));
-                    break;
-                }
-                case '.':
-                case '-': {
-                    NText[] d = StringReaderExtUtils.readNumber(ar);
-                    if (d != null) {
-                        all.addAll(Arrays.asList(d));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                case '/': {
-                    if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ar)));
-                    } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                default: {
-                    if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
-                    } else {
-                        NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
-                        if (d != null) {
-                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).value();
-                                if (reservedWords.contains(txt2)) {
-                                    d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
-                                }
-                            }
-                            all.addAll(Arrays.asList(d));
-                        } else {
-                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return NText.ofList(all.toArray(new NText[0]));
+        return NCodeHighlighterHelper.score(context,
+                "java", "jav", "text/x-java", "text/x-java-source", "text/java", "application/x-java");
     }
 }

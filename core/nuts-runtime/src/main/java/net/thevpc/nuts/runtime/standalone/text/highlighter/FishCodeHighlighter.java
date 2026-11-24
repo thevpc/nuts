@@ -35,7 +35,9 @@ public class FishCodeHighlighter implements NCodeHighlighter {
             return NScorable.DEFAULT_SCORE;
         }
         switch (s) {
-            case "fish": {
+            case "fish":
+            case "text/x-fish":
+            case "application/x-fish": {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {

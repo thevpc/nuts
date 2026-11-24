@@ -135,9 +135,16 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case "win-cmd":
             case "wincmd":
             case "cmd":
+            case "powershell":
+            case "power-shell":
+            case "pwsh":
+            case "ps1":
+            case "posh":
             case "powsershell":
             case "powser-shell":
-            case "text/x-msdos-batch": {
+            case "text/x-msdos-batch":
+            case "text/x-powershell":
+            case "application/x-powershell": {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {

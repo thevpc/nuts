@@ -288,11 +288,11 @@ public class DefaultNTextManagerModel {
 
 
     public void addCodeHighlighter(NCodeHighlighter format) {
-        highlighters.put(format.id(), format);
+        highlighters.put(format.id().toLowerCase(), format);
     }
 
     public void removeCodeHighlighter(String id) {
-        highlighters.remove(id);
+        highlighters.remove(id.toLowerCase());
     }
 
     public NCodeHighlighter[] getCodeHighlighters() {

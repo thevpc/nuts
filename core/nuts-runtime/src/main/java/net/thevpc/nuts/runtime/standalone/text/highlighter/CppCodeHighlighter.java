@@ -1,144 +1,49 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.reflect.NScore;
-import net.thevpc.nuts.reflect.NScorable;
 import net.thevpc.nuts.reflect.NScorableContext;
-import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
 
-import java.util.*;
+import java.util.List;
 
-public class CppCodeHighlighter implements NCodeHighlighter {
-
-    private Set<String> reservedWords = new HashSet<>();
+public class CppCodeHighlighter extends AbstractCodeHighlighter {
 
     public CppCodeHighlighter() {
-        reservedWords.addAll(NCodeHighlighterHelper.loadNames("cpp.kw1",getClass()));
+        super("cpp");
+        keywords.addAll(NCodeHighlighterHelper.loadNames("cpp.kw1", getClass()));
+        booleanLiterals.addAll(java.util.Arrays.asList("true", "false"));
+        nullLiterals.add("nullptr");
+        lineComments.add("//");
+        blockCommentOpen = "/*";
+        blockCommentClose = "*/";
+        stringQuotes.add('\'');
+        charLiterals = true;
+        numberSuffixChars = "uUlLfFdD";
     }
-
-    @Override
-    public String id() {
-        return "cpp";
-    }
-
-    @Override
-    public NText tokenToText(String text, String nodeType) {
-        return NText.ofPlain(text);
-    }
-
 
     @NScore
     public static int getScore(NScorableContext context) {
-        String s = context.criteria();
-        if(s==null){
-            return NScorable.DEFAULT_SCORE;
-        }
-        switch (s){
-            case "c":
-            case "h":
-            case "hpp":
-            case "cpp":
-            case "text/x-c":
-            case "text/x-c++":
-            case "text/x-csrc":
-            case "text/x-c++src":
-            case "text/x-cppsrc":
-            {
-                return NScorable.DEFAULT_SCORE;
-            }
-        }
-        return NScorable.UNSUPPORTED_SCORE;
+        return NCodeHighlighterHelper.score(context,
+                "c", "h", "hpp", "hxx", "cc", "cpp", "cxx", "c++",
+                "text/x-c", "text/x-c++", "text/x-csrc", "text/x-c++src", "text/x-cppsrc");
     }
 
     @Override
-    public NText stringToText(String text) {
-        List<NText> all = new ArrayList<>();
-        StringReaderExt ar = new StringReaderExt(text);
-        while (ar.hasNext()) {
-            switch (ar.peekChar()) {
-                case '{':
-                case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '@':
-                case '=':
-                case '+':
-                case '*':
-                case '%':
-                case ':':
-                case '?':
-                case '<':
-                case '>':
-                case '!':
-                case ';': {
-                    all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    break;
-                }
-                case '\'': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(ar)));
-                    break;
-                }
-                case '"': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ar)));
-                    break;
-                }
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(ar)));
-                    break;
-                }
-                case '.':
-                case '-': {
-                    NText[] d = StringReaderExtUtils.readNumber(ar);
-                    if (d != null) {
-                        all.addAll(Arrays.asList(d));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                case '/': {
-                    if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ar)));
-                    } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
-                    } else {
-                        all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                    }
-                    break;
-                }
-                default: {
-                    if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
-                    } else {
-                        NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
-                        if (d != null) {
-                            if (d.length == 1 && d[0].type() == NTextType.PLAIN) {
-                                String txt2 = ((NTextPlain) d[0]).value();
-                                if (reservedWords.contains(txt2)) {
-                                    d[0] = NText.ofStyled(d[0], NTextStyle.keyword());
-                                }
-                            }
-                            all.addAll(Arrays.asList(d));
-                        } else {
-                            all.add(NText.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
-                        }
-                    }
-                    break;
-                }
+    protected boolean handleSpecial(StringReaderExt ar, List<NText> all) {
+        if (ar.peekChar() == '#') {
+            StringBuilder sb = new StringBuilder();
+            sb.append(ar.readChar());
+            while (ar.hasNext() && Character.isWhitespace(ar.peekChar())) {
+                sb.append(ar.readChar());
             }
+            while (ar.hasNext() && Character.isJavaIdentifierPart(ar.peekChar())) {
+                sb.append(ar.readChar());
+            }
+            all.add(NText.ofStyled(sb.toString(), NTextStyle.annotation()));
+            return true;
         }
-        return NText.ofList(all.toArray(new NText[0]));
+        return false;
     }
 }

@@ -73,11 +73,14 @@ public class JsCodeHighlighter implements NCodeHighlighter {
         if (s == null) return NScorable.DEFAULT_SCORE;
         switch (s) {
             case "js":
+            case "jsx":
             case "javascript":
             case "mjs":
             case "cjs":
             case "text/javascript":
+            case "text/x-javascript":
             case "application/javascript":
+            case "application/x-javascript":
                 return NScorable.DEFAULT_SCORE;
         }
         return NScorable.UNSUPPORTED_SCORE;

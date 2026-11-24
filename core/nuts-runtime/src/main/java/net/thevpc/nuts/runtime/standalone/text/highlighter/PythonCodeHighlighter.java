@@ -58,9 +58,10 @@ public class PythonCodeHighlighter implements NCodeHighlighter {
         switch (s) {
             case "python":
             case "py":
+            case "py3":
             case "python3":
             case "text/x-python":
-            {
+            case "text/x-python3": {
                 return NScorable.DEFAULT_SCORE;
             }
         }

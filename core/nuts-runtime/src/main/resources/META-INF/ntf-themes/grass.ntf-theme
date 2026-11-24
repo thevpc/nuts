@@ -85,4 +85,8 @@ VAR(*)=foregroundColor(190)
 PALE(*)=foregroundColor(250)
 VERSION(*)=foregroundColor(220)
 PATH(*)=foregroundColor(114)
+COMMENTS(*)=foregroundColor(DARK_GRAY)
+ANNOTATION(*)=foregroundColor(DARK_YELLOW)
+ENTITY(*)=foregroundColor(DARK_SKY)
+ACTION(*)=foregroundColor(BRIGHT_BLUE)
 

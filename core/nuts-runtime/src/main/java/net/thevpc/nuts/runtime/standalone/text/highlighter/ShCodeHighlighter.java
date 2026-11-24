@@ -84,11 +84,17 @@ public class ShCodeHighlighter implements NCodeHighlighter {
         }
         switch (s) {
             case "sh":
+            case "shell":
             case "bash":
             case "csh":
             case "zsh":
             case "ksh":
-            case "text/x-shellscript": {
+            case "dash":
+            case "text/sh":
+            case "text/x-sh":
+            case "text/x-shellscript":
+            case "application/x-sh":
+            case "application/x-shellscript": {
                 return NScorable.DEFAULT_SCORE;
             }
             case "system": {
