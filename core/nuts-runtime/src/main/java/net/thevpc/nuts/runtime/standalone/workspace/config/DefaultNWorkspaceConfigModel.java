@@ -63,6 +63,7 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.log.NMsgIntent;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
+import net.thevpc.nuts.runtime.standalone.concurrent.NWorkspaceLockUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -227,6 +228,14 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public boolean save(boolean force) {
+        return NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.workspaceLock("workspace-config", NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> saveImpl(force)
+        );
+    }
+
+    private boolean saveImpl(boolean force) {
         if (!force && !isConfigurationChanged()) {
             return false;
         }
@@ -742,7 +751,7 @@ public class DefaultNWorkspaceConfigModel {
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
         cc.configVersion(current().getApiVersion());
-        NElementWriter.ofJson().write(cc, afile);
+        writeConfigFile(cc, afile);
     }
 
     public void setExtraBootRuntimeId(NId apiId, NId runtimeId, List<NDependency> deps) {
@@ -770,7 +779,7 @@ public class DefaultNWorkspaceConfigModel {
         estoreModelApi.configVersion(current().getApiVersion());
         NPath apiVersionSpecificLocation = NPath.of(NStoreKey.ofConf(apiId));
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
-        NElementWriter.ofJson().write(estoreModelApi, afile);
+        writeConfigFile(estoreModelApi, afile);
 
         NWorkspaceConfigRuntime storeModelRuntime = new NWorkspaceConfigRuntime();
         storeModelRuntime.setId(runtimeId);
@@ -782,8 +791,16 @@ public class DefaultNWorkspaceConfigModel {
                 .resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         storeModelRuntime.configVersion(current().getApiVersion());
-        NElementWriter.ofJson().write(storeModelRuntime, afile);
+        writeConfigFile(storeModelRuntime, afile);
 
+    }
+
+    private void writeConfigFile(Object value, NPath file) {
+        NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.companionLock(file, NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> NElementWriter.ofJson().write(value, file)
+        );
     }
 
     public void setBootRuntimeId(NId value, String dependencies) {

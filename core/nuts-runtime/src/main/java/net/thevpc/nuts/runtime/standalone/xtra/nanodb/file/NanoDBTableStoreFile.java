@@ -1,12 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb.file;
 
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.concurrent.NWorkspaceLockUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.*;
 import net.thevpc.nuts.pipeline.NStream;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.StreamSupport;
 
 public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
@@ -73,6 +76,10 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     }
 
     public long add(T a) {
+        return withTableFileLock(() -> addImpl(a));
+    }
+
+    private long addImpl(T a) {
         synchronized (tableLock) {
             File tableFile = getTableFile();
             boolean writeHeader = false;
@@ -105,6 +112,13 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     }
 
     public void flush() {
+        withTableFileLock(() -> {
+            flushImpl();
+            return null;
+        });
+    }
+
+    private void flushImpl() {
         synchronized (tableLock) {
             if (writeStream != null) {
                 writeStream.flush();
@@ -116,8 +130,15 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
     }
 
     public void close() {
+        withTableFileLock(() -> {
+            closeImpl();
+            return null;
+        });
+    }
+
+    private void closeImpl() {
         synchronized (tableLock) {
-            flush();
+            flushImpl();
             if (writeStream != null) {
                 writeStream.flush();
                 writeStream.close();
@@ -134,6 +155,14 @@ public class NanoDBTableStoreFile<T> implements NanoDBTableStore<T> {
                 value.close();
             }
         }
+    }
+
+    private <R> R withTableFileLock(Callable<R> callable) {
+        return NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.companionLock(NPath.of(getTableFile()), NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                callable
+        );
     }
 
     public NStream<T> stream() {

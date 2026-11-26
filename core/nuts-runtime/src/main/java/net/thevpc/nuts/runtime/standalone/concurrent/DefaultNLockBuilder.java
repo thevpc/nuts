@@ -41,7 +41,7 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
         if (lf != null) {
             Path p = toPath(lf);
             if (p != null) {
-                return new DefaultFileNLock(p, target() != null ? target() : lf);
+                return new DefaultFileNLock(p, target() != null ? target() : lf, leaseDuration());
             }
             return memLocks.computeIfAbsent(lf, e -> new DefaultMemLock(e));
         }
@@ -53,7 +53,7 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
                 throw new NLockException(NMsg.ofP("companion lock requires a path target"), null, tgt);
             }
             NPath compPath = resolveCompanion(tgtPath, companionNameOrSuffix());
-            return new DefaultFileNLock(compPath.toPath().get(), tgt);
+            return new DefaultFileNLock(compPath.toPath().get(), tgt, leaseDuration());
         }
 
         if (tgt != null) {
@@ -61,7 +61,7 @@ public class DefaultNLockBuilder extends AbstractNLockBuilder {
             if (p != null) {
                 NPath tgtPath = NPath.of(p);
                 NPath compPath = resolveCompanion(tgtPath, null);
-                return new DefaultFileNLock(compPath.toPath().get(), tgt);
+                return new DefaultFileNLock(compPath.toPath().get(), tgt, leaseDuration());
             }
             return memLocks.computeIfAbsent(tgt, e -> new DefaultMemLock(e));
         }

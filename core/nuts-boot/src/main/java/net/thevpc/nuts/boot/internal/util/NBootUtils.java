@@ -1678,9 +1678,14 @@ public final class NBootUtils {
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("not found %s", ff));
             throw new UncheckedIOException(new FileNotFoundException(ff == null ? "" : ff.getPath()));
         }
+        File part = newTempSibling(to);
         try {
-            Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            // Never write the target in place: another process using the same
+            // workspace may be reading (or creating) it at the same time.
+            Files.copy(ff.toPath(), part.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            replaceFile(part, to);
         } catch (IOException ex) {
+            deleteQuietly(part);
             log.with().level(Level.CONFIG).verbFail().log(NBootMsg.ofC("error copying %s to %s : %s", ff, to, ex.toString()));
             throw new UncheckedIOException(ex);
         }
@@ -1716,7 +1721,9 @@ public final class NBootUtils {
         int maxAttempts = isRemoteURL(url) ? 3 : 1;
         IOException lastError = null;
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            File part = new File(to.getPath() + ".part");
+            // A fixed ".part" name was shared by every process using the same
+            // workspace; two concurrent downloads could corrupt each other.
+            File part = newTempSibling(to);
             try {
                 copyURLOnce(url, part);
                 replaceFile(part, to);
@@ -1782,10 +1789,17 @@ public final class NBootUtils {
 
     private static void replaceFile(File from, File to) throws IOException {
         try {
+            Files.move(from.toPath(), to.toPath(), StandardCopyOption.ATOMIC_MOVE);
+            return;
+        } catch (java.nio.file.AtomicMoveNotSupportedException ignored) {
+            // fall through to a non-atomic replacement
+        } catch (IOException atomicMoveError) {
+            // some file systems (and virus scanners holding the target open)
+            // refuse an atomic move; try a regular move then a copy
+        }
+        try {
             Files.move(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException moveError) {
-            // some file systems (and virus scanners holding the target open)
-            // refuse a move; fall back to a regular copy
             try {
                 Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException copyError) {
@@ -1794,6 +1808,10 @@ public final class NBootUtils {
             }
             deleteQuietly(from);
         }
+    }
+
+    private static File newTempSibling(File to) {
+        return new File(to.getPath() + "." + UUID.randomUUID() + ".part");
     }
 
     private static boolean isRemoteURL(URL url) {

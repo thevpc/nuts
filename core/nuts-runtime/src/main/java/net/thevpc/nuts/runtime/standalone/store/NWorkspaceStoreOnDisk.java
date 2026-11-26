@@ -11,7 +11,6 @@ import net.thevpc.nuts.elem.NElementReader;
 import net.thevpc.nuts.elem.NElementWriter;
 import net.thevpc.nuts.pipeline.NIterator;
 import net.thevpc.nuts.pipeline.NIteratorBuilder;
-import net.thevpc.nuts.platform.NStoreScope;
 import net.thevpc.nuts.platform.NStoreType;
 import net.thevpc.nuts.core.NRepository;
 import net.thevpc.nuts.core.NRepositoryConfig;
@@ -23,6 +22,7 @@ import net.thevpc.nuts.log.NLog;
 
 import net.thevpc.nuts.core.NStoreKey;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
+import net.thevpc.nuts.runtime.standalone.concurrent.NWorkspaceLockUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.NAtomicFileWriter;
@@ -48,6 +48,7 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
@@ -98,29 +99,57 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveWorkspaceConfigBoot(NWorkspaceConfigBoot value) {
-        Path file = NWorkspace.of().workspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        storeObject(value, file.toString());
+        NPath file = NWorkspace.of().workspaceLocation().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        withConfigLock(file, () -> {
+            NWorkspaceConfigBoot toSave = value;
+            if (file.isRegularFile()) {
+                try {
+                    NWorkspaceConfigBoot current = loadWorkspaceConfigBoot(file);
+                    if (current != null
+                            && !NBlankable.isBlank(current.getUuid())
+                            && !NBlankable.isBlank(value.getUuid())
+                            && !current.getUuid().equals(value.getUuid())) {
+                        // Another process created (or re-created) this workspace
+                        // while this instance was running. Never let a stale
+                        // instance overwrite the identity and layout of the
+                        // workspace that is actually stored on disk.
+                        toSave = value.copy();
+                        toSave.setUuid(current.getUuid());
+                        toSave.setName(current.getName());
+                        toSave.setWorkspace(current.getWorkspace());
+                        toSave.setStoreStrategy(current.getStoreStrategy());
+                        toSave.setRepositoryStoreStrategy(current.getRepositoryStoreStrategy());
+                        toSave.setStoreLayout(current.getStoreLayout());
+                        toSave.setStoreLocations(current.getStoreLocations());
+                        toSave.setHomeLocations(current.getHomeLocations());
+                    }
+                } catch (RuntimeException ex) {
+                    // An unreadable existing config will simply be replaced.
+                }
+            }
+            storeObject(toSave, file.toString());
+        });
     }
 
     @Override
     public void saveConfigSecurity(NWorkspaceConfigSecurity value) {
         NPath configVersionSpecificLocation = NPath.of(NStoreKey.ofConf(NWorkspace.of().apiId()));
         NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
-        storeObject(value, file.toString());
+        withConfigLock(file, () -> storeObject(value, file.toString()));
     }
 
     @Override
     public void saveConfigMain(NWorkspaceConfigMain value) {
         NPath configVersionSpecificLocation = NPath.of(NStoreKey.ofConf(NWorkspace.of().apiId()));
         NPath file = configVersionSpecificLocation.resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
-        storeObject(value, file.toString());
+        withConfigLock(file, () -> storeObject(value, file.toString()));
     }
 
     @Override
     public void saveConfigApi(NWorkspaceConfigApi value) {
         NPath apiVersionSpecificLocation = NPath.of(NStoreKey.ofConf(NWorkspace.of().apiId()));
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
-        storeObject(value, afile.toString());
+        withConfigLock(afile, () -> storeObject(value, afile.toString()));
     }
 
     @Override
@@ -129,7 +158,31 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         NPath conf = NPath.of(NStoreKey.ofConf())
                 .resolve(NConstants.Folders.ID).resolve(workspace.getDefaultIdBasedir(workspace.runtimeId()));
         NPath file = conf.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
-        storeObject(value, file.toString());
+        withConfigLock(file, () -> storeObject(value, file.toString()));
+    }
+
+    private void withConfigLock(NPath file, Runnable runnable) {
+        NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.workspaceLock("workspace-config", NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> NWorkspaceLockUtils.withLock(
+                        NWorkspaceLockUtils.companionLock(file, NWorkspaceLockUtils.SHORT_LEASE),
+                        NWorkspaceLockUtils.SHORT_TIMEOUT,
+                        runnable
+                )
+        );
+    }
+
+    private <T> T callWithConfigLock(NPath file, Callable<T> callable) {
+        return NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.workspaceLock("workspace-config", NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> NWorkspaceLockUtils.withLock(
+                        NWorkspaceLockUtils.companionLock(file, NWorkspaceLockUtils.SHORT_LEASE),
+                        NWorkspaceLockUtils.SHORT_TIMEOUT,
+                        callable
+                )
+        );
     }
 
     public void storeObject(Object anyObject, String file) {
@@ -215,13 +268,15 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
     @Override
     public boolean saveRepoConfig(NRepository repository, NRepositoryConfig config) {
         NPath file = repository.config().storeLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
-        boolean created = false;
-        if (!file.exists()) {
-            created = true;
-        }
-        repository.config().storeLocation().mkdirs();
-        NElementWriter.ofJson().write(config, file);
-        return created;
+        return callWithConfigLock(file, () -> {
+            boolean created = false;
+            if (!file.exists()) {
+                created = true;
+            }
+            repository.config().storeLocation().mkdirs();
+            NElementWriter.ofJson().write(config, file);
+            return created;
+        });
     }
 
     @Override
@@ -294,9 +349,12 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void saveInstallInfoConfig(InstallInfoConfig installInfoConfig) {
-
         NPath path = NPath.of(NStoreKey.ofConf(installInfoConfig.getId())).resolve(DefaultNInstalledRepository.NUTS_INSTALL_FILE);
-        NElementWriter.ofJson().write(installInfoConfig, path);
+        NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.idLock(installInfoConfig.getId(), DefaultNInstalledRepository.NUTS_INSTALL_FILE, NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> NElementWriter.ofJson().write(installInfoConfig, path)
+        );
     }
 
     @Override
@@ -358,7 +416,11 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 
     @Override
     public void deleteInstallInfoConfig(NId id) {
-        remove(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE);
+        NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.idLock(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE, NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                () -> remove(id, DefaultNInstalledRepository.NUTS_INSTALL_FILE)
+        );
     }
 
     public void remove(NId id, String name) {
@@ -379,10 +441,12 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
 //            path = getPath(id, NUTS_INSTALL_FILE);
 //        }
         if (path.isRegularFile()) {
-            InstallInfoConfig c = NLock.ofIdPath(id, NStoreScope.WORKSPACE, DefaultNInstalledRepository.NUTS_INSTALL_FILE).callWith(
-                    () -> NElementReader.ofJson().read(path, InstallInfoConfig.class),
-                    CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
-            ).orNull();
+            InstallInfoConfig c = NWorkspaceLockUtils.idLock(
+                            id, DefaultNInstalledRepository.NUTS_INSTALL_FILE, NWorkspaceLockUtils.SHORT_LEASE)
+                    .callWith(
+                            () -> NElementReader.ofJson().read(path, InstallInfoConfig.class),
+                            CoreNUtils.LOCK_TIME, CoreNUtils.LOCK_TIME_UNIT
+                    ).orNull();
             if (c != null) {
                 boolean changeStatus = false;
                 NVersion v = c.getConfigVersion();
@@ -456,14 +520,16 @@ public class NWorkspaceStoreOnDisk extends AbstractNWorkspaceStore {
         String version = id.version().value();
         NPath pp = NPath.of(NStoreKey.ofConf(id.builder().version("ANY").build()))
                 .resolveSibling("default-version");
-        if (NBlankable.isBlank(version)) {
-            if (pp.isRegularFile()) {
-                pp.delete();
+        withConfigLock(pp, () -> {
+            if (NBlankable.isBlank(version)) {
+                if (pp.isRegularFile()) {
+                    pp.delete();
+                }
+            } else {
+                pp.mkParentDirs();
+                pp.writeString(version.trim());
             }
-        } else {
-            pp.mkParentDirs();
-            pp.writeString(version.trim());
-        }
+        });
     }
 
     private static NLog _LOG() {

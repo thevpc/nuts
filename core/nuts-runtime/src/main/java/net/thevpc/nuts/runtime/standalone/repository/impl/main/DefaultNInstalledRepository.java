@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.core.*;
 
-
 import net.thevpc.nuts.artifact.*;
 import net.thevpc.nuts.command.*;
 import net.thevpc.nuts.internal.rpi.NDefinitionFilterRPI;
@@ -39,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.definition.NDefinitionFilterUtils;
 import net.thevpc.nuts.runtime.standalone.definition.NDefinitionHelper;
 import net.thevpc.nuts.runtime.standalone.definition.filter.SafeNDefinitionFilter;
 import net.thevpc.nuts.runtime.standalone.store.NWorkspaceStore;
+import net.thevpc.nuts.runtime.standalone.concurrent.NWorkspaceLockUtils;
 import net.thevpc.nuts.runtime.standalone.collections.NLRUMapImpl;
 import net.thevpc.nuts.security.NSecurityManager;
 import net.thevpc.nuts.text.NMsg;
@@ -70,6 +70,7 @@ import net.thevpc.nuts.util.*;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * @author thevpc
@@ -172,6 +173,13 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public void install(NId id, NId forId) {
+        withInstallInfoLock(id, () -> {
+            installImpl(id, forId);
+            return null;
+        });
+    }
+
+    private void installImpl(NId id, NId forId) {
         boolean succeeded = false;
         NWorkspaceUtils.of().checkReadOnly();
         InstallInfoConfig ii = _wstore().loadInstallInfoConfig(id);
@@ -223,6 +231,13 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public void uninstall(NDefinition def) {
+        withInstallInfoLock(def.id(), () -> {
+            uninstallImpl(def);
+            return null;
+        });
+    }
+
+    private void uninstallImpl(NDefinition def) {
         boolean succeeded = false;
         NWorkspaceUtils.of().checkReadOnly();
         NId id = def.id();
@@ -259,6 +274,17 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public NInstallInformation require(NDefinition def, NId[] forIds, NDependencyScope scope) {
+        List<NId> ids = new ArrayList<>();
+        if (def != null && def.id() != null) {
+            ids.add(def.id());
+        }
+        if (forIds != null) {
+            ids.addAll(Arrays.asList(forIds));
+        }
+        return withInstallInfoLocks(ids, () -> requireImpl(def, forIds, scope));
+    }
+
+    private NInstallInformation requireImpl(NDefinition def, NId[] forIds, NDependencyScope scope) {
         boolean succeeded = false;
         NId requiredId = def.id();
         NInstallInformation nInstallInformation = updateInstallInformation(def.id(), def, null, null, true);
@@ -309,6 +335,13 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public void unrequire(NId requiredId, NId requestorId, NDependencyScope scope) {
+        withInstallInfoLocks(Arrays.asList(requiredId, requestorId), () -> {
+            unrequireImpl(requiredId, requestorId, scope);
+            return null;
+        });
+    }
+
+    private void unrequireImpl(NId requiredId, NId requestorId, NDependencyScope scope) {
         Instant now = Instant.now();
         String user = NSecurityManager.of().currentUsername();
         boolean succeeded = false;
@@ -432,6 +465,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     private NInstallInformation updateInstallInformation(NId id1, NDefinition def, Boolean deployed, Boolean install, Boolean require) {
+        return withInstallInfoLock(id1, () -> updateInstallInformationImpl(id1, def, deployed, install, require));
+    }
+
+    private NInstallInformation updateInstallInformationImpl(NId id1, NDefinition def, Boolean deployed, Boolean install, Boolean require) {
         invalidateInstallationDigest();
         InstallInfoConfig ii = _wstore().loadInstallInfoConfig(id1);
         boolean wasInstalled = false;
@@ -733,6 +770,22 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         action,
                         id, requestor, message, succeeded
                 ));
+    }
+
+    private <T> T withInstallInfoLock(NId id, Callable<T> callable) {
+        return NWorkspaceLockUtils.withLock(
+                NWorkspaceLockUtils.idLock(id, NUTS_INSTALL_FILE, NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                callable
+        );
+    }
+
+    private <T> T withInstallInfoLocks(Collection<NId> ids, Callable<T> callable) {
+        return NWorkspaceLockUtils.withLocks(
+                NWorkspaceLockUtils.idLocks(ids, NUTS_INSTALL_FILE, NWorkspaceLockUtils.SHORT_LEASE),
+                NWorkspaceLockUtils.SHORT_TIMEOUT,
+                callable
+        );
     }
 
 }

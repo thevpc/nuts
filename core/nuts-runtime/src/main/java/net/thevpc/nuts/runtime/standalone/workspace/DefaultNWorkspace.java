@@ -78,6 +78,7 @@ import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNWorkspaceExtensionModel;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
+import net.thevpc.nuts.runtime.standalone.concurrent.NWorkspaceLockUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -288,7 +289,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 this.wsModel.init();
                 _preloadWorkspace(data);
                 NOpenMode m = data.initialBootOptions.openMode().orElse(NOpenMode.OPEN_OR_CREATE);
-                if (!loadWorkspace(data.effectiveBootOptions.excludedExtensions().orElseGet(Collections::emptyList), null)) {
+                List<String> excludedExtensions = data.effectiveBootOptions.excludedExtensions().orElseGet(Collections::emptyList);
+                if (loadWorkspace(excludedExtensions, null)) {
+                    switch (m){
+                        case CREATE_OR_ERROR:{
+                            throw new NBootWorkspaceAlreadyExistsException(wsModel.location);
+                        }
+                    }
+                    _createWorkspaceNonFirstBoot(data);
+                } else {
                     switch (m){
                         case OPEN_OR_NULL:{
                             throw new NBootWorkspaceNotFoundException(wsModel.location);
@@ -297,14 +306,32 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             throw new NBootWorkspaceNotFoundException(wsModel.location);
                         }
                     }
-                    _createWorkspaceFirstBoot(data);
-                } else {
-                    switch (m){
-                        case CREATE_OR_ERROR:{
-                            throw new NBootWorkspaceAlreadyExistsException(wsModel.location);
-                        }
+                    String wsLocation = wsModel.location;
+                    if (wsLocation == null) {
+                        _createWorkspaceFirstBoot(data);
+                    } else {
+                        // First boot is a create-or-open operation. Several processes
+                        // (including nuts children using the same workspace) can race
+                        // here; serialize it and re-check under the lock so the second
+                        // process does not overwrite the freshly created config.
+                        NPath initLockFile = NPath.of(wsLocation)
+                                .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME + ".init.lock");
+                        NWorkspaceLockUtils.withLock(
+                                NWorkspaceLockUtils.fileLock(initLockFile, NWorkspaceLockUtils.INIT_LEASE),
+                                NWorkspaceLockUtils.INIT_TIMEOUT,
+                                () -> {
+                                    if (loadWorkspace(excludedExtensions, null)) {
+                                        if (m == NOpenMode.CREATE_OR_ERROR) {
+                                            throw new NBootWorkspaceAlreadyExistsException(wsModel.location);
+                                        }
+                                        _createWorkspaceNonFirstBoot(data);
+                                    } else {
+                                        _createWorkspaceFirstBoot(data);
+                                    }
+                                    return null;
+                                }
+                        );
                     }
-                    _createWorkspaceNonFirstBoot(data);
                 }
                 _postCreateWorkspace(data);
                 applyTransientRepositorySelection();

@@ -32,6 +32,7 @@ public class DefaultFileNLock extends AbstractNLock {
     private static final TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private final Path path;
     private final Object lockedObject;
+    private final NDuration leaseDuration;
     private volatile Thread ownerThread;
 
     public static class LockInfo {
@@ -105,8 +106,13 @@ public class DefaultFileNLock extends AbstractNLock {
     }
 
     public DefaultFileNLock(Path path, Object lockedObject) {
+        this(path, lockedObject, null);
+    }
+
+    public DefaultFileNLock(Path path, Object lockedObject, NDuration leaseDuration) {
         this.path = path;
         this.lockedObject = lockedObject;
+        this.leaseDuration = leaseDuration;
     }
 
     public TimePeriod getDefaultTimePeriod() {
@@ -371,7 +377,15 @@ public class DefaultFileNLock extends AbstractNLock {
             LockInfo li = new LockInfo();
             li.hostname = NEnv.of().hostName();
             li.instant = Instant.now();
-            li.maxValidInstant = li.instant.plusSeconds(12 * 3600); // 12 hours TTL
+            // Artifact locks keep the historical long TTL (large downloads can
+            // take a while). Short lived workspace-state locks provide their
+            // own lease so a crashed process cannot block the workspace for
+            // twelve hours.
+            long leaseMillis = leaseDuration == null ? 12L * 3600 * 1000 : leaseDuration.toMillis();
+            if (leaseMillis <= 0) {
+                leaseMillis = 12L * 3600 * 1000;
+            }
+            li.maxValidInstant = li.instant.plusMillis(leaseMillis);
             li.pid = NEnv.of().pid();
 
             Files.write(path, li.serialize().getBytes());
